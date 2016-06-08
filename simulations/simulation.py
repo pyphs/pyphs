@@ -6,6 +6,7 @@ Created on Tue May 24 11:20:26 2016
 """
 from misc.io import write_data
 from misc.tools import progressbar
+from config import standard_config
 import time
 
 
@@ -29,9 +30,9 @@ class Simulation:
 
         nt : number of time steps (x goes to x[nt+1])
         """
-
-        self.fs = fs
-        self.ts = fs**-1
+        self.config = standard_config
+        self.config.update({'fs': fs,
+                            'language': language})
 
         if not hasattr(phs, 'nums'):
             phs.build_nums()
@@ -54,7 +55,7 @@ got {0!s} '.format(nt)
                     if phs.ny() > 0:
                         yield [0, ]*phs.ny()
                     else:
-                        yield " "
+                        yield ""
             sequ = generator_u()
         # if seq_p is not provided, a sequence of [[0]*np]*nt is assumed
         if seqp is None:
@@ -63,7 +64,7 @@ got {0!s} '.format(nt)
                     if phs.np() > 0:
                         yield [0, ]*phs.np()
                     else:
-                        yield " "
+                        yield ""
             seqp = generator_p()
 
         self.nt = nt
@@ -79,31 +80,27 @@ got {0!s} '.format(nt)
         write_data(phs, seqp, 'p')
         write_data(phs, [x0, ], 'x0')
 
-    def process(numerics, fs, seq_u=None, seq_p=None, x0=None, nt=None,
-                language='py',
-                config=None):
+    def process(self):
 
-        init_simu(numerics, seq_u=seq_u, seq_p=seq_p, x0=x0, nt=nt)
-
-        if numerics.config['timer']:
+        if self.config['timer']:
             tstart = time.time()
         # language is 'py' or 'cpp'
-        assert language in ('c++', 'py'), 'language "{0!s}" \
-unknown'.format(language)
-        if language == 'c++':
-            process_cpp(numerics)
-        elif language == 'py':
-            process_py(numerics)
-        if numerics.config['timer']:
+        assert self.config['language'] in ('c++', 'python'), 'language \
+"{0!s}" unknown'.format(self.config['language'])
+        if self.config['language'] == 'c++':
+            process_cpp(self)
+        elif self.config['language'] == 'python':
+            process_py(self)
+        if self.config['timer']:
             tstop = time.time()
         # load data from 'phs.path/data/'
         from utils.io import load_all
-        load_all(numerics)
-        if numerics.config['timer']:
-            time_per_it = ((tstop-tstart)/float(numerics.nt))
+        load_all(self)
+        if self.config['timer']:
+            time_per_it = ((tstop-tstart)/float(self.nt))
             print 'time per iteration: \
 {0!s} s'.format(format(time_per_it, 'f'))
-            ratio_to_real_time = time_per_it/numerics.ts
+            ratio_to_real_time = time_per_it*self.config['fs']
             print 'ratio compared to real-time: {0!s}\
 '.format(format(ratio_to_real_time, 'f'))
 

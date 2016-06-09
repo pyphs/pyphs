@@ -131,14 +131,19 @@ class diodepn(NonLinearDissipative):
     Usage
     -----
 
-    electronics.diodepn label (N1, N2): Is=1e-9, v0=25e-3
+    electronics.diodepn label nodes: **kwargs
 
     Parameters:
     -----------
 
-    Is: saturation current (A)
-    v0: quality factor (V)
+    nodes : (N1, N2)
+        tuple of nodes labels (int or string). The edge (ie. the current 'i') \
+is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
 
+    kwargs : dictionary with following "key: value"
+
+         * 'Is': saturation current (A)
+         * 'v0': quality factor (V)
     """
     def __init__(self, label, nodes, **kwargs):
         # parameters
@@ -161,6 +166,49 @@ class diodepn(NonLinearDissipative):
         NonLinearDissipative.__init__(self, label, [edge],
                                       [w], [z], **kwargs)
 
+
+class bjtnpn:
+    """
+    bipolar junction transistor of NPN type according to on Ebers-Moll model.
+    
+    Usage
+    -----
+
+    electronics.bjtnpn label (Nb, Nc, Ne] []
+
+    Description
+    ------------
+
+    Triode model from [1] which includes Norman Koren modeling of plate to \
+    cathode current Ipk and grid effect for grid to cathod current Igk.
+
+    Nodes:
+        3 (cathode 'K', plate 'P' and grid 'G').
+
+    Edges:
+        2 (plate->cathode 'PK' and grid->cathode 'GK').
+
+    Parameters
+    -----------
+
+    +------------+---------+------------+---------+------------+---------+----\
+--------+---------+
+    |    mu      |  Ex     |    Kg      |  Kp     |     Kvb    |    Vcp  \
+|  Va        |    Rgk  |
+    +------------+---------+------------+---------+------------+---------+---\
+---------+---------+
+    | 88         | 1.4     | 1060       | 600     | 300        | 0.5     \
+| 0.33       | 3000    |
+    +------------+---------+------------+---------+------------+---------+---\
+---------+---------+
+
+    Reference
+    ----------
+
+    [1] I. Cohen and T. Helie, Measures and parameter estimation of triodes \
+    for the real-time simulation of a multi-stage guitar preamplifier. 129th \
+    Convention of the AES, SF USA, 2009.
+    
 
 class triode(NonLinearDissipative):
     """

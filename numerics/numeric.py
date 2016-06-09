@@ -7,7 +7,6 @@ Created on Fri Jun  3 15:27:55 2016
 
 from tools import geteval, lambdify, find
 from symbolics.tools import free_symbols
-from discrete_calculus import discrete_gradient
 
 _args_names = ('x', 'dx', 'w', 'u', 'p')
 
@@ -17,9 +16,7 @@ class Numeric:
     Class that serves as a container for all numerical functions
     """
     def __init__(self, phs):
-        phs.exprs.setexpr('discgradH', discrete_gradient(phs.exprs.H,
-                                                         phs.symbs.x,
-                                                         phs.symbs.dx()))
+
         self.args_names = _args_names
         # lists all arguments
         args = []

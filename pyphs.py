@@ -280,7 +280,6 @@ got %s' % type(label)
         u : str, symbol, or list of
         y : str, symbol, or list of
         """
-        print u, y
         if hasattr(u, '__len__'):
             u = _assert_vec(u)
             y = _assert_vec(y)

@@ -11,10 +11,10 @@ def list2str(l):
     return str(str(l).strip('[]')).replace(',', '') + '\n'
 
 
-def open_files(phs, files_to_open):
+def open_files(path, files_to_open):
     files = {}
-    for var in files_to_open.split(' '):
-        _file = open(phs.folders['data'] + os.sep + var + '.txt', 'w')
+    for var in files_to_open:
+        _file = open(path + os.sep + var + '.txt', 'w')
         files.update({var: _file})
     return files
 
@@ -25,10 +25,10 @@ def close_files(files):
             _file.close()
 
 
-def dump_files(numerics, files):
+def dump_files(internal, files):
     for key in files.keys():
         _file = files[key]
-        lis = [float(el) for el in getattr(numerics, key)()]
+        lis = [float(el) for el in getattr(internal, key)()]
         _file.write(list2str(lis))
 
 

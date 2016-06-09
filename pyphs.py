@@ -91,7 +91,7 @@ got %s' % type(label)
         from symbolics.expressions import Expressions
         setattr(self, 'exprs', Expressions())
 
-        from symbolics.structure import Structure
+        from symbolics.structures.structure import Structure
         setattr(self, 'struc', Structure(self))
 
         from graphs.graph import Graph
@@ -103,7 +103,7 @@ got %s' % type(label)
         """
         if n < self.struc.indx()[1]:
             name = 'x'
-            func = 'gradH'
+            func = 'dxH'
         elif n < self.struc.indw()[1]:
             name = 'w'
             func = 'z'
@@ -147,9 +147,9 @@ got %s' % type(label)
 
     def build_exprs(self):
         """
-        set attributes 'gradH', 'hessH' and 'jacz'
+        set attributes 'dxH', 'hessH' and 'jacz'
         """
-        self.exprs.build(self.symbs)
+        self.exprs.build(self)
 
     def build_nums(self):
         """
@@ -167,25 +167,31 @@ got %s' % type(label)
         self.graph._perform_analysis()
         self.graph.analysis.build_phs(self)
 
-    def build_simulation(self, fs, sequ=None, seqp=None, language='python',
+    def build_simulation(self, config=None, sequ=None, seqp=None,
                          nt=None, x0=None):
         """
         Parameters
         -----------
 
-        fs : float, sample rate
+        config : dic of configuraiton options, including sample rate 'fs' and\
+'language' ('c++' or 'python').
 
-        sequ : iterable of tuples of inputs values
+        sequ : iterable of tuples of inputs values.
 
-        seqp : iterable of tuples of parameters values
+        seqp : iterable of tuples of parameters values.
 
-        language : 'c++' or 'python'
-
-        nt : number of time steps (x goes to x[nt+1])
+        nt : number of time steps (x goes to x[nt+1]).
         """
         from simulations.simulation import Simulation
-        self.simulation = Simulation(self, fs, sequ=sequ, seqp=seqp,
-                                     language=language, nt=nt, x0=x0)
+        self.simulation = Simulation(self, config=config, sequ=sequ, seqp=seqp,
+                                     nt=nt, x0=x0)
+
+    def run_simulation(self):
+        """
+        run the simulation. to set parameters (inputs, sampling rate, etc.), \
+refer to function 'buil_simulation' of your 'PortHamiltonianObject'
+        """
+        self.simulation.process()
 
     def apply_subs(self, subs=None):
         if subs is None:
@@ -447,30 +453,28 @@ got %s' % type(label)
         latex_file.write(str_latex)
         latex_file.close()
 
-    def plot_powerBal(self, nmin=0, nmax=None, plot_properties=None):
+    def plot_powerBal(self, plot_properties=None):
 
         if plot_properties is None:
             plot_properties = {}
-        datax = self.numerics.seq_t[nmin: nmax]
+        datax = [el for el in self.simulation.data.t()]
         datay = list()
-        datay.append(self.numerics.seq_dtE[nmin: nmax])
+        datay.append([el for el in self.simulation.data.dtE()])
         Psd = map(lambda x, y: float(x) - float(y),
-                  self.numerics.seq_ps[nmin: nmax],
-                  self.numerics.seq_pd[nmin: nmax])
+                  self.simulation.data.ps(),
+                  self.simulation.data.pd())
         datay.append(Psd)
-        from utils.plots import singleplot
-        from utils.plots import plotprops
-        pp = plotprops(which='single')
+        from plots.plots import singleplot, plotprops
         import os
-        fold = 'plots'
-        self.folders[fold] = safe_mkdir(self.path, fold)
-
+        if not os.path.exists(self.paths['figures']):
+            os.makedirs(self.paths['figures'])
+        pp = plotprops(which='single')
         pp.update({'unitx': 'time $t$ (s)',
                    'unity': r'Power (W)',
                    'labels': [r'$\frac{\mathtt{d} \mathrm{E}}{\mathtt{d} t}$',
                               r'$\mathrm{P_S}-\mathrm{P_D}$'],
                    'filelabel':
-                       self.folders['plots']+os.path.sep+'power_balance',
+                       self.paths['figures']+os.path.sep+'power_balance',
                    'maintitle': r'Power balance',
                    'linestyles': ['-b', '--r'],
                    'linewidth': 3,

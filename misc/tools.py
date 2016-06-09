@@ -4,6 +4,14 @@ Created on Sat Mar  5 13:53:43 2016
 
 @author: Falaize
 """
+import numpy
+
+
+def norm(lis):
+    """
+    return the norm of a vector given as a list
+    """
+    return numpy.sqrt(numpy.matrix(lis)*numpy.matrix(lis).T)[0, 0]
 
 
 def myrange(N, indi, indf):

@@ -109,7 +109,7 @@ def build_graph(phs):
 def input_sequence(amp=100., f0=100.):
     from misc.signals.synthesis import signalgenerator
     fs = samplerate()
-    nsin = int(2.*fs/f0)
+    nsin = int(0.5*fs/f0)
     SigIn = signalgenerator(which="sin", n=nsin, ramp_on=False,
                             A=amp, f0=f0, fs=fs)
 
@@ -121,23 +121,11 @@ def input_sequence(amp=100., f0=100.):
 
 
 def simulation(phs, sequ, nt):
-    fs = samplerate()
-    phs.build_simulation(fs, sequ=sequ, nt=nt)
+    config = None
+    phs.build_simulation(config=config, sequ=sequ, nt=nt)
+    phs.run_simulation()
 
 
-def test():
-    add_path()
-    write_netlist()
-    phs = init_phs()
-    build_graph(phs)
-    phs.build()
-    seq_u, nt = input_sequence()
-    phs.build_numerics(fs=samplerate())
-    num = phs.numerics
-    simulation(phs, seq_u, nt)
-    phs.plot_powerBal()
-#    phs.plot_variables([('x', 0), ('dtx', 1), ('dxHd', 1)])
-    
 if __name__ is '__main__':
     add_path()
     write_netlist()
@@ -147,4 +135,5 @@ if __name__ is '__main__':
     phs.build_exprs()
     phs.build_nums()
     simulation(phs, sequ, nt)
-#    phs.plot_powerBal()
+    phs.plot_powerBal()
+#    phs.plot_variables([('x', 0), ('dtx', 1), ('dxHd', 1)])

@@ -11,6 +11,8 @@ standard_config = {'numtol': EPS,
                    'load_options': {'decim': 1,
                                     'imin': 0,
                                     'imax': None},
-                   'solver': '1',
+                   'solver': 'standard',
+                   'fs': 48e3,
+                   'language': 'python',
                    'timer': True,
-                   'split': False}
+                   'split': None}

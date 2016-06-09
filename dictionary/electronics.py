@@ -13,6 +13,8 @@ from classes.nonlinears.dissipatives import NonLinearDissipative
 from config import nice_var_label
 from tools import symbols
 
+import sympy
+
 
 class source(Port):
     """
@@ -122,30 +124,42 @@ class resistor(LinearDissipationFreeCtrl):
         LinearDissipationFreeCtrl.__init__(self, label, nodes, coeff=coeff)
 
 
-class pn_diode(NonLinearDissipative):
-    """ pn-diode
+class diodepn(NonLinearDissipative):
     """
-    def __init__(self, label, nodes_labels, subs):
-        import sympy
+    Electronic nonlinear dissipative component: diode PN
+
+    Usage
+    -----
+
+    electronics.diodepn label (N1, N2): Is=1e-9, v0=25e-3
+
+    Parameters:
+    -----------
+
+    Is: saturation current (A)
+    v0: quality factor (V)
+
+    """
+    def __init__(self, label, nodes, **kwargs):
         # parameters
         pars = ['Is', 'v0']
-        Is, v0 = symbols(pars, real=True)
+        for par in pars:
+            assert par in kwargs.keys()
+        Is, v0 = symbols(pars)
         # dissipation variable
-        w = symbols("w"+label, real=True)
+        w = symbols("w"+label)
         # dissipation funcion
         z = Is*(sympy.exp(w/v0)-1)
         # edge data
-        edge_data = {'label': str(w),
+        edge_data = {'label': w,
                      'type': 'dissipative',
-                     'realizability': 'effort_controlled',
-                     'linear': False,
-                     'link': str(w)}
-        edges_data = [edge_data]
+                     'ctrl': 'e',
+                     'link': None}
         # edge
-        edge = (nodes_labels[0], nodes_labels[1], edges_data)
+        edge = (nodes[0], nodes[1], edge_data)
         # init component
-        NonLinearDissipative.__init__(self, label, subs,
-                                      pars, [w], [z], [edge])
+        NonLinearDissipative.__init__(self, label, [edge],
+                                      [w], [z], **kwargs)
 
 
 class triode(NonLinearDissipative):

@@ -7,6 +7,16 @@ Created on Tue Jun  7 19:50:15 2016
 from pyphs import PortHamiltonianObject
 from dictionary.tools import mappars
 
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jun  7 19:03:49 2016
+
+@author: Falaize
+"""
+from pyphs import PortHamiltonianObject, symbols
+from dictionary.tools import parsub
+from dictionary.config import nice_var_label
+
 
 class NonLinearDissipative(PortHamiltonianObject):
     """
@@ -19,50 +29,44 @@ class NonLinearDissipative(PortHamiltonianObject):
 
         component label
 
-    nodes_labels : list of tuples
+    edges : list of networkx edges
 
-        each tupple '(n1, n2)' is associated to an edge e with 'e=(n1 -> n2)'.
-
-    subs : list of tuples
-
-        each tupple is associated to a parameter in 'phs.subs'.
-
-    pars : list of str or sp.Symbol
-
-        list of parameters in z. Coud be str or Symbols (converted to strings).
+    networkx edges are tuples edge = (node_start, node_end, data), where data \
+is a diciotnary with the following 'key':value
+        * ‘label': sympy.Symbol, edge label.
+        * 'ctrl': in ['e', 'f', '?'] control type. if indeterminate '?' then \
+a dictionary of dissipation function z must be provided.
+        * 'z': dic {'e':ze, 'f':zf} where ze and zf are the dissipation \
+functions (sympy.Exprs) in the effort-controlled case and the flux controlled \
+case, respectively.
+        * 'link': not implemented for dssipative components.
 
     w : list of sp.Symbol
 
-        list of dissipation varibales symbols
+        list of dissipation variables symbols.
 
     z : list of sp.Expr
 
-        list of dissipation function expressions with symbols in 'w' and 'pars'
+        list of dissipation function expressions with symbols in 'w' and in \
+keys of the kwargs arguments.
 
-    edges_data : list of dict
-
-        edges data dictionaries. each dictionary contain the keys:
-        * _label_
-        * _realizability_
-        * _link_
+    kwargs: dictionary of component parameters
 
     """
-    def __init__(self, label, subs, pars, w, z, edges):
+    def __init__(self, label, edges, w, z, **kwargs):
         assert len(w) == len(z),\
             'len(z)={0!s} is not equal to len(w)={1!s}.'.format(len(z), len(w))
         # init PortHamiltonianObject
         PortHamiltonianObject.__init__(self, label)
-        # convert pars elements to strings
-        pars = map(lambda el: str(el), pars)
         # build correspondance between labels in subs and pars (dicpars)...
         # ... and build the correspondance between symbols and subs (subs)
-        dicpars, subs = mappars(self, pars, subs)
+        dicpars, subs = mappars(self, **kwargs)
         # update dict of subs in phs
-        self.subs.update(subs)
+        self.symbs.subs.update(subs)
         # replace parameters in z by correspondances in 'dicpars'
-        for n in len(z):
+        for n in range(len(z)):
             z[n] = z[n].subs(dicpars)
         # add dissipative component
-        self.addDissipations(w, z)
+        self.add_dissipations(w, z)
         # update phs.Graph with edges
-        self.Graph.add_edges_from(edges)
+        self.graph.add_edges_from(edges)

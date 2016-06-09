@@ -25,7 +25,7 @@ def move_stor(phs, indi, indf):
 def move_diss(phs, indi, indf):
     new_indices = myrange(phs.nw(), indi, indf)
     phs.symbs.w = [phs.symbs.w[el] for el in new_indices]
-    phs.symbs.z = [phs.symbs.z[el] for el in new_indices]
+    phs.exprs.z = [phs.exprs.z[el] for el in new_indices]
     moveJcolnrow(phs, phs.nx()+indi, phs.nx()+indf)
     phs.build_exprs()
 

@@ -1,0 +1,5 @@
+electronics.source IN ('A', 'ref'): type='voltage'
+electronics.resistor R ('A', 'B'): R=('R', 1000.0)
+electronics.diodepn D ('B', 'C'): v0=('v0', 0.025) Is=('Is', 1e-09)
+electronics.inductor L ('B', 'C'): L=('L', 0.05)
+electronics.capacitor C ('C', 'ref'): C=('C', 2e-06)

@@ -41,6 +41,7 @@ Created on Thu Jun  2 21:33:07 2016
 """
 
 from symbolics.tools import _assert_expr, _assert_vec, symbols
+from plots.plots import singleplot, multiplot, plotprops
 
 
 ##########################################################################
@@ -464,7 +465,6 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
                   self.simulation.data.ps(),
                   self.simulation.data.pd())
         datay.append(Psd)
-        from plots.plots import singleplot, plotprops
         import os
         if not os.path.exists(self.paths['figures']):
             os.makedirs(self.paths['figures'])
@@ -491,21 +491,22 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         """
         if plot_properties is None:
             plot_properties = {}
-        datax = self.numerics.seq_t[nmin:nmax]
+        datax = [el for el in self.simulation.data.t()]
         datay = list()
         labels = list()
 
         import os
-        fold = 'plots'
-        self.folders[fold] = safe_mkdir(self.path, fold)
-        filelabel = self.folders['plots']+os.path.sep
+        if not os.path.exists(self.paths['figures']):
+            os.makedirs(self.paths['figures'])
+        filelabel = self.paths['figures']+os.path.sep
         for tup in var_list:
-            sig = get_sequence(self, tup)
-            datay.append(sig[nmin:nmax])
+            generator = getattr(self.simulation.data, tup[0])
+            sig = [el for el in generator(ind=tup[1])]
+            datay.append(sig)
             labels.append(nice_label(tup[0], tup[1]))
             filelabel += '_'+tup[0]+str(tup[1])
-        from utils.plots import plotprops
         pp = plotprops(which='multi')
+
         pp.update({'unitx': 'time $t$ (s)',
                    'unity': labels,
                    'labels': None,
@@ -514,24 +515,9 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
                    'limits': 'extend',
                    'log': None})
         pp.update(plot_properties)
-        from utils.plots import multiplot
         multiplot(datax, datay, **pp)
 
 ###############################################################################
-
-
-def get_sequence(phs, tup):
-    if isinstance(tup, list):
-        sig = tup
-    else:
-        if isinstance(tup, tuple):
-            var, ind = tup
-        else:
-            assert isinstance(tup, str), 'Signal label not understood: \
-            expected string, got {0!s}'.format(type(tup))
-            var, ind = tup, 0
-        sig = [e[ind] for e in getattr(phs.numerics, "seq_"+var)]
-    return sig
 
 
 def nice_label(var, ind):

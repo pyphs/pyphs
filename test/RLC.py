@@ -95,7 +95,7 @@ def write_netlist(R=1e3, L=5e-2, C=2e-6):
 
 def init_phs():
     # import pHobj
-    from pypHs import PortHamiltonianObject
+    from pyphs import PortHamiltonianObject
     import os
     phs = PortHamiltonianObject(label=label(),
                                 path=workingdirectory() + os.sep + label())

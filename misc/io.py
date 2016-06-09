@@ -33,7 +33,9 @@ def dump_files(numerics, files):
 
 
 def write_data(phs, seq, var):
-    _file = open(phs.folders['data'] + os.sep + var + '.txt', 'w')
+    if not os.path.exists(phs.paths['data']):
+        os.makedirs(phs.paths['data'])
+    _file = open(phs.paths['data'] + os.sep + var + '.txt', 'w')
     for el in seq:
         _file.write(list2str(el))
     _file.close()

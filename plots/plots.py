@@ -296,7 +296,7 @@ def multiplot(datax, datay, unitx='', unity=None, labels=None, limits='extend', 
     from matplotlib.pyplot import rc
     rc('font', size=fontsize, **Globalfont())
 
-    from utils.tools import decimate
+    from misc.tools import decimate
     dec = lambda li: [el for el in decimate(li, max((1, int(len(li)/maxnplot))))]
     x = dec(datax)
             

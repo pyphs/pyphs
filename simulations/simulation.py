@@ -7,6 +7,8 @@ Created on Tue May 24 11:20:26 2016
 from misc.io import write_data
 from misc.tools import progressbar
 from config import standard_config
+from data import Data
+from numerics.tools import geteval
 import time
 
 
@@ -14,7 +16,7 @@ class Simulation:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
-    def __init__(self, phs, fs, sequ=None, seqp=None, 
+    def __init__(self, phs, fs, sequ=None, seqp=None,
                  language='python', nt=None, x0=None):
         """
         Parameters
@@ -33,9 +35,8 @@ class Simulation:
         self.config = standard_config
         self.config.update({'fs': fs,
                             'language': language})
-
-        if not hasattr(phs, 'nums'):
-            phs.build_nums()
+        # build data i/o structure
+        self.data = Data(self, phs)
 
         if isinstance(sequ, (list, tuple)):
             nt = len(sequ)
@@ -43,9 +44,9 @@ class Simulation:
             nt = len(seqp)
         else:
             assert nt is not None, 'Unknown number of \
-    iterations. Please tell either seq_u (input sequence), seq_p \
+    iterations. Please tell either sequ (input sequence), seqp \
     (sequence of parameters) or nt (number of time steps).'
-            assert isinstance(nt, int), 'number of time steps in not int, \
+            assert isinstance(nt, int), 'number of time steps is not integer, \
 got {0!s} '.format(nt)
 
         # if seq_u is not provided, a sequence of [[0]*ny]*nt is assumed
@@ -79,19 +80,65 @@ got {0!s} '.format(nt)
         write_data(phs, sequ, 'u')
         write_data(phs, seqp, 'p')
         write_data(phs, [x0, ], 'x0')
-    def data_generator(self, var, ind=None, postprocess=None):
-        from utils.io import data_generator
-        import os
-        filename = self.phs.folders['data']+os.sep+var+'.txt'
-        load_options = self.config['load_options']
-        generator = data_generator(filename, ind=ind, postprocess=postprocess,
-                                   **load_options)
-        return generator
+
+        self._build_internal(phs)
+
+    def _build_internal(self, phs):
+        # init internal attr with empty object
+        class Internal:
+            pass  # do nothing
+        self.internal = Internal()
+        # list of variables quantities on which the lambdified functions depend
+        variables = phs.nums.args_names
+        # list all variables
+        args = []
+        for name in variables:
+            symbs = geteval(phs.symbs, name)
+            setattr(self.internal, name+'_symbs', symbs)
+            setattr(self.internal, name+'_inds',
+                    (len(args), len(args)+len(symbs)))
+            args += symbs
+        setattr(self.internal, 'all_symbs', args)
+        setattr(self.internal, 'all_vals', [0, ]*len(self.internal.all_symbs))
+
+        # generators of 'get' and 'set':
+        def get_generator(inds):
+            def get_func():
+                start, stop = inds
+                return self.internal.all_vals[start: stop]
+            return get_func
+
+        def set_generator(inds):
+            def set_func(lis):
+                start, stop = inds
+                self.internal.all_vals[start: stop] = lis[0: stop-start]
+            return set_func
+
+        def eval_generator(func, inds):
+            def eval_func():
+                args = (self.internal.all_vals[el] for el in inds)
+                return func(*args)
+            return eval_func
+
+        # get each variable in all_vals:
+        for name in variables:
+            inds = getattr(self.internal, name+'_inds')
+            setattr(self.internal, name, get_generator(inds))
+            setattr(self.internal, 'set_'+name, set_generator(inds))
+
+        # build numerical functions from functions in phs.exprs._names
+        phs.build_nums()
+
+        # link evaluation to internal values
+        for name in phs.exprs._names:
+            func = getattr(phs.nums, name)
+            inds = getattr(phs.nums, 'inds_' + name)
+            setattr(self.internal, name, eval_generator(func, inds))
 
     def update(self, u, p):
         """
-        update with input 'u' and parameter 'p' on the time step (samplerate \
-is numerics.fs).
+        update with input 'u' and parameter 'p' on a sigle  time step \
+(the samplerate is simulation.config['fs']).
         """
         # store u in numerics
         self.set_u(u)

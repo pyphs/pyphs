@@ -29,9 +29,9 @@ class Numeric:
         # stores args as tuple
         self.args = tuple(args)
         # lists all functions
-        self.func_names = phs.exprs._names
+        self._names = phs.exprs._names
         # for each function, subs, stores func args, args_inds and lambda func
-        for name in self.func_names:
+        for name in self._names:
             expr = getattr(phs.exprs, name)
             if hasattr(expr, 'index'):
                 expr = list(expr)
@@ -95,8 +95,8 @@ def self_lambdify(numerics):
         setattr(numerics, name, eval_generator(func_num_all_args))
 
 
-def get_argslabels(pho):
-    return lambda: pho.symbs.argslabels
+def get_argslabels(phs):
+    return lambda: phs.symbs.argslabels
 
 
 def get_inds(numerics, symbs):

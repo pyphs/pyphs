@@ -172,7 +172,7 @@ effort-controlled (0 in lambda).
         """
         return the data 'key' associated to edge 'index'
         """
-        data = self.get_edges_data(key)[index]
+        data = self.edges[index][2][key]
         return data
 
     def move_node(self, indi, indf):

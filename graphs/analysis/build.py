@@ -47,6 +47,26 @@ def _sort_edges(analysis):
     analysis.J = analysis.J[all_edges, all_edges]
 
 
+def _select_relations(analysis, phs):
+    """
+    select the dissipative relation 'z' and connectors coefficients 'alpha' \
+according to the control type of each indeterminate edge
+    """
+    # select dissipative relations
+    for e in analysis.diss_edges:
+        ctrl = analysis.get_edge_data(e, 'ctrl')
+        # select for indeterminate edges only
+        if ctrl == '?':
+            # get edge label index in 'w'
+            label = analysis.get_edge_data(e, 'label')
+            indw = phs.symbs.w.index(label)
+            if e in analysis.ec_edges:
+                phs.exprs.z[indw] = analysis.get_edge_data(e, 'z')['e_ctrl']
+            else:
+                assert e in analysis.fc_edges
+                phs.exprs.z[indw] = analysis.get_edge_data(e, 'z')['f_ctrl']
+
+
 def _set_phs(analysis, phs):
     new_indices_x = []
     for e in analysis.stor_edges:
@@ -79,4 +99,8 @@ def _set_phs(analysis, phs):
     phs.symbs.cy = [phs.symbs.cy[el] for el in new_indices_connector]
     phs.symbs.cu = [phs.symbs.cu[el] for el in new_indices_connector]
 
+    _select_relations(analysis, phs)
+    
     phs.struc.J = analysis.J
+    
+    

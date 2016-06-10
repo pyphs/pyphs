@@ -9,7 +9,6 @@ import time
 
 
 def process_py(simulation):
-
     # get generators of u and p
     seq_u = simulation.data.u()
     seq_p = simulation.data.p()

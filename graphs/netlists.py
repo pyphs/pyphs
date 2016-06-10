@@ -137,12 +137,13 @@ or tuple (str, float).
                                       dic['label'], dic['nodes'])
     pars = ""
     for par in dic['arguments'].keys():
-        pars += ' {}={}'.format(par, str(dic['arguments'][par]))
+        pars += ' {}={};'.format(par, str(dic['arguments'][par]))
     line = component + pars + '\n'
     return line
 
 
 def read_netlist(filename, netlist):
+    import ast
     file_ = open(filename, "r")
     netlist.__init__()
     with file_ as openfileobject:
@@ -156,18 +157,13 @@ def read_netlist(filename, netlist):
             netlist.dictionaries = list(netlist.dictionaries)+[dic, ]
             netlist.components = list(netlist.components)+[comp, ]
             netlist.labels = list(netlist.labels)+[label, ]
-            netlist.nodes = list(netlist.nodes)+[eval(nodes), ]
-
-            parameters = parameters.replace(' ', '')
+            netlist.nodes = list(netlist.nodes)+[ast.literal_eval(nodes), ]
             nb_pars = parameters.count('=')
             pars = {}
             for n in range(nb_pars):
-                key, _, parameters = parameters.partition('=')                
-                if parameters[0] is '(':
-                    value, clpar, parameters = parameters.partition(')')
-                    value += clpar
-                else:
-                    value, _, parameters = parameters.partition(',')
-                pars.update({key: eval(value)})
+                par, _, parameters = parameters.partition(';')
+                par = par.replace(' ', '')
+                key, _, value = par.partition('=')
+                pars.update({key: ast.literal_eval(value)})
             netlist.arguments = list(netlist.arguments)+[pars, ]
     file_.close()

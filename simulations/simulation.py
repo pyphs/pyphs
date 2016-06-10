@@ -62,10 +62,10 @@ class Simulation:
             # set all components as nonlinear
             phs.nxl = phs.nwl = 0
             phs.nxnl, phs.nwnl = phs.nx(), phs.nw()
-        # init input and parameters sequences, and get number of time steps
-        init_data(self, phs, sequ, seqp, x0, nt)
         # build the numerical update evaluation structure
         self.internal = Internal(self.config, phs)
+        # init input and parameters sequences, and get number of time steps
+        init_data(self, phs, sequ, seqp, x0, nt)
 
     def process(self):
         """

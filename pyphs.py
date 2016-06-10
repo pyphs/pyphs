@@ -485,13 +485,13 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         #######################################################################
 
     def plot_variables(self, var_list,
-                       nmin=0, nmax=None, plot_properties=None):
+                       imin=0, imax=None, plot_properties=None):
         """
         Plot each phs.seq_'var'['ind'] in var_list = [(var1, ind1), (...)]
         """
         if plot_properties is None:
             plot_properties = {}
-        datax = [el for el in self.simulation.data.t()]
+        datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
         datay = list()
         labels = list()
 
@@ -501,7 +501,7 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         filelabel = self.paths['figures']+os.path.sep
         for tup in var_list:
             generator = getattr(self.simulation.data, tup[0])
-            sig = [el for el in generator(ind=tup[1])]
+            sig = [el for el in generator(ind=tup[1], imin=imin, imax=imax)]
             datay.append(sig)
             labels.append(nice_label(tup[0], tup[1]))
             filelabel += '_'+tup[0]+str(tup[1])

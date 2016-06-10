@@ -28,12 +28,15 @@ class Data:
         for name in list(phs.nums.args_names) + ['yd', 'dxHd', 'z', 'dtx']:
             setattr(self, name, dummy_func(name))
 
-    def t(self):
-        imin = self.options['imin']
-        imax = self.options['imax']
+    def t(self, imin=None, imax=None, decim=None):
+        if imin is None:
+            imin = self.options['imin']
         if imax is None:
-            imax = float('Inf')
-        decim = self.options['decim']
+            imax = self.options['imax']
+            if imax is None:
+                imax = float('Inf')
+        if decim is None:
+            decim = self.options['decim']
 
         def generator():
             for n in range(self.nt):
@@ -68,10 +71,15 @@ class Data:
         for u, yd in zip(self.u(), self.yd(postprocess=lambda el: -el)):
             yield scalar_product(u, yd)
 
-    def data_generator(self, name, ind=None, postprocess=None):
+    def data_generator(self, name, ind=None, postprocess=None,
+                       imin=None, imax=None, decim=None):
+        options = {'imin': self.options['imin'] if imin is None else imin,
+                   'imax': self.options['imax'] if imax is None else imax,
+                   'decim': self.options['decim'] if decim is None else decim}
+
         filename = self.path + os.sep + name.lower() + '.txt'
         generator = data_generator(filename, ind=ind, postprocess=postprocess,
-                                   **self.options)
+                                   **options)
         return generator
 
 

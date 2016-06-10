@@ -114,8 +114,8 @@ for implicite functions.
             jac_impfunc = sp.zeros(0)
             # set solver to None
             internal.config['solver'] = None
-        impfunc = simplify(impfunc)
-        res_impfunc = simplify(res_impfunc)
+        impfunc = impfunc
+        res_impfunc = res_impfunc
         # append to list of lambdified functions
         phs.exprs.setexpr('impfunc', impfunc)
         phs.exprs.setexpr('res_impfunc', res_impfunc)

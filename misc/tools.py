@@ -56,8 +56,9 @@ def progressbar(progress):
     block = int(round(barLength*progress))
     text = "\rPercent: [{0}] {1}% {2}".format("#"*block+"-"*(barLength-block),
                                               progress*100, status)
-    sys.stdout.write(text)
-    sys.stdout.flush()
+    print text
+#    sys.stdout.write(text)
+#    sys.stdout.flush()
 
 
 def splitlist(lis, len_out):

@@ -19,7 +19,6 @@ def move_stor(phs, indi, indf):
     new_indices = myrange(phs.nx(), indi, indf)
     phs.symbs.x = [phs.symbs.x[el] for el in new_indices]
     moveJcolnrow(phs, indi, indf)
-    phs.build_exprs()
 
 
 def move_diss(phs, indi, indf):
@@ -27,7 +26,6 @@ def move_diss(phs, indi, indf):
     phs.symbs.w = [phs.symbs.w[el] for el in new_indices]
     phs.exprs.z = [phs.exprs.z[el] for el in new_indices]
     moveJcolnrow(phs, phs.nx()+indi, phs.nx()+indf)
-    phs.build_exprs()
 
 
 def move_port(phs, indi, indf):
@@ -35,7 +33,6 @@ def move_port(phs, indi, indf):
     phs.symbs.u = [phs.symbs.u[el] for el in new_indices]
     phs.symbs.y = [phs.symbs.y[el] for el in new_indices]
     moveJcolnrow(phs, phs.nx()+phs.nw()+indi, phs.nx()+phs.nw()+indf)
-    phs.build_exprs()
 
 
 def split_separate(phs):

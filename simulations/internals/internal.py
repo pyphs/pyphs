@@ -87,6 +87,7 @@ def init_args(internal, phs):
     setattr(internal, 'nvarnl', internal.nxnl + internal.nwnl)
 
     # list of variables quantities on which the lambdified functions depend
+    phs.build_nums()
     internal.args_names = list(phs.nums.args_names)
     args = []
     for name in internal.args_names:

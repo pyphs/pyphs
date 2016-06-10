@@ -46,21 +46,21 @@ def data_generator(filename, ind=None, decim=1,
                    postprocess=None, imin=0, imax=None):
     if imax is None:
         imax = float('Inf')
-    with open(filename, 'r') as f:
-        i = 0
-        for line in f:
-            if i >= imin and i < imax:
-                if not bool(i % decim):
-                    if ind is None:
-                        out = [float(x) for x in line.split()]
-                        yield out if postprocess is None else map(postprocess,
-                                                                  out)
-                    else:
-                        assert isinstance(ind, int), 'Index should be an \
+    f = open(filename, "r")
+    i = 0
+    for line in f:
+        if i >= imin and i < imax:
+            if not bool(i % decim):
+                if ind is None:
+                    out = [float(x) for x in line.split()]
+                    yield out if postprocess is None else map(postprocess,
+                                                              out)
+                else:
+                    assert isinstance(ind, int), 'Index should be an \
 integer. Got {0!s}'.format(type(ind))
-                        out = float(line.split()[ind])
-                        yield out if postprocess is None else postprocess(out)
-            i += 1
+                    out = float(line.split()[ind])
+                    yield out if postprocess is None else postprocess(out)
+        i += 1
 
 
 def load_data(phs, var, ind=None, decim=1,

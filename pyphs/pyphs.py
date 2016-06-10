@@ -356,15 +356,13 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         """
         Plot the graph of the system (networkx.plot method).
         """
-        from utils.graphs import ShowGraph
-        from pyphs_config import plot_format
+        from graphs.tools import plot
         import os
-        self.paths['plots'] = self.path + os.sep + 'plots'
-        if not os.path.exists(self.paths['plots']):
-            os.makedirs(self.paths['plots'])
-        fig_name = self.paths['plots'] + os.sep + self.label + \
-            '_graph.' + plot_format
-        ShowGraph(self, save=fig_name)
+        if not os.path.exists(self.paths['figures']):
+            os.makedirs(self.paths['figures'])
+        fig_name = self.paths['figures'] + os.sep + self.label + \
+            '_graph'
+        plot(self.graph, save=fig_name)
 
     def plot_powerBal(self, plot_properties=None,
                       imin=0, imax=None):
@@ -438,6 +436,11 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         multiplot(datax, datay, **pp)
 
 ###############################################################################
+
+    def export_latex(self):
+        from generation.codelatex.latex import Latex
+        latex = Latex(self)
+        latex.export()
 
 
 def nice_label(var, ind):

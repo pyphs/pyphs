@@ -13,7 +13,7 @@ def plot(graph, save=None):
 
     import networkx as nx
     import matplotlib.pyplot as plt
-    from pyphs_config import plot_format
+    from pyphs.configs.plots import plot_format
 
     pos = nx.spring_layout(graph)
     fig = plt.figure()

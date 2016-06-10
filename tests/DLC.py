@@ -18,7 +18,7 @@ def add_path():
 
 
 def workingdirectory():
-    return '/Users/Falaize/Documents/DEV/python/pypHs/test'
+    return '/Users/Falaize/Documents/DEV/python/pypHs/tests'
 
 
 def label():
@@ -37,14 +37,14 @@ def samplerate():
     """
     global sample rate
     """
-    return 96e3
+    return 48e3
 
 
 def write_netlist(R=1e3, L=5e-2, C=2e-6, Is=1e-9, v0=25e-3):
     """
     Write netlist for RLC circuit
     """
-    from graphs.netlists import Netlist
+    from pyphs.graphs.netlists import Netlist
 
     netlist = Netlist()
 
@@ -108,7 +108,7 @@ def build_graph(phs):
 
 
 def input_sequence(amp=100., f0=100.):
-    from misc.signals.synthesis import signalgenerator
+    from pyphs.misc.signals.synthesis import signalgenerator
     fs = samplerate()
     nsin = int(10*fs/f0)
     SigIn = signalgenerator(which="sin", n=nsin, ramp_on=False,
@@ -122,8 +122,7 @@ def input_sequence(amp=100., f0=100.):
 
 
 def simulation(phs, sequ, nt):
-    config = {'fs': samplerate(),
-              'split': True}
+    config = {'fs': samplerate()}
     phs.build_simulation(config=config, sequ=sequ, nt=nt)
     phs.run_simulation()
 

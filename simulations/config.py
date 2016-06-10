@@ -7,7 +7,7 @@ Created on Wed Jun  8 20:42:02 2016
 from numerics.tools import EPS
 
 standard_config = {'numtol': EPS,
-                   'maxit': 100,
+                   'maxit': 10,
                    'load_options': {'decim': 1,
                                     'imin': 0,
                                     'imax': None},

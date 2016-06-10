@@ -54,7 +54,7 @@ is numerics.fs).
         # init args memory for computation of step on iteration
         old_varnl = [float('Inf'), ]*self.nxnl
         # loop while res > tol, step > tol and it < itmax
-        while res > self.EPS and step > self.EPS and it < self.maxit:
+        while it < self.maxit: # res > self.EPS and step > self.EPS and 
             # updated args
             self.iter_solver()
             # eval residual

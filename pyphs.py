@@ -454,16 +454,20 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         latex_file.write(str_latex)
         latex_file.close()
 
-    def plot_powerBal(self, plot_properties=None):
+    def plot_powerBal(self, plot_properties=None,
+                      imin=0, imax=None):
 
         if plot_properties is None:
             plot_properties = {}
-        datax = [el for el in self.simulation.data.t()]
+        datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
         datay = list()
-        datay.append([el for el in self.simulation.data.dtE()])
+        datay.append([el for el in self.simulation.data.dtE(imin=imin,
+                                                            imax=imax)])
         Psd = map(lambda x, y: float(x) - float(y),
-                  self.simulation.data.ps(),
-                  self.simulation.data.pd())
+                  self.simulation.data.ps(imin=imin,
+                                          imax=imax),
+                  self.simulation.data.pd(imin=imin,
+                                          imax=imax))
         datay.append(Psd)
         import os
         if not os.path.exists(self.paths['figures']):

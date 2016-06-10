@@ -20,8 +20,10 @@ class Data:
         setattr(self, 'nt', simulation.nt)
 
         def dummy_func(name):
-            def get_seq(ind=None, postprocess=None):
-                return self.data_generator(name, ind=ind,
+            def get_seq(ind=None, postprocess=None, imin=None, imax=None,
+                        decim=None):
+                return self.data_generator(name, ind=ind, imin=imin,
+                                           imax=imax, decim=decim,
                                            postprocess=postprocess)
             return get_seq
 
@@ -48,27 +50,39 @@ class Data:
                     yield el
             i += 1
 
-    def dtE(self):
+    def dtE(self, imin=None, imax=None, decim=None):
         """
         Energy variation
         """
+        options = {'imin': self.options['imin'] if imin is None else imin,
+                   'imax': self.options['imax'] if imax is None else imax,
+                   'decim': self.options['decim'] if decim is None else decim}
+
         def dxtodtx(dx):
             return dx*self.fs
-        for dtx, dxh in zip(self.dx(postprocess=dxtodtx), self.dxHd()):
+        for dtx, dxh in zip(self.dx(postprocess=dxtodtx, **options),
+                            self.dxHd(**options)):
             yield scalar_product(dtx, dxh)
 
-    def pd(self):
+    def pd(self, imin=None, imax=None, decim=None):
         """
         Dissipated power
         """
-        for w, z in zip(self.w(), self.z()):
+        options = {'imin': self.options['imin'] if imin is None else imin,
+                   'imax': self.options['imax'] if imax is None else imax,
+                   'decim': self.options['decim'] if decim is None else decim}
+        for w, z in zip(self.w(**options), self.z(**options)):
             yield scalar_product(w, z)
 
-    def ps(self):
+    def ps(self, imin=None, imax=None, decim=None):
         """
         Source power
         """
-        for u, yd in zip(self.u(), self.yd(postprocess=lambda el: -el)):
+        options = {'imin': self.options['imin'] if imin is None else imin,
+                   'imax': self.options['imax'] if imax is None else imax,
+                   'decim': self.options['decim'] if decim is None else decim}
+        for u, yd in zip(self.u(**options),
+                         self.yd(postprocess=lambda el: -el, **options)):
             yield scalar_product(u, yd)
 
     def data_generator(self, name, ind=None, postprocess=None,

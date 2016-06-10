@@ -5,3 +5,4 @@ Created on Fri Jun 10 12:45:42 2016
 @author: Falaize
 """
 
+plot_format = 'pdf'

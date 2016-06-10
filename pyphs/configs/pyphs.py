@@ -5,8 +5,6 @@ Created on Sat May 21 10:57:32 2016
 @author: Falaize
 """
 
-plot_format = 'pdf'
-
 eigen_path = '/Users/Falaize/Documents/DEV/c++/bibliothèques/eigen'
 
 xcode_template_path = '/Users/Falaize/Documents/DEV/c++/xcode_template'

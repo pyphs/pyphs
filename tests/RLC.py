@@ -134,6 +134,7 @@ if __name__ is '__main__':
     sequ, nt = input_sequence()
     phs.build_exprs()
     phs.build_nums()
-    simulation(phs, sequ, nt)
+    phs.export_latex()
+#    simulation(phs, sequ, nt)
     phs.plot_powerBal()
 #    phs.plot_variables([('x', 0), ('dtx', 1), ('dxHd', 1)])

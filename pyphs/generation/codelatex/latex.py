@@ -5,227 +5,323 @@ Created on Fri Mar  4 00:24:35 2016
 @author: Falaize
 """
 
-forbiden_char = ['#']
+
+special_chars = ['#']
 
 
-def cr(n):
+class Latex:
     """
-    Latex cariage return with insertion of n "%"
+    object that generates latex description of PortHamiltonianObject
     """
-    assert isinstance(n, int), 'n should be an int, got {0!s}'.format(type(n))
-    string = ('\n' + r'%')*n + '\n'
-    return string
+    def __init__(self, phs):
 
+        self.sys_label = phs.label
 
-def print_latex(sp_object):
-    from sympy.printing import latex
-    import sympy as sp
-    if isinstance(sp_object, sp.Matrix) and any(el == 0
-                                                for el in sp_object.shape):
-        return '\\left(\\right)'
-    else:
-        return latex(sp_object, fold_short_frac=True, mat_str="array")
+        self.netlist_dic = phs.graph.netlist
 
+        self.path_figs = phs.paths['figures']
+        self.path = phs.paths['tex']
 
-def obj2tex(obj, label, description, toMatrix=True):
-    """
-    Return nicely latex formated string for "%\ndescription $label = obj$;"
-    Parameters
-    -----------
-    obj : sympy object
-    label : latex compliant string
-    description : string
+        for dim in [r'x', r'w', r'y', r'p']:
+            obj = getattr(phs, 'n'+dim)
+            setattr(self, 'n'+dim, obj())
 
-    Return
-    ------
-    string
-    """
+        for var in [r'x', r'w', r'u', r'y', r'p', 'subs']:
+            obj = getattr(phs.symbs, var)
+            setattr(self, var, obj)
 
-    if toMatrix:
-        import sympy as sp
-        obj = sp.Matrix(obj)
+        self.symbol_names = {}
+        for var in [r'x', r'w', r'u', r'y', r'p']:
+            for symb in getattr(self, var):
+                string = str(symb)
+                lab = string[1:]
+                self.symbol_names.update({symb: var+r'_{\mathrm{'+lab+r'}}'})
+        for key in self.subs.keys():
+            self.symbol_names.update({key: r'\mathrm{'+str(key)+r'}'})
 
-    str_out = cr(1)
-    description = description + " " if len(description) > 0 else description
-    str_out += description +\
-        r"$ " + label + r" = " +\
-        print_latex(obj) + r" ; $ " + cr(1) + r'\\'
-    return str_out
+        if hasattr(phs, 'graph'):
+            phs.plot_graph()
 
+        if not hasattr(phs.exprs, 'dxH'):
+            phs.buil_exprs()
 
-def preamble(phs):
-    str_preamble = \
-        r"""
-\documentclass[11pt, oneside]{article}  % use 'amsart' instead of \
-'article' for AMSLaTeX format
+        for expr in [r'H', r'z', r'jacz', r'dxH']:
+            obj = getattr(phs.exprs, expr)
+            setattr(self, expr, obj)
 
-\usepackage{geometry}                   % See geometry.pdf to learn the \
-layout options. There are lots.
-\geometry{letterpaper}                  % ... or a4paper or a5paper \
-or ...
-%\geometry{landscape}                   % Activate for for rotated page \
-geometry
+        for mat in ['Jxx', 'Jxw', 'Jxy', 'Jww', 'Jwy', 'Jyy']:
+            obj = getattr(phs.struc, mat)
+            setattr(self, mat, obj())
+        J = getattr(phs.struc, 'J')
+        setattr(self, 'J', J)
 
-\usepackage[parfill]{parskip}           % Activate to begin paragraphs with \
-an empty line rather than an indent
+    def sympy2latex(self, sp_object):
+        """
+        print latex code from sympy object
+        """
+        from sympy.printing import latex
+        import sympy
+        from pyphs.configs.latex import fold_short_frac, mat_delim,\
+            mat_str, mul_symbol
+        if isinstance(sp_object, sympy.Matrix) and any(el == 0
+                                                       for el in
+                                                       sp_object.shape):
+            return r'\left(\right)'
+        else:
+            return latex(sp_object, fold_short_frac=fold_short_frac,
+                         mat_str=mat_str, mat_delim=mat_delim,
+                         mul_symbol=mul_symbol, symbol_names=self.symbol_names)
 
-\usepackage{graphicx}                   % Use pdf, png, jpg, or eps with \
-pdflatex; use eps in DVI mode
-                                        % TeX will automatically convert \
-eps --> pdf in pdflatex
+    def obj2tex(self, obj, label, description, toMatrix=True):
+        """
+        Return "%\ndescription $label = obj$;"
+        Parameters
+        -----------
+        obj : sympy object
+        label : latex compliant string
+        description : string
 
+        Return
+        ------
+        string
+        """
+
+        if toMatrix:
+            import sympy as sp
+            obj = sp.Matrix(obj)
+
+        str_out = cr(1)
+        description = description + " " if len(description) > 0 \
+            else description
+        str_out += description +\
+            r"$ " + label + r" = " +\
+            self.sympy2latex(obj) + r" ; $ " + cr(1) + r'\\'
+        return str_out
+
+    def export(self):
+        """
+        return latex code as plain string for global phs description
+        """
+        str_tex = ""
+        str_tex += self.preamble()
+        str_tex += cr(1) + r"\begin{document}" + cr(1)
+        str_tex += r"\maketitle"
+        str_tex += self.netlist()
+        str_tex += self.dimensions()
+        str_tex += self.symbols()
+        str_tex += self.expressions()
+        str_tex += self.parameters()
+        str_tex += self.structure()
+        str_tex += cr(1)
+        str_tex += r"\end{document}"
+        for special_char in special_chars:
+            latex_char = "\\" + special_char
+            str_tex = str_tex.replace(special_char, latex_char)
+        import os
+        filename = self.path + os.sep + self.sys_label + r'.tex'
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        file_ = open(filename, 'w')
+        file_.write(str_tex)
+        file_.close()
+
+    def preamble(self):
+        from pyphs.configs.latex import authors, affiliations
+        nb_authors = len(authors)
+        nb_affiliations = len(affiliations)
+        latex_affiliations = ""
+        if nb_affiliations > 1:
+            assert nb_affiliations == nb_authors
+            id_affiliations = list()
+            i = 1
+            for affiliation in affiliations:
+                latex_affiliations += cr(1)
+                latex_affiliations += r"\affil["+str(i)+r"]{"+affiliation+r"}"
+                id_affiliations.append(i)
+                i += 1
+        else:
+            latex_affiliations += cr(1)
+            latex_affiliations += r"\affil["+str(1)+r"]{"+affiliations[0]+r"}"
+            id_affiliations = [1, ]*nb_affiliations
+        latex_authors = ""
+        for author, id_aff in zip(authors, id_affiliations):
+            latex_authors += cr(1)
+            latex_authors += r'\author['+str(id_aff)+r']{'+author+'}'
+
+        str_preamble = \
+            r"""%
+\documentclass[11pt, oneside]{article}      % use 'amsart' instead of """ + \
+            r"""'article' for AMSLaTeX format
+\usepackage{geometry}                       % See geometry.pdf to learn """ + \
+            r"""the layout options. There are lots.
+\geometry{letterpaper}                      % ... or a4paper or a5paper """ + \
+            r"""or ...
+%\geometry{landscape}                       % Activate for for rotated """ + \
+            r"""page geometry
+\usepackage[parfill]{parskip}               % Activate to begin """ + \
+            r"""paragraphs with an empty line rather than an indent
+\usepackage{graphicx}                       % Use pdf, png, jpg, or eps """ + \
+            r"""with pdflatex; use eps in DVI mode
+                                            % TeX will automatically """ + \
+            r"""convert eps --> pdf in pdflatex
 \usepackage{amssymb}
-
-%\date{}                                % Activate to display a given \
-date or no date
-
-\title{Structure of pHs \texttt{""" + phs.label + r"""}}
-
+%\date{\today}                              % Activate to display a """ + \
+            r"""given date or no date
+\title{Structure of pHs \texttt{""" + self.sys_label + r"""}}
+%
 \usepackage{authblk}
 \usepackage{hyperref}
-\author[1]{Antoine Falaize}
-\affil[1]{Project-team S3\footnote{\url{http://s3.ircam.fr}}, STMS, \
-IRCAM-CNRS-UPMC (UMR 9912), 1 Place Igor-Stravinsky, 75004 Paris, France}
 %\renewcommand\Authands{ and }
-
-
-
-"""
-    return str_preamble
-
-
-def dimensions(phs):
-    str_dimensions = ""
-    str_dimensions += r"\section{System dimensions}"
-    for dim in [r'x', r'w', r'y', r'p']:
-        obj = eval(r'phs.n'+dim+r'()')
-        label = r"n_\mathbf{"+dim+r"}"
-        desc = r"$\dim(\mathbf{"+dim+r"})=$"
-        str_dimensions += obj2tex(obj, label, desc, toMatrix=False)
-    return str_dimensions
-
-
-def str_figure_graph(phs):
-    import os
-    from pyphs_config import plot_format
-    phs.plot_graph()
-    fig_name = phs.folders['plots'] + os.sep + phs.label + \
-        '_graph.' + plot_format
-    string = r"""%
-%
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=\linewidth]{""" + fig_name + r"""}
-%
-\caption{\label{fig:graph_""" + phs.label + r"""} Graph of system \texttt{""" + phs.label + r"""}. }
-\end{center}
-\end{figure}
 %"""
-    return string
+        return str_preamble + latex_authors + latex_affiliations
 
+    def dimensions(self):
+        """
+        latexize dimensions nx, nx, ny and np
+        """
+        str_dimensions = ""
+        str_dimensions += r"\section{System dimensions}"
+        for dim in [r'x', r'w', r'y', r'p']:
+            val = getattr(self, 'n'+dim)
+            label = r"n_\mathbf{"+dim+r"}"
+            desc = r"$\dim(\mathbf{"+dim+r"})=$"
+            str_dimensions += self.obj2tex(val, label, desc, toMatrix=False)
+        return str_dimensions
 
-def netlist(phs):
-    str_netlist = cr(2)
-    if len(phs.netlist) > 0:
-        str_netlist += r"\section{System netlist}" + cr(2)
-        str_netlist += r"\begin{center}" + cr(1)
-        str_netlist += r"\texttt{" + cr(0)
-        str_netlist += r"\begin{tabular}{llllll}" + cr(0)
-        str_netlist += r"\hline" + cr(0)
-        str_netlist += "line & dictionary.component & label & nodes & \
-parameters " + r"\\ \hline" + cr(1)
-        l = 0
-        for line in phs.netlist.splitlines():
-            l += 1
-            str_table = ''
-            columns = [r"$\ell_" + str(l) + r"$"]
-            ind_bracket_1 = line.index('[')
-            columns += line[:ind_bracket_1-1].split(' ')
-            ind_bracket_2 = line.index(']')
-            columns += [line[ind_bracket_1:ind_bracket_2+1], ]
-            columns += [line[ind_bracket_2+2:], ]
-            for el in columns:
-                str_table += el + " & "
-            str_netlist += str_table[:-2] + cr(0) + r"\\" + cr(0)
-        str_netlist += r"\hline" + cr(0)
-        str_netlist += r"\end{tabular}" + cr(1)
-        str_netlist += r"}" + cr(1)
-        str_netlist += r"\end{center}"+'\n'
-        str_netlist += str_figure_graph(phs)
-    return str_netlist
+    def graph(self):
+        """
+        associate the plot of the graph to a latex figure
+        """
+        import os
+        from pyphs.configs.plots import plot_format
+        fig_name = self.path_figs + os.sep + \
+            self.sys_label + '_graph.' + plot_format
+        string = r"""%
+    %
+    \begin{figure}[!h]
+    \begin{center}
+    \includegraphics[width=\linewidth]{""" + fig_name + r"""}
+    %
+    \caption{\label{fig:graph_""" + self.sys_label +\
+            r"""} Graph of system \texttt{""" + self.sys_label + r"""}. }
+    \end{center}
+    \end{figure}
+    %"""
+        return string
 
+    def netlist(self):
+        str_netlist = cr(2)
+        if hasattr(self, 'netlist_dic'):
+            str_netlist += r"\section{System netlist}" + cr(2)
+            str_netlist += r"\begin{center}" + cr(1)
+            str_netlist += r"\texttt{" + cr(0)
+            str_netlist += r"\begin{tabular}{llllll}" + cr(0)
+            str_netlist += r"\hline" + cr(0)
+            str_netlist += "line & label & dictionary.component & nodes & \
+    parameters " + r"\\ \hline" + cr(1)
+            l = 0
+            for comp in self.netlist_dic:
+                l += 1
+                latex_line = r"$\ell_" + str(l) + r"$"
+                latex_dic = str(comp['dictionary'])
+                latex_comp = str(comp['component'])
+                latex_label = str(comp['label'])
+                latex_nodes = str(comp['nodes'])
+                latex_args = str(comp['arguments'])
+                str_table = r'{} & {} & {}.{} & {} & {}'.format(latex_line,
+                                                                latex_label,
+                                                                latex_dic,
+                                                                latex_comp,
+                                                                latex_nodes,
+                                                                latex_args)
+                str_netlist += str_table + cr(0) + r" \\" + cr(0)
+            str_netlist += r"\hline" + cr(0)
+            str_netlist += r"\end{tabular}" + cr(1)
+            str_netlist += r"}" + cr(1)
+            str_netlist += r"\end{center}"+'\n'
+            str_netlist += self.graph()
+        return str_netlist
 
-def variables(phs):
-    str_variables = cr(2)
-    str_variables += r"\section{System variables}"
-    if phs.nx() > 0:
-        str_variables += obj2tex(phs.x, r'\mathbf{x}', 'State variable')
-    if phs.nw() > 0:
-        str_variables += obj2tex(phs.w, r'\mathbf{w}', 'Dissipation variable')
-    if phs.ny() > 0:
-        str_variables += obj2tex(phs.u, r'\mathbf{u}', 'Input')
-        str_variables += obj2tex(phs.y, r'\mathbf{y}', 'Output')
-    return str_variables
+    def symbols(self):
+        str_variables = cr(2)
+        str_variables += r"\section{System variables}"
+        if self.nx > 0:
+            str_variables += self.obj2tex(self.x, r'\mathbf{x}',
+                                          'State variable')
+        if self.nw > 0:
+            str_variables += self.obj2tex(self.w, r'\mathbf{w}',
+                                          'Dissipation variable')
+        if self.ny > 0:
+            str_variables += self.obj2tex(self.u, r'\mathbf{u}',
+                                          'Input')
+            str_variables += self.obj2tex(self.y, r'\mathbf{y}',
+                                          'Output')
+        return str_variables
 
+    def expressions(self):
+        str_relations = cr(2)
+        str_relations += r"\section{Constitutive relations}"
+        if self.nx > 0:
+            str_relations += self.obj2tex(self.H, r'\mathtt{H}(\mathbf{x})',
+                                          'Hamiltonian',
+                                          toMatrix=False)
+            str_relations += self.obj2tex(self.dxH,
+                                          r'\nabla \mathtt{H}(\mathbf{x})',
+                                          'Hamiltonian gradient')
+        if self.nw > 0:
+            str_relations += self.obj2tex(self.z, r'\mathbf{z}(\mathbf{w})',
+                                          'Dissipation function')
+            str_relations += self.obj2tex(self.jacz,
+                                          r'\mathcal{J}_{\mathbf{z}}(\mathbf{w})',
+                                          'Jacobian of dissipation function')
+        return str_relations
 
-def relations(phs):
-    str_relations = cr(2)
-    str_relations += r"\section{Constitutive relations}"
-    if phs.nx() > 0:
-        str_relations += obj2tex(phs.H, r'\mathtt{H}(\mathbf{x})',
-                                 'Hamiltonian',
-                                 toMatrix=False)
-        str_relations += obj2tex(phs.dxH, r'\nabla \mathtt{H}(\mathbf{x})',
-                                 'Hamiltonian gradient')
-    if phs.nw() > 0:
-        str_relations += obj2tex(phs.z, r'\mathbf{z}(\mathbf{w})',
-                                 'Dissipation function')
-        str_relations += obj2tex(phs.Jacz,
-                                 r'\mathcal{J}_{\mathbf{z}}(\mathbf{w})',
-                                 'Jacobian of dissipation function')
-    return str_relations
+    def parameters(self):
+        str_parameters = ""
+        if len(self.subs) > 0:
+            str_parameters += cr(2)
+            str_parameters += r"\section{System parameters}" + cr(2)
+            str_parameters += r"\subsection{Constant}" + cr(1)
+            str_parameters += dic2table(['parameter', 'value (SI)'], self.subs)
+        if self.np > 0:
+            str_parameters += cr(2)
+            str_parameters += r"\subsection{Controled}" + cr(1)
+            str_parameters += self.obj2tex(self.p, r'\mathbf{p}',
+                                           'Control parameters')
+        return str_parameters
 
-
-def parameters(phs):
-    str_parameters = ""
-    if len(phs.subs) > 0:
-        str_parameters += cr(2)
-        str_parameters += r"\section{System parameters}" + cr(2)
-        str_parameters += r"\subsection{Constant}" + cr(1)
-        str_parameters += dic2table(['parameter', 'value (SI)'], phs.subs)
-    if phs.np() > 0:
-        str_parameters += cr(2)
-        str_parameters += r"\subsection{Controled}" + cr(1)
-        str_parameters += obj2tex(phs.params, r'\mathbf{p}',
-                                  'Control parameters')
-    return str_parameters
-
-
-def structure(phs):
-    str_structure = cr(1)
-    str_structure += r"\section{System structure}" + cr(1)
-    if phs.nx() > 0:
-        str_structure += obj2tex(phs.Jx, r"\mathbf{J_x}", "")
-        if phs.nw() > 0:
-            str_structure += obj2tex(phs.K, r"\mathbf{K}", "")
-        if phs.ny() > 0:
-            str_structure += obj2tex(phs.Gx, r"\mathbf{G_x}", "")
-    if phs.nw() > 0:
-        str_structure += obj2tex(phs.Jw, r"\mathbf{J_w}", "")
-        if phs.ny() > 0:
-            str_structure += obj2tex(phs.Gw, r"\mathbf{G_w}", "")
-    if phs.ny() > 0:
-        str_structure += obj2tex(phs.Jy, r"\mathbf{J_y}", "")
-    str_J = obj2tex(phs.J, r"\mathbf{J}", "")
-    str_J = str_J.replace('begin{matrix}', 'begin{array}{' +
-                          r'c'*phs.nx() +
-                          r'|' + r'c'*phs.nw() +
-                          r'|' + r'c'*phs.nw() + r'}')
-    str_structure += str_J.replace('end{matrix}', 'end{array}')
-    return str_structure
+    def structure(self):
+        """
+        return latex code for system structure matrices.
+        """
+        str_structure = cr(1)
+        str_structure += r"\section{System structure}" + cr(1)
+        if self.nx > 0:
+            str_structure += self.obj2tex(self.Jxx, r"\mathbf{J_x}", "")
+            if self.nw > 0:
+                str_structure += self.obj2tex(self.Jxw, r"\mathbf{K}", "")
+            if self.ny > 0:
+                str_structure += self.obj2tex(self.Jxy, r"\mathbf{G_x}", "")
+        if self.nw > 0:
+            str_structure += self.obj2tex(self.Jww, r"\mathbf{J_w}", "")
+            if self.ny > 0:
+                str_structure += self.obj2tex(self.Jwy, r"\mathbf{G_w}", "")
+        if self.ny > 0:
+            str_structure += self.obj2tex(self.Jyy, r"\mathbf{J_y}", "")
+        str_J = self.obj2tex(self.J, r"\mathbf{J}", "")
+#        str_J = str_J.replace('begin{matrix}', 'begin{array}{' +
+#                              r'c'*self.nx +
+#                              r'|' + r'c'*self.nw +
+#                              r'|' + r'c'*self.nw + r'}')
+#        str_J += str_J.replace('end{matrix}', 'end{array}')
+        return str_J
 
 
 def dic2table(labels, dic):
+    """
+    Return a latex table with two columns. Columns labels are labels[0] and \
+labels[1], then each line is made of columns key and dic[key] for each dic.keys
+    """
     l_keys, l_vals = labels
     string = ""
     string += r"\begin{center}" + cr(1)
@@ -241,22 +337,10 @@ def dic2table(labels, dic):
     return string
 
 
-def phs2tex(phs):
-    str_tex = ""
-    str_tex += preamble(phs)
-    str_tex += r"\begin{document}" + cr(1)
-    str_tex += r"\maketitle"
-    str_tex += netlist(phs)
-    str_tex += dimensions(phs)
-    str_tex += variables(phs)
-    str_tex += relations(phs)
-    str_tex += parameters(phs)
-    str_tex += structure(phs)
-    str_tex += cr(1)
-    str_tex += r"\end{document}"
-    for char in forbiden_char:
-        replacement_char = "\\" + char
-        str_tex = str_tex.replace(char, replacement_char)
-    str_tex = str_tex.replace('left[', 'left(')
-    str_tex = str_tex.replace('right]', 'right)')
-    return str_tex
+def cr(n):
+    """
+    Latex cariage return with insertion of n "%"
+    """
+    assert isinstance(n, int), 'n should be an int, got {0!s}'.format(type(n))
+    string = ('\n' + r'%')*n + '\n'
+    return string

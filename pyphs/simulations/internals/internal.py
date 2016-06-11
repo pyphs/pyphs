@@ -17,12 +17,18 @@ class Internal:
         self.fs = config['fs']
         self.EPS = config['numtol']
         self.maxit = config['maxit']
-
-        init_args(self, phs)
-        # init solver
         self.solver_id = config['solver']
+
+        # define all arguments 'args' and accessor to specific parts eg x, xl,
+        # xnl, linear an dnonlinear variables varl=(dxl, wl), varl=(dxl, wl)
+        init_args(self, phs)
+
+        # init args values with 0
+        setattr(self, 'args', [0, ]*self.nargs)
+
+        # init solver
         self.solver = Solver(self, phs, self.solver_id)
-        
+
         # build numerical functions from functions in phs.exprs._names
         phs.build_nums()
         init_funcs(self, phs)
@@ -79,41 +85,65 @@ def init_args(internal, phs):
     """
     define accessors and mutators of numerical values associated to arguments
     """
-    # get dimensions
-    for dim in ['x', 'w', 'y', 'p', 'xl', 'wl']:
-        setattr(internal, 'n'+dim, geteval(phs, 'n'+dim))
-    setattr(internal, 'nxnl', phs.nx() - phs.nxl)
-    setattr(internal, 'nwnl', phs.nw() - phs.nwl)
-    setattr(internal, 'nvarl', phs.nxl + phs.nwl)
-    setattr(internal, 'nvarnl', internal.nxnl + internal.nwnl)
+    # set dimensions
+    def set_dim(name):
+        dim_name = 'n'+name
+        dim = geteval(phs, dim_name)
+        setattr(internal, dim_name, dim)
+
+    dims_names = ('x', 'w', 'y', 'p', 'xl', 'wl')
+    for name in dims_names:
+        set_dim(name)
+
+    # define dimension of nonlinear parts of x and w
+    nxnl = internal.nx - internal.nxl
+    nwnl = internal.nw - internal.nwl
+    setattr(internal, 'nxnl', nxnl)
+    setattr(internal, 'nwnl', nwnl)
 
     # list of variables quantities on which the lambdified functions depend
-    phs.build_nums()
-    internal.args_names = list(phs.nums.args_names)
+    from pyphs.numerics.numeric import _args_names
+    internal._args_names = _args_names
     args = []
     for name in internal.args_names:
+        # get symbols and stores symbols
         symbs = geteval(phs.symbs, name)
         setattr(internal, name+'_symbs', symbs)
+        # get symbols and stores index in all args
         inds = range(len(args), len(args)+len(symbs))
         setattr(internal, name+'_inds', inds)
+        # append all args symbols
         args += symbs
+    # stores all args symbols
     setattr(internal, 'args_symbs', args)
-    setattr(internal, 'args', [0, ]*len(internal.args_symbs))
+    # stores dima of all args
+    setattr(internal, 'nargs', len(internal.args_symbs))
 
     # select linear and nonlinear parts and add to list of variables
     for names, dim in zip([['x', 'dx'], ['w']], ['x', 'w']):
+        # apply to list [x, dx] with same dim x only
         for name in names:
+            # get dimension of linear part
             diml = getattr(internal, 'n'+dim+'l')
+            # get and stores symbols of linear parts
             l_symbs = getattr(internal, name+'_symbs')[:diml]
-            nl_symbs = getattr(internal, name+'_symbs')[diml:]
             setattr(internal, name+'l_symbs', l_symbs)
-            setattr(internal, name+'nl_symbs', nl_symbs)
+            # get and stores indices of linear parts
             l_inds = getattr(internal, name+'_inds')[:diml]
-            nl_inds = getattr(internal, name+'_inds')[diml:]
             setattr(internal, name+'l_inds', l_inds)
-            setattr(internal, name+'nl_inds', nl_inds)
-            internal.args_names += [name+'l', name+'nl']
+            # append to list of variable for which define accessor and mutator
+            internal._args_names.append(name+'l')
 
+            # get and stores symbols of nonlinear parts
+            nl_symbs = getattr(internal, name+'_symbs')[diml:]
+            setattr(internal, name+'nl_symbs', nl_symbs)
+            # get and stores indices of nonlinear parts
+            nl_inds = getattr(internal, name+'_inds')[diml:]
+            setattr(internal, name+'nl_inds', nl_inds)
+            # append to list of variable for which define accessor and mutator
+            internal._args_names.append(name+'nl')
+
+    # define varl=[dxl, wl] and varnl=[dxnl, wnl]
     for attr in ['l', 'nl']:
         name = 'var'+attr
         symbs = []
@@ -123,7 +153,10 @@ def init_args(internal, phs):
             inds += getattr(internal, quantity+attr+'_inds')
         setattr(internal, name+'_inds', inds)
         setattr(internal, name+'_symbs', symbs)
-        internal.args_names += [name, ]
+        # append to list of variable for which define accessor and mutator
+        internal._args_names.append(name)
+    setattr(internal, 'nvarl', len(internal.varl_symbs))
+    setattr(internal, 'nvarnl', len(internal.varnl_symbs))
 
     # generators of 'get' and 'set':
     def get_generator(inds):

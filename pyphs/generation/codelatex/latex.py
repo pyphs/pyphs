@@ -43,7 +43,7 @@ class Latex:
             phs.plot_graph()
 
         if not hasattr(phs.exprs, 'dxH'):
-            phs.buil_exprs()
+            phs.build_exprs()
 
         for expr in [r'H', r'z', r'jacz', r'dxH']:
             obj = getattr(phs.exprs, expr)

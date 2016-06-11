@@ -6,8 +6,6 @@ Created on Tue May 31 10:46:21 2016
 """
 import sympy as sp
 import numpy as np
-from utils.calculus import mysimplify, mysymbolicinv
-from utils.calculus import eps
 
 
 def args_ordering():

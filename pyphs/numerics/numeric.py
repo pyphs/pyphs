@@ -8,6 +8,7 @@ Created on Fri Jun  3 15:27:55 2016
 from tools import geteval, lambdify, find
 from pyphs.symbolics.tools import free_symbols
 
+# names of arguments for functions evaluation
 _args_names = ('x', 'dx', 'w', 'u', 'p')
 
 
@@ -17,18 +18,19 @@ class Numeric:
     """
     def __init__(self, phs):
 
+        # names of arguments for functions evaluation
         self.args_names = _args_names
         # lists all arguments
         args = []
-        for attr in self.args_names:
-            symbs = geteval(phs.symbs, attr)
+        for name in self.args_names:
+            symbs = geteval(phs.symbs, name)
             args += list(symbs)
         # stores args as tuple
         self.args = tuple(args)
         # lists all functions
-        self._names = phs.exprs._names
+        self.funcs_names = phs.exprs._names
         # for each function, subs, stores func args, args_inds and lambda func
-        for name in self._names:
+        for name in self.funcs_names:
             expr = getattr(phs.exprs, name)
             if hasattr(expr, 'index'):
                 expr = list(expr)
@@ -36,67 +38,17 @@ class Numeric:
                     expr[i] = expr[i].subs(phs.symbs.subs)
             else:
                 expr = expr.subs(phs.symbs.subs)
-            func, args, inds = _expr_to_numerics(expr, self.args)
+            func, args, inds = self._expr_to_numerics(expr)
             setattr(self, name, func)
             setattr(self, 'args_'+name, args)
             setattr(self, 'inds_'+name, inds)
 
-
-def _expr_to_numerics(expr, allargs):
-    symbs = free_symbols(expr)
-    args, inds = find(symbs, allargs)
-    func = lambdify(args, expr)
-    return func, args, inds
-
-
-def self_lambdify(numerics):
-    """
-    lambdify all exprs of numerics
-    """
-    # list of args for the lambdified functions
-    args = numerics.args
-
-    # generators of 'get' and 'set':
-    def get_generator(inds):
-        def get_func():
-            start, stop = inds
-            return numerics.all_vals[start: stop]
-        return get_func
-
-    def set_generator(inds):
-        def set_func(lis):
-            start, stop = inds
-            numerics.all_vals[start: stop] = lis[0: stop-start]
-        return set_func
-
-    def eval_generator(func_num_all_args):
-        def eval_func():
-            return func_num_all_args(*numerics.all_vals)
-        return eval_func
-
-    # get each variable in all_vals:
-    for name in args:
-        inds = getattr(numerics, name+'_inds')
-        setattr(numerics, name, get_generator(inds))
-        setattr(numerics, 'set_'+name, set_generator(inds))
-
-    # list all functions to lambdify
-    numerics.funcs_to_lambdify = 'H dtx dxH dxHd z y Jx Jw Jy K Gx Gw J' +\
-        numerics.funcs_to_lambdify
-    for name in numerics.funcs_to_lambdify.split(' '):
-        func = getattr(numerics.phs, name)
-        symbs_in_func = free_symbols(func, args)
-        func_num_selected_args = lambdify(symbs_in_func, func)
-        setattr(numerics.phs, name+'_num', func_num_selected_args)
-        func_num_all_args = lambdify(numerics.all_symbs, func)
-        setattr(numerics, name, eval_generator(func_num_all_args))
-
-
-def get_argslabels(phs):
-    return lambda: phs.symbs.argslabels
-
-
-def get_inds(numerics, symbs):
-    inds = list()
-    for symb in symbs:
-        inds.append(numerics.args.index(symb))
+    def _expr_to_numerics(self, expr):
+        """
+        get symbols in expr, and return lambdified evaluation, \
+arguments symbols and arguments position in list of all arguments
+        """
+        symbs = free_symbols(expr)
+        args, inds = find(symbs, self.args)
+        func = lambdify(args, expr)
+        return func, args, inds

@@ -22,6 +22,7 @@ class Internal:
         # init solver
         self.solver_id = config['solver']
         self.solver = Solver(self, phs, self.solver_id)
+        
         # build numerical functions from functions in phs.exprs._names
         phs.build_nums()
         init_funcs(self, phs)
@@ -54,7 +55,7 @@ is numerics.fs).
         # init args memory for computation of step on iteration
         old_varnl = [float('Inf'), ]*self.nxnl
         # loop while res > tol, step > tol and it < itmax
-        while it < self.maxit: # res > self.EPS and step > self.EPS and 
+        while res > self.EPS and step > self.EPS and it < self.maxit:
             # updated args
             self.iter_solver()
             # eval residual

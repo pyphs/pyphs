@@ -42,11 +42,9 @@ $\ell_1$ & IN & electronics.source & ('A', 'ref') & {'type': 'voltage'}
  \\
 $\ell_2$ & R1 & electronics.resistor & ('A', 'B') & {'R': ('R1', 1000.0)}
  \\
-$\ell_3$ & R2 & electronics.resistor & ('B', 'C') & {'R': ('R2', 1000.0)}
+$\ell_3$ & L & electronics.inductor & ('B', 'C') & {'L': ('L', 0.05)}
  \\
-$\ell_4$ & L & electronics.inductor & ('B', 'C') & {'L': ('L', 0.05)}
- \\
-$\ell_5$ & C & electronics.capacitor & ('C', 'ref') & {'C': ('C', 2e-06)}
+$\ell_4$ & C & electronics.capacitor & ('C', 'ref') & {'C': ('C', 2e-06)}
  \\
 \hline
 \end{tabular}
@@ -69,7 +67,7 @@ $\dim(\mathbf{x})=$ $ n_\mathbf{x} = 2 ; $
 %
 \\
 %
-$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 2 ; $ 
+$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 1 ; $ 
 %
 \\
 %
@@ -88,7 +86,7 @@ State variable $ \mathbf{x} = \left(\begin{array}{c}x_{\mathrm{L}}\\x_{\mathrm{C
 %
 \\
 %
-Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{R1}}\\w_{\mathrm{R2}}\end{array}\right) ; $ 
+Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{R1}}\end{array}\right) ; $ 
 %
 \\
 %
@@ -111,11 +109,11 @@ Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\fr
 %
 \\
 %
-Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\frac{w_{\mathrm{R1}}}{\mathrm{R1}}\\\mathrm{R2} \cdot w_{\mathrm{R2}}\end{array}\right) ; $ 
+Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{R1} \cdot w_{\mathrm{R1}}\end{array}\right) ; $ 
 %
 \\
 %
-Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{cc}\frac{1}{\mathrm{R1}} & 0\\0 & \mathrm{R2}\end{array}\right) ; $ 
+Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{R1}\end{array}\right) ; $ 
 %
 \\
 %
@@ -136,8 +134,6 @@ C & 2e-06
 \\
 R1 & 1000.0
 \\
-R2 & 1000.0
-\\
 L & 0.05
 \\
 \hline
@@ -145,7 +141,7 @@ L & 0.05
 %
 \end{center}
 %
-$ \mathbf{J} = \left(\begin{array}{ccccc}0 & 0 & 0 & 1.0 & 0\\0 & 0 & 1.0 & 0 & 0\\0 & -1.0 & 0 & -1.0 & 1.0\\-1.0 & 0 & 1.0 & 0 & 0\\0 & 0 & -1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{J} = \left(\begin{array}{cccc}0 & -1.0 & -1.0 & 1.0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\\-1.0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %

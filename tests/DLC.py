@@ -40,7 +40,7 @@ def samplerate():
     return 48e3
 
 
-def write_netlist(R=1e3, L=5e-2, C=2e-6, Is=1e-9, v0=25e-3):
+def write_netlist(C=2e-10, Is=1e-9, v0=25e-3):
     """
     Write netlist for RLC circuit
     """
@@ -58,36 +58,20 @@ def write_netlist(R=1e3, L=5e-2, C=2e-6, Is=1e-9, v0=25e-3):
               'arguments': {'type': "'voltage'"}}
     netlist.add_line(source)
 
-    # resistor
-    resistance = {'dictionary': 'electronics',
-                  'component': 'resistor',
-                  'label': 'R',
-                  'nodes': ('A', 'B'),
-                  'arguments': {'R': ('R', R)}}
-    netlist.add_line(resistance)
-
     # diode
     diode = {'dictionary': 'electronics',
              'component': 'diodepn',
              'label': 'D',
-             'nodes': ('B', 'C'),
+             'nodes': ('A', 'B'),
              'arguments': {'Is': ('Is', Is),
                            'v0': ('v0', v0)}}
     netlist.add_line(diode)
-
-    # inductor
-    inductor = {'dictionary': 'electronics',
-                'component': 'inductor',
-                'label': 'L',
-                'nodes': ('B', 'C'),
-                'arguments': {'L': ('L', L)}}
-    netlist.add_line(inductor)
 
     # capacitor
     capacitor = {'dictionary': 'electronics',
                  'component': 'capacitor',
                  'label': 'C',
-                 'nodes': ('C', datum),
+                 'nodes': ('B', datum),
                  'arguments': {'C': ('C', C)}}
     netlist.add_line(capacitor)
 
@@ -107,7 +91,7 @@ def build_graph(phs):
     phs.build_from_netlist(netlist_filename())
 
 
-def input_sequence(amp=100., f0=100.):
+def input_sequence(amp=50., f0=100.):
     from pyphs.misc.signals.synthesis import signalgenerator
     fs = samplerate()
     nsin = int(10*fs/f0)
@@ -135,6 +119,7 @@ if __name__ is '__main__':
     sequ, nt = input_sequence()
     phs.build_exprs()
     phs.build_nums()
+    phs.export_latex()
     simulation(phs, sequ, nt)
     phs.plot_powerBal()
-    phs.plot_variables([('u', 0), ('w', 1), ('z', 1)])
+    phs.plot_variables([('u', 0), ('x', 0), ('w', 0)])

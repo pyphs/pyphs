@@ -26,10 +26,6 @@ class Analysis:
         # get number of nodes and edges
         self.nn = len(self.nodes)
         self.ne = len(self.edges)
-        # Init lists of edges for analysis
-        self.ec_edges = []
-        self.fc_edges = []
-        self.ic_edges = range(self.ne)
         # init list of nodes for analysis
         self.ic_nodes = range(0, self.nn)
         # Put datum node at the top of the node list
@@ -40,6 +36,10 @@ class Analysis:
             self.lambd[0, :] = 0
             # exclude datum from analysis
             self.ic_nodes.remove(self.nodes.index(datum))
+        # Init lists of edges for analysis
+        self.ec_edges = []
+        self.fc_edges = []
+        self.ic_edges = range(self.ne)
         # test for determinate edge (iter over ic_edges which length change)
         i = 0  # element in ic_edges to check
         while i < len(self.ic_edges):
@@ -126,7 +126,7 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
         # init memory of lambda to check for change or stop while loop
         lambd_temp = numpy.zeros(self.lambd.shape)
         # realizability analysis on the ic_edges
-        while (len(self.ic_edges) > 0):
+        while (len(self.ic_edges) + len(self.ic_nodes) > 0):
             # loop while Lambda is changed
             while ((not isequal(lambd_temp, self.lambd)) &
                    (len(self.ic_edges) + len(self.ic_nodes) > 0)):
@@ -150,17 +150,20 @@ te columnss in lambda corresponding to two indeterminate control edges are \
 the same, we select the first edge and set it to \
 effort-controlled (0 in lambda).
         """
-        for i in range(len(self.ic_edges)):
-            e1 = self.ic_edges[i]
-            for j in range(i+1, len(self.ic_edges)):
-                e2 = self.ic_edges[j]
+        try:
+            for i in range(len(self.ic_edges)):
+                e1 = self.ic_edges[i]
+                for j in range(i+1, len(self.ic_edges)):
+                    e2 = self.ic_edges[j]
+                    if isequal(self.lambd[:, e1], self.lambd[:, e2]):
+                        break
                 if isequal(self.lambd[:, e1], self.lambd[:, e2]):
                     break
-            if isequal(self.lambd[:, e1], self.lambd[:, e2]):
-                break
-        # if two esdges have same lambda column
-        assert isequal(self.lambd[:, e1], self.lambd[:, e2])
-        self.set_edge_ec(e1)
+            # if two esdges have same lambda column
+            assert isequal(self.lambd[:, e1], self.lambd[:, e2])
+            self.set_edge_ec(e1)
+        except:
+            pass
 
     def get_edges_data(self, key):
         """
@@ -217,8 +220,12 @@ effort-controlled (0 in lambda).
         # new edges lists with new(nec) = nec+1 and new(nic)=nic-1.
         indices = range(self.ne)
         self.ec_edges = indices[:nec+1]
-        self.ic_edges = indices[nec+1:-nfc]
-        self.fc_edges = indices[-nfc:]
+        if nfc > 0:
+            self.ic_edges = indices[nec+1:-nfc]
+            self.fc_edges = indices[-nfc:]
+        else:
+            self.ic_edges = indices[nec+1:]
+            self.fc_edges = []
         # set corresponding Lambda elements to 0
         self.lambd[:, 0] = 0
 

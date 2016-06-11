@@ -18,7 +18,7 @@ def add_path():
 
 
 def workingdirectory():
-    return '/Users/Falaize/Documents/DEV/python/pypHs/test'
+    return '/Users/Falaize/Documents/DEV/python/pyphs/tests'
 
 
 def label():
@@ -46,7 +46,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=1e-14, Vt=26e-3,
     """
     Write netlist for RLC circuit
     """
-    from graphs.netlists import Netlist
+    from pyphs.graphs.netlists import Netlist
 
     netlist = Netlist()
 
@@ -104,8 +104,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=1e-14, Vt=26e-3,
               'component': 'source',
               'label': 'VCC',
               'nodes': ('D', datum),
-              'arguments': {'type': "'voltage'",
-                            'const': 9.}}
+              'arguments': {'type': "'voltage'"}}
     netlist.add_line(source)
 
     # capacitor Cout
@@ -121,8 +120,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=1e-14, Vt=26e-3,
               'component': 'source',
               'label': 'OUT',
               'nodes': ('F', datum),
-              'arguments': {'type': "'current'",
-                            'const': 0.}}
+              'arguments': {'type': "'current'"}}
     netlist.add_line(source)
 
     netlist.write(filename=netlist_filename())
@@ -142,7 +140,7 @@ def build_graph(phs):
 
 
 def input_sequence(amp=2, f0=1e3):
-    from misc.signals.synthesis import signalgenerator
+    from pyphs.misc.signals.synthesis import signalgenerator
     fs = samplerate()
     nsin = int(10.*fs/f0)
     ndeb = int(1*fs)
@@ -161,18 +159,20 @@ def simulation(phs, sequ, nt):
               'split': True}
     phs.build_simulation(config=config, sequ=sequ, nt=nt)
     phs.run_simulation()
+    phs.plot_powerBal()
+    phs.plot_powerBal(imin=int(1*samplerate()))
+    phs.plot_variables([('u', 0), ('yd', 2)])
+    phs.plot_variables([('u', 0), ('yd', 2)], imin=int(1*samplerate()))
 
 
 if __name__ is '__main__':
     add_path()
     phs = init_phs()
+    write_netlist()
     build_graph(phs)
-    from symbolics.structures.tools import move_port
+    from pyphs.symbolics.structures.tools import move_port
     move_port(phs, phs.symbs.u.index(phs.symbols('uIN')), 0)
     move_port(phs, phs.symbs.u.index(phs.symbols('uOUT')), 2)
     sequ, nt = input_sequence()
+    phs.export_latex()
     simulation(phs, sequ, nt)
-    phs.plot_powerBal()
-    phs.plot_powerBal(imin=int(1*samplerate()))
-    phs.plot_variables([('u', 0), ('yd', 2)])
-    phs.plot_variables([('u', 0), ('yd', 2)], imin=int(1*samplerate()))

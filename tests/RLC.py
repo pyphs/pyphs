@@ -40,7 +40,7 @@ def samplerate():
     return 96e3
 
 
-def write_netlist(R=1e3, L=5e-2, C=2e-6):
+def write_netlist(R1=1e3, L=5e-2, C=2e-6):
     """
     Write netlist for RLC circuit
     """
@@ -58,20 +58,12 @@ def write_netlist(R=1e3, L=5e-2, C=2e-6):
               'arguments': {'type': "'voltage'"}}
     netlist.add_line(source)
 
-    # resistor 2
+    # resistor 1
     resistance = {'dictionary': 'electronics',
                   'component': 'resistor',
                   'label': 'R1',
                   'nodes': ('A', 'B'),
-                  'arguments': {'R': ('R1', R)}}
-    netlist.add_line(resistance)
-
-    # resistor 2
-    resistance = {'dictionary': 'electronics',
-                  'component': 'resistor',
-                  'label': 'R2',
-                  'nodes': ('B', 'C'),
-                  'arguments': {'R': ('R2', R)}}
+                  'arguments': {'R': ('R1', R1)}}
     netlist.add_line(resistance)
 
     # inductor
@@ -132,9 +124,6 @@ if __name__ is '__main__':
     phs = init_phs()
     build_graph(phs)
     sequ, nt = input_sequence()
-    phs.build_exprs()
-    phs.build_nums()
     phs.export_latex()
-#    simulation(phs, sequ, nt)
+    simulation(phs, sequ, nt)
     phs.plot_powerBal()
-#    phs.plot_variables([('x', 0), ('dtx', 1), ('dxHd', 1)])

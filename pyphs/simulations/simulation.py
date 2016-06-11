@@ -7,7 +7,6 @@ Created on Tue May 24 11:20:26 2016
 from pyphs.misc.io import write_data
 from pyphs.configs.simulations import standard_config
 from data import Data
-from pyphs.symbolics.structures.tools import split_linear
 from pyphs.symbolics.tools import simplify, inverse
 import time
 import sympy as sp
@@ -29,41 +28,43 @@ class Simulation:
 
             keys and default values are
 
-             * 'language': 'python',
-             * 'numtol': EPS,
-             * 'maxit': 100,
-             * 'load_options': {'decim': 1,
-                                'imin': 0,
-                                'imax': None},
-            * 'solver': '1',
-            * 'timer': True,
-            * 'fs': 48e3,
-            * 'split': None
+                * 'language': 'python',
+                * 'fs': 48e3,
+                * 'numtol': EPS,
+                * 'maxit': 100,
+                * 'split': True
+                * 'solver': 'standard',
+                * 'timer': True,
+                * 'load_options': {'decim': 1,
+                                   'imin': 0,
+                                   'imax': None},
 
         sequ : iterable of tuples of inputs values
 
         seqp : iterable of tuples of parameters values
 
-        language : 'c++' or 'python'
-
-        nt : number of time steps (x goes to x[nt+1])
+        nt : number of time steps (state x goes to x[nt+1])
         """
         # init configuration options
         if config is None:
             config = {}
         self.config = standard_config
         self.config.update(config)
+
         # split system into linear and nonlinear parts
         if self.config['split']:
             # apply split if not already
             if not hasattr(phs, 'nxl'):
+                from pyphs.symbolics.structures.tools import split_linear
                 split_linear(phs)
         else:
             # set all components as nonlinear
             phs.nxl = phs.nwl = 0
             phs.nxnl, phs.nwnl = phs.nx(), phs.nw()
+
         # build the numerical update evaluation structure
         self.internal = Internal(self.config, phs)
+
         # init input and parameters sequences, and get number of time steps
         init_data(self, phs, sequ, seqp, x0, nt)
 

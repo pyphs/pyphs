@@ -261,7 +261,7 @@ def str_functions_full(phs):
             par = '()'
         else:
             par = ''
-        mat_expr = eval('phs.' + var + par)
+        mat_expr = getattr(phs, var + par)
         func_label = 'UpDate_' + var
         return matcpp(mat_expr, func_label, var)
 

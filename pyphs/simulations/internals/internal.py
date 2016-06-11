@@ -103,9 +103,9 @@ def init_args(internal, phs):
 
     # list of variables quantities on which the lambdified functions depend
     from pyphs.numerics.numeric import _args_names
-    internal._args_names = _args_names
+    internal._args_names = list(_args_names)
     args = []
-    for name in internal.args_names:
+    for name in internal._args_names:
         # get symbols and stores symbols
         symbs = geteval(phs.symbs, name)
         setattr(internal, name+'_symbs', symbs)
@@ -172,7 +172,7 @@ def init_args(internal, phs):
         return set_func
 
     # get each variable in all_vals:
-    for name in internal.args_names:
+    for name in internal._args_names:
         inds = getattr(internal, name+'_inds')
         setattr(internal, name, get_generator(inds))
         setattr(internal, 'set_'+name, set_generator(inds))

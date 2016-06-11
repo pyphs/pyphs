@@ -129,21 +129,25 @@ subplots.
 
     """
     opts = plotopts('multi')
+    opts.update(kwargs)
     nplots = int(datay.__len__())
+
     if opts['fontsize'] is None:
         opts['fontsize'] = int(6*opts['figsize'][0])
     if opts['legendfontsize'] is None:
         opts['legendfontsize'] = int(0.8*opts['fontsize'])
     if opts['unity'] is None:
-        unity = ['', ]*nplots
+        opts['unity'] = ['', ]*nplots
     if opts['limits'] is None:
         opts['limits'] = [None, ]*nplots
     elif opts['limits'] == 'extend':
         opts['limits'] = ['extend', ]*nplots
     if opts['labels'] is None:
-        labels = [None, ]*nplots
+        opts['labels'] = [None, ] * nplots
     if opts['log'] is None:
-        log = ['']*nplots
+        opts['log'] = ['', ] * nplots
+
+    print opts
 
     from matplotlib.pyplot import subplots, close
     close('all')
@@ -162,16 +166,14 @@ subplots.
         miny = float('Inf')
         maxy = -float('Inf')
 
-        which_log = log[n]
-
         if type(datay[n]) is list:
             y = dec(datay[n], opts)
             maxy = max([maxy, max(y)])
             miny = min([miny, min(y)])
             if nplots > 1:
-                plotn = whichplot(which_log, axs[n])
+                plotn = whichplot(opts['log'][n], axs[n])
             else:
-                whichplot(which_log, axs)
+                whichplot(opts['log'][n], axs)
             plotn(x, y, opts['linestyles'][0], label=opts['labels'][n],
                   linewidth=opts['linewidth'],
                   markeredgewidth=opts['markeredgewidth'],
@@ -179,20 +181,21 @@ subplots.
 
         elif isinstance(datay[n], tuple):
             len_yn = len(datay[n])
-            if labels[n] is None:
-                labels[n] = (None, )*len_yn
+            if opts['labels'][n] is None:
+                opts['labels'][n] = (None, )*len_yn
             for m in range(len_yn):
-                if isinstance(labels[n][m], (list, tuple)):
-                    annotate(x, y, labels[n][m][0], labels[n][m][1],
+                if isinstance(opts['labels'][n][m], (list, tuple)):
+                    annotate(x, y, opts['labels'][n][m][0],
+                             opts['labels'][n][m][1],
                              opts['legendfontsize'])
                     l = None
                 else:
-                    l = labels[n][m]
+                    l = opts['labels'][n][m]
 
                 y = dec(datay[n][m])
                 maxy = max([maxy, max(y)])
                 miny = min([miny, min(y)])
-                plotn = whichplot(which_log, axs[n])
+                plotn = whichplot(opts['log'][n], axs[n])
                 plotn(x, y, opts['linestyles'][m], label=l,
                       linewidth=opts['linewidth'],
                       markersize=opts['markersize'],
@@ -202,8 +205,8 @@ subplots.
         setticks(axs[n], opts)
 
         axs[n].legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
-        if not unity[n] is None:
-            axs[n].set_ylabel(unity[n], fontsize=opts['fontsize'])
+        if not opts['unity'][n] is None:
+            axs[n].set_ylabel(opts['unity'][n], fontsize=opts['fontsize'])
             if not opts['xpos_ylabel'] is None:
                 axs[n].yaxis.set_label_coords(opts['xpos_ylabel'], 0.5)
         if n == nplots-1:

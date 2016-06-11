@@ -42,12 +42,11 @@ Created on Thu Jun  2 21:33:07 2016
 
 ###############################################################################
 
-import datetime
-__copyright__ = "Copyright 2012-" + str(datetime.date.today().year)
-__author__ = "Antoine Falaize"
 __licence__ = "CeCILL-B"
-__version__ = "0.1.5"
+__author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
+__version__ = "0.1.5"
+__copyright__ = "Copyright 2012-2016"
 
 ###############################################################################
 
@@ -342,15 +341,12 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
             '_graph'
         plot(self.graph, save=fig_name)
 
-    def plot_powerBal(self, plot_properties=None,
-                      imin=0, imax=None):
+    def plot_powerBal(self, imin=0, imax=None):
         """
         Plot the power balance between imin and imax
         """
-        from plots.plots import singleplot, plotprops
+        from plots.singleplots import singleplot
         import os
-        if plot_properties is None:
-            plot_properties = {}
         datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
         datay = list()
         datay.append([el for el in self.simulation.data.dtE(imin=imin,
@@ -363,35 +359,29 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         datay.append(Psd)
         if not os.path.exists(self.paths['figures']):
             os.makedirs(self.paths['figures'])
-        pp = plotprops(which='single')
-        pp.update({'unitx': 'time $t$ (s)',
-                   'unity': r'Power (W)',
-                   'labels': [r'$\frac{\mathtt{d} \mathrm{E}}{\mathtt{d} t}$',
-                              r'$\mathrm{P_S}-\mathrm{P_D}$'],
-                   'filelabel':
-                       self.paths['figures']+os.path.sep+'power_balance',
-                   'maintitle': r'Power balance',
-                   'linestyles': ['-b', '--r'],
-                   'linewidth': 3,
-                   'loc': 0})
-        pp.update(plot_properties)
-        singleplot(datax, datay, **pp)
+        plotopts = {'unitx': 'time $t$ (s)',
+                    'unity': r'Power (W)',
+                    'labels': [r'$\frac{\mathtt{d} \mathrm{E}}{\mathtt{d} t}$',
+                               r'$\mathrm{P_S}-\mathrm{P_D}$'],
+                    'filelabel':
+                        self.paths['figures']+os.sep+'power_balance',
+                    'maintitle': r'Power balance'}
+        singleplot(datax, datay, **plotopts)
 
-    def plot_variables(self, var_list,
-                       imin=0, imax=None, plot_properties=None):
+    def plot_variables(self, var_list, imin=0, imax=None):
         """
         Plot each phs.seq_'var'['ind'] in var_list = [(var1, ind1), (...)]
         """
-        from plots.plots import multiplot, plotprops
+        from plots.multiplots import multiplot
+        from generation.codelatex.tools import nice_label
         import os
-        if plot_properties is None:
-            plot_properties = {}
         datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
         datay = list()
         labels = list()
 
         if not os.path.exists(self.paths['figures']):
             os.makedirs(self.paths['figures'])
+
         filelabel = self.paths['figures']+os.path.sep
         for tup in var_list:
             generator = getattr(self.simulation.data, tup[0])
@@ -399,17 +389,12 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
             datay.append(sig)
             labels.append(nice_label(tup[0], tup[1]))
             filelabel += '_'+tup[0]+str(tup[1])
-        pp = plotprops(which='multi')
 
-        pp.update({'unitx': 'time $t$ (s)',
-                   'unity': labels,
-                   'labels': None,
-                   'maintitle': None,
-                   'filelabel': filelabel,
-                   'limits': 'extend',
-                   'log': None})
-        pp.update(plot_properties)
-        multiplot(datax, datay, **pp)
+        plotopts = {'unitx': 'time $t$ (s)',
+                    'unity': labels,
+                    'filelabel': filelabel}
+
+        multiplot(datax, datay, **plotopts)
 
     ###########################################################################
 

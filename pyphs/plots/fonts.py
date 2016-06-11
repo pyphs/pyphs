@@ -4,7 +4,6 @@ Created on Sat Jun 11 19:40:55 2016
 
 @author: Falaize
 """
-from multiplots import multiplot
 
 
 def font_lists():
@@ -125,6 +124,7 @@ if __name__ == '__main__':
                        'nbinsx': 20,
                        'nbinsy': 4,
                        'minor': True}
+    from multiplots import multiplot
     multiplot(datax, datay, **plot_properties)
     datay = [s1, s2]
     labels = [r'5Hz', r'7Hz']

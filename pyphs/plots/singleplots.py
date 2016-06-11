@@ -118,11 +118,11 @@ None).
     if opts['fontsize'] is None:
         opts['fontsize'] = int(4*opts['figsize'][0])
     if opts['legendfontsize'] is None:
-        kwargs['legendfontsize'] = int(0.8*opts['fontsize'])
+        opts['legendfontsize'] = int(0.8*opts['fontsize'])
     if opts['labels'] is None:
         opts['labels'] = [None, ]*nplots
     if opts['log'] is None:
-        opts['log'] = ['']*nplots
+        opts['log'] = ''
 
     activate_latex(opts)
 

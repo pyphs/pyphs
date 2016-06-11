@@ -46,12 +46,12 @@ def annotate(x, y, pos, annote, legendfontsize):
          horizontalalignment='center', verticalalignment='center')
 
 
-def setticks(ax, ticks_properties):
+def setticks(ax, properties):
     """
     manage ticks and grids of a figure
     """
 
-    major_linewidth = ticks_properties['linewidth']
+    major_linewidth = properties['linewidth']
     minor_linewidth = major_linewidth/4.
 
     from matplotlib.ticker import ScalarFormatter
@@ -59,28 +59,28 @@ def setticks(ax, ticks_properties):
 
     from matplotlib.ticker import MaxNLocator, AutoMinorLocator, AutoLocator
 
-    nbinsx = ticks_properties['nbinsx'] + 1
-    nbinsy = ticks_properties['nbinsy'] + 1
+    nbinsx = properties['nbinsx'] + 1
+    nbinsy = properties['nbinsy'] + 1
 
-    if ticks_properties['islog'] == '':
+    if properties['log'] == '':
         locatorxMaj = MaxNLocator(nbins=nbinsx)
         locatoryMaj = MaxNLocator(nbins=nbinsy)
         locatorxMin = AutoMinorLocator()
         locatoryMin = AutoMinorLocator()
 
-    elif ticks_properties['islog'] == 'x':
+    elif properties['log'] == 'x':
         locatorxMaj = AutoLocator()
         locatoryMaj = MaxNLocator(nbins=nbinsy)
         locatorxMin = locatorxMaj
         locatoryMin = AutoMinorLocator()
 
-    elif ticks_properties['islog'] == 'y':
+    elif properties['log'] == 'y':
         locatorxMaj = MaxNLocator(nbins=nbinsx)
         locatoryMaj = AutoLocator()
         locatorxMin = AutoMinorLocator()
         locatoryMin = locatoryMaj
 
-    elif ticks_properties['islog'] == 'xy':
+    elif properties['log'] == 'xy':
         locatorxMaj = AutoLocator()
         locatoryMaj = AutoLocator()
         locatorxMin = locatorxMaj
@@ -100,18 +100,18 @@ def setticks(ax, ticks_properties):
     # grid
     ax.xaxis.grid(True, 'major', linewidth=major_linewidth)
     ax.yaxis.grid(True, 'major', linewidth=major_linewidth)
-    if ticks_properties['minor']:
+    if properties['minor']:
         ax.xaxis.set_minor_locator(locatorxMin)
         ax.yaxis.set_minor_locator(locatoryMin)
         ax.xaxis.grid(True, 'minor', linewidth=minor_linewidth)
         ax.yaxis.grid(True, 'minor', linewidth=minor_linewidth)
 
     ax.ticklabel_format(axis='both', style='sci', scilimits=(-2, 2))
-    ax.tick_params(axis='both', labelsize=ticks_properties['ticksfontsize'])
+    ax.tick_params(axis='both', labelsize=properties['legendfontsize'])
     t = ax.xaxis.get_offset_text()
-    t.set_size(ticks_properties['ticksfontsize'])
+    t.set_size(properties['legendfontsize'])
     t = ax.yaxis.get_offset_text()
-    t.set_size(ticks_properties['ticksfontsize'])
+    t.set_size(properties['legendfontsize'])
 
 
 def setlims(ax, x, miny, maxy, limy):

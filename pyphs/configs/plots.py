@@ -11,7 +11,6 @@ plot_format = 'pdf'
 def plot_options():
     return {'loc': 1,
             'linestyles': ('-b', '--r', '-.g', ':m'),
-            'markeredgewidth': 1,
             'axedef': (0.15, 0.15, 0.75, 0.75),
             'fontsize': 20,
             'log': None,

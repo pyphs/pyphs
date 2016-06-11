@@ -12,7 +12,7 @@ from utils.dic import linear_storage_fc, linear_storage_ec, linear_diss_ic, \
 import sympy as sp
 from utils.dic import nice_var_label
 
-class stiffness(linear_storage_fc):
+class Stiffness(linear_storage_fc):
     """
     Linear stiffness
     """
@@ -21,7 +21,7 @@ class stiffness(linear_storage_fc):
                                    value, inv_par=False)
 
 
-class mass(linear_storage_ec):
+class Mass(linear_storage_ec):
     """
     Linear inductor
     """
@@ -29,21 +29,21 @@ class mass(linear_storage_ec):
         linear_storage_ec.__init__(self, label, nodes_labels, value)
 
 
-class damper(linear_diss_ic):
+class Damper(linear_diss_ic):
     """ Linear resistor (indeterminate control)
     """
     def __init__(self, label, nodes_labels, value):
         linear_diss_ic.__init__(self, label, nodes_labels, value)
 
 
-class damper_fc(linear_diss_fc):
+class Damper_fc(linear_diss_fc):
     """ Linear flux-controlled resistor
     """
     def __init__(self, label, nodes_labels, value):
         linear_diss_fc.__init__(self, label, nodes_labels, value)
 
 
-class damper_ec(linear_diss_ec):
+class Damper_ec(linear_diss_ec):
     """ Linear effort-controlled resistor
     """
     def __init__(self, label, nodes_labels, value):

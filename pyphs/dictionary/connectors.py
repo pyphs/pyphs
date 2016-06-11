@@ -7,7 +7,7 @@ Created on Tue Jun  7 19:13:35 2016
 from classes.connectors.connector import Connector
 
 
-class gyrator(Connector):
+class Gyrator(Connector):
     """
     gyrator
     """
@@ -16,7 +16,7 @@ class gyrator(Connector):
         Connector.__init__(self, label, nodes, **kwargs)
 
 
-class transformer(Connector):
+class Transformer(Connector):
     """
     transformer
     """

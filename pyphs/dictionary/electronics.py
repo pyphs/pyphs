@@ -19,7 +19,7 @@ import sympy
 GMIN = 1e-9
 
 
-class source(Port):
+class Source(Port):
     """
     Voltage or current source
 
@@ -50,7 +50,7 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         Port.__init__(self, label, nodes, **kwargs)
 
 
-class capacitor(LinearStorageFluxCtrl):
+class Capacitor(LinearStorageFluxCtrl):
     """
     Linear capacitor
 
@@ -76,7 +76,7 @@ class capacitor(LinearStorageFluxCtrl):
         LinearStorageFluxCtrl.__init__(self, label, nodes, **kwargs)
 
 
-class inductor(LinearStorageEffortCtrl):
+class Inductor(LinearStorageEffortCtrl):
     """
     Linear inductor
 
@@ -102,7 +102,7 @@ class inductor(LinearStorageEffortCtrl):
         LinearStorageEffortCtrl.__init__(self, label, nodes, **kwargs)
 
 
-class resistor(LinearDissipationFreeCtrl):
+class Resistor(LinearDissipationFreeCtrl):
     """
     Linear resistor (unconstrained control)
 
@@ -127,7 +127,7 @@ class resistor(LinearDissipationFreeCtrl):
         LinearDissipationFreeCtrl.__init__(self, label, nodes, coeff=coeff)
 
 
-class diodepn(NonLinearDissipative):
+class Diodepn(NonLinearDissipative):
     """
     Electronic nonlinear dissipative component: diode PN
 
@@ -170,7 +170,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
                                       [w], [z], **kwargs)
 
 
-class bjt(NonLinearDissipative):
+class Bjt(NonLinearDissipative):
     """
     bipolar junction transistor of NPN type according to on Ebers-Moll model.
 
@@ -264,7 +264,7 @@ transistor#Ebers.E2.80.93Moll_model
                                       list(zbjt) + list(zR), **kwargs)
 
 
-class triode(NonLinearDissipative):
+class Triode(NonLinearDissipative):
     """
     Usage
     -----

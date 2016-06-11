@@ -341,7 +341,7 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
             '_graph'
         plot(self.graph, save=fig_name)
 
-    def plot_powerBal(self, imin=0, imax=None):
+    def plot_powerbal(self, imin=0, imax=None):
         """
         Plot the power balance between imin and imax
         """
@@ -368,7 +368,7 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
                     'maintitle': r'Power balance'}
         singleplot(datax, datay, **plotopts)
 
-    def plot_variables(self, var_list, imin=0, imax=None):
+    def plot_data(self, var_list, imin=0, imax=None):
         """
         Plot each phs.seq_'var'['ind'] in var_list = [(var1, ind1), (...)]
         """

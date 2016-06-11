@@ -5,6 +5,9 @@ Created on Fri Jun 10 12:45:31 2016
 @author: Falaize
 """
 
+# path to latex compiler
+compiler_path = ':/usr/texbin'
+
 # author for latex exports
 authors = ['Antoine Falaize', 'John Doe']
 affiliations = [r'Project-team S3\footnote{\url{http://s3.ircam.fr}}, \\' +

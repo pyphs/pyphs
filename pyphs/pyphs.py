@@ -98,6 +98,17 @@ got %s' % type(label)
 
     ###########################################################################
 
+    def __add__(phs1, phs2):
+        label = phs1.label
+        path = phs1.path
+        phs = PortHamiltonianObject(label=label, path=path)
+        for attr in ['symbs', 'exprs', 'struc', 'graph']:
+            sumattrs = getattr(phs1, attr) + getattr(phs2, attr)
+            setattr(phs, attr, sumattrs)
+        return phs
+
+    ###########################################################################
+
     def __getitem__(self, n):
         """
         Return 'n'-th element in structure 'a=J.b', ie. a[n], b[n] and J[n,:].
@@ -126,33 +137,6 @@ got %s' % type(label)
         Return n'th row of structure matrix J
         """
         return self.struc.J[n, :]
-
-    def labels(self):
-        """
-        Return a list of edges labels
-        """
-        labels = list(self.symbs.x) + \
-            list(self.symbs.w) + \
-            list(self.symbs.y) + \
-            +list(self.symbs.cy)
-        return [str(el) for el in labels]
-
-    def get_label(self, n):
-        """
-        return label of edge n
-        """
-        return self.labels[n]
-
-    ###########################################################################
-
-    def __add__(phs1, phs2):
-        label = phs1.label
-        path = phs1.path
-        phs = PortHamiltonianObject(label=label, path=path)
-        for attr in ['symbs', 'exprs', 'struc', 'graph']:
-            sumattrs = getattr(phs1, attr) + getattr(phs2, attr)
-            setattr(phs, attr, sumattrs)
-        return phs
 
     ###########################################################################
 
@@ -187,6 +171,8 @@ got %s' % type(label)
         self.graph._perform_analysis()
         self.graph.analysis.build_phs(self)
 
+    ###########################################################################
+
     def build_simulation(self, config=None, sequ=None, seqp=None,
                          nt=None, x0=None):
         """
@@ -213,7 +199,12 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         """
         self.simulation.process()
 
+    ###########################################################################
+
     def apply_subs(self, subs=None):
+        """
+        replace all instances of key by value for each key:value in self.subs
+        """
         if subs is None:
             subs = {}
         subs.update(self.symbs.subs)
@@ -240,20 +231,7 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
             setattr(self.exprs, name, attr)
         self.struc.J = self.struc.J.subs(subs)
 
-    def apply_connectors(phs):
-        """
-        Effectively connect inputs and outputs defined in phs.connectors.
-        """
-        import sympy as sp
-        J = phs.J
-        nxwy = phs.nx() + phs.nw() + phs.ny()
-        switch_list = [connector['alpha'] * sp.Matrix([[0, 1], [-1, 0]])
-                       for connector in phs.connectors]
-        Mswitch = sp.diag(*switch_list)
-        G_connectors = sp.Matrix(J[:nxwy, nxwy:])
-        J_connectors = G_connectors * Mswitch * G_connectors.T
-        J = J[:nxwy, :nxwy] + J_connectors
-        phs.addStructure(J=J)
+    ###########################################################################
 
     def add_storages(self, x, H):
         """
@@ -350,7 +328,7 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
             p = (p, )
         self.symbs.p = tuple(list(self.symbs.p) + list(p))
 
-#######################################################################
+    ###########################################################################
 
     def plot_graph(self):
         """
@@ -399,8 +377,6 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         pp.update(plot_properties)
         singleplot(datax, datay, **pp)
 
-        #######################################################################
-
     def plot_variables(self, var_list,
                        imin=0, imax=None, plot_properties=None):
         """
@@ -435,18 +411,47 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         pp.update(plot_properties)
         multiplot(datax, datay, **pp)
 
-###############################################################################
+    ###########################################################################
 
     def export_latex(self):
+        """
+        export latex description of the system
+        """
         from generation.codelatex.latex import Latex
         latex = Latex(self)
         latex.export()
 
+    ###########################################################################
 
-def nice_label(var, ind):
-    if var in ('dxHd', 'dxH'):
-        return r'$\overline{\nabla}\mathtt{H}_'+str(ind)+r'$'
-    elif var == 'dtx':
-        return r'$\mathrm D_t \,{x}_'+str(ind)+'$'
-    else:
-        return r'$'+var+'_'+str(ind)+r'$'
+    def labels(self):
+        """
+        Return a list of edges labels
+        """
+        labels = list(self.symbs.x) + \
+            list(self.symbs.w) + \
+            list(self.symbs.y) + \
+            +list(self.symbs.cy)
+        return [str(el) for el in labels]
+
+    def get_label(self, n):
+        """
+        return label of edge n
+        """
+        return self.labels[n]
+
+    ###########################################################################
+
+    def apply_connectors(phs):
+        """
+        Effectively connect inputs and outputs defined in phs.connectors.
+        """
+        import sympy as sp
+        J = phs.J
+        nxwy = phs.nx() + phs.nw() + phs.ny()
+        switch_list = [connector['alpha'] * sp.Matrix([[0, 1], [-1, 0]])
+                       for connector in phs.connectors]
+        Mswitch = sp.diag(*switch_list)
+        G_connectors = sp.Matrix(J[:nxwy, nxwy:])
+        J_connectors = G_connectors * Mswitch * G_connectors.T
+        J = J[:nxwy, :nxwy] + J_connectors
+        phs.addStructure(J=J)

@@ -96,9 +96,8 @@ def split_linear(phs):
             # do nothing and increment counter
             nxl += 1
         else:
-            if not nxl == phs.dims.w()-1:
-                # move the element at the end of states vector
-                move_stor(phs, nxl, phs.dims.x())
+            # move the element at the end of states vector
+            move_stor(phs, nxl, phs.dims.x()-1)
     # number of linear components
     setattr(phs.dims, 'xl', nxl)
 
@@ -117,10 +116,8 @@ def split_linear(phs):
             # do nothing and increment counter
             nwl += 1
         else:
-            # if not last element
-            if not nwl == phs.dims.w()-1:
-                # move the element to end of dissipation variables vector
-                move_diss(phs, nwl, phs.dims.w())
+            # move the element to end of dissipation variables vector
+            move_diss(phs, nwl, phs.dims.w()-1)
 
     # number of linear components
     setattr(phs.dims, 'wl', nwl)

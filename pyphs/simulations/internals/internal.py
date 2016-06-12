@@ -115,7 +115,6 @@ def init_args(internal, phs):
            'p': phs.symbs.p}
 
     for name in dic:
-        print name
         _, inds = find(dic[name], phs.symbs.args())
         setattr(internal, name + '_symbs', dic[name])
         setattr(internal, name, get_generator(inds))

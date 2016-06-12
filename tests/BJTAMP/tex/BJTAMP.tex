@@ -38,7 +38,7 @@
 \hline
 line & label & dictionary.component & nodes &     parameters \\ \hline
 %
-$\ell_1$ & IN & electronics.source & ('A', 'ref') & $\left\{ 
+$\ell_1$ & IN & electronics.source & ('IN', 'ref') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -46,7 +46,7 @@ type & voltage
 \\
 \end{tabular}\right.$
  \\
-$\ell_2$ & Cin & electronics.capacitor & ('A', 'B') & $\left\{ 
+$\ell_2$ & Cin & electronics.capacitor & ('IN', '5') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -54,15 +54,15 @@ C & ('Cin', 1e-05)
 \\
 \end{tabular}\right.$
  \\
-$\ell_3$ & Rbc & electronics.resistor & ('B', 'C') & $\left\{ 
+$\ell_3$ & Rbc & electronics.resistor & ('5', '6') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
-R & ('Rcd', 270000.0)
+R & ('Rbc', 270000.0)
 \\
 \end{tabular}\right.$
  \\
-$\ell_4$ & BJT & electronics.bjt & ('B', 'C', 'ref') & $\left\{ 
+$\ell_4$ & BJT & electronics.bjt & ('5', '6', 'ref') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -84,7 +84,7 @@ Re & ('Re', 0.4683)
 \\
 \end{tabular}\right.$
  \\
-$\ell_5$ & Rcd & electronics.resistor & ('C', 'D') & $\left\{ 
+$\ell_5$ & Rcd & electronics.resistor & ('vcc', '6') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -92,7 +92,7 @@ R & ('Rcd', 1000.0)
 \\
 \end{tabular}\right.$
  \\
-$\ell_6$ & VCC & electronics.source & ('D', 'ref') & $\left\{ 
+$\ell_6$ & VCC & electronics.source & ('vcc', 'ref') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -100,7 +100,7 @@ type & voltage
 \\
 \end{tabular}\right.$
  \\
-$\ell_7$ & Cout & electronics.capacitor & ('C', 'F') & $\left\{ 
+$\ell_7$ & Cout & electronics.capacitor & ('OUT', '6') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -108,7 +108,7 @@ C & ('Cout', 1e-05)
 \\
 \end{tabular}\right.$
  \\
-$\ell_8$ & OUT & electronics.source & ('F', 'ref') & $\left\{ 
+$\ell_8$ & OUT & electronics.source & ('OUT', 'ref') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -156,7 +156,7 @@ State variable $ \mathbf{x} = \left(\begin{array}{c}x_{\mathrm{Cin}}\\x_{\mathrm
 %
 \\
 %
-Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{Rcd}}\\w_{\mathrm{BJTbe}}\\w_{\mathrm{BJTbc}}\\w_{\mathrm{BJTrc}}\\w_{\mathrm{BJTre}}\\w_{\mathrm{BJTrb}}\\w_{\mathrm{Rbc}}\end{array}\right) ; $ 
+Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{Rcd}}\\w_{\mathrm{BJTbe}}\\w_{\mathrm{BJTbc}}\\w_{\mathrm{BJTre}}\\w_{\mathrm{BJTrc}}\\w_{\mathrm{BJTrb}}\\w_{\mathrm{Rbc}}\end{array}\right) ; $ 
 %
 \\
 %
@@ -179,11 +179,11 @@ Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\fr
 %
 \\
 %
-Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\frac{w_{\mathrm{Rcd}}}{\mathrm{Rcd}}\\- \mathrm{Is} \cdot \left(e^{\frac{w_{\mathrm{BJTbc}}}{\mathrm{Vt} \cdot \mathrm{mu}}} - 1\right) - 1.0 \cdot 10^{-9} \cdot w_{\mathrm{BJTbc}} + \frac{1}{\mathrm{betaF}} \cdot \left(\mathrm{betaF} + 1\right) \cdot \left(\mathrm{Is} \cdot \left(e^{\frac{w_{\mathrm{BJTbe}}}{\mathrm{Vt} \cdot \mathrm{mu}}} - 1\right) + 1.0 \cdot 10^{-9} \cdot w_{\mathrm{BJTbe}}\right)\\- \mathrm{Is} \cdot \left(e^{\frac{w_{\mathrm{BJTbe}}}{\mathrm{Vt} \cdot \mathrm{mu}}} - 1\right) - 1.0 \cdot 10^{-9} \cdot w_{\mathrm{BJTbe}} + \frac{1}{\mathrm{betaR}} \cdot \left(\mathrm{betaR} + 1\right) \cdot \left(\mathrm{Is} \cdot \left(e^{\frac{w_{\mathrm{BJTbc}}}{\mathrm{Vt} \cdot \mathrm{mu}}} - 1\right) + 1.0 \cdot 10^{-9} \cdot w_{\mathrm{BJTbc}}\right)\\\mathrm{Rc} \cdot w_{\mathrm{BJTrc}}\\\mathrm{Re} \cdot w_{\mathrm{BJTre}}\\\mathrm{Rb} \cdot w_{\mathrm{BJTrb}}\\\mathrm{Rcd} \cdot w_{\mathrm{Rbc}}\end{array}\right) ; $ 
+Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\frac{w_{\mathrm{Rcd}}}{\mathrm{Rcd}}\\- \mathrm{Is} \cdot \left(e^{\frac{w_{\mathrm{BJTbc}}}{\mathrm{Vt} \cdot \mathrm{mu}}} - 1\right) - 1.0 \cdot 10^{-9} \cdot w_{\mathrm{BJTbc}} + \frac{1}{\mathrm{betaF}} \cdot \left(\mathrm{betaF} + 1\right) \cdot \left(\mathrm{Is} \cdot \left(e^{\frac{w_{\mathrm{BJTbe}}}{\mathrm{Vt} \cdot \mathrm{mu}}} - 1\right) + 1.0 \cdot 10^{-9} \cdot w_{\mathrm{BJTbe}}\right)\\- \mathrm{Is} \cdot \left(e^{\frac{w_{\mathrm{BJTbe}}}{\mathrm{Vt} \cdot \mathrm{mu}}} - 1\right) - 1.0 \cdot 10^{-9} \cdot w_{\mathrm{BJTbe}} + \frac{1}{\mathrm{betaR}} \cdot \left(\mathrm{betaR} + 1\right) \cdot \left(\mathrm{Is} \cdot \left(e^{\frac{w_{\mathrm{BJTbc}}}{\mathrm{Vt} \cdot \mathrm{mu}}} - 1\right) + 1.0 \cdot 10^{-9} \cdot w_{\mathrm{BJTbc}}\right)\\\mathrm{Re} \cdot w_{\mathrm{BJTre}}\\\mathrm{Rc} \cdot w_{\mathrm{BJTrc}}\\\mathrm{Rb} \cdot w_{\mathrm{BJTrb}}\\\mathrm{Rbc} \cdot w_{\mathrm{Rbc}}\end{array}\right) ; $ 
 %
 \\
 %
-Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{ccccccc}\frac{1}{\mathrm{Rcd}} & 0 & 0 & 0 & 0 & 0 & 0\\0 & \frac{1}{\mathrm{betaF}} \cdot \left(\mathrm{betaF} + 1\right) \cdot \left(\frac{\mathrm{Is} \cdot e^{\frac{w_{\mathrm{BJTbe}}}{\mathrm{Vt} \cdot \mathrm{mu}}}}{\mathrm{Vt} \cdot \mathrm{mu}} + 1.0 \cdot 10^{-9}\right) & - \frac{\mathrm{Is} \cdot e^{\frac{w_{\mathrm{BJTbc}}}{\mathrm{Vt} \cdot \mathrm{mu}}}}{\mathrm{Vt} \cdot \mathrm{mu}} - 1.0 \cdot 10^{-9} & 0 & 0 & 0 & 0\\0 & - \frac{\mathrm{Is} \cdot e^{\frac{w_{\mathrm{BJTbe}}}{\mathrm{Vt} \cdot \mathrm{mu}}}}{\mathrm{Vt} \cdot \mathrm{mu}} - 1.0 \cdot 10^{-9} & \frac{1}{\mathrm{betaR}} \cdot \left(\mathrm{betaR} + 1\right) \cdot \left(\frac{\mathrm{Is} \cdot e^{\frac{w_{\mathrm{BJTbc}}}{\mathrm{Vt} \cdot \mathrm{mu}}}}{\mathrm{Vt} \cdot \mathrm{mu}} + 1.0 \cdot 10^{-9}\right) & 0 & 0 & 0 & 0\\0 & 0 & 0 & \mathrm{Rc} & 0 & 0 & 0\\0 & 0 & 0 & 0 & \mathrm{Re} & 0 & 0\\0 & 0 & 0 & 0 & 0 & \mathrm{Rb} & 0\\0 & 0 & 0 & 0 & 0 & 0 & \mathrm{Rcd}\end{array}\right) ; $ 
+Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{ccccccc}\frac{1}{\mathrm{Rcd}} & 0 & 0 & 0 & 0 & 0 & 0\\0 & \frac{1}{\mathrm{betaF}} \cdot \left(\mathrm{betaF} + 1\right) \cdot \left(\frac{\mathrm{Is} \cdot e^{\frac{w_{\mathrm{BJTbe}}}{\mathrm{Vt} \cdot \mathrm{mu}}}}{\mathrm{Vt} \cdot \mathrm{mu}} + 1.0 \cdot 10^{-9}\right) & - \frac{\mathrm{Is} \cdot e^{\frac{w_{\mathrm{BJTbc}}}{\mathrm{Vt} \cdot \mathrm{mu}}}}{\mathrm{Vt} \cdot \mathrm{mu}} - 1.0 \cdot 10^{-9} & 0 & 0 & 0 & 0\\0 & - \frac{\mathrm{Is} \cdot e^{\frac{w_{\mathrm{BJTbe}}}{\mathrm{Vt} \cdot \mathrm{mu}}}}{\mathrm{Vt} \cdot \mathrm{mu}} - 1.0 \cdot 10^{-9} & \frac{1}{\mathrm{betaR}} \cdot \left(\mathrm{betaR} + 1\right) \cdot \left(\frac{\mathrm{Is} \cdot e^{\frac{w_{\mathrm{BJTbc}}}{\mathrm{Vt} \cdot \mathrm{mu}}}}{\mathrm{Vt} \cdot \mathrm{mu}} + 1.0 \cdot 10^{-9}\right) & 0 & 0 & 0 & 0\\0 & 0 & 0 & \mathrm{Re} & 0 & 0 & 0\\0 & 0 & 0 & 0 & \mathrm{Rc} & 0 & 0\\0 & 0 & 0 & 0 & 0 & \mathrm{Rb} & 0\\0 & 0 & 0 & 0 & 0 & 0 & \mathrm{Rbc}\end{array}\right) ; $ 
 %
 \\
 %
@@ -201,6 +201,8 @@ Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(
 parameter & value (SI)
 \\ \hline
 betaF :& 294.3
+\\
+Rbc :& 270000.0
 \\
 betaR :& 7.946
 \\
@@ -227,7 +229,7 @@ Rc :& 0.85
 %
 \end{center}
 %
-$ \mathbf{J} = \left(\begin{array}{cccccccccccc}0 & 0 & 1.0 & 1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1.0\\0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1.0\\-1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1.0 & 1.0 & -1.0 & 0\\-1.0 & 0 & 0 & 0 & 0 & 0 & 1.0 & -1.0 & 0 & 1.0 & 0 & 0\\0 & 0 & 0 & 0 & 0 & 1.0 & 0 & -1.0 & 1.0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 1.0 & 1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 1.0 & 0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 1.0\\0 & 0 & -1.0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1.0\\0 & 0 & 1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\-1.0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & -1.0 & 1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{J} = \left(\begin{array}{cccccccccccc}0 & 0 & -1.0 & 1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1.0\\0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1.0\\1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1.0 & -1.0 & 1.0 & 0\\-1.0 & 0 & 0 & 0 & 0 & 1.0 & 0 & -1.0 & 0 & 1.0 & 0 & 0\\0 & 0 & 0 & 0 & 0 & 0 & 1.0 & -1.0 & 1.0 & 0 & 0 & 0\\0 & 0 & 0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 1.0 & 1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & -1.0 & 0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 1.0\\0 & 0 & 1.0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1.0\\0 & 0 & -1.0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\-1.0 & 1.0 & 0 & 0 & 0 & 0 & 0 & 0 & -1.0 & 1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %

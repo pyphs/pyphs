@@ -39,37 +39,37 @@ for implicite functions.
             internal.set_varsnl(varsnl)
         return iter_solver
 
-    def symbolic_inverse(self, internal, phs):
+    def partial(self, internal, phs):
 
         jac_impfunc = phs.exprs.jac_impfunc
         phs.exprs.setexpr('ijac_impfunc', inverse(jac_impfunc))
 
         def iter_solver():
             # eval args
-            varnl = internal.varnl()
+            varsnl = internal.varsnl()
             impfunc = internal.impfunc()
             ijac_impfunc = internal.ijac_impfunc()
             # build updates for args
-            v = numpy.matrix(varnl).T - ijac_impfunc * impfunc
+            v = numpy.matrix(varsnl).T - ijac_impfunc * numpy.matrix(impfunc).T
             varnl = v.T.tolist()[0]
             internal.set_varnl(varnl)
 
         return iter_solver
 
-    def symbolic_iteration(self, internal, phs):
-        impfunc = phs.impfunc
-        varnl = numpy.Matrix(internal.varnl_symbs)
-        jac_impfunc = phs.jac_impfunc
+    def full(self, internal, phs):
+        impfunc = sp.Matrix(phs.exprs.impfunc)
+        varsnl = sp.Matrix(phs.exprs.varsnl)
+        jac_impfunc = phs.exprs.jac_impfunc
         ijac_impfunc = inverse(jac_impfunc)
-        update_varnl = list(varnl - ijac_impfunc * impfunc)
+        update_varnl = list(varsnl - ijac_impfunc * impfunc)
         attr = 'update_varnl'
         phs.exprs.setexpr(attr, update_varnl)
 
         # def update args function
         def iter_solver():
             # eval args
-            varnl = getattr(internal, attr)()
-            internal.set_varnl(varnl)
+            varsnl = getattr(internal, attr)()
+            internal.set_varsnl(varsnl)
 
         return iter_solver
 
@@ -212,12 +212,16 @@ def _init_updates(phs, fs):
     expr_wl = _build_eval(phs, 'wl')
     phs.exprs.setexpr('wl', expr_wl)
     expr_varsl = expr_dxl + expr_wl
+    phs.exprs.setexpr('varsl', list(phs.symbs.dx()[:phs.dims.xl]) +
+                      list(phs.symbs.w[:phs.dims.wl]))
     phs.exprs.setexpr('eval_varsl', expr_varsl)
 
     expr_dxnl = _build_eval(phs, 'xnl')
     phs.exprs.setexpr('dxnl', expr_dxnl)
     expr_wnl = _build_eval(phs, 'wnl')
     phs.exprs.setexpr('wnl', expr_wnl)
+    phs.exprs.setexpr('varsnl', list(phs.symbs.dx()[phs.dims.xl:]) +
+                      list(phs.symbs.w[phs.dims.wl:]))
 
     if phs.dims.xnl() + phs.dims.wnl() > 0:
         mat_dxnl = sp.Matrix(phs.symbs.dx()[phs.dims.xl:])

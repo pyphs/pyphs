@@ -86,11 +86,17 @@ got %s' % type(label)
         from symbolics.symbols import Symbols
         setattr(self, 'symbs', Symbols())
 
-        from symbolics.expressions import Expressions
-        setattr(self, 'exprs', Expressions())
+        from symbolics.structures.dimensions import Dimensions
+        setattr(self, 'dims', Dimensions(self))
+
+        from symbolics.structures.indices import Indices
+        setattr(self, 'inds', Indices(self))
 
         from symbolics.structures.structure import Structure
         setattr(self, 'struc', Structure(self))
+
+        from symbolics.expressions import Expressions
+        setattr(self, 'exprs', Expressions())
 
         from graphs.graph import Graph
         setattr(self, 'graph', Graph())

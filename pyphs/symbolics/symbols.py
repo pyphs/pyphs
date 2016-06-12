@@ -5,7 +5,12 @@ Created on Fri Jun  3 14:22:39 2016
 @author: Falaize
 """
 
+from pyphs.misc.tools import geteval
+
 ##############################################################################
+
+# names of arguments for functions evaluation
+_args_names = ('x', 'dx', 'w', 'u', 'p')
 
 
 class Symbols:
@@ -41,6 +46,13 @@ class Symbols:
         for x in self.x:
             symbs += (symbols('d'+str(x)), )
         return symbs
+
+    def args(self):
+        args = []
+        for name in _args_names:
+            symbs = geteval(self, name)
+            args += symbs
+        return args
 
     def _setsymb(self, name, list_symbs):
         if name not in self._names:

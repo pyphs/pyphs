@@ -6,17 +6,6 @@ Created on Fri Jun  3 11:26:41 2016
 """
 
 
-def geteval(obj, attr):
-    """
-    if attr is function, return attr evaluation with no arguments, else attr.
-    """
-    elt = getattr(obj, attr)
-    if hasattr(elt, '__call__'):
-        return elt()
-    else:
-        return elt
-
-
 def lambdify(args, expr):
     """
     call to lambdify with chosen options

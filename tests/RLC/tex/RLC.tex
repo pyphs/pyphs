@@ -38,13 +38,37 @@
 \hline
 line & label & dictionary.component & nodes &     parameters \\ \hline
 %
-$\ell_1$ & IN & electronics.source & ('A', 'ref') & {'type': 'voltage'}
+$\ell_1$ & IN & electronics.source & ('A', 'ref') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+type & voltage
+\\
+\end{tabular}\right.$
  \\
-$\ell_2$ & R1 & electronics.resistor & ('A', 'B') & {'R': ('R1', 1000.0)}
+$\ell_2$ & R1 & electronics.resistor & ('A', 'B') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+R & ('R1', 1000.0)
+\\
+\end{tabular}\right.$
  \\
-$\ell_3$ & L & electronics.inductor & ('B', 'C') & {'L': ('L', 0.05)}
+$\ell_3$ & L & electronics.inductor & ('B', 'C') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+L & ('L', 0.05)
+\\
+\end{tabular}\right.$
  \\
-$\ell_4$ & C & electronics.capacitor & ('C', 'ref') & {'C': ('C', 2e-06)}
+$\ell_4$ & C & electronics.capacitor & ('C', 'ref') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+C & ('C', 2e-06)
+\\
+\end{tabular}\right.$
  \\
 \hline
 \end{tabular}
@@ -130,11 +154,11 @@ Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(
 \hline
 parameter & value (SI)
 \\ \hline
-C & 2e-06
+C :& 2e-06
 \\
-R1 & 1000.0
+R1 :& 1000.0
 \\
-L & 0.05
+L :& 0.05
 \\
 \hline
 \end{tabular}

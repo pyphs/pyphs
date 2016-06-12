@@ -118,24 +118,29 @@ got %s' % type(label)
         """
         Return 'n'-th element in structure 'a=J.b', ie. a[n], b[n] and J[n,:].
         """
-        if n < self.struc.indx()[1]:
+        if n < self.inds.x()[1]:
             name = 'x'
             func = 'dxH'
-        elif n < self.struc.indw()[1]:
+            deb = self.inds.x()[0]
+        elif n < self.inds.w()[1]:
             name = 'w'
             func = 'z'
-        elif n < self.struc.indy()[1]:
+            deb = self.inds.w()[0]
+        elif n < self.inds.y()[1]:
             name = 'y'
             func = 'u'
+            deb = self.inds.y()[0]
         else:
             name = 'cy'
             func = 'cu'
-        symb = getattr(self.symbs, name)
+            deb = self.inds.cy()[0]
+        symb = getattr(self.symbs, name)[n-deb]
         if func in ('u', 'cu'):
-            expr = getattr(self.symbs, func)
+            expr = getattr(self.symbs, func)[n-deb]
         else:
-            expr = getattr(self.exprs, func)
-        return symb, expr, self._struc_item(n)
+            expr = getattr(self.exprs, func)[n-deb]
+        mat = self._struc_item(n)
+        return symb, expr, mat
 
     def _struc_item(self, n):
         """
@@ -143,6 +148,17 @@ got %s' % type(label)
         """
         return self.struc.J[n, :]
 
+    def _getblock(self, indices):
+        import sympy
+        symbs = tuple()
+        exprs = tuple()
+        mats = sympy.zeros(0, self.dims.tot())
+        for n in indices:
+            symb, expr, mat = self.__getitem__(n)
+            symbs += (symb, )
+            exprs += (expr, )
+            mats = sympy.Matrix.vstack(mats, mat)
+        return symbs, exprs, mats
     ###########################################################################
 
     def symbols(self, obj):

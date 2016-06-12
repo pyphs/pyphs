@@ -5,7 +5,7 @@ Created on Fri Jun  3 14:29:46 2016
 @author: Falaize
 """
 import sympy
-
+from dimensions import names_dims
 
 class Structure:
     """
@@ -16,24 +16,34 @@ class Structure:
     * setJxx(): set bloc (x, x) of J
     """
     def __init__(self, phs):
-        self._names = phs.dims._names
+        self._names = tuple()
         self.J = sympy.zeros(0)
+        setattr(self,
+                '_build_get_mat',
+                lambda mat: _build_get_mat(phs, self, mat))
+        setattr(self,
+                '_build_set_mat',
+                lambda mat: _build_set_mat(phs, self, mat))
         # define set and get for all structure matrices
         matrices = set()
-        for vari in phs.dims._names:
+        for vari in names_dims:
             for varj in phs.dims._names:
                 matrices = matrices.union({('J'+vari+varj, (vari, varj))})
         for mat in matrices:
-            setattr(self, mat[0], _build_get_mat(phs, self, mat))
-            setattr(self, 'set_'+mat[0], _build_set_mat(phs, self, mat))
+            self._set_block(mat[0], mat[1])
+
+    def _set_block(self, name, dims_names):
+        self._names += (name, )
+        setattr(self, name, self._build_get_mat(dims_names))
+        setattr(self, 'set_'+name, self._build_set_mat(dims_names))
 
     def __add__(struc1, struc2):
         """
         concatenate structures 1 and 2 J = block_diag(J1, J2)
         """
         struc = struc1
-        for vari in struc._names:
-            for varj in struc._names:
+        for vari in names_dims:
+            for varj in names_dims:
                 Jij1 = getattr(struc1, 'J'+vari+varj)()
                 Jij2 = getattr(struc2, 'J'+vari+varj)()
                 Jij1 = sympy.diag(Jij1, Jij2)
@@ -41,12 +51,12 @@ class Structure:
         return struc
 
 
-def _build_get_mat(phs, struct, mat):
+def _build_get_mat(phs, struct, dims_names):
     """
     mat is ('M', ('m', 'n')) with M the matrix argument to define and 'x' and \
 'y' the variables that corresponds to block of struct.J
     """
-    namei, namej = mat[1]
+    namei, namej = dims_names
 
     def get_mat():
         """
@@ -58,12 +68,12 @@ def _build_get_mat(phs, struct, mat):
     return get_mat
 
 
-def _build_set_mat(phs, struct, mat):
+def _build_set_mat(phs, struct, dims_names):
     """
     mat is ('M', ('m', 'n')) with M the matrix argument to define and 'x' and \
 'y' the variables that corresponds to block of struct.J
     """
-    vari, varj = mat[1]
+    vari, varj = dims_names
 
     def set_mat(val):
         """

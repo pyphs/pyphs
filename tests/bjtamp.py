@@ -37,11 +37,11 @@ def samplerate():
     """
     global sample rate
     """
-    return 2*192e3
+    return 96e3
 
 
-def write_netlist(Cin=10e-6, Cout=10e-6, Is=1e-14, Vt=26e-3,
-                  betaR=4, betaF=300, mu=1.1, Rb=20, Rc=0.1, Re=0.1, Rbc=270e3,
+def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
+                  betaR=7.946, betaF=294.3, mu=1.006, Rb=1, Rc=0.85, Re=0.4683, Rbc=270e3,
                   Rcd=1e3):
     """
     Write netlist for RLC circuit
@@ -147,9 +147,8 @@ def input_sequence(amp=0.2, f0=1e3, ndeb=int(0.3*samplerate())):
                           A=amp, f0=f0, fs=fs, ndeb=ndeb, attack_ratio=1)
 
     nt = ndeb+nsin
-    attak = 1e-3*samplerate()/nt
     vcc = signalgenerator(which="step", n=nt, ramp_on=False, A=9.,
-                          attack_ratio=attak)
+                          attack_ratio=0)
 
     def genu():
         for s, v in zip(sig, vcc):
@@ -160,7 +159,8 @@ def input_sequence(amp=0.2, f0=1e3, ndeb=int(0.3*samplerate())):
 
 def simulation(phs, sequ, nt):
     config = {'fs': samplerate(),
-              'split': True}
+              'split': True,
+              'maxit': 100}
     phs.build_simulation(config=config, sequ=sequ, nt=nt)
     phs.run_simulation()
 

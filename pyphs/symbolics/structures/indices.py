@@ -12,28 +12,36 @@ class Indices:
     Class that serves as a container for indices of arguments
     """
     def __init__(self, phs):
-        for name in phs.dims._names:
-            inds = _inds_in_all(phs, name)
-            setattr(self, name, inds)
-        setattr(self, name, inds)
 
-def _inds_in_all(phs, name):
+        def _set_inds(names):
+            """
+            Add indices from list of list of names in dims with \
+    sum(dims.name())=dims.tot()
+            """
+            for name in names:
+                inds = _inds_in_all(phs, names, name)
+                setattr(self, name, inds)
+
+        setattr(self, '_set_inds', _set_inds)
+
+        self._set_inds(phs.dims._names)
+
+
+def _inds_in_all(phs, names, name):
     """
     return position of deb and end of name in structure
     """
-
     def inds():
         """
-        get indices deb and end of block """ + name
-        names = list(phs.dims._names)
-        iter_name = names.pop(0)
+        get indices deb and end of a block"""
         deb = 0
-        while iter_name != name:
-            deb += geteval(phs.dims, iter_name)
-            iter_name = names.pop(0)
-        end = deb + geteval(phs.dims, iter_name)
+        for current_name in names:
+            if current_name != name:
+                deb += geteval(phs.dims, current_name)
+            else:
+                end = deb + geteval(phs.dims, current_name)
+                break
         return (deb, end)
-
     return inds
 
 ##############################################################################

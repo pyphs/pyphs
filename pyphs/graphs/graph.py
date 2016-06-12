@@ -46,7 +46,9 @@ port-Hamiltonian systems.
             line = self.netlist[l]
             dic_name = 'pyphs.dictionary' + '.' + line['dictionary']
             dic = import_module(dic_name)
-            component = getattr(dic, line['component'])
+            name = line['component'].lower()
+            klass = name[0].upper() + name[1:]
+            component = getattr(dic, klass)
             component_phs = component(line['label'],
                                       line['nodes'],
                                       **line['arguments'])

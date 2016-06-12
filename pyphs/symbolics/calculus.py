@@ -73,8 +73,8 @@ def hessian(scalar_func, vars_, dosimplify=True):
 
         gradient of H with hess = Jac(Grad(H))
     """
-    hess = jacobian(gradient(scalar_func, vars_, dosimplify),
-                    vars_, dosimplify)
+    grad = gradient(scalar_func, vars_, dosimplify)
+    hess = jacobian(grad, vars_, dosimplify)
     return hess
 
 

@@ -139,11 +139,10 @@ def build_graph(phs):
     phs.build_from_netlist(netlist_filename())
 
 
-def input_sequence(amp=2, f0=1e3):
+def input_sequence(amp=0.2, f0=1e3, ndeb=int(0.3*samplerate())):
     from pyphs.misc.signals.synthesis import signalgenerator
     fs = samplerate()
     nsin = int(10.*fs/f0)
-    ndeb = int(1*fs)
     SigIn = signalgenerator(which="sin", n=nsin, ramp_on=False,
                             A=amp, f0=f0, fs=fs, ndeb=ndeb, attack_ratio=1)
 
@@ -160,9 +159,6 @@ def simulation(phs, sequ, nt):
     phs.build_simulation(config=config, sequ=sequ, nt=nt)
     phs.run_simulation()
     phs.plot_powerBal()
-    phs.plot_powerBal(imin=int(1*samplerate()))
-    phs.plot_variables([('u', 0), ('yd', 2)])
-    phs.plot_variables([('u', 0), ('yd', 2)], imin=int(1*samplerate()))
 
 
 if __name__ is '__main__':
@@ -173,6 +169,10 @@ if __name__ is '__main__':
     from pyphs.symbolics.structures.tools import move_port
     move_port(phs, phs.symbs.u.index(phs.symbols('uIN')), 0)
     move_port(phs, phs.symbs.u.index(phs.symbols('uOUT')), 2)
-    sequ, nt = input_sequence()
+    ndeb = int(0.3*samplerate())
+    sequ, nt = input_sequence(ndeb=ndeb)
     phs.export_latex()
     simulation(phs, sequ, nt)
+    phs.plot_powerbal(imin=ndeb)
+    phs.plot_data([('u', 0), ('yd', 2)])
+    phs.plot_data([('u', 0), ('yd', 2)], imin=ndeb)

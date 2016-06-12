@@ -40,7 +40,7 @@ def samplerate():
     return 48e3
 
 
-def write_netlist(C=2e-10, Is=1e-9, v0=25e-3):
+def write_netlist(C=1e-12, Is=1e-9, v0=25e-3):
     """
     Write netlist for RLC circuit
     """
@@ -91,7 +91,7 @@ def build_graph(phs):
     phs.build_from_netlist(netlist_filename())
 
 
-def input_sequence(amp=50., f0=100.):
+def input_sequence(amp=5., f0=100.):
     from pyphs.misc.signals.synthesis import signalgenerator
     fs = samplerate()
     nsin = int(10*fs/f0)
@@ -109,6 +109,8 @@ def simulation(phs, sequ, nt):
     config = {'fs': samplerate()}
     phs.build_simulation(config=config, sequ=sequ, nt=nt)
     phs.run_simulation()
+    phs.plot_powerbal()
+    phs.plot_data([('u', 0), ('x', 0), ('w', 0)])
 
 
 if __name__ is '__main__':
@@ -120,6 +122,5 @@ if __name__ is '__main__':
     phs.build_exprs()
     phs.build_nums()
     phs.export_latex()
+    print phs.struc.J
     simulation(phs, sequ, nt)
-    phs.plot_powerBal()
-    phs.plot_variables([('u', 0), ('x', 0), ('w', 0)])

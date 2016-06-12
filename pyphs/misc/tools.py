@@ -7,6 +7,18 @@ Created on Sat Mar  5 13:53:43 2016
 import numpy
 
 
+def geteval(obj, attr):
+    """
+    if getattr(obj, attr) is function, return evaluation with no arguments, \
+else return value.
+    """
+    elt = getattr(obj, attr)
+    if hasattr(elt, '__call__'):
+        return elt()
+    else:
+        return elt
+
+
 def norm(lis):
     """
     return the norm of a vector given as a list

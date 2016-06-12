@@ -5,11 +5,8 @@ Created on Fri Jun  3 15:27:55 2016
 @author: Falaize
 """
 
-from tools import geteval, lambdify, find
+from tools import lambdify, find
 from pyphs.symbolics.tools import free_symbols
-
-# names of arguments for functions evaluation
-_args_names = ('x', 'dx', 'w', 'u', 'p')
 
 
 class Numeric:
@@ -17,38 +14,26 @@ class Numeric:
     Class that serves as a container for all numerical functions
     """
     def __init__(self, phs):
-
-        # names of arguments for functions evaluation
-        self.args_names = _args_names
-        # lists all arguments
-        args = []
-        for name in self.args_names:
-            symbs = geteval(phs.symbs, name)
-            args += list(symbs)
-        # stores args as tuple
-        self.args = tuple(args)
-        # lists all functions
-        self.funcs_names = phs.exprs._names
         # for each function, subs, stores func args, args_inds and lambda func
-        for name in self.funcs_names:
+        for name in phs.exprs._names:
             expr = getattr(phs.exprs, name)
             if hasattr(expr, 'index'):
                 expr = list(expr)
-                for i in range(len(expr)):
-                    expr[i] = expr[i].subs(phs.symbs.subs)
+                for i, expr_i in enumerate(expr):
+                    expr[i] = expr_i.subs(phs.symbs.subs)
             else:
                 expr = expr.subs(phs.symbs.subs)
-            func, args, inds = self._expr_to_numerics(expr)
+            func, args, inds = self._expr_to_numerics(expr, phs.symbs.args())
             setattr(self, name, func)
-            setattr(self, 'args_'+name, args)
-            setattr(self, 'inds_'+name, inds)
+            setattr(self, name+'_args', args)
+            setattr(self, name+'_inds', inds)
 
-    def _expr_to_numerics(self, expr):
+    def _expr_to_numerics(self, expr, allargs):
         """
         get symbols in expr, and return lambdified evaluation, \
 arguments symbols and arguments position in list of all arguments
         """
         symbs = free_symbols(expr)
-        args, inds = find(symbs, self.args)
+        args, inds = find(symbs, allargs)  # args are symbs reorganized
         func = lambdify(args, expr)
         return func, args, inds

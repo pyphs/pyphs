@@ -4,7 +4,7 @@ Created on Fri Mar  4 00:24:35 2016
 
 @author: Falaize
 """
-
+import ast
 
 special_chars = ['#']
 
@@ -22,8 +22,8 @@ class Latex:
         self.path_figs = phs.paths['figures']
         self.path = phs.paths['tex']
 
-        for dim in [r'x', r'w', r'y', r'p']:
-            obj = getattr(phs, 'n'+dim)
+        for dim in list(phs.dims._names) + ['p']:
+            obj = getattr(phs.dims, dim)
             setattr(self, 'n'+dim, obj())
 
         for var in [r'x', r'w', r'u', r'y', r'p', 'subs']:
@@ -227,7 +227,8 @@ class Latex:
                 latex_comp = str(comp['component'])
                 latex_label = str(comp['label'])
                 latex_nodes = str(comp['nodes'])
-                latex_args = str(comp['arguments'])
+                latex_args = r'$\left\{ ' + dic2array(comp['arguments']) +\
+                    r'\right.$'
                 str_table = r'{} & {} & {}.{} & {} & {}'.format(latex_line,
                                                                 latex_label,
                                                                 latex_dic,
@@ -330,10 +331,24 @@ labels[1], then each line is made of columns key and dic[key] for each dic.keys
     string += l_keys + r" & " + l_vals + cr(0) + r"\\ \hline" + cr(0)
     for k in dic.keys():
         v = dic[k]
-        string += str(k) + r" & " + str(v) + cr(0) + r"\\" + cr(0)
+        string += str(k) + r" :& " + str(v) + cr(0) + r"\\" + cr(0)
     string += r"\hline" + cr(0)
     string += r"\end{tabular}" + cr(1)
     string += r"\end{center}"
+    return string
+
+
+def dic2array(dic):
+    """
+    Return a latex table with two columns. Columns labels are labels[0] and \
+labels[1], then each line is made of columns key and dic[key] for each dic.keys
+    """
+    string = cr(1)
+    string += r"\begin{tabular}{ll}" + cr(1)
+    for k in dic.keys():
+        v = dic[k]
+        string += str(k) + r" & " + str(v) + cr(0) + r"\\" + cr(0)
+    string += r"\end{tabular}"
     return string
 
 

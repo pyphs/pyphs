@@ -5,6 +5,7 @@ Created on Thu Jun  9 10:22:56 2016
 @author: Falaize
 """
 from pyphs.misc.io import data_generator
+from pyphs.symbolics.symbols import _args_names
 import os
 
 
@@ -27,7 +28,7 @@ class Data:
                                            postprocess=postprocess)
             return get_seq
 
-        for name in list(phs.nums.args_names) + ['yd', 'dxHd', 'z', 'dtx']:
+        for name in list(_args_names) + ['yd', 'dxHd', 'z', 'dtx']:
             setattr(self, name, dummy_func(name))
 
     def t(self, imin=None, imax=None, decim=None):

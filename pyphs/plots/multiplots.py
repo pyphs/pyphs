@@ -147,8 +147,6 @@ subplots.
     if opts['log'] is None:
         opts['log'] = ['', ] * nplots
 
-    print opts
-
     from matplotlib.pyplot import subplots, close
     close('all')
     fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'])

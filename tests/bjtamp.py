@@ -37,7 +37,7 @@ def samplerate():
     """
     global sample rate
     """
-    return 192e3
+    return 2*192e3
 
 
 def write_netlist(Cin=10e-6, Cout=10e-6, Is=1e-14, Vt=26e-3,
@@ -143,14 +143,19 @@ def input_sequence(amp=0.2, f0=1e3, ndeb=int(0.3*samplerate())):
     from pyphs.misc.signals.synthesis import signalgenerator
     fs = samplerate()
     nsin = int(10.*fs/f0)
-    SigIn = signalgenerator(which="sin", n=nsin, ramp_on=False,
-                            A=amp, f0=f0, fs=fs, ndeb=ndeb, attack_ratio=1)
+    sig = signalgenerator(which="sin", n=nsin, ramp_on=False,
+                          A=amp, f0=f0, fs=fs, ndeb=ndeb, attack_ratio=1)
+
+    nt = ndeb+nsin
+    attak = 1e-3*samplerate()/nt
+    vcc = signalgenerator(which="step", n=nt, ramp_on=False, A=9.,
+                          attack_ratio=attak)
 
     def genu():
-        for el in SigIn:
-            yield [el, 9., 0.]
+        for s, v in zip(sig, vcc):
+            yield [s, v, 0.]
 
-    return genu(), ndeb+nsin
+    return genu(), nt
 
 
 def simulation(phs, sequ, nt):
@@ -158,7 +163,6 @@ def simulation(phs, sequ, nt):
               'split': True}
     phs.build_simulation(config=config, sequ=sequ, nt=nt)
     phs.run_simulation()
-    phs.plot_powerBal()
 
 
 if __name__ is '__main__':
@@ -174,5 +178,4 @@ if __name__ is '__main__':
     phs.export_latex()
     simulation(phs, sequ, nt)
     phs.plot_powerbal(imin=ndeb)
-    phs.plot_data([('u', 0), ('yd', 2)])
     phs.plot_data([('u', 0), ('yd', 2)], imin=ndeb)

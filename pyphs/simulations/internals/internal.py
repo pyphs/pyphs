@@ -31,7 +31,11 @@ class Internal:
         # init solver
         self.solver = Solver(self, phs, self.solver_id)
 
+        # define state variation
+        phs.exprs.setexpr('dtx', [el*self.fs for el in phs.symbs.dx()])
+
         # build numerical functions from functions in phs.exprs._names
+        phs.build_exprs()
         phs.build_nums()
         init_funcs(self, phs)
 
@@ -62,7 +66,7 @@ is numerics.fs).
         # init residual of implicite function
         res = float('Inf')
         # init args memory for computation of step on iteration
-        old_nlinvars = [float('Inf'), ]*(self.dims.xnl()+self.dims.wnl())
+        old_varsnl = [float('Inf'), ]*(self.dims.xnl()+self.dims.wnl())
         # loop while res > tol, step > tol and it < itmax
         while res > self.EPS and step > self.EPS and it < self.maxit:
             # updated args
@@ -70,18 +74,16 @@ is numerics.fs).
             # eval residual
             res = self.res_impfunc()
             # eval norm step
-            norm_step = norm([el1-el2 for (el1, el2) in zip(self.nlinvars(),
-                                                            old_nlinvars)])
-            norm_varnl = norm(self.nlinvars()) + self.EPS
-            step = norm_step/(norm_varnl)
+            step = norm([el1-el2 for (el1, el2) in zip(self.varsnl(),
+                                                       old_varsnl)])
             # increment it
             it += 1
             # save args for comparison
-            old_nlinvars = self.nlinvars()
+            old_varsnl = self.varsnl()
 
     def update_l(self):
-        linvars = self.iter_explicite()
-        self.set_linvars(linvars)
+        varsl = self.eval_varsl()
+        self.set_varsl(varsl)
 
 
 def init_args(internal, phs):
@@ -105,11 +107,11 @@ def init_args(internal, phs):
     nxl = phs.dims.xl
     nwl = phs.dims.wl
 
-    dic = {'linvars': list(phs.symbs.dx()[:nxl]) + list(phs.symbs.w[:nwl]),
-           'nlinvars': list(phs.symbs.dx()[nxl:]) + list(phs.symbs.w[nwl:]),
+    dic = {'varsl': list(phs.symbs.dx()[:nxl]) + list(phs.symbs.w[:nwl]),
+           'varsnl': list(phs.symbs.dx()[nxl:]) + list(phs.symbs.w[nwl:]),
            'x': phs.symbs.x,
            'dx': phs.symbs.dx(),
-           'dxnl': phs.symbs.dx()[phs.dims.xl:],
+           'dxnl': phs.symbs.dx()[nxl:],
            'w': phs.symbs.w,
            'u': phs.symbs.u,
            'p': phs.symbs.p}

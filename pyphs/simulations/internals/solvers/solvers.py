@@ -7,7 +7,8 @@ Created on Thu Jun  9 15:45:17 2016
 import numpy
 import sympy as sp
 from pyphs.symbolics.tools import inverse, simplify
-from pyphs.symbolics.calculus import jacobian
+from pyphs.symbolics.calculus import jacobian, hessian
+from pyphs.misc.tools import geteval
 
 
 class Solver:
@@ -18,122 +19,8 @@ for implicite functions.
     """
     def __init__(self, internal, phs, solver_name):
         # structure
-        J = phs.struc.J
-        phs.exprs.setexpr('dtx', [el*internal.fs for el in phs.symbs.dx()])
-
-        # linear coefficients with Hl = xl^T.Q.xl/2 and zl = R.wl
-        phs.exprs.setexpr('Q', phs.exprs.hessH[:phs.dims.xl, :phs.dims.xl])
-        phs.exprs.setexpr('R', phs.exprs.jacz[:phs.dims.wl, :phs.dims.wl])
-
-        Mx1 = J[:phs.dims.xl, :phs.dims.xl]
-        Mx2 = J[:phs.dims.xl, phs.dims.xl:phs.dims.x()]
-        Mx3 = J[:phs.dims.xl, phs.dims.x():phs.dims.x()+phs.dims.wl]
-        Mx4 = J[:phs.dims.xl,
-                phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w()]
-        Mx5 = J[:phs.dims.xl, phs.dims.x()+phs.dims.w():]
-
-        Mw1 = J[phs.dims.x():phs.dims.x()+phs.dims.wl, :phs.dims.xl]
-        Mw2 = J[phs.dims.x():phs.dims.x()+phs.dims.wl,
-                phs.dims.xl:phs.dims.x()]
-        Mw3 = J[phs.dims.x():phs.dims.x()+phs.dims.wl,
-                phs.dims.x():phs.dims.x()+phs.dims.wl]
-        Mw4 = J[phs.dims.x():phs.dims.x()+phs.dims.wl,
-                phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w()]
-        Mw5 = J[phs.dims.x():phs.dims.x()+phs.dims.wl,
-                phs.dims.x()+phs.dims.w():]
-
-        Al = sp.Matrix.vstack(sp.Matrix.hstack(Mx1, Mx3),
-                              sp.Matrix.hstack(Mw1, Mw3))
-        Alx = sp.Matrix.vstack(sp.Matrix.hstack(Mx1),
-                               sp.Matrix.hstack(Mw1))
-        Bl = sp.Matrix.vstack(sp.Matrix.hstack(Mx2, Mx4),
-                              sp.Matrix.hstack(Mw2, Mw4))
-        Cl = sp.Matrix.vstack(Mx5,
-                              Mw5)
-        Id_coeffs = sp.diag(sp.eye(phs.dims.xl)*internal.fs,
-                            sp.eye(phs.dims.wl))
-        JQR = Al*sp.diag(phs.exprs.Q/2, phs.exprs.R)
-        Dl = Id_coeffs - JQR
-        iDl = inverse(Dl)
-        if phs.dims.xl + phs.dims.wl > 0:
-            Vl1 = Alx*phs.exprs.Q*sp.Matrix(phs.symbs.x[:phs.dims.xl])
-            if phs.dims.xnl() + phs.dims.wnl() > 0:
-                Vl2 = Bl*sp.Matrix(phs.exprs.dxHd[phs.dims.xl:] +
-                                   phs.exprs.z[phs.dims.wl:])
-            else:
-                Vl2 = sp.zeros(phs.dims.xl + phs.dims.wl, 1)
-            if phs.dims.y() > 0:
-                Vl3 = Cl*sp.Matrix(phs.symbs.u)
-            else:
-                Vl3 = sp.zeros(phs.dims.xl + phs.dims.wl, 1)
-            iter_explicite = iDl*(Vl1 + Vl2 + Vl3)
-            iter_explicite = simplify(list(iter_explicite))
-        else:
-            iter_explicite = sp.zeros(0, 0)
-        phs.exprs.setexpr('iter_explicite', iter_explicite)
-
-        # construct the non-linear implict function
-        # structure
-        Nx1 = J[phs.dims.xl:phs.dims.x(), :phs.dims.xl]
-        Nx2 = J[phs.dims.xl:phs.dims.x(), phs.dims.xl:phs.dims.x()]
-        Nx3 = J[phs.dims.xl:phs.dims.x(),
-                phs.dims.x():phs.dims.x()+phs.dims.wl]
-        Nx4 = J[phs.dims.xl:phs.dims.x(),
-                phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w()]
-        Nx5 = J[phs.dims.xl:phs.dims.x(), phs.dims.x()+phs.dims.w():]
-
-        Nw1 = J[phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w(),
-                :phs.dims.xl]
-        Nw2 = J[phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w(),
-                phs.dims.xl:phs.dims.x()]
-        Nw3 = J[phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w(),
-                phs.dims.x():phs.dims.x()+phs.dims.wl]
-        Nw4 = J[phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w(),
-                phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w()]
-        Nw5 = J[phs.dims.x()+phs.dims.wl:phs.dims.x()+phs.dims.w(),
-                phs.dims.x()+phs.dims.w():]
-
-        Anl = sp.Matrix.vstack(sp.Matrix.hstack(Nx1, Nx3),
-                               sp.Matrix.hstack(Nw1, Nw3))
-        Bnl = sp.Matrix.vstack(sp.Matrix.hstack(Nx2, Nx4),
-                               sp.Matrix.hstack(Nw2, Nw4))
-        Cnl = sp.Matrix.vstack(Nx5,
-                               Nw5)
-        Id_coeffs = sp.diag(sp.eye(phs.dims.xnl())*internal.fs,
-                            sp.eye(phs.dims.wnl()))
-        if phs.dims.xnl() + phs.dims.wnl() > 0:
-            Vnl2 = Bnl*sp.Matrix(phs.exprs.dxHd[phs.dims.xl:] +
-                                 phs.exprs.z[phs.dims.wl:])
-            if phs.dims.xl + phs.dims.wl > 0:
-                Vnl1 = Anl*sp.Matrix(phs.exprs.dxHd[:phs.dims.xl] +
-                                     phs.exprs.z[:phs.dims.wl])
-                dic_sub = {}
-                for symb, expr in zip(internal.linvars_symbs,
-                                      phs.exprs.iter_explicite):
-                    dic_sub.update({symb: expr})
-                Vnl1 = Vnl1.subs(dic_sub)
-            else:
-                Vnl1 = sp.zeros(phs.dims.xnl() + phs.dims.wnl(), 1)
-            if phs.dims.y() > 0:
-                Vnl3 = Cnl*sp.Matrix(phs.symbs.u)
-            else:
-                Vnl3 = sp.zeros(phs.dims.xnl + phs.dims.wnl, 1)
-            impfunc = Id_coeffs*sp.Matrix(internal.nlinvars_symbs) -\
-                (Vnl1 + Vnl2 + Vnl3)
-            res_impfunc = sp.sqrt((impfunc.T*impfunc)[0, 0])
-            jac_impfunc = jacobian(impfunc, internal.nlinvars_symbs)
-        else:
-            # init dummy quantities
-            impfunc = sp.zeros(0, 1)
-            res_impfunc = sp.sympify(0)
-            jac_impfunc = sp.zeros(0)
-
-        impfunc = impfunc
-        res_impfunc = res_impfunc
-        # append to list of lambdified functions
-        phs.exprs.setexpr('impfunc', impfunc)
-        phs.exprs.setexpr('res_impfunc', res_impfunc)
-        phs.exprs.setexpr('jac_impfunc', jac_impfunc)
+        _init_structure(phs, internal.fs)
+        _init_updates(phs, internal.fs)
 
         iter_solver = getattr(self, solver_name)(internal, phs)
         internal.iter_solver = iter_solver
@@ -141,15 +28,15 @@ for implicite functions.
     def standard(self, internal, phs):
         def iter_solver():
             # eval args
-            nlinvars = internal.nlinvars()
+            varsnl = internal.varsnl()
             impfunc = internal.impfunc()
             jac_impfunc = internal.jac_impfunc()
             # compute inverse jacobian
             ijac_impfunc = numpy.linalg.inv(jac_impfunc)
             # build updates for args
-            v = numpy.matrix(nlinvars).T - ijac_impfunc * impfunc
-            nlinvars = v.T.tolist()[0]
-            internal.set_nlinvars(nlinvars)
+            v = numpy.matrix(varsnl).T - ijac_impfunc * numpy.matrix(impfunc).T
+            varsnl = v.T.tolist()[0]
+            internal.set_varsnl(varsnl)
         return iter_solver
 
     def symbolic_inverse(self, internal, phs):
@@ -185,3 +72,176 @@ for implicite functions.
             internal.set_varnl(varnl)
 
         return iter_solver
+
+
+def _init_structure(phs, fs):
+    """
+    split system in xlin, xlin, wlin and wnlin, and stores structure in exprs
+    """
+    # split linear and nonlinear parts
+    dims_names = ['xl', 'xnl', 'wl', 'wnl', 'y']
+
+    # set indices
+    phs.inds._set_inds(dims_names)
+    # get() and set() for structure matrices
+    for name1 in dims_names:
+        for name2 in dims_names:
+            phs.struc._set_block('J'+name1+name2, (name1, name2))
+
+    # linear coefficients with Hl = xl^T.Q.xl/2 and zl = R.wl
+    phs.exprs.setexpr('Q', hessian(phs.exprs.H, phs.symbs.x[:phs.dims.xl]))
+    phs.exprs.setexpr('R', jacobian(phs.exprs.z[:phs.dims.wl],
+                                    phs.symbs.w[:phs.dims.wl]))
+    iDw = sp.eye(phs.dims.wl)-phs.struc.Jwlwl()*phs.exprs.R
+    phs.exprs.setexpr('iDw', iDw)
+    Dw = inverse(iDw)
+    phs.exprs.setexpr('Dw', Dw)
+
+    temp_Awl = Dw*phs.struc.Jwlxl()
+    temp_Bwl = Dw*phs.struc.Jwlxnl()
+    temp_Cwl = Dw*phs.struc.Jwlwnl()
+    temp_Dwl = Dw*phs.struc.Jwly()
+
+    temp_Axl = phs.struc.Jxlxl() + phs.struc.Jxlwl() * phs.exprs.R * temp_Awl
+    temp_Bxl = phs.struc.Jxlxnl() + phs.struc.Jxlwl() * phs.exprs.R * temp_Bwl
+    temp_Cxl = phs.struc.Jxlwnl() + phs.struc.Jxlwl() * phs.exprs.R * temp_Cwl
+    temp_Dxl = phs.struc.Jxly() + phs.struc.Jxlwl() * phs.exprs.R * temp_Dwl
+
+    iDx = sp.eye(phs.dims.xl)*fs - sp.sympify(1./2.)*temp_Axl*phs.exprs.Q
+    phs.exprs.setexpr('iDx', iDx)
+    Dx = inverse(iDx)
+    phs.exprs.setexpr('Dx', Dx)
+
+    Axl = Dx*temp_Axl*phs.exprs.Q
+    phs.exprs.setexpr('Axl', Axl)
+    Bxl = Dx*temp_Bxl
+    phs.exprs.setexpr('Bxl', Bxl)
+    Cxl = Dx*temp_Cxl
+    phs.exprs.setexpr('Cxl', Cxl)
+    Dxl = Dx*temp_Dxl
+    phs.exprs.setexpr('Dxl', Dxl)
+
+    temp_A = phs.exprs.Q * (sp.eye(phs.dims.xl) + sp.sympify(1./2.)*Axl)
+    temp_B = sp.sympify(1./2.)*phs.exprs.Q*Bxl
+    temp_C = sp.sympify(1./2.)*phs.exprs.Q*Cxl
+    temp_D = sp.sympify(1./2.)*phs.exprs.Q*Dxl
+
+    temp_Axnl = phs.struc.Jxnlxl()+phs.struc.Jxnlwl()*phs.exprs.R*temp_Awl
+    temp_Bxnl = phs.struc.Jxnlxnl()+phs.struc.Jxnlwl()*phs.exprs.R*temp_Bwl
+    temp_Cxnl = phs.struc.Jxnlwnl()+phs.struc.Jxnlwl()*phs.exprs.R*temp_Cwl
+    temp_Dxnl = phs.struc.Jxnly()+phs.struc.Jxnlwl()*phs.exprs.R*temp_Dwl
+
+    Axnl = temp_Axnl*temp_A
+    phs.exprs.setexpr('Axnl', Axnl)
+    Bxnl = temp_Bxnl + temp_Axnl*temp_B
+    phs.exprs.setexpr('Bxnl', Bxnl)
+    Cxnl = temp_Cxnl + temp_Axnl*temp_C
+    phs.exprs.setexpr('Cxnl', Cxnl)
+    Dxnl = temp_Dxnl + temp_Axnl*temp_D
+    phs.exprs.setexpr('Dxnl', Dxnl)
+
+    temp_Awnl = phs.struc.Jwnlxl()+phs.struc.Jwnlwl()*phs.exprs.R*temp_Awl
+    temp_Bwnl = phs.struc.Jwnlxnl()+phs.struc.Jwnlwl()*phs.exprs.R*temp_Bwl
+    temp_Cwnl = phs.struc.Jwnlwnl()+phs.struc.Jwnlwl()*phs.exprs.R*temp_Cwl
+    temp_Dwnl = phs.struc.Jwnly()+phs.struc.Jwnlwl()*phs.exprs.R*temp_Dwl
+
+    Awnl = temp_Awnl*temp_A
+    phs.exprs.setexpr('Awnl', Awnl)
+    Bwnl = temp_Bwnl + temp_Awnl*temp_B
+    phs.exprs.setexpr('Bwnl', Bwnl)
+    Cwnl = temp_Cwnl + temp_Awnl*temp_C
+    phs.exprs.setexpr('Cwnl', Cwnl)
+    Dwnl = temp_Dwnl + temp_Awnl*temp_D
+    phs.exprs.setexpr('Dwnl', Dwnl)
+
+    Awl = temp_Awl*temp_A
+    phs.exprs.setexpr('Awl', Awl)
+    Bwl = temp_Bwl + temp_Awl*temp_B
+    phs.exprs.setexpr('Bwl', Bwl)
+    Cwl = temp_Cwl + temp_Awl*temp_C
+    phs.exprs.setexpr('Cwl', Cwl)
+    Dwl = temp_Dwl + temp_Awl*temp_D
+    phs.exprs.setexpr('Dwl', Dwl)
+
+
+def _build_eval(phs, name):
+    """
+    return expression for evaluation of update structure block with label name
+    """
+    if geteval(phs.dims, name) > 0:
+        if phs.dims.xl > 0:
+            Vxl = geteval(phs.exprs, 'A'+name) * \
+                sp.Matrix(phs.symbs.x[:phs.dims.xl])
+        else:
+            Vxnl = sp.zeros(geteval(phs.dims, name), 1)
+
+        if phs.dims.xnl() > 0:
+            Vxnl = geteval(phs.exprs, 'B'+name) * \
+                sp.Matrix(phs.exprs.dxHd[phs.dims.xl:])
+        else:
+            Vxnl = sp.zeros(geteval(phs.dims, name), 1)
+
+        if phs.dims.wnl() > 0:
+            Vwnl = geteval(phs.exprs, 'C'+name) * \
+                sp.Matrix(phs.exprs.z[phs.dims.wl:])
+        else:
+            Vwnl = sp.zeros(geteval(phs.dims, name), 1)
+
+        if phs.dims.y() > 0:
+            Vy = geteval(phs.exprs, 'D'+name) * \
+                sp.Matrix(phs.symbs.u)
+        else:
+            Vy = sp.zeros(geteval(phs.dims, name), 1)
+
+        expr = Vxl + Vxnl + Vwnl + Vy
+        expr = simplify(list(expr))
+
+    else:
+        expr = sp.zeros(0, 0)
+
+    return expr
+
+
+def _init_updates(phs, fs):
+    """
+    init expressions for update of internal tructure
+    """
+
+    expr_dxl = _build_eval(phs, 'xl')
+    phs.exprs.setexpr('dxl', expr_dxl)
+    expr_wl = _build_eval(phs, 'wl')
+    phs.exprs.setexpr('wl', expr_wl)
+    expr_varsl = expr_dxl + expr_wl
+    phs.exprs.setexpr('eval_varsl', expr_varsl)
+
+    expr_dxnl = _build_eval(phs, 'xnl')
+    phs.exprs.setexpr('dxnl', expr_dxnl)
+    expr_wnl = _build_eval(phs, 'wnl')
+    phs.exprs.setexpr('wnl', expr_wnl)
+
+    if phs.dims.xnl() + phs.dims.wnl() > 0:
+        mat_dxnl = sp.Matrix(phs.symbs.dx()[phs.dims.xl:])
+        mat_expr_dxnl = sp.Matrix(expr_dxnl)
+        expr_impfunc_dxnl = list(mat_dxnl*fs - mat_expr_dxnl)
+
+        mat_wnl = sp.Matrix(phs.symbs.w[phs.dims.wl:])
+        mat_expr_wnl = sp.Matrix(expr_wnl)
+        expr_impfunc_wnl = list(mat_wnl - mat_expr_wnl)
+
+        impfunc = expr_impfunc_dxnl + expr_impfunc_wnl
+        mat_impfunc = sp.Matrix(impfunc)
+        res_impfunc = sp.sqrt((mat_impfunc.T*mat_impfunc)[0, 0])
+        jac_impfunc = jacobian(impfunc, list(phs.symbs.dx()[phs.dims.xl:]) +
+                               list(phs.symbs.w[phs.dims.wl:]))
+    else:
+        # init dummy quantities
+        impfunc = sp.zeros(0, 1)
+        res_impfunc = sp.sympify(0)
+        jac_impfunc = sp.zeros(0)
+
+    impfunc = impfunc
+    res_impfunc = res_impfunc
+    # append to list of lambdified functions
+    phs.exprs.setexpr('impfunc', impfunc)
+    phs.exprs.setexpr('res_impfunc', res_impfunc)
+    phs.exprs.setexpr('jac_impfunc', jac_impfunc)

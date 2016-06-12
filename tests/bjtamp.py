@@ -37,7 +37,7 @@ def samplerate():
     """
     global sample rate
     """
-    return 96e3
+    return 384e3
 
 
 def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
@@ -56,7 +56,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
     source = {'dictionary': 'electronics',
               'component': 'source',
               'label': 'IN',
-              'nodes': ('A', datum),
+              'nodes': ('IN', datum),
               'arguments': {'type': "'voltage'"}}
     netlist.add_line(source)
 
@@ -64,7 +64,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
     capacitorCin = {'dictionary': 'electronics',
                     'component': 'capacitor',
                     'label': 'Cin',
-                    'nodes': ('A', 'B'),
+                    'nodes': ('IN', '5'),
                     'arguments': {'C': ('Cin', Cin)}}
     netlist.add_line(capacitorCin)
 
@@ -72,15 +72,15 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
     resistance = {'dictionary': 'electronics',
                   'component': 'resistor',
                   'label': 'Rbc',
-                  'nodes': ('B', 'C'),
-                  'arguments': {'R': ('Rcd', Rbc)}}
+                  'nodes': ('5', '6'),
+                  'arguments': {'R': ('Rbc', Rbc)}}
     netlist.add_line(resistance)
 
-    # bjt
+    # bjt BC574B
     bjt = {'dictionary': 'electronics',
            'component': 'bjt',
            'label': 'BJT',
-           'nodes': ('B', 'C', datum),
+           'nodes': ('5', '6', datum),
            'arguments': {'Is': ('Is', Is),
                          'Vt': ('Vt', Vt),
                          'betaR': ('betaR', betaR),
@@ -95,7 +95,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
     resistance = {'dictionary': 'electronics',
                   'component': 'resistor',
                   'label': 'Rcd',
-                  'nodes': ('C', 'D'),
+                  'nodes': ('vcc', '6'),
                   'arguments': {'R': ('Rcd', Rcd)}}
     netlist.add_line(resistance)
 
@@ -103,7 +103,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
     source = {'dictionary': 'electronics',
               'component': 'source',
               'label': 'VCC',
-              'nodes': ('D', datum),
+              'nodes': ('vcc', datum),
               'arguments': {'type': "'voltage'"}}
     netlist.add_line(source)
 
@@ -111,7 +111,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
     capacitorCout = {'dictionary': 'electronics',
                      'component': 'capacitor',
                      'label': 'Cout',
-                     'nodes': ('C', 'F'),
+                     'nodes': ('OUT', '6'),
                      'arguments': {'C': ('Cout', Cout)}}
     netlist.add_line(capacitorCout)
 
@@ -119,7 +119,7 @@ def write_netlist(Cin=10e-6, Cout=10e-6, Is=2.39e-14, Vt=26e-3,
     source = {'dictionary': 'electronics',
               'component': 'source',
               'label': 'OUT',
-              'nodes': ('F', datum),
+              'nodes': ('OUT', datum),
               'arguments': {'type': "'current'"}}
     netlist.add_line(source)
 
@@ -160,7 +160,8 @@ def input_sequence(amp=0.2, f0=1e3, ndeb=int(0.3*samplerate())):
 def simulation(phs, sequ, nt):
     config = {'fs': samplerate(),
               'split': True,
-              'maxit': 100}
+              'maxit': 10,
+              'solver': 'standard'}
     phs.build_simulation(config=config, sequ=sequ, nt=nt)
     phs.run_simulation()
 

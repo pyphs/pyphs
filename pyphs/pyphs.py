@@ -64,8 +64,11 @@ system with methods that allow:
     label : str or 'None'
         System label. If 'None', "dummy_phs" is used (the default is 'None').
     path : str or 'None'
-        Path used for export. If None, current directory is \
-used (the default is 'None').
+        * if path is None, no path is used (default);
+        * if path is 'cwd', current working directory is used;
+        * if path is 'label', a new folder with phs label is created in \
+current working directory;
+        * if path is a str, it is used for the system's path.
     """
 
     ###########################################################################

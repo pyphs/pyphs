@@ -10,6 +10,8 @@ plot_format = 'pdf'
 
 def plot_options():
     return {'loc': 1,
+            'unitx': None,
+            'unity': None,
             'linestyles': ('-b', '--r', '-.g', ':m'),
             'axedef': (0.15, 0.15, 0.75, 0.75),
             'fontsize': 20,
@@ -29,7 +31,8 @@ def plot_options():
             'limits': None,
             'labels': None,
             'xpos_ylabel': None,
-            'maintitle': None}
+            'maintitle': None,
+            'filelabel': None}
 
 
 def plotopts(which='single'):

@@ -16,7 +16,7 @@ from tools import symbols
 import sympy
 
 # Minimal conductance for accelerating convergenc of solver (diode and bjt)
-GMIN = 1e-9
+GMIN = 1e-12
 
 
 class Source(Port):

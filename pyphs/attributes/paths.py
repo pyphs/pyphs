@@ -11,7 +11,7 @@ def _init_paths(phs, path):
     set path for PortHamiltonianObject 'phs'.
         * if path is None, no path is used;
         * if path is 'cwd', current working directory is used;
-        * if path is 'label', a new folder 'pho.label' is created in \
+        * if path is 'label', a new folder with phs label is created in \
 current working directory;
         * if path is a str, it is used for the system's path.
     """

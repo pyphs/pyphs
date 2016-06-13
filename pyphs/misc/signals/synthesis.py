@@ -116,7 +116,7 @@ def constant(n, A=1.):
         yield A
 
 
-def sweep_cosine(n, fs, f0, f1, A=1.):
+def sweep_cosine(n, fs, f0, f1, A=1., phi=-90):
     """
     Build a generator that yields a sweep sine between f0 and f1.
 
@@ -132,6 +132,8 @@ def sweep_cosine(n, fs, f0, f1, A=1.):
         Final frequency in Hz such that f1>f0
     A : float, optional
         Amplitude (the default is 1.0).
+    phi : float, optional
+        original phase in degrees, default is -90 (sin chirp).
 
     Yields
     ------
@@ -142,7 +144,7 @@ def sweep_cosine(n, fs, f0, f1, A=1.):
     from scipy.signal import chirp
     T = float(n-1)/float(fs)
     for t in linspace(0, T, n):
-        yield A*chirp(t, f0=f0, f1=f1, t1=T)
+        yield A*chirp(t, f0=f0, f1=f1, t1=T, phi=phi)
 
 
 def signalgenerator(which='sin', n=100,  ncycles=1, ndeb=0, nend=0,
@@ -235,64 +237,32 @@ to PWM.
         else:
             return 0.
 
-    for i in range(ndeb):
-        yield background_noise()
-
-    for c in range(ncycles):
-        if which == 'sin':
-            Sig = sine(non, fs, f0, A)
-        elif which == 'cos':
-            Sig = cosine(non, fs, f0, A)
-        elif which == 'noise':
-            Sig = randomuniform(non, A)
-        elif which == 'step':
-            Sig = constant(non, A)
-        elif which == "sweep":
-            Sig = sweep_cosine(non, fs, f0, f1, A)
-        else:
-            print '{0!s} unknown.'.format(which)
-            raise NameError
-
-        i = 0
-        for v in Sig:
-            yield ramp(i+c*n)*env(i)*v + background_noise()
-            i += 1
-
-        for i in range(noff):
+    def generator():
+        for i in range(ndeb):
             yield background_noise()
-
-    for i in range(nend):
-        yield background_noise()
-
-
-def export_wav(sig, fs, label, normalize=True, timefades=1e-3):
-    from struct import pack
-    import wave
-    import types
-    assert isinstance(sig, (list, types.GeneratorType)), 'Signal should be a \
-list or a generator. Got {0!s}'.format(type(sig))
-    if isinstance(sig, types.GeneratorType):
-        sig = [s for s in sig]
-
-    nsig = len(sig)
-    nfades = int(timefades*fs)
-    if nsig >= 2*nfades:
-        fadein = [n/(nfades) for n in range(nfades)]
-        fadeout = [(nfades-1-n)/(nfades) for n in range(nfades)]
-        fades = fadein + [1.]*(nsig-2*nfades) + fadeout
-        sig = [elsig*elfade for (elsig, elfade) in zip(sig, fades)]
-
-    # GENERATE MONO FILE #
-    wv = wave.open(label+'.wav', 'w')
-    wv.setparams((1, 2, fs, 0, 'NONE', 'not compressed'))
-    maxVol = 2**15-1.0  # maximum amplitude
-    if normalize:
-        scale = max([abs(el) for el in sig])
-    wvData = ""
-    for i in range(0, sig.__len__()):
-        wvData += pack('h', int(maxVol*sig[i]/scale))
-    wv.writeframes(wvData)
-    wv.close()
+        for c in range(ncycles):
+            if which == 'sin':
+                Sig = sine(non, fs, f0, A)
+            elif which == 'cos':
+                Sig = cosine(non, fs, f0, A)
+            elif which == 'noise':
+                Sig = randomuniform(non, A)
+            elif which == 'step':
+                Sig = constant(non, A)
+            elif which == "sweep":
+                Sig = sweep_cosine(non, fs, f0, f1, A, A1)
+            else:
+                print '{0!s} unknown.'.format(which)
+                raise NameError
+            i = 0
+            for v in Sig:
+                yield ramp(i+c*n)*env(i)*v + background_noise()
+                i += 1
+            for i in range(noff):
+                yield background_noise()
+        for i in range(nend):
+            yield background_noise()
+    return generator
 
 
 if __name__ is '__main__':
@@ -302,10 +272,11 @@ if __name__ is '__main__':
     nt = int(Dur*fs)
     f1 = 10
     s = [el for el in signalgenerator(which='sweep', n=nt, noisy=0.01,
-                                      fs=fs, f0=f0, f1=f1, A=1)]
-    export_wav(s, fs, 'sweep')
+                                      fs=fs, f0=f0, f1=f1, A=2, A1=-90)()]
+    from waves import wavwrite
+    wavwrite(s, fs, 'sweep', normalize=True)
     from matplotlib.pyplot import specgram, cm
     specgram(s, NFFT=2**10, cmap=cm.bone_r)
-    from plots.plots import singleplot
+    from pyphs.plots.singleplots import singleplot
     t = [el/float(fs) for el in range(nt)]
     singleplot(t, (s, ))

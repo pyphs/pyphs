@@ -1,8 +1,0 @@
-electronics.source IN ('IN', 'ref'): type='voltage';
-electronics.capacitor Cin ('IN', '5'): C=('Cin', 1e-05);
-electronics.resistor Rbc ('5', '6'): R=('Rbc', 270000.0);
-electronics.bjt BJT ('5', '6', 'ref'): mu=('mu', 1.006); betaF=('betaF', 294.3); Vt=('Vt', 0.026); betaR=('betaR', 7.946); Rb=('Rb', 1); Rc=('Rc', 0.85); Is=('Is', 2.39e-14); Re=('Re', 0.4683);
-electronics.resistor Rcd ('vcc', '6'): R=('Rcd', 1000.0);
-electronics.source VCC ('vcc', 'ref'): type='voltage';
-electronics.capacitor Cout ('OUT', '6'): C=('Cout', 1e-05);
-electronics.source OUT ('OUT', 'ref'): type='current';

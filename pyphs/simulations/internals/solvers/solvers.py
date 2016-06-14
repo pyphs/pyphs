@@ -173,7 +173,7 @@ def _build_eval(phs, name):
             Vxl = geteval(phs.exprs, 'A'+name) * \
                 sp.Matrix(phs.symbs.x[:phs.dims.xl])
         else:
-            Vxnl = sp.zeros(geteval(phs.dims, name), 1)
+            Vxl = sp.zeros(geteval(phs.dims, name), 1)
 
         if phs.dims.xnl() > 0:
             Vxnl = geteval(phs.exprs, 'B'+name) * \
@@ -194,12 +194,11 @@ def _build_eval(phs, name):
             Vy = sp.zeros(geteval(phs.dims, name), 1)
 
         expr = Vxl + Vxnl + Vwnl + Vy
-        expr = simplify(list(expr))
 
     else:
         expr = sp.zeros(0, 0)
 
-    return expr
+    return simplify(list(expr))
 
 
 def _init_updates(phs, fs):

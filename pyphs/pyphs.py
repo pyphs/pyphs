@@ -400,6 +400,7 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         from plots.multiplots import multiplot
         from generation.codelatex.tools import nice_label
         import os
+
         datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
         datay = list()
         labels = list()

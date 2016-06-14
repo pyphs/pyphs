@@ -32,7 +32,10 @@ def plot_options():
             'labels': None,
             'xpos_ylabel': None,
             'maintitle': None,
-            'filelabel': None}
+            'filelabel': None,
+            'nfft': 2**12,
+            'colormap': 'BuPu',
+            'xpos_ylabel': -0.08}
 
 
 def plotopts(which='single'):

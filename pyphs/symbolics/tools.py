@@ -6,7 +6,7 @@ Created on Fri Jun  3 11:26:23 2016
 """
 
 import sympy
-
+from pyphs.misc.timer import timeout
 
 ###############################################################################
 
@@ -21,8 +21,10 @@ def symbols(obj):
 def _simplify_expr(expr):
     assert isinstance(expr, sympy.Expr),\
         "{0!s}\nexpr should be sp.Expr, got {1!s}".format(expr, type(expr))
-    expr = sympy.simplify(expr, ratio=1)
-    print '.'
+
+    def func(expr):
+        return sympy.simplify(expr, ratio=1)
+    expr = timeout(func, expr)
     return expr
 
 
@@ -46,6 +48,9 @@ def _simplify_mat(mat):
 
 
 def simplify(obj):
+    """
+    simplify expression, list or matrix
+    """
     if hasattr(obj, 'shape'):
         return _simplify_mat(obj)
     if hasattr(obj, '__len__'):
@@ -58,7 +63,10 @@ def simplify(obj):
 
 
 def inverse(Mat):
-    iMat = sympy.Matrix.inv(Mat)
+    """
+    all inverses by LU factorization
+    """
+    iMat = sympy.Matrix.inverse_LU(Mat)
     return simplify(iMat)
 
 

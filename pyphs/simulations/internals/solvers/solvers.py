@@ -52,7 +52,7 @@ for implicite functions.
             # build updates for args
             v = numpy.matrix(varsnl).T - ijac_impfunc * numpy.matrix(impfunc).T
             varnl = v.T.tolist()[0]
-            internal.set_varnl(varnl)
+            internal.set_varsnl(varnl)
 
         return iter_solver
 

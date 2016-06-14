@@ -15,6 +15,7 @@ from pyphs.misc.matrices import get_ind_nonzeros_col, get_ind_nonzeros_row, \
 class Analysis:
 
     def __init__(self, graph):
+        self._verbose = False
         self.nodes = graph.nodes()
         self.edges = graph.edges(data=True)
         # Compute incidence Matrix
@@ -55,6 +56,12 @@ class Analysis:
             elif e_data['ctrl'] is 'f':
                 # move edge at the end of edge list
                 self.set_edge_fc(e)
+                if self.lambd[:, e].sum() == 1:
+                    # edge 'e' imposes the potential on that node
+                    # get node index
+                    n = list(numpy.array(self.lambd)[:, e]).index(1)
+                    # set node 'n' as determinate
+                    self.set_node_dc((n, e))
             else:
                 i += 1
 
@@ -105,7 +112,7 @@ class Analysis:
         # iterate over indeterminate nodes
         for n in self.ic_nodes:
             # assert the potential on node n can be defined
-            assert self.lambd[n, :].sum() is not 0, \
+            assert self.lambd[n, :].sum() != 0, \
                 "potential on node {0!s} is not defined".format(self.nodes[n])
             # test for definite node
             if self.lambd[n, :].sum() == 1:
@@ -121,6 +128,7 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
                 if self.get_edge_data(e, 'type') is 'connector':
                     # link realizability of the other edge of the connector
                     self.link_connector(e, 'f')
+
 
     def perform(self):
         # init memory of lambda to check for change or stop while loop
@@ -150,22 +158,16 @@ te columnss in lambda corresponding to two indeterminate control edges are \
 the same, we select the first edge and set it to \
 effort-controlled (0 in lambda).
         """
-        print self.lambd
-        try:
-            for i in range(len(self.ic_edges)):
-                e1 = self.ic_edges[i]
-                for j in range(i+1, len(self.ic_edges)):
-                    e2 = self.ic_edges[j]
-                    if isequal(self.lambd[:, e1], self.lambd[:, e2]):
-                        break
-                if isequal(self.lambd[:, e1], self.lambd[:, e2]):
-                    break
-            # if two esdges have same lambda column
-            assert isequal(self.lambd[:, e1], self.lambd[:, e2])
-            self.set_edge_ec(e1)
+        ic_lambd = self.lambd[:, self.ic_edges]
+        for n, row in enumerate(ic_lambd.tolist()):
+            if sum(row) > 1:
+                e = row.index(1)
+                self.lambd[n, len(self.ec_edges) + e] = 0
+                break
+        if self._verbose:
+            print 'unlock'
             print self.lambd
-        except:
-            pass
+            raw_input()
 
     def get_edges_data(self, key):
         """
@@ -214,10 +216,6 @@ effort-controlled (0 in lambda).
         """
         move an edge from indeterminate to e_ctrl, and set self.lambd to 0
         """
-        print 'edges', self.get_edges_data('label')
-        print 'nodes', self.nodes
-        print 'set_edge_ec', self.edges[e]
-        print self.lambd
         # move new effort-controlled edges at the top of edges list
         old_indices, new_indices = self.move_edge(e, 0)
         # initial length of edges lists with ne = nec + nfc + len(phs.ic_edges)
@@ -234,18 +232,17 @@ effort-controlled (0 in lambda).
             self.fc_edges = []
         # set corresponding Lambda elements to 0
         self.lambd[:, 0] = 0
-        print self.lambd
-        raw_input()
+        if self._verbose:
+            print 'set_edge_ec', self.get_edge_data(e, 'label')
+            print 'edges', self.get_edges_data('label')
+            print 'nodes', self.nodes
+            print self.lambd
 
     def set_edge_fc(self, e):
         """
         move an edge from indeterminate to flux-controlled, and remove \
 controlled node from node list
         """
-        print 'edges', self.get_edges_data('label')
-        print 'nodes', self.nodes
-        print 'set_edge_fc', self.edges[e]
-        print self.lambd
         # move new flux-controlled edges at the end of edges list
         self.move_edge(e, self.ne-1)
         # initial length of edges lists with ne = nec + nfc + len(phs.ic_edges)
@@ -256,8 +253,11 @@ controlled node from node list
         self.ec_edges = indices[:nec]
         self.ic_edges = indices[nec:-(nfc+1)]
         self.fc_edges = indices[-(nfc+1):]
-        print self.lambd
-        raw_input()
+        if self._verbose:
+            print 'set_edge_ec', self.get_edge_data(e, 'label')
+            print 'edges', self.get_edges_data('label')
+            print 'nodes', self.nodes
+            print self.lambd
 
     def set_node_dc(self, (n, e)):
         """
@@ -275,6 +275,11 @@ controlled node from node list
         if e in self.ic_edges:
             # remove edge from list of indeterminate edges
             self.set_edge_fc(e)
+        if self._verbose:
+            print 'set_node_dc', self.nodes(n)
+            print 'edges', self.get_edges_data('label')
+            print 'nodes', self.nodes
+            print self.lambd
 
     def rowindexGamma(self, c):
         """

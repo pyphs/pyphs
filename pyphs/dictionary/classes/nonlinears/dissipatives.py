@@ -54,8 +54,13 @@ keys of the kwargs arguments.
         # update dict of subs in phs
         self.symbs.subs.update(subs)
         # replace parameters in z by correspondances in 'dicpars'
-        for n in range(len(z)):
-            z[n] = z[n].subs(dicpars)
+        for i, zz in enumerate(z):
+            z[i] = zz.subs(dicpars)
+        for e, edge in enumerate(edges):
+            if 'z' in edge[2].keys():
+                for k in ['e_ctrl', 'f_ctrl']:
+                    edges[e][2]['z'][k] = edge[2]['z'][k].subs(dicpars)
+
         # add dissipative component
         self.add_dissipations(w, z)
         # update phs.Graph with edges

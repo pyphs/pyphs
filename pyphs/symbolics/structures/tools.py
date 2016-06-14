@@ -171,12 +171,12 @@ def output_function(phs):
             Vyx = phs.struc.Jyx()*sympy.Matrix(phs.exprs.dxH)
             Vyxd = phs.struc.Jyx()*sympy.Matrix(phs.exprs.dxHd)
         else:
-            Vyx = sympy.zeros(1, phs.dims.y())
+            Vyx = Vyxd = sympy.zeros(phs.dims.y(), 1)
 
         if phs.dims.w() > 0:
             Vyw = phs.struc.Jyw()*sympy.Matrix(phs.exprs.z)
         else:
-            Vyw = sympy.zeros(1, phs.dims.y())
+            Vyw = sympy.zeros(phs.dims.y(), 1)
 
         out = list(Vyx + Vyw + Vyu)
         out = simplify(out)

@@ -16,7 +16,7 @@ from tools import symbols
 import sympy
 
 # Minimal conductance for accelerating convergenc of solver (diode and bjt)
-GMIN = 1e12
+GMIN = 1e-12
 
 
 class Source(Port):
@@ -177,7 +177,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         data_resistor = {'label': w[1],
                          'z': {'e_ctrl': w[1]/R, 'f_ctrl': R*w[1]},
                          'type': 'dissipative',
-                         'ctrl': 'f',
+                         'ctrl': '?',
                          'link': None}
         # edge
         edge_resistor = (iN2, N2, data_resistor)

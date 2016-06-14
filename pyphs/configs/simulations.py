@@ -5,8 +5,8 @@ Created on Wed Jun  8 20:42:02 2016
 @author: Falaize
 """
 
-# from numerics import EPS
-standard_config = {'numtol': 1e-12,  # or EPS
+from numerics import EPS
+standard_config = {'numtol': EPS,
                    'maxit': 100,
                    'load_options': {'decim': 1,
                                     'imin': 0,

@@ -151,19 +151,19 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
     """
     def __init__(self, label, nodes, **kwargs):
         # parameters
-        pars = ['Is', 'v0', 'R']
+        pars = ['Is', 'v0', 'R', 'mu']
         for par in pars:
             assert par in kwargs.keys()
-        Is, v0, R = symbols(pars)
+        Is, v0, R, mu = symbols(pars)
         # dissipation variable
         w = symbols(["w"+label, "w"+label+"R"])
         # dissipation funcion
-        zd = Is*(sympy.exp(w[0]/v0)-1) + GMIN*w[0]
+        zd = Is*(sympy.exp(w[0]/(mu*v0))-1) + GMIN*w[0]
         # dissipation funcion
         zr = R*w[1]
 
         N1, N2 = nodes
-        iN2 = N1+label
+        iN2 = str(N2)+label
 
         # edge diode data
         data_diode = {'label': w[0],
@@ -177,14 +177,14 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         data_resistor = {'label': w[1],
                          'z': {'e_ctrl': w[1]/R, 'f_ctrl': R*w[1]},
                          'type': 'dissipative',
-                         'ctrl': '?',
+                         'ctrl': 'f',
                          'link': None}
         # edge
         edge_resistor = (iN2, N2, data_resistor)
 
         # init component
         NonLinearDissipative.__init__(self, label, [edge_diode, edge_resistor],
-                                      [w], [zd, zr], **kwargs)
+                                      w, [zd, zr], **kwargs)
 
 
 class Bjt(NonLinearDissipative):

@@ -16,7 +16,7 @@ from tools import symbols
 import sympy
 
 # Minimal conductance for accelerating convergenc of solver (diode and bjt)
-GMIN = 1e-12
+GMIN = 1e12
 
 
 class Source(Port):
@@ -147,27 +147,44 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
 
          * 'Is': saturation current (A)
          * 'v0': quality factor (V)
+         * 'R': connectors resistance (Ohms)
     """
     def __init__(self, label, nodes, **kwargs):
         # parameters
-        pars = ['Is', 'v0']
+        pars = ['Is', 'v0', 'R']
         for par in pars:
             assert par in kwargs.keys()
-        Is, v0 = symbols(pars)
+        Is, v0, R = symbols(pars)
         # dissipation variable
-        w = symbols("w"+label)
+        w = symbols(["w"+label, "w"+label+"R"])
         # dissipation funcion
-        z = Is*(sympy.exp(w/v0)-1)
-        # edge data
-        edge_data = {'label': w,
-                     'type': 'dissipative',
-                     'ctrl': 'e',
-                     'link': None}
+        zd = Is*(sympy.exp(w[0]/v0)-1) + GMIN*w[0]
+        # dissipation funcion
+        zr = R*w[1]
+
+        N1, N2 = nodes
+        iN2 = N1+label
+
+        # edge diode data
+        data_diode = {'label': w[0],
+                      'type': 'dissipative',
+                      'ctrl': 'e',
+                      'link': None}
         # edge
-        edge = (nodes[0], nodes[1], edge_data)
+        edge_diode = (N1, iN2, data_diode)
+
+        # edge resistance data
+        data_resistor = {'label': w[1],
+                         'z': {'e_ctrl': w[1]/R, 'f_ctrl': R*w[1]},
+                         'type': 'dissipative',
+                         'ctrl': '?',
+                         'link': None}
+        # edge
+        edge_resistor = (iN2, N2, data_resistor)
+
         # init component
-        NonLinearDissipative.__init__(self, label, [edge],
-                                      [w], [z], **kwargs)
+        NonLinearDissipative.__init__(self, label, [edge_diode, edge_resistor],
+                                      [w], [zd, zr], **kwargs)
 
 
 class Bjt(NonLinearDissipative):

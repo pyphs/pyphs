@@ -150,6 +150,7 @@ te columnss in lambda corresponding to two indeterminate control edges are \
 the same, we select the first edge and set it to \
 effort-controlled (0 in lambda).
         """
+        print self.lambd
         try:
             for i in range(len(self.ic_edges)):
                 e1 = self.ic_edges[i]
@@ -162,6 +163,7 @@ effort-controlled (0 in lambda).
             # if two esdges have same lambda column
             assert isequal(self.lambd[:, e1], self.lambd[:, e2])
             self.set_edge_ec(e1)
+            print self.lambd
         except:
             pass
 
@@ -208,12 +210,16 @@ effort-controlled (0 in lambda).
         self.edges = [self.edges[n] for n in new_indices]
         return old_indices, new_indices
 
-    def set_edge_ec(self, indi):
+    def set_edge_ec(self, e):
         """
         move an edge from indeterminate to e_ctrl, and set self.lambd to 0
         """
+        print 'edges', self.get_edges_data('label')
+        print 'nodes', self.nodes
+        print 'set_edge_ec', self.edges[e]
+        print self.lambd
         # move new effort-controlled edges at the top of edges list
-        old_indices, new_indices = self.move_edge(indi, 0)
+        old_indices, new_indices = self.move_edge(e, 0)
         # initial length of edges lists with ne = nec + nfc + len(phs.ic_edges)
         nec = len(self.ec_edges)
         nfc = len(self.fc_edges)
@@ -228,12 +234,18 @@ effort-controlled (0 in lambda).
             self.fc_edges = []
         # set corresponding Lambda elements to 0
         self.lambd[:, 0] = 0
+        print self.lambd
+        raw_input()
 
     def set_edge_fc(self, e):
         """
         move an edge from indeterminate to flux-controlled, and remove \
 controlled node from node list
         """
+        print 'edges', self.get_edges_data('label')
+        print 'nodes', self.nodes
+        print 'set_edge_fc', self.edges[e]
+        print self.lambd
         # move new flux-controlled edges at the end of edges list
         self.move_edge(e, self.ne-1)
         # initial length of edges lists with ne = nec + nfc + len(phs.ic_edges)
@@ -244,6 +256,8 @@ controlled node from node list
         self.ec_edges = indices[:nec]
         self.ic_edges = indices[nec:-(nfc+1)]
         self.fc_edges = indices[-(nfc+1):]
+        print self.lambd
+        raw_input()
 
     def set_node_dc(self, (n, e)):
         """

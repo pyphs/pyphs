@@ -15,7 +15,7 @@ def plot(graph, save=None):
     import matplotlib.pyplot as plt
     from pyphs.configs.plots import plot_format
 
-    pos = nx.spring_layout(graph)
+    pos = nx.circular_layout(graph)  # spring
     fig = plt.figure()
     ax = plt.axes(frameon=False)
     ax.axes.get_xaxis().set_visible(False)
@@ -24,7 +24,7 @@ def plot(graph, save=None):
     edge_labels = {(u, v, ): d['label']
                    for u, v, d in graph.edges(data=True)}
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels,
-                                 label_pos=0.3, font_size=15)
+                                 label_pos=0, font_size=7)
     plt.show()
     if save is not None:
         fig.savefig(save + '.' + plot_format)

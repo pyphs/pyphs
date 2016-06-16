@@ -126,8 +126,8 @@ def split_linear(phs):
 def reduce_linear_dissipations(phs):
     if not hasattr(phs, 'nwl'):
         split_linear(phs)
-    from utils.calculus import compute_jacobian
-    phs.zl = compute_jacobian(phs.z[:phs.dims.wl], phs.w[:phs.dims.wl])
+    from pyphs.symbolics.calculus import jacobian
+    phs.zl = jacobian(phs.z[:phs.dims.wl], phs.w[:phs.dims.wl])
     Kl = phs.K[:, :phs.dims.wl]
     Knl = phs.K[:, phs.dims.wl:]
     Gl = phs.Gw[:phs.dims.wl, :]

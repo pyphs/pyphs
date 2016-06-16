@@ -15,4 +15,5 @@ standard_config = {'numtol': EPS,
                    'fs': 48e3,
                    'language': 'python',
                    'timer': True,
+                   'presubs': True,
                    'split': True}

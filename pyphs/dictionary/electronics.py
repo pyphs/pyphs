@@ -12,7 +12,6 @@ from classes.nonlinears.dissipatives import NonLinearDissipative
 
 from pyphs.configs.dictionary import nice_var_label
 from tools import symbols
-from pyphs import PortHamiltonianObject
 
 import sympy
 

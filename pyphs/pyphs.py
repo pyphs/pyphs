@@ -424,13 +424,43 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
 
     ###########################################################################
 
-    def export_latex(self):
+    def texwrite(self):
         """
-        export latex description of the system
+        Export latex description of the system in the folder pointed by \
+phs.paths['latex'].
         """
         from generation.codelatex.latex import Latex
         latex = Latex(self)
         latex.export()
+
+    def cppwrite(self):
+        """
+        Export system's simulation code (c++) in the folder pointed by \
+phs.paths['cpp'].
+        """
+        from generation.codecpp.phs2cpp import cppwrite
+        cppwrite(self)
+
+    def wavwrite(self, name, index, fs_in, filename=None, gain=1, fs_out=None):
+        """
+        write phs.simulation.data.name[index] in the folder pointed by \
+phs.paths['wav'].
+        """
+        from misc.signals.waves import wavwrite
+        import os
+        if fs_out is None:
+            fs_out = fs_in
+        if filename is None:
+            filename = name
+        path = self.path + os.sep + 'wav'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        data = getattr(self.simulation.data, name)
+        sig = [gain*el[index] for el in data()]
+        for i, s in enumerate(sig):
+            if abs(s) >= 1:
+                sig[i] = 0.
+        wavwrite(sig, fs_in, path + os.sep + filename, fs_out=fs_out)
 
     ###########################################################################
 

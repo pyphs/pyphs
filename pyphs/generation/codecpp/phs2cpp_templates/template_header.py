@@ -48,7 +48,7 @@ def hfile_presolve(phs):
     
     str_phs_functions = "\n    // Port-Hamiltonian runtime functions\n"
     
-    dict_args = {"x":phs.x, "dx": phs.dx, "w": phs.w, "u": phs.u, "p": phs.params}
+    dict_args = {"x":phs.symbs.x, "dx": phs.dx, "w": phs.symbs.w, "u": phs.symbs.u, "p": phs.params}
     phs_label = phs.label.upper()
 
     expr = list(phs.Fl)
@@ -68,17 +68,17 @@ def hfile_presolve(phs):
         label_func = "FresidualNR"
         str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h").replace('residual_NR[0] ', 'residual_NR ')
 
-    expr = phs.dxH
+    expr = phs.exprs.dxHd
     label_variable = "dxH"
     label_func = "FdxH"
     str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
 
-    expr = phs.z
+    expr = phs.exprs.z
     label_variable = "z"
     label_func = "Fz"
     str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
             
-    expr = phs.Fy
+    expr = phs.exprs.yd
     label_variable = "y"
     label_func = "Fy"
     str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
@@ -138,7 +138,7 @@ def hfile_presolve(phs):
 
 def hfile_full(phs):  
 
-    from pyphs_config import eigen_path    
+    from pyphs.configs.cpp import eigen_path
     
     header_label = phs.label.upper()+"_H"
     str_test = "#ifndef " + header_label + "\n#define " + header_label +"\n\n"
@@ -176,119 +176,61 @@ def hfile_full(phs):
     
     str_phs_functions = "\n    // Port-Hamiltonian runtime functions\n"
     
-    dict_args = {"x":phs.x, "dx": phs.dx, "w": phs.w, "u": phs.u, "p": phs.params}
+    dict_args = {"x":phs.symbs.x, "dx": phs.symbs.dx(), "w": phs.symbs.w, "u": phs.symbs.u, "p": phs.symbs.p}
     phs_label = phs.label.upper()
 
-    expr = list(phs.Fl)
-    label_variable = ["dxl["+str(n)+"]" for n in range(phs.nxl())]+ ["wl["+str(n)+"]" for n in range(phs.nwl())]
+    expr = list(phs.exprs.eval_varsl)
+    label_variable = ["dxl["+str(n)+"]" for n in range(phs.dims.xl)] + \
+["wl["+str(n)+"]" for n in range(phs.dims.wl)]
     label_func = "UpDate_l"
     str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
 
-    expr = phs.dxH
+    expr = phs.exprs.dxHd
     label_variable = "dxH"
     label_func = "UpDate_dxH"
     str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
 
-    expr = phs.z
+    expr = phs.exprs.z
     label_variable = "z"
     label_func = "UpDate_z"
     str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
             
-    expr = phs.Fy
+    expr = phs.exprs.yd
     label_variable = "y"
     label_func = "UpDate_y"
     str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
 
-    matrixExpr = phs.J1        
-    matrixLabel = 'J1'
-    funcLabel = 'UpDate_J1'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
 
-    matrixExpr = phs.J2        
-    matrixLabel = 'J2'
-    funcLabel = 'UpDate_J2'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
+    from pyphs.misc.tools import geteval    
+    names = ('xl', 'xnl', 'wl', 'wnl', 'y')
+    for namei in names:
+        for namej in names:
+            matrix_name = 'Jxlxl'
+            matrix_expr = geteval(phs.struc, matrix_name)
+    funcLabel = 'UpDate_' + matrix_name
+    str_phs_functions += Matrix2Cpp(matrix_expr, dict_args, phs_label,
+                                    funcLabel, matrix_name, "h")
 
-    matrixExpr = phs.J3        
-    matrixLabel = 'J3'
-    funcLabel = 'UpDate_J3'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.J4        
-    matrixLabel = 'J4'
-    funcLabel = 'UpDate_J4'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.K1        
-    matrixLabel = 'K1'
-    funcLabel = 'UpDate_K1'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.K2        
-    matrixLabel = 'K2'
-    funcLabel = 'UpDate_K2'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.K3        
-    matrixLabel = 'K3'
-    funcLabel = 'UpDate_K3'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.K4        
-    matrixLabel = 'K4'
-    funcLabel = 'UpDate_K4'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.G1        
-    matrixLabel = 'G1'
-    funcLabel = 'UpDate_G1'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.G2        
-    matrixLabel = 'G2'
-    funcLabel = 'UpDate_G2'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.G3     
-    matrixLabel = 'G3'
-    funcLabel = 'UpDate_G3'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.G4        
-    matrixLabel = 'G4'
-    funcLabel = 'UpDate_G4'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.M1        
-    matrixLabel = 'M1'
-    funcLabel = 'UpDate_M1'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.M2        
-    matrixLabel = 'M2'
-    funcLabel = 'UpDate_M2'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-
-    matrixExpr = phs.R()        
+    matrixExpr = phs.epxrs.R
     matrixLabel = 'R'
     funcLabel = 'UpDate_R'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
+    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label,
+                                    funcLabel, matrixLabel, "h")
 
-    matrixExpr = phs.Q()        
+    matrixExpr = phs.exprs.Q
     matrixLabel = 'Q'
     funcLabel = 'UpDate_Q'
-    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label, funcLabel, matrixLabel, "h")
-    
-    str_phs_functions += "    void UpDate_Matrices();\n"
+    str_phs_functions += Matrix2Cpp(matrixExpr, dict_args, phs_label,
+                                    funcLabel, matrixLabel, "h")
 
+    str_phs_functions += "    void UpDate_Matrices();\n"
     str_phs_functions += "    void process(vector<double>&, vector<double>&);\n"
-    
-    str_phs_functions += "    Matrix<double,"+str(phs.nxl())+","+str(1)+"> xl();\n"
-    str_phs_functions += "    Matrix<double,"+str(phs.nxl())+","+str(1)+"> dxl();\n"
-    str_phs_functions += "    Matrix<double,"+str(phs.nxl())+","+str(1)+"> dxHl();\n"
-    str_phs_functions += "    Matrix<double,"+str(phs.nwl())+","+str(1)+"> wl();\n"
-    str_phs_functions += "    Matrix<double,"+str(phs.nwl())+","+str(1)+"> zl();\n"
-    str_phs_functions += "    Matrix<double,"+str(phs.nxnl()+ phs.nwnl())+","+str(phs.nxnl()+ phs.nwnl())+"> iJacobianImplicitFunc();\n"
+    str_phs_functions += "    Matrix<double,"+str(phs.dims.xl)+","+str(1)+"> xl();\n"
+    str_phs_functions += "    Matrix<double,"+str(phs.dims.xl)+","+str(1)+"> dxl();\n"
+    str_phs_functions += "    Matrix<double,"+str(phs.dims.xl)+","+str(1)+"> dxHl();\n"
+    str_phs_functions += "    Matrix<double,"+str(phs.dims.wl)+","+str(1)+"> wl();\n"
+    str_phs_functions += "    Matrix<double,"+str(phs.dims.wl)+","+str(1)+"> zl();\n"
+    str_phs_functions += "    Matrix<double,"+str(phs.dims.xnl()+ phs.dims.wnl())+","+str(phs.dims.xnl() + phs.dims.wnl())+"> iJacobianImplicitFunc();\n"
 
     if phs.isNL:
         str_phs_functions += "    void UpDate_residualNR();\n"
@@ -328,23 +270,23 @@ def hfile_full(phs):
     
     str_privates_variables += "    // Runtime matrices \n"
 
-    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.nxl())+"> J1 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.nxnl())+"> M1 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nxnl())+","+str(phs.nxnl())+"> J2 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.nxl())+"> Jxlxl ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.nxnl())+"> Jxlxnl ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxnl())+","+str(phs.nxnl())+"> Jxnlxnl ;\n"
 
-    str_privates_variables += "    Matrix<double,"+str(phs.nwl())+","+str(phs.nwl())+"> J3 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nwl())+","+str(phs.nwnl())+"> M2 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nwnl())+","+str(phs.nwnl())+"> J4 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nwl())+","+str(phs.nwl())+"> Jwlwl ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nwl())+","+str(phs.nwnl())+"> Jwlwnl ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nwnl())+","+str(phs.nwnl())+"> Jwnlwnl ;\n"
 
-    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.nwl())+"> K1 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.nwnl())+"> K2 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nxnl())+","+str(phs.nwl())+"> K3 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nxnl())+","+str(phs.nwnl())+"> K4 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.nwl())+"> Jxlwl ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.nwnl())+"> Jxlwnl ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxnl())+","+str(phs.nwl())+"> Jxnlwl ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxnl())+","+str(phs.nwnl())+"> Jxnlwnl ;\n"
 
-    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.ny())+"> G1 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nxnl())+","+str(phs.ny())+"> G2 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nwl())+","+str(phs.ny())+"> G3 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.nwnl())+","+str(phs.ny())+"> G4 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxl())+","+str(phs.ny())+"> Jxly ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nxnl())+","+str(phs.ny())+"> Jxnly ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nwl())+","+str(phs.ny())+"> Jwly ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.nwnl())+","+str(phs.ny())+"> Jwnly ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.nwl())+","+str(phs.nwl())+"> iDw ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.nwl())+","+str(phs.nwl())+"> Dw ;\n"

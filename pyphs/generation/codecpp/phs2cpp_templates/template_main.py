@@ -43,7 +43,7 @@ class timer {
 int main() {
 
     ifstream x0File;
-    x0File.open("""+ '"'+phs.folders['data']+"/"+ """x0.txt");
+    x0File.open("""+ '"'+phs.paths['data']+"/"+ """x0.txt");
 
     if (x0File.fail()) {
         cerr << "Failed opening x0 file" << endl;
@@ -51,7 +51,7 @@ int main() {
     }
 
     ifstream uFile;
-    uFile.open("""+ '"'+phs.folders['data']+"/"+ """u.txt");
+    uFile.open("""+ '"'+phs.paths['data']+"/"+ """u.txt");
 
     if (uFile.fail()) {
         cerr << "Failed opening input file" << endl;
@@ -59,7 +59,7 @@ int main() {
     }
 
     ifstream pFile;
-    pFile.open("""+'"'+ phs.folders['data']+"/"+ """p.txt");
+    pFile.open("""+'"'+ phs.paths['data']+"/"+ """p.txt");
 
     if (pFile.fail()) {
         cerr << "Failed opening parameters file" << endl;
@@ -171,19 +171,19 @@ int main() {
     }
 
     ofstream xFile;
-    xFile.open("""+'"'+ phs.folders['data']+"/"+ """x.txt");
+    xFile.open("""+'"'+ phs.paths['data']+"/"+ """x.txt");
     ofstream dxHFile;
-    dxHFile.open("""+'"'+ phs.folders['data']+"/"+ """dxH.txt");
+    dxHFile.open("""+'"'+ phs.paths['data']+"/"+ """dxH.txt");
     ofstream dxFile;
-    dxFile.open("""+'"'+ phs.folders['data']+"/"+ """dx.txt");
+    dxFile.open("""+'"'+ phs.paths['data']+"/"+ """dx.txt");
 
     ofstream wFile;
-    wFile.open("""+'"'+ phs.folders['data']+"/"+ """w.txt");
+    wFile.open("""+'"'+ phs.paths['data']+"/"+ """w.txt");
     ofstream zFile;
-    zFile.open("""+'"'+ phs.folders['data']+"/"+ """z.txt");
+    zFile.open("""+'"'+ phs.paths['data']+"/"+ """z.txt");
 
     ofstream yFile;
-    yFile.open("""+'"'+ phs.folders['data']+"/"+ """y.txt");
+    yFile.open("""+'"'+ phs.paths['data']+"/"+ """y.txt");
 
     // Save
     cout << "Write output..."<< endl;
@@ -253,7 +253,7 @@ int main() {
     cout << endl;
     cout << "Data written at" << endl;
     cout << endl;
-    cout << """+'"'+ phs.folders['data']+"/"+'"' +"""<< endl;
+    cout << """+'"'+ phs.paths['data']+"/"+'"' +"""<< endl;
     cout << endl;
     
     return 0;
@@ -309,7 +309,7 @@ class timer {
 int main() {
 
     ifstream x0File;
-    x0File.open("""+ '"'+phs.folders['data']+"/"+ """x0.txt");
+    x0File.open("""+ '"'+phs.paths['data']+"/"+ """x0.txt");
 
     if (x0File.fail()) {
         cerr << "Failed opening x0 file" << endl;
@@ -317,7 +317,7 @@ int main() {
     }
 
     ifstream uFile;
-    uFile.open("""+ '"'+phs.folders['data']+"/"+ """u.txt");
+    uFile.open("""+ '"'+phs.paths['data']+"/"+ """u.txt");
 
     if (uFile.fail()) {
         cerr << "Failed opening input file" << endl;
@@ -325,7 +325,7 @@ int main() {
     }
 
     ifstream pFile;
-    pFile.open("""+'"'+ phs.folders['data']+"/"+ """p.txt");
+    pFile.open("""+'"'+ phs.paths['data']+"/"+ """p.txt");
 
     if (pFile.fail()) {
         cerr << "Failed opening parameters file" << endl;
@@ -388,19 +388,19 @@ int main() {
     t.start();
 
     ofstream xFile;
-    xFile.open("""+'"'+ phs.folders['data']+"/"+ """x.txt");
+    xFile.open("""+'"'+ phs.paths['data']+"/"+ """x.txt");
     ofstream dxHFile;
-    dxHFile.open("""+'"'+ phs.folders['data']+"/"+ """dxH.txt");
+    dxHFile.open("""+'"'+ phs.paths['data']+"/"+ """dxH.txt");
     ofstream dxFile;
-    dxFile.open("""+'"'+ phs.folders['data']+"/"+ """dx.txt");
+    dxFile.open("""+'"'+ phs.paths['data']+"/"+ """dx.txt");
 
     ofstream wFile;
-    wFile.open("""+'"'+ phs.folders['data']+"/"+ """w.txt");
+    wFile.open("""+'"'+ phs.paths['data']+"/"+ """w.txt");
     ofstream zFile;
-    zFile.open("""+'"'+ phs.folders['data']+"/"+ """z.txt");
+    zFile.open("""+'"'+ phs.paths['data']+"/"+ """z.txt");
 
     ofstream yFile;
-    yFile.open("""+'"'+ phs.folders['data']+"/"+ """y.txt");
+    yFile.open("""+'"'+ phs.paths['data']+"/"+ """y.txt");
     
     for (unsigned int n=0; n<nt; n++) {
         
@@ -480,13 +480,13 @@ int main() {
     cout << endl;
     cout << "Data written at" << endl;
     cout << endl;
-    cout << """+'"'+ phs.folders['data']+"/"+'"' +"""<< endl;
+    cout << """+'"'+ phs.paths['data']+"/"+'"' +"""<< endl;
     cout << endl;
     
     return 0;
 }
 """
-    main_file = open(phs.folders['cpp']+"/main.cpp", 'w')
+    main_file = open(phs.paths['cpp']+"/main.cpp", 'w')
     main_file.write(str_main)
     main_file.close()
     return str_main

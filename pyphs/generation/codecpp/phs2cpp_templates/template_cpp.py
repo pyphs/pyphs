@@ -292,21 +292,10 @@ def str_functions_full(phs):
     label_func = "UpDate_y"
     str_phs_functions += exprcpp(expr, label_func, label_variable)
 
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxlxl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxnlxnl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jwlwl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jwnlwnl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxlwl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxlwnl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxnlwl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxnlwnl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxly')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxnly')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jwly')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxnly')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jxlxnl')
-    str_phs_functions += shortmatcpp(phs.struc, 'Jwlwnl')
-
+    names = ('xl', 'xnl', 'wl', 'wnl', 'y')
+    for namei in names:
+        for namej in names:
+            str_phs_functions += shortmatcpp(phs.struc, 'J'+namei+namej)
     str_phs_functions += shortmatcpp(phs.exprs, 'R')
     str_phs_functions += shortmatcpp(phs.exprs, 'Q')
 
@@ -398,26 +387,26 @@ residual_NR = 1;
         str_newton_solver = ""
 
     if phs.dims.wl > 0:
-        str_mat_wl = """\n    iDw << Matrix<double, """+str(phs.dims.wl)+", "+str(phs.dims.wl)+""">::Identity() - J3*R;
+        str_mat_wl = """\n    iDw << Matrix<double, """+str(phs.dims.wl)+", "+str(phs.dims.wl)+""">::Identity() - Jwlwl*R;
     Dw << iDw.inverse();"""
         if phs.dims.xl > 0:
-            str_mat_wl += "\n    A1 << Dw*(K1.transpose());"
+            str_mat_wl += "\n    A1 << Dw*Jwlxl;"
         if phs.dims.xnl() > 0:
-            str_mat_wl += "\n    B1 << Dw*(K3.transpose());"
+            str_mat_wl += "\n    B1 << Dw*Jwlxnl;"
         if phs.dims.wnl() > 0:
-            str_mat_wl += "\n    C1 << Dw*M2;"
+            str_mat_wl += "\n    C1 << Dw*Jwlwnl;"
         if phs.dims.y() > 0:
-            str_mat_wl += "\n    D1 << Dw*G3;"
+            str_mat_wl += "\n    D1 << Dw*Jwly;"
     else:
         str_mat_wl = ""
 
     if phs.dims.xl > 0:
 
         str_mat_xl = """
-    tildeA2 << J1 - K1*R*A1;
-    tildeB2 << M1-K1*R*B1;
-    tildeC2 << -(K2+K1*R*C1);
-    tildeD2 << G1-K1*R*D1;
+    tildeA2 << Jxlxl+Jxlwl*R*A1;
+    tildeB2 << Jxlxnl+Jxlwl*R*B1;
+    tildeC2 << Jxlwnl+Jxlwl*R*C1;
+    tildeD2 << Jxly+Jxlwl*R*D1;
     iDx << Matrix<double, """+str(phs.dims.xl)+", "+str(phs.dims.xl)+""">::Identity() * fs - 0.5*tildeA2*Q;
     Dx = iDx.inverse();
     A2 << Dx*tildeA2*Q;
@@ -500,38 +489,29 @@ UpDate_z();
 UpDate_y();
 x += dx;\n}\n"""
 
-    str_process += "void "+phs_label+"::UpDate_Matrices() {\n " + \
-    """
-    UpDate_J1();
-    UpDate_J2();
-    UpDate_J3();
-    UpDate_J4();
-    UpDate_K1();
-    UpDate_K2();
-    UpDate_K3();
-    UpDate_K4();
-    UpDate_M1();
-    UpDate_M2();
-    UpDate_G1();
-    UpDate_G2();
-    UpDate_G3();
-    UpDate_G4();
+    str_process += "void "+phs_label+"::UpDate_Matrices() {\n "
+    names = ('xl', 'xnl', 'wl', 'wnl', 'y')
+    for namei in names :
+        for namej in names:
+            str_process += '    UpDate_J' + namei + namej + '();\n';
+    str_process += \
+        """
     UpDate_R();
     UpDate_Q();
     """ + str_mat_wl + str_mat_xl +\
-    """
-    tildeA4 << -(M1.transpose()+ K3*R*A1);
-    tildeB4 << (J2 - K3*R*B1);
-    tildeC4 << -(K4 + K3*R*C1);
-    tildeD4 << (G2 - K3*R*D1);
+        """
+    tildeA4 << Jxnlxl + Jxnlwl*R*A1;
+    tildeB4 << Jxnlxnl + Jxnlwl*R*B1;
+    tildeC4 << Jxnlwnl + Jxnlwl*R*C1;
+    tildeD4 << Jxnly + Jxnlwl*R*D1;
     A4 << tildeA4*A3;
     B4 << tildeB4+tildeA4*B3;
     C4 << tildeC4+tildeA4*C3;
     D4 << tildeD4+tildeA4*D3;
-    tildeA5 << (K2.transpose()- M2.transpose()*R*A1);
-    tildeB5 << (K4.transpose() - M2.transpose()*R*B1);
-    tildeC5 << (J4 - M2.transpose()*R*C1);
-    tildeD5 << (G4 - M2.transpose()*R*D1);
+    tildeA5 << Jwnlxl + Jwnlwl*R*A1;
+    tildeB5 << Jwnlxnl + Jwnlwl*R*B1;
+    tildeC5 << Jwnlwnl + Jwnlwl*R*C1;
+    tildeD5 << Jwnly + Jwnlwl*R*D1;
 
     A5 << tildeA5*A3;
     B5 << (tildeB5+tildeA5*B3);
@@ -542,9 +522,9 @@ x += dx;\n}\n"""
     B6 << (B1+A1*B3);
     C6 << (C1+A1*C3);
     D6 << (D1+A1*D3);
-    """ + str_A7 + str_B7 + str_C7 + str_D7 + str_Bxnl + str_Bwnl +\
-    "}\n"
+    """ + str_A7 + str_B7 + str_C7 + str_D7 + str_Bxnl + str_Bwnl + "}\n"
     return str_process
+
 
 def cfile_full(phs):
 

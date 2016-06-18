@@ -221,7 +221,7 @@ got %s' % type(label)
         run the simulation. to set parameters (inputs, sampling rate, etc.), \
 refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         """
-        self.simulation.process()
+        self.simulation.process(self)
 
     ###########################################################################
 

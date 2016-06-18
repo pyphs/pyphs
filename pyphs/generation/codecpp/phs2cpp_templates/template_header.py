@@ -94,7 +94,7 @@ def hfile_presolve(phs):
     str_privates_variables += "    "+"const unsigned int nw=" + str(phs.dims.w()) + ";\n"
     str_privates_variables += "    "+"const unsigned int nwl=" + str(phs.dims.wl) + ";\n"
     str_privates_variables += "    "+"const unsigned int nwnl=" + str(phs.dims.wnl()) + ";\n"
-    str_privates_variables += "    "+"const unsigned int ny=" + str(phs.dims.y) + ";\n"
+    str_privates_variables += "    "+"const unsigned int ny=" + str(phs.dims.y()) + ";\n"
     str_privates_variables += "    "+"const unsigned int np=" + str(phs.dims.p()) + ";\n\n"
     
     str_privates_variables += "    // Port-Hamiltonian system's vectors\n"
@@ -103,8 +103,8 @@ def hfile_presolve(phs):
     str_privates_variables += "    vector<double> dxH = vector<double>(" + str(phs.dims.x()) + ");\n"
     str_privates_variables += "    vector<double> w = vector<double>(" + str(phs.dims.w()) + ");\n"
     str_privates_variables += "    vector<double> z = vector<double>(" + str(phs.dims.w()) + ");\n"
-    str_privates_variables += "    vector<double> u = vector<double>(" + str(phs.dims.y) + ");\n"
-    str_privates_variables += "    vector<double> y = vector<double>(" + str(phs.dims.y) + ");\n"
+    str_privates_variables += "    vector<double> u = vector<double>(" + str(phs.dims.y()) + ");\n"
+    str_privates_variables += "    vector<double> y = vector<double>(" + str(phs.dims.y()) + ");\n"
     str_privates_variables += "    vector<double> p = vector<double>(" + str(phs.dims.p()) + ");\n\n"
     
     str_privates_variables += "    // Pointers to the linear part of each vector\n"
@@ -194,22 +194,23 @@ def hfile_full(phs):
     label_variable = "z"
     label_func = "UpDate_z"
     str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
-            
+
     expr = phs.exprs.yd
     label_variable = "y"
     label_func = "UpDate_y"
-    str_phs_functions += Expr2Cpp(expr,dict_args,phs_label, label_func, label_variable, "h")
+    str_phs_functions += Expr2Cpp(expr,dict_args, phs_label,
+                                  label_func, label_variable, "h")
 
-
-    from pyphs.misc.tools import geteval    
+    from pyphs.misc.tools import geteval
     names = ('xl', 'xnl', 'wl', 'wnl', 'y')
     for namei in names:
         for namej in names:
-            matrix_name = 'Jxlxl'
+            matrix_name = 'J'+namei+namej
             matrix_expr = geteval(phs.struc, matrix_name)
-    funcLabel = 'UpDate_' + matrix_name
-    str_phs_functions += Matrix2Cpp(matrix_expr, dict_args, phs_label,
-                                    funcLabel, matrix_name, "h")
+            funcLabel = 'UpDate_' + matrix_name
+            str_phs_functions += Matrix2Cpp(matrix_expr,
+                                            dict_args, phs_label,
+                                            funcLabel, matrix_name, "h")
 
     matrixExpr = phs.exprs.R
     matrixLabel = 'R'
@@ -255,7 +256,7 @@ def hfile_full(phs):
     str_privates_variables += "    "+"const unsigned int nw=" + str(phs.dims.w()) + ";\n"
     str_privates_variables += "    "+"const unsigned int nwl=" + str(phs.dims.wl) + ";\n"
     str_privates_variables += "    "+"const unsigned int nwnl=" + str(phs.dims.wnl()) + ";\n"
-    str_privates_variables += "    "+"const unsigned int ny=" + str(phs.dims.y) + ";\n"
+    str_privates_variables += "    "+"const unsigned int ny=" + str(phs.dims.y()) + ";\n"
     str_privates_variables += "    "+"const unsigned int np=" + str(phs.dims.p()) + ";\n\n"
     
     str_privates_variables += "    // Port-Hamiltonian system's vectors\n"
@@ -264,42 +265,30 @@ def hfile_full(phs):
     str_privates_variables += "    Matrix<double,"+str(phs.dims.x())+",1> dxH ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.w())+",1> w ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.w())+",1> z ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.y)+",1> u ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.y)+",1> y ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.y())+",1> u ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.y())+",1> y ;\n"
     str_privates_variables += "    vector<double> p = vector<double>(" + str(phs.dims.p()) + ");\n\n"
     
     str_privates_variables += "    // Runtime matrices \n"
 
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xl)+"> Jxlxl ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xnl())+"> Jxlxnl ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.xnl())+"> Jxnlxnl ;\n"
-
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.wl)+"> Jwlwl ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.wnl())+"> Jwlwnl ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.wnl())+"> Jwnlwnl ;\n"
-
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.wl)+"> Jxlwl ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.wnl())+"> Jxlwnl ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.wl)+"> Jxnlwl ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.wnl())+"> Jxnlwnl ;\n"
-
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.y)+"> Jxly ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.y)+"> Jxnly ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.y)+"> Jwly ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.y)+"> Jwnly ;\n"
-
+    names = ('xl', 'xnl', 'wl', 'wnl', 'y')
+    for namei in names:
+        for namej in names:
+            str_privates_variables += "    Matrix<double," +\
+                str(geteval(phs.dims, namei)) + "," + \
+                str(geteval(phs.dims, namej)) + "> J" + namei+namej + ";\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.wl)+"> iDw ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.wl)+"> Dw ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.xl)+"> A1 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.xnl())+"> B1 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.wnl())+"> C1 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.y)+"> D1 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.y())+"> D1 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xl)+"> tildeA2 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xnl())+"> tildeB2 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.wnl())+"> tildeC2 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.y)+"> tildeD2 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.y())+"> tildeD2 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xl)+"> iDx ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xl)+"> Dx ;\n"
@@ -307,42 +296,42 @@ def hfile_full(phs):
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xl)+"> A2 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xnl())+"> B2 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.wnl())+"> C2 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.y)+"> D2 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.y())+"> D2 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xl)+"> A3 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.xnl())+"> B3 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.wnl())+"> C3 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.y)+"> D3 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl)+","+str(phs.dims.y())+"> D3 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.xl)+"> tildeA4 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.xnl())+"> tildeB4 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.wnl())+"> tildeC4 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.y)+"> tildeD4 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.y())+"> tildeD4 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.xl)+"> A4 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.xnl())+"> B4 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.wnl())+"> C4 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.y)+"> D4 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.y())+"> D4 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.xl)+"> tildeA5 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.xnl())+"> tildeB5 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.wnl())+"> tildeC5 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.y)+"> tildeD5 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.y())+"> tildeD5 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.xl)+"> A5 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.xnl())+"> B5 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.wnl())+"> C5 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.y)+"> D5 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.y())+"> D5 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.xl)+"> A6 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.xnl())+"> B6 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.wnl())+"> C6 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.y)+"> D6 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.wl)+","+str(phs.dims.y())+"> D6 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl+phs.dims.wl)+","+str(phs.dims.xl)+"> A7 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl+phs.dims.wl)+","+str(phs.dims.xnl())+"> B7 ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xl+phs.dims.wl)+","+str(phs.dims.wnl())+"> C7 ;\n"
-    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl+phs.dims.wl)+","+str(phs.dims.y)+"> D7 ;\n"
+    str_privates_variables += "    Matrix<double,"+str(phs.dims.xl+phs.dims.wl)+","+str(phs.dims.y())+"> D7 ;\n"
 
     str_privates_variables += "    Matrix<double,"+str(phs.dims.xnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> Bxnl ;\n"
     str_privates_variables += "    Matrix<double,"+str(phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> Bwnl ;\n"

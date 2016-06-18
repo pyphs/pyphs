@@ -29,16 +29,16 @@ def process_py(simulation):
     close_files(files)
 
 
-def process_cpp(simulation):
+def process_cpp(phs):
 
-    numerics.phs.writeCppCode()
+    phs.cppwrite()
 
-    from pyphs_config import cpp_build_and_run_script
+    from pyphs.configs.cpp import cpp_build_and_run_script
     if cpp_build_and_run_script is None:
         import os
         print"\no==========================================================\
         ==o\n"
-        print " Please, execute:\n" + numerics.phs.folders['cpp'] + \
+        print " Please, execute:\n" + phs.paths['cpp'] + \
             os.path.sep + \
             "/main.cpp"
         print"\no==========================================================\
@@ -48,7 +48,7 @@ def process_cpp(simulation):
         import subprocess
         # Replace generic term 'phobj_path' by actual object path
         script = cpp_build_and_run_script.replace('phobj_path',
-                                                  numerics.phs.path)
+                                                  phs.path)
         # exec Build and Run script
         p = subprocess.Popen(script, shell=True,
                              stdout=subprocess.PIPE,

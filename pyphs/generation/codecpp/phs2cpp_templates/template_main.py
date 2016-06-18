@@ -16,7 +16,7 @@ def main_presolve(phs):
 //
 
 #include <iostream>
-"""+ '#include "'+phs.folders['cpp']+"/" + ("phobj").upper() + '.h"\n\n'+\
+"""+ '#include "'+phs.paths['cpp']+"/" + ("phobj").upper() + '.h"\n\n'+\
 """
 #include "vector"
 
@@ -68,22 +68,22 @@ int main() {
 
     unsigned int nt = 0;
 
-    vector<double> xVector("""+ str(phs.nx()) +""");
-    vector<double> x0Vector("""+ str(phs.nx()) +""");
-    vector<double> dxHVector("""+ str(phs.nx()) +""");
-    vector<double> dxVector("""+ str(phs.nx()) +""");
-    vector<double> wVector("""+ str(phs.nw()) +""");
-    vector<double> zVector("""+ str(phs.nw()) +""");
-    vector<double> uVector("""+ str(phs.ny()) +""");
-    vector<double> yVector("""+ str(phs.ny()) +""");
-    vector<double> pVector("""+ str(phs.params.__len__()) +""");
+    vector<double> xVector("""+ str(phs.dims.x()) +""");
+    vector<double> x0Vector("""+ str(phs.dims.x()) +""");
+    vector<double> dxHVector("""+ str(phs.dims.x()) +""");
+    vector<double> dxVector("""+ str(phs.dims.x()) +""");
+    vector<double> wVector("""+ str(phs.dims.w()) +""");
+    vector<double> zVector("""+ str(phs.dims.w()) +""");
+    vector<double> uVector("""+ str(phs.dims.y()) +""");
+    vector<double> yVector("""+ str(phs.dims.y()) +""");
+    vector<double> pVector("""+ str(phs.dims.p()) +""");
 
     typedef std::vector< std::vector<double> > matrix;
 
-    matrix matU(0, vector<double>("""+ str(phs.ny()) +"""));
-    matrix matP(0, vector<double>("""+ str(phs.np()) +"""));
+    matrix matU(0, vector<double>("""+ str(phs.dims.y()) +"""));
+    matrix matP(0, vector<double>("""+ str(phs.dims.p()) +"""));
 
-    for (unsigned int i=0; i<"""+ str(+phs.nx()) +"""; i++) {
+    for (unsigned int i=0; i<"""+ str(+phs.dims.x()) +"""; i++) {
         x0File >> x0Vector[i];
     }
 
@@ -114,12 +114,12 @@ int main() {
 
     nt -= 1;
     
-    matrix matX(nt, vector<double>("""+ str(phs.nx()) +"""));
-    matrix matdX(nt, vector<double>("""+ str(phs.nx()) +"""));
-    matrix matdxH(nt, vector<double>("""+ str(phs.nx()) +"""));
-    matrix matW(nt, vector<double>("""+ str(phs.nw()) +"""));
-    matrix matZ(nt, vector<double>("""+ str(phs.nw()) +"""));
-    matrix matY(nt, vector<double>("""+ str(phs.ny()) +"""));
+    matrix matX(nt, vector<double>("""+ str(phs.dims.x()) +"""));
+    matrix matdX(nt, vector<double>("""+ str(phs.dims.x()) +"""));
+    matrix matdxH(nt, vector<double>("""+ str(phs.dims.x()) +"""));
+    matrix matW(nt, vector<double>("""+ str(phs.dims.w()) +"""));
+    matrix matZ(nt, vector<double>("""+ str(phs.dims.w()) +"""));
+    matrix matY(nt, vector<double>("""+ str(phs.dims.y()) +"""));
 
     // Compute
     cout <<"Process simulation..." << endl;
@@ -259,7 +259,7 @@ int main() {
     return 0;
 }
 """
-    main_file = open(phs.folders['cpp']+"/main.cpp", 'w')
+    main_file = open(phs.paths['cpp']+"/main.cpp", 'w')
     main_file.write(str_main)
     main_file.close()
     return str_main
@@ -279,7 +279,7 @@ def main_full(phs):
 //
 
 #include <iostream>
-"""+ '#include "'+phs.folders['cpp']+"/" + ('phobj').upper() + '.h"\n\n'+\
+"""+ '#include "'+phs.paths['cpp']+"/" + ('phobj').upper() + '.h"\n\n'+\
 """
 #include "vector"
 
@@ -334,22 +334,22 @@ int main() {
 
     unsigned int nt = 0;
 
-    vector<double> xVector("""+ str(phs.nx()) +""");
-    vector<double> x0Vector("""+ str(phs.nx()) +""");
-    vector<double> dxHVector("""+ str(phs.nx()) +""");
-    vector<double> dxVector("""+ str(phs.nx()) +""");
-    vector<double> wVector("""+ str(phs.nw()) +""");
-    vector<double> zVector("""+ str(phs.nw()) +""");
-    vector<double> uVector("""+ str(phs.ny()) +""");
-    vector<double> yVector("""+ str(phs.ny()) +""");
-    vector<double> pVector("""+ str(phs.params.__len__()) +""");
+    vector<double> xVector("""+ str(phs.dims.x()) +""");
+    vector<double> x0Vector("""+ str(phs.dims.x()) +""");
+    vector<double> dxHVector("""+ str(phs.dims.x()) +""");
+    vector<double> dxVector("""+ str(phs.dims.x()) +""");
+    vector<double> wVector("""+ str(phs.dims.w()) +""");
+    vector<double> zVector("""+ str(phs.dims.w()) +""");
+    vector<double> uVector("""+ str(phs.dims.y()) +""");
+    vector<double> yVector("""+ str(phs.dims.y()) +""");
+    vector<double> pVector("""+ str(phs.dims.p()) +""");
 
     typedef std::vector< std::vector<double> > matrix;
 
-    matrix matU(0, vector<double>("""+ str(phs.ny()) +"""));
-    matrix matP(0, vector<double>("""+ str(phs.np()) +"""));
+    matrix matU(0, vector<double>("""+ str(phs.dims.y()) +"""));
+    matrix matP(0, vector<double>("""+ str(phs.dims.p()) +"""));
 
-    for (unsigned int i=0; i<"""+ str(+phs.nx()) +"""; i++) {
+    for (unsigned int i=0; i<"""+ str(+phs.dims.x()) +"""; i++) {
         x0File >> x0Vector[i];
     }
 

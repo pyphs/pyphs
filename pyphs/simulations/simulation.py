@@ -65,7 +65,7 @@ class Simulation:
         # init input and parameters sequences, and get number of time steps
         init_data(self, phs, sequ, seqp, x0, nt)
 
-    def process(self):
+    def process(self, phs):
         """
         process simulation for all time steps
         """
@@ -77,7 +77,7 @@ class Simulation:
             'language "{0!s}" unknown'.format(self.config['language'])
 
         if self.config['language'] == 'c++':
-            process_cpp(self)
+            process_cpp(phs)
         elif self.config['language'] == 'python':
             process_py(self)
 

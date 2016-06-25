@@ -18,6 +18,10 @@ class Internal:
         self.EPS = config['numtol']
         self.maxit = config['maxit']
         self.solver_id = config['solver']
+        self.presubs = config['presubs']
+        
+        if self.presubs:
+            phs.apply_subs()
 
         self.dims = phs.dims
         self.is_nl = bool(self.dims.xnl() + self.dims.wnl())

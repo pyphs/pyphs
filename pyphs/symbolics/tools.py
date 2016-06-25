@@ -24,6 +24,7 @@ def _simplify_expr(expr):
 
     def func(expr):
         return sympy.simplify(expr, ratio=1)
+#        return sympy.nsimplify(expr)
     expr = timeout(func, expr)
     return expr
 
@@ -31,8 +32,9 @@ def _simplify_expr(expr):
 def _parallel_simplify(lis):
     assert hasattr(lis, '__len__'), "{0!s}\ntype({1!s}) not a valid argument for\
 'utils.calculus.simplify_list' ".format(lis, type(lis))
-    from pyphs.misc.parallelize import parallel_map
-    return parallel_map(_simplify_expr, lis)
+#    from pyphs.misc.parallelize import parallel_map
+#    return parallel_map(_simplify_expr, lis)
+    return map(_simplify_expr, lis)
 
 
 def _simplify_mat(mat):
@@ -53,7 +55,7 @@ def simplify(obj):
     """
     if hasattr(obj, 'shape'):
         return _simplify_mat(obj)
-    if hasattr(obj, '__len__'):
+    elif hasattr(obj, '__len__'):
         return _parallel_simplify(obj)
     else:
         return _simplify_expr(obj)
@@ -64,9 +66,9 @@ def simplify(obj):
 
 def inverse(Mat):
     """
-    all inverses by LU factorization
+    same method for every matrix inversions
     """
-    iMat = sympy.Matrix.inverse_LU(Mat)
+    iMat = Mat.inv()
     return simplify(iMat)
 
 

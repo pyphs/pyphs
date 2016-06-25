@@ -4,15 +4,25 @@ Created on Fri Mar  4 02:08:01 2016
 
 @author: Falaize
 """
-def writeCppCode(self):
-    from utils.phs2cpp import phs2mainfile, phs2cppfile, phs2headerfile
-    for fold in ['data', 'cpp']:
-        self.folders[fold] = safe_mkdir(self.path, fold)
-    phs2cppfile(self)
-    phs2headerfile(self)
-    phs2mainfile(self)
+
+
+def cppwrite(phs):
+    """
+    export c++ simulation code NAME.cpp with header NAME.h and execution \
+script main.cpp in the folder pointed by phs.paths['cpp']
+    """
+    from phs2cpp_templates import template_cpp, template_header, template_main
+    import os
+    path = phs.path + os.sep + 'cpp'
+    if not os.path.exists(path):
+        os.makedirs(path)
+    phs.paths['cpp'] = path
+    template_cpp.cfile_full(phs)
+    template_header.hfile_full(phs)
+    template_main.main_full(phs)
 
 #######################################################################
+
 
 def phs2mainfile(phs):
     if phs.presolve:
@@ -22,6 +32,7 @@ def phs2mainfile(phs):
         from .phs2cpp_templates.template_main import main_full
         return main_full(phs)
 
+
 def phs2cppfile(phs):
     if phs.presolve:
         from .phs2cpp_templates.template_cpp import cfile_presolve
@@ -29,6 +40,7 @@ def phs2cppfile(phs):
     else:
         from .phs2cpp_templates.template_cpp import cfile_full
         return cfile_full(phs)
+
 
 def phs2headerfile(phs):
     if phs.presolve:
@@ -46,23 +58,22 @@ def Expr2Cpp(expr, dict_args, phs_label, label_func, Out_variables, out="c"):
 
     arg_labels = dict_args.keys()
     na = arg_labels.__len__()
-    
-    expr_symbols = Matrix(expr).free_symbols if expr.__len__()>0 else []    
+
+    expr_symbols = Matrix(expr).free_symbols if expr.__len__() > 0 else []
     nexpr = expr.__len__()
-    
-    str_args = ""    
+
+    str_args = ""
     for n in range(na):
         str_args += "vector<double>& " + arg_labels[n]
-        if n<na-1:
-            str_args += ", "    
-    str_header =  label_func +"()"
-
+        if n < na-1:
+            str_args += ", "
+    str_header = label_func + "()"
     str_init = ""
     for n in range(na):
-        list_args = [e for e in dict_args[arg_labels[n]] ]
+        list_args = [e for e in dict_args[arg_labels[n]]]
         str_args = ""
         naa = list_args.__len__()
-        if naa>0:
+        if naa > 0:
             for m in range(naa):
                 test = set([list_args[m]]).issubset(expr_symbols) if expr.__len__()>0 else False
                 if test:
@@ -153,7 +164,6 @@ def Matrix2Cpp(matrixExpr, dict_args, phs_label, label_func, Out_Matrix, out="c"
             
         str_c = "\n"+"void "+phs_label+"::"+str_header + " {\n"+ str_init + "\n" + str_out + "\n}\n"
         return str_c
-    else: 
-        str_h = "    "+"void " +str_header + ";\n"
+    else:
+        str_h = "    "+"void " + str_header + ";\n"
         return str_h
-

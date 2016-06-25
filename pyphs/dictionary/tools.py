@@ -43,7 +43,7 @@ def parsub(phs, obj, par_name):
         string = obj
         symb = symbols(string)
         sub = {}
-        phs.p.append(symb)
+        phs.symbs.p += (symb, )
     return symb, sub
 
 

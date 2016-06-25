@@ -6,7 +6,7 @@ Created on Wed Jun  8 20:42:02 2016
 """
 
 from numerics import EPS
-standard_config = {'numtol': EPS,
+standard_config = {'numtol': 1e-12,
                    'maxit': 100,
                    'load_options': {'decim': 1,
                                     'imin': 0,
@@ -15,4 +15,5 @@ standard_config = {'numtol': EPS,
                    'fs': 48e3,
                    'language': 'python',
                    'timer': True,
+                   'presubs': True,
                    'split': True}

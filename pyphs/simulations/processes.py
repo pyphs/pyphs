@@ -4,7 +4,9 @@ Created on Thu Jun  9 16:10:47 2016
 
 @author: Falaize
 """
-from pyphs.misc.tools import progressbar
+
+#from pyphs.misc.tools import progressbar
+import progressbar
 import time
 
 
@@ -17,6 +19,11 @@ def process_py(simulation):
     files_to_open = ['x', 'dx', 'dxHd', 'w', 'z', 'yd']
     files = open_files(simulation.data.path, files_to_open)
 
+    pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ', 
+                  progressbar.Bar(), ' ', progressbar.ETA()]
+    pbar = progressbar.ProgressBar(widgets=pb_widgets, maxval=simulation.nt)
+    pbar.start()
+
     # init time step
     n = 0
     print "\n*** Simulation ***\n"
@@ -24,21 +31,23 @@ def process_py(simulation):
         simulation.internal.update(u=u, p=p)
         dump_files(simulation.internal, files)
         n += 1
-        progressbar(n/float(simulation.nt))
+        pbar.update(n)
+    pbar.finish()
+#        progressbar(n/float(simulation.nt))
     time.sleep(0.5)
     close_files(files)
 
 
-def process_cpp(simulation):
+def process_cpp(phs):
 
-    numerics.phs.writeCppCode()
+    phs.cppwrite()
 
-    from pyphs_config import cpp_build_and_run_script
+    from pyphs.configs.cpp import cpp_build_and_run_script
     if cpp_build_and_run_script is None:
         import os
         print"\no==========================================================\
         ==o\n"
-        print " Please, execute:\n" + numerics.phs.folders['cpp'] + \
+        print " Please, execute:\n" + phs.paths['cpp'] + \
             os.path.sep + \
             "/main.cpp"
         print"\no==========================================================\
@@ -48,7 +57,7 @@ def process_cpp(simulation):
         import subprocess
         # Replace generic term 'phobj_path' by actual object path
         script = cpp_build_and_run_script.replace('phobj_path',
-                                                  numerics.phs.path)
+                                                  phs.path)
         # exec Build and Run script
         p = subprocess.Popen(script, shell=True,
                              stdout=subprocess.PIPE,

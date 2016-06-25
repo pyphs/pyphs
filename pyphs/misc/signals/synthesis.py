@@ -116,7 +116,7 @@ def constant(n, A=1.):
         yield A
 
 
-def sweep_cosine(n, fs, f0, f1, A=1., phi=-90):
+def sweep_cosine(n, fs, f0, f1, A=1., kwargs=None):
     """
     Build a generator that yields a sweep sine between f0 and f1.
 
@@ -140,16 +140,20 @@ def sweep_cosine(n, fs, f0, f1, A=1., phi=-90):
     s : float
         Sequence of sweep values.
     """
+    if kwargs is None:
+        kwargs = {}
+    if 'phi' not in kwargs.keys():
+        kwargs.update({'phi': -90})
     from numpy import linspace
     from scipy.signal import chirp
     T = float(n-1)/float(fs)
     for t in linspace(0, T, n):
-        yield A*chirp(t, f0=f0, f1=f1, t1=T, phi=phi)
+        yield A*chirp(t, f0=f0, f1=f1, t1=T, **kwargs)
 
 
 def signalgenerator(which='sin', n=100,  ncycles=1, ndeb=0, nend=0,
                     fs=int(1e3), A=1., A1=0., f0=10., f1=100., cycle_ratio=1.,
-                    attack_ratio=0., decay_ratio=0., ramp_on=False, noisy=0.):
+                    attack_ratio=0., decay_ratio=0., ramp_on=False, noisy=0., kwargs=None):
     """
     Return a generator that yields variety of signals.
 
@@ -219,6 +223,9 @@ to PWM.
 
     na, nd = int(attack_ratio*non), int(decay_ratio*non)
 
+    if kwargs is None:
+        kwargs = {}
+
     def clamp_signal(x, xmin, xmax):
         clamp_below = max((x, xmin))
         return min((xmax, clamp_below))
@@ -250,7 +257,7 @@ to PWM.
             elif which == 'step':
                 Sig = constant(non, A)
             elif which == "sweep":
-                Sig = sweep_cosine(non, fs, f0, f1, A, A1)
+                Sig = sweep_cosine(non, fs, f0, f1, A, kwargs)
             else:
                 print '{0!s} unknown.'.format(which)
                 raise NameError

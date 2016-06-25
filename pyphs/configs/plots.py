@@ -35,7 +35,9 @@ def plot_options():
             'filelabel': None,
             'nfft': 2**12,
             'colormap': 'BuPu',
-            'xpos_ylabel': -0.08}
+            'xpos_ylabel': -0.08,
+            'cmap': 'BuPu',  #  'inferno',  #'gnuplot2', # 'CMRmap',  # 'PuBu',
+            'dpi': 100}
 
 
 def plotopts(which='single'):

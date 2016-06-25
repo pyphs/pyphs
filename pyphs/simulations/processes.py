@@ -4,7 +4,9 @@ Created on Thu Jun  9 16:10:47 2016
 
 @author: Falaize
 """
-from pyphs.misc.tools import progressbar
+
+#from pyphs.misc.tools import progressbar
+import progressbar
 import time
 
 
@@ -17,6 +19,11 @@ def process_py(simulation):
     files_to_open = ['x', 'dx', 'dxHd', 'w', 'z', 'yd']
     files = open_files(simulation.data.path, files_to_open)
 
+    pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ', 
+                  progressbar.Bar(), ' ', progressbar.ETA()]
+    pbar = progressbar.ProgressBar(widgets=pb_widgets, maxval=simulation.nt)
+    pbar.start()
+
     # init time step
     n = 0
     print "\n*** Simulation ***\n"
@@ -24,7 +31,9 @@ def process_py(simulation):
         simulation.internal.update(u=u, p=p)
         dump_files(simulation.internal, files)
         n += 1
-        progressbar(n/float(simulation.nt))
+        pbar.update(n)
+    pbar.finish()
+#        progressbar(n/float(simulation.nt))
     time.sleep(0.5)
     close_files(files)
 

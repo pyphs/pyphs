@@ -23,8 +23,8 @@ def _simplify_expr(expr):
         "{0!s}\nexpr should be sp.Expr, got {1!s}".format(expr, type(expr))
 
     def func(expr):
-        # return sympy.simplify(expr, ratio=1)
-        return sympy.nsimplify(expr)
+        return sympy.simplify(expr, ratio=1)
+#        return sympy.nsimplify(expr)
     expr = timeout(func, expr)
     return expr
 

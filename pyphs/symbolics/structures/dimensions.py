@@ -15,7 +15,7 @@ class Dimensions:
     """
     def __init__(self, phs):
         """
-        define accessors to len of var 'pho.symbs.nvar' for var in x, w, y, cy
+        define accessors to len of var 'phs.symbs.nvar' for var in x, w, y, cy
         """
         setattr(self, '_names', names_dims)
 

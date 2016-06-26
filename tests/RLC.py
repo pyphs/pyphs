@@ -123,7 +123,3 @@ if __name__ is '__main__':
     write_netlist()
     phs = init_phs()
     build_graph(phs)
-    sequ, nt = input_sequence()
-    phs.export_latex()
-    simulation(phs, sequ, nt)
-    phs.plot_powerbal()

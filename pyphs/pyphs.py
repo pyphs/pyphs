@@ -83,30 +83,38 @@ got %s' % type(label)
         self.label = label
 
         # object path
-        from attributes import paths
+        import paths
         paths._init_paths(self, path)
 
+        # Include the pyphs.symbolics tools
         from symbolics.symbols import Symbols
         setattr(self, 'symbs', Symbols())
 
+        # Include the pyphs.structures.dimensions tools
         from symbolics.structures.dimensions import Dimensions
         setattr(self, 'dims', Dimensions(self))
 
+        # Include the pyphs.structures.indices tools
         from symbolics.structures.indices import Indices
         setattr(self, 'inds', Indices(self))
 
+        # Include the pyphs.structures.indices tools
         from symbolics.structures.structure import Structure
         setattr(self, 'struc', Structure(self))
 
+        # Include the pyphs.expressions tools
         from symbolics.expressions import Expressions
         setattr(self, 'exprs', Expressions())
 
+        # Include the pyphs.simulation tools
         from simulations.simulation import Simulation
-        setattr(self, 'simu', Simulation(self, nt=1))
+        setattr(self, 'simu', Simulation(self))
 
+        # Include the pyphs.data tools
         from data.data import Data
         setattr(self, 'data', Data(self))
 
+        # Include the pyphs.graphs tools
         from graphs.graph import Graph
         setattr(self, 'graph', Graph())
 
@@ -172,7 +180,7 @@ got %s' % type(label)
 
     def symbols(self, obj):
         """
-        Standard symbols in pyphs are REAL sympy.Symbol instances.
+        Standard symbols in PyPHS are REAL sympy.Symbol instances.
         """
         from symbolics.tools import symbols
         return symbols(obj)
@@ -203,32 +211,6 @@ got %s' % type(label)
 
     ###########################################################################
 
-    def build_simulation(self, config=None, sequ=None, seqp=None,
-                         nt=None, x0=None):
-        """
-        Parameters
-        -----------
-
-        config : dic of configuraiton options, including sample rate 'fs' and\
-'language' ('c++' or 'python').
-
-        sequ : iterable of tuples of inputs values.
-
-        seqp : iterable of tuples of parameters values.
-
-        nt : number of time steps (x goes to x[nt+1]).
-        """
-        from simulations.simulation import Simulation
-        self.simulation = Simulation(self, config=config, sequ=sequ, seqp=seqp,
-                                     nt=nt, x0=x0)
-
-    def run_simulation(self):
-        """
-        run the simulation. to set parameters (inputs, sampling rate, etc.), \
-refer to function 'buil_simulation' of your 'PortHamiltonianObject'
-        """
-        self.simulation.process(self)
-
     ###########################################################################
 
     def apply_subs(self, subs=None):
@@ -251,21 +233,23 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
             attr = getattr(self.exprs, name)
             if hasattr(attr, "__len__"):
                 attr = list(attr)
-                for i in range(len(attr)):
+                for i, at in enumerate(attr):
                     try:
-                        attr[i] = attr[i].subs(subs)
+                        attr[i] = at.subs(subs)
                     except:
                         pass
             else:
                 attr = attr.subs(subs)
             setattr(self.exprs, name, attr)
-        self.struc.J = self.struc.J.subs(subs)
+        self.struc.M = self.struc.M.subs(subs)
 
     ###########################################################################
 
     def add_storages(self, x, H):
         """
         Add a storage component with state x and energy H.
+        * State x is append to the current list of states symbols,
+        * Expression H is added to the current expression of Hamiltonian.
 
         Parameters
         ----------

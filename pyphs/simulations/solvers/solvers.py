@@ -81,12 +81,10 @@ def _init_structure(phs, fs):
     # split linear and nonlinear parts
     dims_names = ['xl', 'xnl', 'wl', 'wnl', 'y']
 
-    # set indices
-    phs.inds._set_inds(dims_names)
     # get() and set() for structure matrices
     for name1 in dims_names:
         for name2 in dims_names:
-            phs.struc._set_block('J'+name1+name2, (name1, name2))
+            phs.struc._build_getset(phs, dims_names=dims_names)
 
     # linear coefficients with Hl = xl^T.Q.xl/2 and zl = R.wl
     phs.exprs.setexpr('Q', hessian(phs.exprs.H, phs.symbs.x[:phs.dims.xl]))

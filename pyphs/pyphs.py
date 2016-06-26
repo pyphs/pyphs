@@ -101,6 +101,12 @@ got %s' % type(label)
         from symbolics.expressions import Expressions
         setattr(self, 'exprs', Expressions())
 
+        from simulations.simulation import Simulation
+        setattr(self, 'simu', Simulation(self, nt=1))
+
+        from data.data import Data
+        setattr(self, 'data', Data(self))
+
         from graphs.graph import Graph
         setattr(self, 'graph', Graph())
 

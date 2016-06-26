@@ -6,7 +6,6 @@ Created on Tue May 24 11:20:26 2016
 """
 from pyphs.misc.io import write_data
 from pyphs.configs.simulations import standard_config
-from data import Data
 import time
 from internals.internal import Internal
 from processes import process_py, process_cpp
@@ -63,7 +62,7 @@ class Simulation:
         self.internal = Internal(self.config, phs)
 
         # init input and parameters sequences, and get number of time steps
-        init_data(self, phs, sequ, seqp, x0, nt)
+        init_data(phs, sequ, seqp, x0, nt)
 
     def process(self, phs):
         """
@@ -92,7 +91,7 @@ class Simulation:
                 time_ratio, 'f'))
 
 
-def init_data(simulation, phs, sequ, seqp, x0, nt):
+def init_data(phs, sequ, seqp, x0, nt):
     # get number of time-steps
     if hasattr(sequ, 'index'):
         nt = len(sequ)
@@ -104,12 +103,11 @@ iterations. Please tell either sequ (input sequence), seqp \
 (sequence of parameters) or nt (number of time steps).'
         assert isinstance(nt, int), 'number of time steps is not integer, \
 got {0!s} '.format(nt)
-    simulation.nt = nt
 
     # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
     if sequ is None:
         def generator_u():
-            for _ in range(simulation.nt):
+            for _ in range(nt):
                 if phs.dims.y() > 0:
                     yield [0, ]*phs.dims.y()
                 else:
@@ -118,7 +116,7 @@ got {0!s} '.format(nt)
     # if seqp is not provided, a sequence of [[0]*np]*nt is assumed
     if seqp is None:
         def generator_p():
-            for _ in range(simulation.nt):
+            for _ in range(nt):
                 if phs.dims.p() > 0:
                     yield [0, ]*phs.dims.p()
                 else:
@@ -133,8 +131,6 @@ got {0!s} '.format(nt)
             isinstance(x0[0], (float, int)), 'x0 not understood, got \
 {0!s}'.format(x0)
 
-    # build data i/o structure
-    simulation.data = Data(simulation, phs)
     # write input sequence
     write_data(phs, sequ, 'u')
     # write parameters sequence

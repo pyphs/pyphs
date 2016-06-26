@@ -13,12 +13,12 @@ class Data:
     """
     container for simulation data
     """
-    def __init__(self, simulation, phs):
+    def __init__(self, phs):
 
         setattr(self, 'path', phs.paths['data'])
-        setattr(self, 'options', simulation.config['load_options'])
-        setattr(self, 'fs', simulation.config['fs'])
-        setattr(self, 'nt', simulation.nt)
+        setattr(self, 'options', phs.simu.config['load_options'])
+        setattr(self, 'fs', phs.simu.config['fs'])
+        setattr(self, 'nt', phs.simu.nt)
 
         def dummy_func(name):
             def get_seq(ind=None, postprocess=None, imin=None, imax=None,

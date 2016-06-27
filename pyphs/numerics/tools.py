@@ -7,6 +7,7 @@ Created on Fri Jun  3 11:26:41 2016
 
 from sympy.printing.lambdarepr import lambdarepr
 import numpy
+import ast
 
 parser_sympy2numpy = {
             'sin': numpy.sin,

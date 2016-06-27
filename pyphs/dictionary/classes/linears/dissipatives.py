@@ -6,7 +6,7 @@ Created on Tue Jun  7 19:03:49 2016
 """
 from pyphs import PortHamiltonianObject
 from pyphs.dictionary.tools import parsub
-from pyphs.configs.dictionary import nice_var_label
+from pyphs.dictionary.config import nice_var_label
 
 
 class LinearDissipationFreeCtrl(PortHamiltonianObject):

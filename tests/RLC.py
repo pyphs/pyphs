@@ -106,7 +106,7 @@ def input_sequence(amp=100., f0=100.):
                             A=amp, f0=f0, fs=fs)
 
     def genu():
-        for el in SigIn:
+        for el in SigIn():
             yield [el, ]
 
     return genu(), nsin
@@ -123,3 +123,7 @@ if __name__ is '__main__':
     write_netlist()
     phs = init_phs()
     build_graph(phs)
+    u, nsin = input_sequence()
+    phs.simu.init(sequ=u, nt=nsin)
+    phs.simu.process()
+    phs.plot_powerbal()

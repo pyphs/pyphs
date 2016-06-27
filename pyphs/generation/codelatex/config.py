@@ -9,7 +9,7 @@ Created on Fri Jun 10 12:45:31 2016
 compiler_path = ':/usr/texbin'
 
 # author for latex exports
-authors = ['Antoine Falaize', 'John Doe']
+authors = ['Antoine Falaize', 'Thomas Helie']
 affiliations = [r'Project-team S3\footnote{\url{http://s3.ircam.fr}}, \\' +
                 r'STMS, IRCAM-CNRS-UPMC (UMR 9912), \\' +
                 r'1 Place Igor-Stravinsky, 75004 Paris, France']*2

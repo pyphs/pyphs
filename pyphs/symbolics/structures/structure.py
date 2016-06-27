@@ -6,6 +6,9 @@ Created on Fri Jun  3 14:29:46 2016
 """
 import sympy
 from pyphs.misc.tools import geteval
+from dimensions import dims_names
+
+
 class Structure:
     """
     Class that serves as a container for structure of PortHamiltonianObject
@@ -22,17 +25,18 @@ class Structure:
         setattr(self,
                 '_build_set_mat',
                 lambda mat, name: _build_set_mat(phs, self, mat, name))
+        self._build_getset(phs)
 
-    def __add__(phs1, phs2):
+    def __add__(struc1, struc2):
         """
         return concatenation of structures for phs 1 and 2 with \
 M = block_diag(M1, M2).
         """
-        struc = phs1.struc
-        for vari in phs1.dims._names:
-            for varj in phs1.dims._names:
-                Mij1 = getattr(phs1.struc, 'M'+vari+varj)()
-                Mij2 = getattr(phs2.struc, 'M'+vari+varj)()
+        struc = struc1
+        for vari in dims_names:
+            for varj in dims_names:
+                Mij1 = getattr(struc1, 'M'+vari+varj)()
+                Mij2 = getattr(struc2, 'M'+vari+varj)()
                 Mij1 = sympy.diag(Mij1, Mij2)
                 getattr(struc, 'set_M'+vari+varj)(Mij1)
         return struc
@@ -55,7 +59,6 @@ M = block_diag(M1, M2).
                 name, self._build_get_mat(dims_names, part))
         setattr(self,
                 'set_'+name, self._build_set_mat(dims_names, part))
-
 
     def J(self):
         """

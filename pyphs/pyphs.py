@@ -104,7 +104,11 @@ got %s' % type(label)
 
         # Include the pyphs.expressions tools
         from symbolics.expressions import Expressions
-        setattr(self, 'exprs', Expressions())
+        setattr(self, 'exprs', Expressions(self))
+
+        # Include the pyphs.expressions tools
+        from numerics.numeric import Functions
+        setattr(self, 'funcs', Functions(self))
 
         # Include the pyphs.simulation tools
         from simulations.simulation import Simulation
@@ -163,7 +167,7 @@ got %s' % type(label)
         """
         Return n'th row of structure matrix J
         """
-        return self.struc.J[n, :]
+        return self.struc.M[n, :]
 
     def _getblock(self, indices):
         import sympy
@@ -187,22 +191,9 @@ got %s' % type(label)
 
     ###########################################################################
 
-    def build_exprs(self):
-        """
-        set attributes 'dxH', 'hessH' and 'jacz'
-        """
-        self.exprs.build(self)
-
-    def build_nums(self):
-        """
-        set module for numerical evaluations
-        """
-        from numerics.numeric import Numeric
-        setattr(self, 'nums', Numeric(self))
-
     def build_from_netlist(self, filename):
         """
-        read and stor data from netlist 'filename'
+        build phs structure from netlist 'filename'
         """
         self.graph.netlist.read(filename)
         self.graph.build_from_netlist(self)
@@ -210,6 +201,9 @@ got %s' % type(label)
         self.graph.analysis.build_phs(self)
 
     ###########################################################################
+
+    def is_nl(self):
+        return bool(self.dims.xnl() + self.dims.wnl())
 
     ###########################################################################
 
@@ -362,15 +356,12 @@ got %s' % type(label)
         """
         from plots.singleplots import singleplot
         import os
-        datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
+        datax = [el for el in self.data.t(imin=imin, imax=imax)]
         datay = list()
-        datay.append([el for el in self.simulation.data.dtE(imin=imin,
-                                                            imax=imax)])
+        datay.append([el for el in self.data.dtE(imin=imin, imax=imax)])
         Psd = map(lambda x, y: float(x) - float(y),
-                  self.simulation.data.ps(imin=imin,
-                                          imax=imax),
-                  self.simulation.data.pd(imin=imin,
-                                          imax=imax))
+                  self.data.ps(imin=imin, imax=imax),
+                  self.data.pd(imin=imin, imax=imax))
         datay.append(Psd)
         if not os.path.exists(self.paths['figures']):
             os.makedirs(self.paths['figures'])
@@ -391,7 +382,7 @@ got %s' % type(label)
         from generation.codelatex.tools import nice_label
         import os
 
-        datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
+        datax = [el for el in self.data.t(imin=imin, imax=imax)]
         datay = list()
         labels = list()
 
@@ -400,7 +391,7 @@ got %s' % type(label)
 
         filelabel = self.paths['figures']+os.path.sep
         for tup in var_list:
-            generator = getattr(self.simulation.data, tup[0])
+            generator = getattr(self.data, tup[0])
             sig = [el for el in generator(ind=tup[1], imin=imin, imax=imax)]
             datay.append(sig)
             labels.append(nice_label(tup[0], tup[1]))

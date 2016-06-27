@@ -4,8 +4,7 @@ Created on Fri Mar  4 00:24:35 2016
 
 @author: Falaize
 """
-import ast
-
+from pyphs.misc.tools import geteval
 special_chars = ['#']
 
 
@@ -43,17 +42,19 @@ class Latex:
             phs.plot_graph()
 
         if not hasattr(phs.exprs, 'dxH'):
-            phs.build_exprs()
+            phs.exprs.build()
 
         for expr in [r'H', r'z', r'jacz', r'dxH']:
             obj = getattr(phs.exprs, expr)
             setattr(self, expr, obj)
 
-        for mat in ['Jxx', 'Jxw', 'Jxy', 'Jww', 'Jwy', 'Jyy']:
-            obj = getattr(phs.struc, mat)
-            setattr(self, mat, obj())
-        J = getattr(phs.struc, 'J')
-        setattr(self, 'J', J)
+        for mat in ['M', 'J', 'R']:
+            M = geteval(phs.struc, mat)
+            setattr(self, mat, M)
+            for parti in ['x', 'w', 'y']:
+                for partj in ['x', 'w', 'y']:
+                    obj = geteval(phs.struc, mat+parti+partj)
+                    setattr(self, mat+parti+partj, obj)
 
     def sympy2latex(self, sp_object):
         """
@@ -61,7 +62,7 @@ class Latex:
         """
         from sympy.printing import latex
         import sympy
-        from pyphs.configs.latex import fold_short_frac, mat_delim,\
+        from config import fold_short_frac, mat_delim,\
             mat_str, mul_symbol
         if isinstance(sp_object, sympy.Matrix) and any(el == 0
                                                        for el in
@@ -126,7 +127,7 @@ class Latex:
         file_.close()
 
     def preamble(self):
-        from pyphs.configs.latex import authors, affiliations
+        from config import authors, affiliations
         nb_authors = len(authors)
         nb_affiliations = len(affiliations)
         latex_affiliations = ""
@@ -193,7 +194,7 @@ class Latex:
         associate the plot of the graph to a latex figure
         """
         import os
-        from pyphs.configs.plots import plot_format
+        from pyphs.plots.config import plot_format
         fig_name = self.path_figs + os.sep + \
             self.sys_label + '_graph.' + plot_format
         string = r"""%
@@ -309,7 +310,9 @@ class Latex:
                 str_structure += self.obj2tex(self.Jwy, r"\mathbf{G_w}", "")
         if self.ny > 0:
             str_structure += self.obj2tex(self.Jyy, r"\mathbf{J_y}", "")
-        str_J = self.obj2tex(self.J, r"\mathbf{J}", "")
+        str_J = self.obj2tex(self.M, r"\mathbf{M}", "")
+        str_J += self.obj2tex(self.J, r"\mathbf{J}", "")
+        str_J += self.obj2tex(self.R, r"\mathbf{R}", "")
 #        str_J = str_J.replace('begin{matrix}', 'begin{array}{' +
 #                              r'c'*self.nx +
 #                              r'|' + r'c'*self.nw +

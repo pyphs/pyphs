@@ -5,31 +5,33 @@ Created on Thu Jun  9 16:10:47 2016
 @author: Falaize
 """
 
-#from pyphs.misc.tools import progressbar
 import progressbar
 import time
 
 
 def process_py(simulation):
     # get generators of u and p
-    seq_u = simulation.data.u()
-    seq_p = simulation.data.p()
+    data = simulation.phs.data
+    seq_u = data.u()
+    seq_p = data.p()
 
     from pyphs.misc.io import open_files, close_files, dump_files
+    data_path = simulation.phs.paths['data']
     files_to_open = ['x', 'dx', 'dxHd', 'w', 'z', 'yd']
-    files = open_files(simulation.data.path, files_to_open)
+    files = open_files(data_path, files_to_open)
 
-    pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ', 
+    pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ',
                   progressbar.Bar(), ' ', progressbar.ETA()]
-    pbar = progressbar.ProgressBar(widgets=pb_widgets, maxval=simulation.nt)
+    pbar = progressbar.ProgressBar(widgets=pb_widgets,
+                                   maxval=simulation.config['nt'])
     pbar.start()
 
     # init time step
     n = 0
     print "\n*** Simulation ***\n"
     for (u, p) in zip(seq_u, seq_p):
-        simulation.internal.update(u=u, p=p)
-        dump_files(simulation.internal, files)
+        simulation.update(u=u, p=p)
+        dump_files(simulation, files)
         n += 1
         pbar.update(n)
     pbar.finish()

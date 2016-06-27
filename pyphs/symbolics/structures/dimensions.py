@@ -6,7 +6,7 @@ Created on Sat Jun 11 23:08:40 2016
 """
 from pyphs.misc.tools import geteval
 
-names_dims = ('x', 'w', 'y', 'cy')
+dims_names = ('x', 'w', 'y', 'cy')
 
 
 class Dimensions:
@@ -15,9 +15,9 @@ class Dimensions:
     """
     def __init__(self, phs):
         """
-        define accessors to len of var 'pho.symbs.nvar' for var in x, w, y, cy
+        define accessors to len of var 'phs.symbs.nvar' for var in x, w, y, cy
         """
-        setattr(self, '_names', names_dims)
+        setattr(self, '_names', dims_names)
 
         for name in self._names:
             dimvar = _dimvar_generator(phs, name)

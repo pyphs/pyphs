@@ -17,18 +17,20 @@ def handler(signum, frame):
     raise Exception("time out")
 
 
-def timeout(func, arg):
+def timeout(func, arg, dur=_dur_process_max):
     # Register the signal function handler
     signal.signal(signal.SIGALRM, handler)
 
     # Define a timeout for your function
-    signal.alarm(_dur_process_max)
+    signal.alarm(dur)
 
     try:
         arg = func(arg)
         # Cancel the timer if the function returned before timeout
         signal.alarm(0)
+        success = True
     except Exception, exc:
+        success = False
         print exc
         pass
-    return arg
+    return arg, success

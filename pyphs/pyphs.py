@@ -430,7 +430,7 @@ phs.paths['wav'].
         path = self.path + os.sep + 'wav'
         if not os.path.exists(path):
             os.makedirs(path)
-        data = getattr(self.simulation.data, name)
+        data = getattr(self.data, name)
         sig = [gain*el[index] for el in data()]
         for i, s in enumerate(sig):
             if abs(s) >= 1:

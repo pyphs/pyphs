@@ -6,8 +6,8 @@ Created on Tue Jun  7 19:14:24 2016
 """
 
 from pyphs import PortHamiltonianObject
-from pyphs.configs.graphs import datum
-from pyphs.configs.dictionary import nice_var_label
+from pyphs.graphs.config import datum
+from pyphs.dictionary.config import nice_var_label
 from pyphs.symbolics.tools import symbols
 
 

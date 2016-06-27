@@ -19,11 +19,12 @@ class Expressions:
     * z: tuple of dissipation functions expressions
     * g: tuple of input/output gains functions expressions
     """
-    def __init__(self):
+    def __init__(self, phs):
         setattr(self, '_names', set())
         self.setexpr('H', sympy.sympify(0))
         self.setexpr('z', tuple())
         self.setexpr('g', tuple())
+        self.phs = phs
 
     def __add__(exprs1, exprs2):
         exprs = exprs1
@@ -32,14 +33,14 @@ class Expressions:
         exprs.setexpr('g', list(exprs.g)+list(exprs2.g))
         return exprs
 
-    def build(self, phs):
-        self.setexpr('dxH', gradient(self.H, phs.symbs.x))
-        self.setexpr('dxHd', discrete_gradient(phs.exprs.H,
-                                               phs.symbs.x,
-                                               phs.symbs.dx()))
-        self.setexpr('hessH', hessian(self.H, phs.symbs.x))
-        self.setexpr('jacz', jacobian(self.z, phs.symbs.w))
-        y, yd = output_function(phs)
+    def build(self):
+        self.setexpr('dxH', gradient(self.H, self.phs.symbs.x))
+        self.setexpr('dxHd', discrete_gradient(self.H,
+                                               self.phs.symbs.x,
+                                               self.phs.symbs.dx()))
+        self.setexpr('hessH', hessian(self.H, self.phs.symbs.x))
+        self.setexpr('jacz', jacobian(self.z, self.phs.symbs.w))
+        y, yd = output_function(self.phs)
         self.setexpr('y', y)
         self.setexpr('yd', yd)
 

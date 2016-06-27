@@ -5,6 +5,7 @@ Created on Sun Jun  5 08:50:42 2016
 @author: Falaize
 """
 
+
 def sep():
     return ','
 
@@ -31,9 +32,9 @@ i-th parameter is defined as 'label_pari'.
         """
         init with filename to read data from 'filename.net'
         """
-        from pyphs.configs.graphs import datum
+        import config
         self.filename = filename
-        self.datum = datum
+        self.datum = config.datum
         self.dictionaries = tuple()
         self.components = tuple()
         self.labels = tuple()
@@ -41,7 +42,7 @@ i-th parameter is defined as 'label_pari'.
         self.arguments = tuple()
 
     def __getitem__(self, n):
-        item = {'dictionary': self.dictionaries[n], 
+        item = {'dictionary': self.dictionaries[n],
                 'component': self.components[n],
                 'label': self.labels[n],
                 'nodes': self.nodes[n],
@@ -90,6 +91,7 @@ components).
         print the netlist line 'n' whith appropriate format
         """
         return _print_netlist_line(self[n])
+
 
 def _print_netlist_line(dic):
     """

@@ -83,24 +83,42 @@ got %s' % type(label)
         self.label = label
 
         # object path
-        from attributes import paths
+        import paths
         paths._init_paths(self, path)
 
+        # Include the pyphs.symbolics tools
         from symbolics.symbols import Symbols
         setattr(self, 'symbs', Symbols())
 
+        # Include the pyphs.structures.dimensions tools
         from symbolics.structures.dimensions import Dimensions
         setattr(self, 'dims', Dimensions(self))
 
+        # Include the pyphs.structures.indices tools
         from symbolics.structures.indices import Indices
         setattr(self, 'inds', Indices(self))
 
+        # Include the pyphs.structures.indices tools
         from symbolics.structures.structure import Structure
         setattr(self, 'struc', Structure(self))
 
+        # Include the pyphs.expressions tools
         from symbolics.expressions import Expressions
-        setattr(self, 'exprs', Expressions())
+        setattr(self, 'exprs', Expressions(self))
 
+        # Include the pyphs.expressions tools
+        from numerics.numeric import Functions
+        setattr(self, 'funcs', Functions(self))
+
+        # Include the pyphs.simulation tools
+        from simulations.simulation import Simulation
+        setattr(self, 'simu', Simulation(self))
+
+        # Include the pyphs.data tools
+        from data.data import Data
+        setattr(self, 'data', Data(self))
+
+        # Include the pyphs.graphs tools
         from graphs.graph import Graph
         setattr(self, 'graph', Graph())
 
@@ -149,7 +167,7 @@ got %s' % type(label)
         """
         Return n'th row of structure matrix J
         """
-        return self.struc.J[n, :]
+        return self.struc.M[n, :]
 
     def _getblock(self, indices):
         import sympy
@@ -166,29 +184,16 @@ got %s' % type(label)
 
     def symbols(self, obj):
         """
-        Standard symbols in pyphs are REAL sympy.Symbol instances.
+        Standard symbols in PyPHS are REAL sympy.Symbol instances.
         """
         from symbolics.tools import symbols
         return symbols(obj)
 
     ###########################################################################
 
-    def build_exprs(self):
-        """
-        set attributes 'dxH', 'hessH' and 'jacz'
-        """
-        self.exprs.build(self)
-
-    def build_nums(self):
-        """
-        set module for numerical evaluations
-        """
-        from numerics.numeric import Numeric
-        setattr(self, 'nums', Numeric(self))
-
     def build_from_netlist(self, filename):
         """
-        read and stor data from netlist 'filename'
+        build phs structure from netlist 'filename'
         """
         self.graph.netlist.read(filename)
         self.graph.build_from_netlist(self)
@@ -197,31 +202,8 @@ got %s' % type(label)
 
     ###########################################################################
 
-    def build_simulation(self, config=None, sequ=None, seqp=None,
-                         nt=None, x0=None):
-        """
-        Parameters
-        -----------
-
-        config : dic of configuraiton options, including sample rate 'fs' and\
-'language' ('c++' or 'python').
-
-        sequ : iterable of tuples of inputs values.
-
-        seqp : iterable of tuples of parameters values.
-
-        nt : number of time steps (x goes to x[nt+1]).
-        """
-        from simulations.simulation import Simulation
-        self.simulation = Simulation(self, config=config, sequ=sequ, seqp=seqp,
-                                     nt=nt, x0=x0)
-
-    def run_simulation(self):
-        """
-        run the simulation. to set parameters (inputs, sampling rate, etc.), \
-refer to function 'buil_simulation' of your 'PortHamiltonianObject'
-        """
-        self.simulation.process(self)
+    def is_nl(self):
+        return bool(self.dims.xnl() + self.dims.wnl())
 
     ###########################################################################
 
@@ -245,21 +227,23 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
             attr = getattr(self.exprs, name)
             if hasattr(attr, "__len__"):
                 attr = list(attr)
-                for i in range(len(attr)):
+                for i, at in enumerate(attr):
                     try:
-                        attr[i] = attr[i].subs(subs)
+                        attr[i] = at.subs(subs)
                     except:
                         pass
             else:
                 attr = attr.subs(subs)
             setattr(self.exprs, name, attr)
-        self.struc.J = self.struc.J.subs(subs)
+        self.struc.M = self.struc.M.subs(subs)
 
     ###########################################################################
 
     def add_storages(self, x, H):
         """
         Add a storage component with state x and energy H.
+        * State x is append to the current list of states symbols,
+        * Expression H is added to the current expression of Hamiltonian.
 
         Parameters
         ----------
@@ -354,6 +338,17 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
 
     ###########################################################################
 
+    def build_resistive_structure(self):
+        """
+        Build resistsive structure matrix R in PHS structure (J-R) associated \
+with the linear dissipative components. Notice the associated \
+dissipative variables w are no more accessible.
+        """
+        from symbolics.structures.tools import reduce_linear_dissipations
+        reduce_linear_dissipations(self)
+
+    ###########################################################################
+
     def plot_graph(self):
         """
         Plot the graph of the system (networkx.plot method).
@@ -366,32 +361,12 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
             '_graph'
         plot(self.graph, save=fig_name)
 
-    def plot_powerbal(self, imin=0, imax=None):
+    def plot_powerbal(self, mode='single', opts=None):
         """
         Plot the power balance between imin and imax
         """
-        from plots.singleplots import singleplot
-        import os
-        datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
-        datay = list()
-        datay.append([el for el in self.simulation.data.dtE(imin=imin,
-                                                            imax=imax)])
-        Psd = map(lambda x, y: float(x) - float(y),
-                  self.simulation.data.ps(imin=imin,
-                                          imax=imax),
-                  self.simulation.data.pd(imin=imin,
-                                          imax=imax))
-        datay.append(Psd)
-        if not os.path.exists(self.paths['figures']):
-            os.makedirs(self.paths['figures'])
-        plotopts = {'unitx': 'time $t$ (s)',
-                    'unity': r'Power (W)',
-                    'labels': [r'$\frac{\mathtt{d} \mathrm{E}}{\mathtt{d} t}$',
-                               r'$\mathrm{P_S}-\mathrm{P_D}$'],
-                    'filelabel':
-                        self.paths['figures']+os.sep+'power_balance',
-                    'maintitle': r'Power balance'}
-        singleplot(datax, datay, **plotopts)
+        from plots.phs import plot_powerbal
+        plot_powerbal(self, mode=mode, opts=opts)
 
     def plot_data(self, var_list, imin=0, imax=None):
         """
@@ -401,7 +376,7 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
         from generation.codelatex.tools import nice_label
         import os
 
-        datax = [el for el in self.simulation.data.t(imin=imin, imax=imax)]
+        datax = [el for el in self.data.t(imin=imin, imax=imax)]
         datay = list()
         labels = list()
 
@@ -410,7 +385,7 @@ refer to function 'buil_simulation' of your 'PortHamiltonianObject'
 
         filelabel = self.paths['figures']+os.path.sep
         for tup in var_list:
-            generator = getattr(self.simulation.data, tup[0])
+            generator = getattr(self.data, tup[0])
             sig = [el for el in generator(ind=tup[1], imin=imin, imax=imax)]
             datay.append(sig)
             labels.append(nice_label(tup[0], tup[1]))

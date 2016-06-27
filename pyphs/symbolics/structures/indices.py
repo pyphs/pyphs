@@ -13,18 +13,18 @@ class Indices:
     """
     def __init__(self, phs):
 
-        def _set_inds(names):
-            """
-            Add indices from list of list of names in dims with \
-    sum(dims.name())=dims.tot()
-            """
-            for name in names:
-                inds = _inds_in_all(phs, names, name)
-                setattr(self, name, inds)
-
-        setattr(self, '_set_inds', _set_inds)
-
+        self.phs = phs
         self._set_inds(phs.dims._names)
+
+    def _set_inds(self, names):
+        """
+        Add indices from list of list of names in dims with \
+sum(dims.name())=dims.tot()
+        """
+        for name in names:
+            inds = _inds_in_all(self.phs, names, name)
+            setattr(self, name, inds)
+
 
 
 def _inds_in_all(phs, names, name):

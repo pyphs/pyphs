@@ -5,6 +5,7 @@ Created on Fri Jun  3 14:22:39 2016
 @author: Falaize
 """
 
+from tools import symbols
 from pyphs.misc.tools import geteval
 
 ##############################################################################
@@ -29,7 +30,7 @@ class Symbols:
         setattr(self, '_names', set())
         # init symbols with empty lists
         for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
-            self._setsymb(name, tuple())
+            self._setsymb(name, list())
         self._args_names = ('x', 'dx', 'w', 'u', 'p')
 
     def __add__(symbs1, symbs2):
@@ -48,7 +49,6 @@ class Symbols:
         returns the states increment symbols "dxi" associated with state \
 symbol "xi" for "xi" in state vector "x".
         """
-        from tools import symbols
         symbs = []
         for x in self.x:
             symbs += [symbols('d'+str(x)), ]
@@ -72,7 +72,7 @@ to list of names.
         """
         if name not in self._names:
             self._names.add(name)
-        setattr(self, name, tuple(list_symbs))
+        setattr(self, name, list_symbs)
 
     def _allsymbs(self):
         """

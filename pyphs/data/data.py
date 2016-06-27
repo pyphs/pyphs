@@ -24,7 +24,7 @@ class Data:
                                            postprocess=postprocess)
             return get_seq
 
-        for name in list(phs.symbs._args_names) + ['yd', 'dxHd', 'z', 'dtx']:
+        for name in list(phs.symbs._args_names) + ['y', 'dxH', 'z', 'dx']:
             setattr(self, name, dummy_func(name))
 
     def t(self, imin=None, imax=None, decim=None):
@@ -60,7 +60,7 @@ class Data:
         def dxtodtx(dx):
             return dx*self.phs.simu.config['fs']
         for dtx, dxh in zip(self.dx(postprocess=dxtodtx, **options),
-                            self.dxHd(**options)):
+                            self.dxH(**options)):
             yield scalar_product(dtx, dxh)
 
     def pd(self, imin=None, imax=None, decim=None):
@@ -82,9 +82,9 @@ class Data:
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
-        for u, yd in zip(self.u(**options),
-                         self.yd(postprocess=lambda el: -el, **options)):
-            yield scalar_product(u, yd)
+        for u, y in zip(self.u(**options),
+                        self.y(postprocess=lambda el: -el, **options)):
+            yield scalar_product(u, y)
 
     def data_generator(self, name, ind=None, postprocess=None,
                        imin=None, imax=None, decim=None):

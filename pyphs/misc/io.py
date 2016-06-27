@@ -20,15 +20,16 @@ def open_files(path, files_to_open):
 
 
 def close_files(files):
-    for key in files.keys():
+    for key in files:
             _file = files[key]
             _file.close()
 
 
-def dump_files(internal, files):
-    for key in files.keys():
+def dump_files(simu, files):
+    for key in files:
         _file = files[key]
-        lis = [float(el) for el in getattr(internal, key)()]
+        obj = getattr(simu, key)()
+        lis = list(obj.flatten())
         _file.write(list2str(lis))
 
 

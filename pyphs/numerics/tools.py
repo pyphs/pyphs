@@ -6,44 +6,37 @@ Created on Fri Jun  3 11:26:41 2016
 """
 
 from sympy.printing.lambdarepr import lambdarepr
+import numpy
 
-
-def replace_sp2np(string):
-    sympy2numpy = {
-            'sin': 'sin',
-            'cos': 'cos',
-            'tan': 'tan',
-            'asin': 'arcsin',
-            'acos': 'arccos',
-            'atan': 'arctan',
-            'atan2': 'arctan2',
-            'sinh': 'sinh',
-            'cosh': 'cosh',
-            'tanh': 'tanh',
-            'asinh': 'arcsinh',
-            'acosh': 'arccosh',
-            'atanh': 'arctanh',
-            'ln': 'log',
-            'log': 'log',
-            'exp': 'exp',
-            'sqrt': 'sqrt',
-            'Abs': 'abs',
-            'conjugate': 'conj',
-            'im': 'imag',
-            're': 'real',
-            'where': 'where',
-            'complex': 'complex',
-            'contains': 'contains',
-            'MutableDenseMatrix': 'array'}
-#            'DenseMatrix': 'array',
-#            'ImmutableDenseMatrix': 'array',
-#            'ImmutableMatrix': 'array',
-#            'Matrix': 'array',
-
-    for key in sympy2numpy:
-        string = string.replace(key, 'numpy.'+sympy2numpy[key])
-    return string
-
+parser_sympy2numpy = {
+            'sin': numpy.sin,
+            'cos': numpy.cos,
+            'tan': numpy.tan,
+            'asin': numpy.arcsin,
+            'acos': numpy.arccos,
+            'atan': numpy.arctan,
+            'atan2': numpy.arctan2,
+            'sinh': numpy.sinh,
+            'cosh': numpy.cosh,
+            'tanh': numpy.tanh,
+            'asinh': numpy.arcsinh,
+            'acosh': numpy.arccosh,
+            'atanh': numpy.arctanh,
+            'ln': numpy.log,
+            'log': numpy.log,
+            'exp': numpy.exp,
+            'sqrt': numpy.sqrt,
+            'Abs': numpy.abs,
+            'conjugate': numpy.conj,
+            'im': numpy.imag,
+            're': numpy.real,
+            'where': numpy.where,
+            'complex': numpy.complex,
+            'MutableDenseMatrix': numpy.array,
+            'DenseMatrix': numpy.array,
+            'ImmutableDenseMatrix': numpy.array,
+            'ImmutableMatrix': numpy.array,
+            'Matrix': numpy.array}
 
 def lambdify(args, expr, subs=None, simplify=True):
     """
@@ -60,12 +53,13 @@ def lambdify(args, expr, subs=None, simplify=True):
     if simplify:
         from pyphs.symbolics.tools import simplify as simp
         expr = simp(expr)
-    str_expr = replace_sp2np(lambdarepr(expr))
+    str_expr = lambdarepr(expr)
     str_args = ""
     for arg in args:
         str_args += str(arg) + ', '
-    import numpy
-    func = eval('lambda ' + str_args + ' : ' + str_expr, {'numpy': numpy}, {})
+    func = eval('lambda ' + str_args + ' : ' + str_expr,
+                parser_sympy2numpy,
+                {})
     return func
 
 

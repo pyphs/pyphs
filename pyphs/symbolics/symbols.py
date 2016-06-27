@@ -30,6 +30,7 @@ class Symbols:
         # init symbols with empty lists
         for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
             self._setsymb(name, tuple())
+        self._args_names = ('x', 'dx', 'w', 'u', 'p')
 
     def __add__(symbs1, symbs2):
         """
@@ -48,9 +49,9 @@ class Symbols:
 symbol "xi" for "xi" in state vector "x".
         """
         from tools import symbols
-        symbs = tuple()
+        symbs = []
         for x in self.x:
-            symbs += (symbols('d'+str(x)), )
+            symbs += [symbols('d'+str(x)), ]
         return symbs
 
     def args(self):
@@ -58,9 +59,8 @@ symbol "xi" for "xi" in state vector "x".
         return list of symbols associated with arguments of numerical functions
         """
         # names of arguments for functions evaluation
-        _args_names = ('x', 'dx', 'w', 'u', 'p')
         args = []
-        for name in _args_names:
+        for name in self._args_names:
             symbs = geteval(self, name)
             args += symbs
         return args

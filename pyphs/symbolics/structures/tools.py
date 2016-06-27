@@ -12,7 +12,7 @@ from pyphs.misc.tools import myrange
 
 def moveJcolnrow(phs, indi, indf):
     new_indices = myrange(phs.dims.tot(), indi, indf)
-    phs.struc.J = phs.struc.J[new_indices, new_indices]
+    phs.struc.M = phs.struc.M[new_indices, new_indices]
 
 
 def move_stor(phs, indi, indf):
@@ -78,47 +78,53 @@ def split_separate(phs):
     phs.dims.wns = phs.dims.w()-i
 
 
-def split_linear(phs):
+def split_linear(phs, force_nolin=False):
     """
     """
     # split storage part
     nxl = 0
-    for _ in range(phs.dims.x()):
-        hess = hessian(phs.exprs.H, phs.symbs.x)
-        hess_line = list(hess[nxl, :].T)
-        # init line symbols
-        line_symbols = set()
-        # collect line symbols
-        for el in hess_line:
-            line_symbols = line_symbols.union(el.free_symbols)
-        # if symbols are not states
-        if not any(el in line_symbols for el in phs.symbs.x):
-            # do nothing and increment counter
-            nxl += 1
-        else:
-            # move the element at the end of states vector
-            move_stor(phs, nxl, phs.dims.x()-1)
+    if not force_nolin:
+        for _ in range(phs.dims.x()):
+            hess = hessian(phs.exprs.H, phs.symbs.x)
+            hess_line = list(hess[nxl, :].T)
+            # init line symbols
+            line_symbols = set()
+            # collect line symbols
+            for el in hess_line:
+                line_symbols = line_symbols.union(el.free_symbols)
+            # if symbols are not states
+            if not any(el in line_symbols for el in phs.symbs.x):
+                # do nothing and increment counter
+                nxl += 1
+            else:
+                # move the element at the end of states vector
+                move_stor(phs, nxl, phs.dims.x()-1)
+    hess = hessian(phs.exprs.H, phs.symbs.x)
+    phs.exprs.setexpr('Q', hess[:nxl, :nxl])
     # number of linear components
     setattr(phs.dims, 'xl', nxl)
 
     # split dissipative part
     nwl = 0
-    for _ in range(phs.dims.w()):
-        jacz = jacobian(phs.exprs.z, phs.symbs.w)
-        jacz_line = list(jacz[nwl, :].T)
-        # init line symbols
-        line_symbols = set()
-        # collect line symbols
-        for el in jacz_line:
-            line_symbols = line_symbols.union(el.free_symbols)
-        # if symbols are not dissipation variables
-        if not any(el in line_symbols for el in phs.symbs.w):
-            # do nothing and increment counter
-            nwl += 1
-        else:
-            # move the element to end of dissipation variables vector
-            move_diss(phs, nwl, phs.dims.w()-1)
-
+    if not force_nolin:
+        for _ in range(phs.dims.w()):
+            jacz = jacobian(phs.exprs.z, phs.symbs.w)
+            jacz_line = list(jacz[nwl, :].T)
+            # init line symbols
+            line_symbols = set()
+            # collect line symbols
+            for el in jacz_line:
+                line_symbols = line_symbols.union(el.free_symbols)
+            print line_symbols
+            # if symbols are not dissipation variables
+            if not any(el in line_symbols for el in phs.symbs.w):
+                # do nothing and increment counter
+                nwl += 1
+            else:
+                # move the element to end of dissipation variables vector
+                move_diss(phs, nwl, phs.dims.w()-1)
+    jacz = jacobian(phs.exprs.z, phs.symbs.w)
+    phs.exprs.setexpr('Zl', jacz[:nwl, :nwl])
     # number of linear components
     setattr(phs.dims, 'wl', nwl)
 
@@ -164,17 +170,16 @@ def output_function(phs):
     creates funtion phs.output_function
     """
     if phs.dims.y() > 0:
-
-        Vyu = phs.struc.Jyy()*sympy.Matrix(phs.symbs.u)
+        Vyu = phs.struc.Myy()*sympy.Matrix(phs.symbs.u)
 
         if phs.dims.x() > 0:
-            Vyx = phs.struc.Jyx()*sympy.Matrix(phs.exprs.dxH)
-            Vyxd = phs.struc.Jyx()*sympy.Matrix(phs.exprs.dxHd)
+            Vyx = phs.struc.Myx()*sympy.Matrix(phs.exprs.dxH)
+            Vyxd = phs.struc.Myx()*sympy.Matrix(phs.exprs.dxHd)
         else:
             Vyx = Vyxd = sympy.zeros(phs.dims.y(), 1)
 
         if phs.dims.w() > 0:
-            Vyw = phs.struc.Jyw()*sympy.Matrix(phs.exprs.z)
+            Vyw = phs.struc.Myw()*sympy.Matrix(phs.exprs.z)
         else:
             Vyw = sympy.zeros(phs.dims.y(), 1)
 

@@ -22,13 +22,13 @@ def activate_latex(opts):
     """
     # Path for latex compiler
     import os
-    from pyphs.configs.latex import compiler_path
+    from pyphs.generation.codelatex.config import compiler_path
     os.environ['PATH'] = os.environ['PATH'] + compiler_path
     # Activate use of latex expressions
     from matplotlib.pyplot import rc
     rc('text', usetex=opts['latex'])
     # Add Latex Preamble
-    from pyphs.configs.plots import latex_preamble
+    from pyphs.plots.config import latex_preamble
     from matplotlib import rcParams
     rcParams['text.latex.preamble'] = latex_preamble
 

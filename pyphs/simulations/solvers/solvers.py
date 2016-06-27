@@ -7,7 +7,7 @@ Created on Thu Jun  9 15:45:17 2016
 import numpy
 import sympy as sp
 from pyphs.symbolics.tools import inverse, simplify
-from pyphs.symbolics.calculus import jacobian, hessian
+from pyphs.symbolics.calculus import jacobian
 from pyphs.misc.tools import geteval
 
 
@@ -17,59 +17,59 @@ class Solver:
 due to nonlinear components, with its jacobian matrix. Define also the solver \
 for implicite functions.
     """
-    def __init__(self, internal, phs, solver_name):
+    def __init__(self, simu):
         # structure
-        _init_structure(phs, internal.fs)
-        _init_updates(phs, internal.fs)
+        _init_structure(simu.phs, simu.config['fs'])
 
-        iter_solver = getattr(self, solver_name)(internal, phs)
-        internal.iter_solver = iter_solver
+        obj = getattr(self, simu.config['solver'])
+        iter_solver = obj(simu)
+        simu.iter_solver = iter_solver
 
-    def standard(self, internal, phs):
+    def standard(self, simu):
         def iter_solver():
             # eval args
-            varsnl = internal.varsnl()
-            impfunc = internal.impfunc()
-            jac_impfunc = internal.jac_impfunc()
+            vnl = simu.vnl()
+            impfunc = simu.impfunc()
+            jac_impfunc = simu.jac_impfunc()
             # compute inverse jacobian
             ijac_impfunc = numpy.linalg.inv(jac_impfunc)
             # build updates for args
-            v = numpy.matrix(varsnl).T - ijac_impfunc * numpy.matrix(impfunc).T
-            varsnl = v.T.tolist()[0]
-            internal.set_varsnl(varsnl)
+            vnl = numpy.matrix(vnl).T - numpy.dot(ijac_impfunc, impfunc)
+            vnl = vnl.T.tolist()[0]
+            simu.set_vnl(vnl)
         return iter_solver
 
-    def partial(self, internal, phs):
+    def partial(self, simu):
 
-        jac_impfunc = phs.exprs.jac_impfunc
-        phs.exprs.setexpr('ijac_impfunc', inverse(jac_impfunc))
+        jac_impfunc = simu.phs.exprs.jac_impfunc
+        simu.phs.exprs.setexpr('ijac_impfunc', inverse(jac_impfunc))
 
         def iter_solver():
             # eval args
-            varsnl = internal.varsnl()
-            impfunc = internal.impfunc()
-            ijac_impfunc = internal.ijac_impfunc()
+            varsnl = simu.varsnl()
+            impfunc = simu.impfunc()
+            ijac_impfunc = simu.ijac_impfunc()
             # build updates for args
             v = numpy.matrix(varsnl).T - ijac_impfunc * numpy.matrix(impfunc).T
             varnl = v.T.tolist()[0]
-            internal.set_varsnl(varnl)
+            simu.set_varsnl(varnl)
 
         return iter_solver
 
-    def full(self, internal, phs):
-        impfunc = sp.Matrix(phs.exprs.impfunc)
-        varsnl = sp.Matrix(phs.exprs.varsnl)
-        jac_impfunc = phs.exprs.jac_impfunc
+    def full(self, simu):
+        impfunc = sp.Matrix(simu.phs.exprs.impfunc)
+        varsnl = sp.Matrix(simu.phs.exprs.varsnl)
+        jac_impfunc = simu.phs.exprs.jac_impfunc
         ijac_impfunc = inverse(jac_impfunc)
         update_varnl = list(varsnl - ijac_impfunc * impfunc)
         attr = 'update_varnl'
-        phs.exprs.setexpr(attr, update_varnl)
+        simu.phs.exprs.setexpr(attr, update_varnl)
 
         # def update args function
         def iter_solver():
             # eval args
-            varsnl = getattr(internal, attr)()
-            internal.set_varsnl(varsnl)
+            varsnl = getattr(simu, attr)()
+            simu.set_varsnl(varsnl)
 
         return iter_solver
 
@@ -78,171 +78,123 @@ def _init_structure(phs, fs):
     """
     split system in xlin, xlin, wlin and wnlin, and stores structure in exprs
     """
+    phs.exprs.build()
     # split linear and nonlinear parts
     dims_names = ['xl', 'xnl', 'wl', 'wnl', 'y']
 
+    phs.inds._set_inds(dims_names)
     # get() and set() for structure matrices
     for name1 in dims_names:
         for name2 in dims_names:
             phs.struc._build_getset(phs, dims_names=dims_names)
 
-    # linear coefficients with Hl = xl^T.Q.xl/2 and zl = R.wl
-    phs.exprs.setexpr('Q', hessian(phs.exprs.H, phs.symbs.x[:phs.dims.xl]))
-    phs.exprs.setexpr('R', jacobian(phs.exprs.z[:phs.dims.wl],
-                                    phs.symbs.w[:phs.dims.wl]))
-    iDw = sp.eye(phs.dims.wl)-phs.struc.Jwlwl()*phs.exprs.R
-    phs.exprs.setexpr('iDw', iDw)
-    Dw = inverse(iDw)
-    phs.exprs.setexpr('Dw', Dw)
+    nxl, nwl = phs.dims.xl, phs.dims.wl
 
-    temp_Awl = Dw*phs.struc.Jwlxl()
-    temp_Bwl = Dw*phs.struc.Jwlxnl()
-    temp_Cwl = Dw*phs.struc.Jwlwnl()
-    temp_Dwl = Dw*phs.struc.Jwly()
+    temp1 = sp.diag(sp.eye(nxl)*phs.simu.config['fs'], sp.eye(nwl))
+    temp2_1 = sp.Matrix.hstack(phs.struc.Mxlxl(), phs.struc.Mxlwl())
+    temp2_2 = sp.Matrix.hstack(phs.struc.Mwlxl(), phs.struc.Mwlwl())
+    temp2 = sp.Matrix.vstack(temp2_1, temp2_2)
+    tempQZl = sp.diag(phs.exprs.Q/2, phs.exprs.Zl)
+    phs.exprs.setexpr('iDl', temp1 - temp2*tempQZl)
 
-    temp_Axl = phs.struc.Jxlxl() + phs.struc.Jxlwl() * phs.exprs.R * temp_Awl
-    temp_Bxl = phs.struc.Jxlxnl() + phs.struc.Jxlwl() * phs.exprs.R * temp_Bwl
-    temp_Cxl = phs.struc.Jxlwnl() + phs.struc.Jxlwl() * phs.exprs.R * temp_Cwl
-    temp_Dxl = phs.struc.Jxly() + phs.struc.Jxlwl() * phs.exprs.R * temp_Dwl
+    temp_1 = sp.Matrix.hstack(phs.struc.Mxlxl())
+    temp_2 = sp.Matrix.hstack(phs.struc.Mwlxl())
+    temp = sp.Matrix.vstack(temp_1, temp_2)
+    phs.exprs.setexpr('barNlxl', temp)
 
-    iDx = sp.eye(phs.dims.xl)*fs - sp.sympify(1./2.)*temp_Axl*phs.exprs.Q
-    phs.exprs.setexpr('iDx', iDx)
-    Dx = inverse(iDx)
-    phs.exprs.setexpr('Dx', Dx)
+    temp_1 = sp.Matrix.hstack(phs.struc.Mxlxnl(), phs.struc.Mxlwnl())
+    temp_2 = sp.Matrix.hstack(phs.struc.Mwlxnl(), phs.struc.Mwlwnl())
+    temp = sp.Matrix.vstack(temp_1, temp_2)
+    phs.exprs.setexpr('barNlnl', temp)
 
-    Axl = Dx*temp_Axl*phs.exprs.Q
-    phs.exprs.setexpr('Axl', Axl)
-    Bxl = Dx*temp_Bxl
-    phs.exprs.setexpr('Bxl', Bxl)
-    Cxl = Dx*temp_Cxl
-    phs.exprs.setexpr('Cxl', Cxl)
-    Dxl = Dx*temp_Dxl
-    phs.exprs.setexpr('Dxl', Dxl)
+    temp_1 = sp.Matrix.hstack(phs.struc.Mxly())
+    temp_2 = sp.Matrix.hstack(phs.struc.Mwly())
+    temp = sp.Matrix.vstack(temp_1, temp_2)
+    phs.exprs.setexpr('barNly', temp)
 
-    temp_A = phs.exprs.Q * (sp.eye(phs.dims.xl) + sp.sympify(1./2.)*Axl)
-    temp_B = sp.sympify(1./2.)*phs.exprs.Q*Bxl
-    temp_C = sp.sympify(1./2.)*phs.exprs.Q*Cxl
-    temp_D = sp.sympify(1./2.)*phs.exprs.Q*Dxl
+    temp_1 = sp.Matrix.hstack(phs.struc.Mxnlxnl(), phs.struc.Mxnlwnl())
+    temp_2 = sp.Matrix.hstack(phs.struc.Mwnlxnl(), phs.struc.Mwnlwnl())
+    temp = sp.Matrix.vstack(temp_1, temp_2)
+    phs.exprs.setexpr('barNnlnl', temp)
 
-    temp_Axnl = phs.struc.Jxnlxl()+phs.struc.Jxnlwl()*phs.exprs.R*temp_Awl
-    temp_Bxnl = phs.struc.Jxnlxnl()+phs.struc.Jxnlwl()*phs.exprs.R*temp_Bwl
-    temp_Cxnl = phs.struc.Jxnlwnl()+phs.struc.Jxnlwl()*phs.exprs.R*temp_Cwl
-    temp_Dxnl = phs.struc.Jxnly()+phs.struc.Jxnlwl()*phs.exprs.R*temp_Dwl
+    temp_1 = sp.Matrix.hstack(phs.struc.Mxnlxl(), phs.struc.Mxnlwl())
+    temp_2 = sp.Matrix.hstack(phs.struc.Mwnlxl(), phs.struc.Mwnlwl())
+    temp = sp.Matrix.vstack(temp_1, temp_2)
+    phs.exprs.setexpr('barNnll', temp*tempQZl)
 
-    Axnl = temp_Axnl*temp_A
-    phs.exprs.setexpr('Axnl', Axnl)
-    Bxnl = temp_Bxnl + temp_Axnl*temp_B
-    phs.exprs.setexpr('Bxnl', Bxnl)
-    Cxnl = temp_Cxnl + temp_Axnl*temp_C
-    phs.exprs.setexpr('Cxnl', Cxnl)
-    Dxnl = temp_Dxnl + temp_Axnl*temp_D
-    phs.exprs.setexpr('Dxnl', Dxnl)
+    temp_1 = sp.Matrix.hstack(phs.struc.Mxnlxl())
+    temp_2 = sp.Matrix.hstack(phs.struc.Mwnlxl())
+    temp = sp.Matrix.vstack(temp_1, temp_2)
+    phs.exprs.setexpr('barNnlxl', temp*phs.exprs.Q)
 
-    temp_Awnl = phs.struc.Jwnlxl()+phs.struc.Jwnlwl()*phs.exprs.R*temp_Awl
-    temp_Bwnl = phs.struc.Jwnlxnl()+phs.struc.Jwnlwl()*phs.exprs.R*temp_Bwl
-    temp_Cwnl = phs.struc.Jwnlwnl()+phs.struc.Jwnlwl()*phs.exprs.R*temp_Cwl
-    temp_Dwnl = phs.struc.Jwnly()+phs.struc.Jwnlwl()*phs.exprs.R*temp_Dwl
+    temp_1 = sp.Matrix.hstack(phs.struc.Mxnly())
+    temp_2 = sp.Matrix.hstack(phs.struc.Mwnly())
+    temp = sp.Matrix.vstack(temp_1, temp_2)
+    phs.exprs.setexpr('barNnly', temp)
 
-    Awnl = temp_Awnl*temp_A
-    phs.exprs.setexpr('Awnl', Awnl)
-    Bwnl = temp_Bwnl + temp_Awnl*temp_B
-    phs.exprs.setexpr('Bwnl', Bwnl)
-    Cwnl = temp_Cwnl + temp_Awnl*temp_C
-    phs.exprs.setexpr('Cwnl', Cwnl)
-    Dwnl = temp_Dwnl + temp_Awnl*temp_D
-    phs.exprs.setexpr('Dwnl', Dwnl)
+    phs.exprs.setexpr('vl', phs.symbs.dx()[:nxl] + phs.symbs.w[:nwl])
 
-    Awl = temp_Awl*temp_A
-    phs.exprs.setexpr('Awl', Awl)
-    Bwl = temp_Bwl + temp_Awl*temp_B
-    phs.exprs.setexpr('Bwl', Bwl)
-    Cwl = temp_Cwl + temp_Awl*temp_C
-    phs.exprs.setexpr('Cwl', Cwl)
-    Dwl = temp_Dwl + temp_Awl*temp_D
-    phs.exprs.setexpr('Dwl', Dwl)
+    phs.exprs.setexpr('vnl', phs.symbs.dx()[nxl:] + phs.symbs.w[nwl:])
+    phs.exprs.setexpr('fnl', phs.exprs.dxHd[nxl:] + phs.exprs.z[nwl:])
+    jac_fnl = jacobian(phs.exprs.fnl, phs.exprs.vnl)
+    phs.exprs.setexpr('jac_fnl', jac_fnl)
+
+    nxnl, nwnl = phs.dims.xnl(), phs.dims.wnl()
+    temp = sp.diag(sp.eye(nxnl)*phs.simu.config['fs'], sp.eye(nwnl))
+    phs.exprs.setexpr('Inl', jac_fnl)
+
+    from pyphs.misc.timer import timeout
+    from pyphs.symbolics.tools import inverse
+    Dl, success = timeout(inverse, phs.exprs.iDl, dur=60)
+    if success:
+        phs.exprs.setexpr('Dl', Dl)
+        for name in ['xl', 'nl', 'y']:
+            temp = Dl * getattr(phs.exprs, 'barNl'+name)
+            phs.exprs.setexpr('Nl'+name, temp)
+            temp1 = getattr(phs.exprs, 'barNnl'+name)
+            temp2 = getattr(phs.exprs, 'Nl'+name)
+            temp = temp1 + getattr(phs.exprs, 'barNnll')*temp2
+            phs.exprs.setexpr('Nnl'+name, temp)
+
+        temp1 = phs.exprs.Nnlxl*sp.Matrix(phs.symbs.x[:phs.dims.xl])
+        temp2 = phs.exprs.Nnly*sp.Matrix(phs.symbs.u)
+        phs.exprs.setexpr('c',
+                          regularize_dims(temp1) +
+                          regularize_dims(temp2))
+
+        temp1 = phs.exprs.Inl*sp.Matrix(phs.exprs.vnl)
+        temp2 = -phs.exprs.Nnlnl*sp.Matrix(phs.exprs.fnl)
+        temp3 = -sp.Matrix(phs.exprs.c)
+        phs.exprs.setexpr('impfunc',
+                          regularize_dims(temp1) +
+                          regularize_dims(temp2) +
+                          regularize_dims(temp3))
+        temp = sp.sqrt((phs.exprs.impfunc.T*phs.exprs.impfunc)[0, 0])
+        phs.exprs.setexpr('res_impfunc', temp)
+
+        phs.exprs.setexpr('jac_impfunc', jacobian(phs.exprs.impfunc,
+                                                  phs.exprs.vnl))
+
+        temp1 = sp.Matrix(phs.exprs.vnl)
+        temp2 = phs.exprs.jac_impfunc
+        temp3 = phs.exprs.impfunc
+        phs.exprs.setexpr('update_nlin',
+                          regularize_dims(temp1) +
+                          regularize_dims(temp2*temp3))
+
+        temp1 = phs.exprs.Nlxl*sp.Matrix(phs.symbs.x[:phs.dims.xl])
+        temp2 = phs.exprs.Nlnl*sp.Matrix(phs.exprs.fnl)
+        temp3 = phs.exprs.Nly*sp.Matrix(phs.symbs.u)
+        phs.exprs.setexpr('update_lin',
+                          regularize_dims(temp1) +
+                          regularize_dims(temp2) +
+                          regularize_dims(temp3))
 
 
-def _build_eval(phs, name):
+def regularize_dims(vec):
     """
-    return expression for evaluation of update structure block with label name
+    return column vector of zeros if vec has no shape along 2nd dimension
     """
-    if geteval(phs.dims, name) > 0:
-        if phs.dims.xl > 0:
-            Vxl = geteval(phs.exprs, 'A'+name) * \
-                sp.Matrix(phs.symbs.x[:phs.dims.xl])
-        else:
-            Vxl = sp.zeros(geteval(phs.dims, name), 1)
-
-        if phs.dims.xnl() > 0:
-            Vxnl = geteval(phs.exprs, 'B'+name) * \
-                sp.Matrix(phs.exprs.dxHd[phs.dims.xl:])
-        else:
-            Vxnl = sp.zeros(geteval(phs.dims, name), 1)
-
-        if phs.dims.wnl() > 0:
-            Vwnl = geteval(phs.exprs, 'C'+name) * \
-                sp.Matrix(phs.exprs.z[phs.dims.wl:])
-        else:
-            Vwnl = sp.zeros(geteval(phs.dims, name), 1)
-
-        if phs.dims.y() > 0:
-            Vy = geteval(phs.exprs, 'D'+name) * \
-                sp.Matrix(phs.symbs.u)
-        else:
-            Vy = sp.zeros(geteval(phs.dims, name), 1)
-
-        expr = Vxl + Vxnl + Vwnl + Vy
-
-    else:
-        expr = sp.zeros(0, 0)
-
-    return simplify(list(expr))
-
-
-def _init_updates(phs, fs):
-    """
-    init expressions for update of internal tructure
-    """
-
-    expr_dxl = _build_eval(phs, 'xl')
-    phs.exprs.setexpr('dxl', expr_dxl)
-    expr_wl = _build_eval(phs, 'wl')
-    phs.exprs.setexpr('wl', expr_wl)
-    expr_varsl = expr_dxl + expr_wl
-    phs.exprs.setexpr('varsl', list(phs.symbs.dx()[:phs.dims.xl]) +
-                      list(phs.symbs.w[:phs.dims.wl]))
-    phs.exprs.setexpr('eval_varsl', expr_varsl)
-
-    expr_dxnl = _build_eval(phs, 'xnl')
-    phs.exprs.setexpr('dxnl', expr_dxnl)
-    expr_wnl = _build_eval(phs, 'wnl')
-    phs.exprs.setexpr('wnl', expr_wnl)
-    phs.exprs.setexpr('varsnl', list(phs.symbs.dx()[phs.dims.xl:]) +
-                      list(phs.symbs.w[phs.dims.wl:]))
-
-    if phs.dims.xnl() + phs.dims.wnl() > 0:
-        mat_dxnl = sp.Matrix(phs.symbs.dx()[phs.dims.xl:])
-        mat_expr_dxnl = sp.Matrix(expr_dxnl)
-        expr_impfunc_dxnl = list(mat_dxnl*fs - mat_expr_dxnl)
-
-        mat_wnl = sp.Matrix(phs.symbs.w[phs.dims.wl:])
-        mat_expr_wnl = sp.Matrix(expr_wnl)
-        expr_impfunc_wnl = list(mat_wnl - mat_expr_wnl)
-
-        impfunc = expr_impfunc_dxnl + expr_impfunc_wnl
-        mat_impfunc = sp.Matrix(impfunc)
-        res_impfunc = sp.sqrt((mat_impfunc.T*mat_impfunc)[0, 0])
-        jac_impfunc = jacobian(impfunc, list(phs.symbs.dx()[phs.dims.xl:]) +
-                               list(phs.symbs.w[phs.dims.wl:]))
-    else:
-        # init dummy quantities
-        impfunc = sp.zeros(0, 1)
-        res_impfunc = sp.sympify(0)
-        jac_impfunc = sp.zeros(0)
-
-    impfunc = impfunc
-    res_impfunc = res_impfunc
-    # append to list of lambdified functions
-    phs.exprs.setexpr('impfunc', impfunc)
-    phs.exprs.setexpr('res_impfunc', res_impfunc)
-    phs.exprs.setexpr('jac_impfunc', jac_impfunc)
+    if vec.shape[1] == 0:
+        vec = sp.zeros(vec.shape[0], 1)
+    return vec

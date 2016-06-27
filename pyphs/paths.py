@@ -17,7 +17,7 @@ current working directory;
     """
     import os
     if path is None:
-        phs_path = None
+        phs_path = 'dummy'
     else:
         assert isinstance(path, str)
         # define path
@@ -32,10 +32,9 @@ current working directory;
             os.makedirs(phs_path)
     # Define path for exports (plots, waves, tex, c++, etc...)
     phs.path = phs_path
-    if phs_path is not None:
-        phs.paths = {'tex': phs_path+os.sep+'tex',
-                     'cpp': phs_path+os.sep+'cpp',
-                     'main': phs_path,
-                     'figures': phs_path+os.sep+'figures',
-                     'data': phs_path+os.sep+'data',
-                     'graph': phs_path+os.sep+'graph'}
+    phs.paths = {'tex': phs_path+os.sep+'tex',
+                 'cpp': phs_path+os.sep+'cpp',
+                 'main': phs_path,
+                 'figures': phs_path+os.sep+'figures',
+                 'data': phs_path+os.sep+'data',
+                 'graph': phs_path+os.sep+'graph'}

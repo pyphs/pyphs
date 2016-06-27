@@ -4,7 +4,7 @@ Created on Sat Jun 11 19:28:12 2016
 
 @author: Falaize
 """
-from pyphs.configs.plots import plotopts
+from config import plotopts
 from tools import activate_latex, annotate, whichplot, setlims, setticks, dec
 from fonts import globalfonts
 

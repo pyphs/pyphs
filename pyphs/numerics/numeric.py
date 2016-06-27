@@ -9,21 +9,25 @@ from tools import lambdify, find
 from pyphs.symbolics.tools import free_symbols
 
 
-class Numeric:
+class Functions:
     """
     Class that serves as a container for all numerical functions
     """
     def __init__(self, phs):
+        self.phs = phs
+
+    def build(self):
         # for each function, subs, stores func args, args_inds and lambda func
-        for name in phs.exprs._names:
-            expr = getattr(phs.exprs, name)
+        for name in self.phs.exprs._names:
+            expr = getattr(self.phs.exprs, name)
             if hasattr(expr, 'index'):
                 expr = list(expr)
                 for i, expr_i in enumerate(expr):
-                    expr[i] = expr_i.subs(phs.symbs.subs)
+                    expr[i] = expr_i.subs(self.phs.symbs.subs)
             else:
-                expr = expr.subs(phs.symbs.subs)
-            func, args, inds = self._expr_to_numerics(expr, phs.symbs.args())
+                expr = expr.subs(self.phs.symbs.subs)
+            func, args, inds = self._expr_to_numerics(expr,
+                                                      self.phs.symbs.args())
             setattr(self, name, func)
             setattr(self, name+'_args', args)
             setattr(self, name+'_inds', inds)

@@ -100,7 +100,5 @@ def _set_phs(analysis, phs):
     phs.symbs.cu = [phs.symbs.cu[el] for el in new_indices_connector]
 
     _select_relations(analysis, phs)
-    
-    phs.struc.J = analysis.J
-    
-    
+
+    phs.struc.M = analysis.J

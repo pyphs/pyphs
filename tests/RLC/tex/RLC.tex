@@ -1,0 +1,168 @@
+%
+\documentclass[11pt, oneside]{article}      % use 'amsart' instead of 'article' for AMSLaTeX format
+\usepackage{geometry}                       % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                      % ... or a4paper or a5paper or ...
+%\geometry{landscape}                       % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}               % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}                       % Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
+                                            % TeX will automatically convert eps --> pdf in pdflatex
+\usepackage{amssymb}
+%\date{\today}                              % Activate to display a given date or no date
+\title{Structure of pHs \texttt{RLC}}
+%
+\usepackage{authblk}
+\usepackage{hyperref}
+%\renewcommand\Authands{ and }
+%
+%
+\author[1]{Antoine Falaize}
+%
+\author[2]{Thomas Helie}
+%
+\affil[1]{Project-team S3\footnote{\url{http://s3.ircam.fr}}, \\STMS, IRCAM-CNRS-UPMC (UMR 9912), \\1 Place Igor-Stravinsky, 75004 Paris, France}
+%
+\affil[2]{Project-team S3\footnote{\url{http://s3.ircam.fr}}, \\STMS, IRCAM-CNRS-UPMC (UMR 9912), \\1 Place Igor-Stravinsky, 75004 Paris, France}
+%
+\begin{document}
+%
+\maketitle
+%
+%
+\section{System netlist}
+%
+%
+\begin{center}
+%
+\texttt{
+\begin{tabular}{llllll}
+\hline
+line & label & dictionary.component & nodes &     parameters \\ \hline
+%
+$\ell_1$ & IN & electronics.source & ('A', 'ref') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+type & voltage
+\\
+\end{tabular}\right.$
+ \\
+$\ell_2$ & R1 & electronics.resistor & ('A', 'B') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+R & ('R1', 1000.0)
+\\
+\end{tabular}\right.$
+ \\
+$\ell_3$ & L & electronics.inductor & ('B', 'C') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+L & ('L', 0.05)
+\\
+\end{tabular}\right.$
+ \\
+$\ell_4$ & C & electronics.capacitor & ('C', 'ref') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+C & ('C', 2e-06)
+\\
+\end{tabular}\right.$
+ \\
+\hline
+\end{tabular}
+%
+}
+%
+\end{center}
+%
+    %
+    \begin{figure}[!h]
+    \begin{center}
+    \includegraphics[width=\linewidth]{/Users/Falaize/Documents/DEV/python/pypHs/tests/RLC/figures/RLC_graph.pdf}
+    %
+    \caption{\label{fig:graph_RLC} Graph of system \texttt{RLC}. }
+    \end{center}
+    \end{figure}
+    %\section{System dimensions}
+%
+$\dim(\mathbf{x})=$ $ n_\mathbf{x} = 2 ; $ 
+%
+\\
+%
+$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 0 ; $ 
+%
+\\
+%
+$\dim(\mathbf{y})=$ $ n_\mathbf{y} = 1 ; $ 
+%
+\\
+%
+$\dim(\mathbf{p})=$ $ n_\mathbf{p} = 0 ; $ 
+%
+\\
+%
+%
+\section{System variables}
+%
+State variable $ \mathbf{x} = \left(\begin{array}{c}x_{\mathrm{L}}\\x_{\mathrm{C}}\end{array}\right) ; $ 
+%
+\\
+%
+Input $ \mathbf{u} = \left(\begin{array}{c}u_{\mathrm{IN}}\end{array}\right) ; $ 
+%
+\\
+%
+Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{IN}}\end{array}\right) ; $ 
+%
+\\
+%
+%
+\section{Constitutive relations}
+%
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = 250000.0 \cdot x_{\mathrm{C}}^{2} + 10.0 \cdot x_{\mathrm{L}}^{2} ; $ 
+%
+\\
+%
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}20.0 \cdot x_{\mathrm{L}}\\500000.0 \cdot x_{\mathrm{C}}\end{array}\right) ; $ 
+%
+\\
+%
+%
+\section{System parameters}
+%
+%
+\subsection{Constant}
+%
+\begin{center}
+%
+\begin{tabular}{ll}
+%
+\hline
+parameter & value (SI)
+\\ \hline
+C :& 2e-06
+\\
+R1 :& 1000.0
+\\
+L :& 0.05
+\\
+\hline
+\end{tabular}
+%
+\end{center}
+%
+$ \mathbf{M} = \left(\begin{array}{ccc}-1000.0 & -1.0 & 1.0\\1.0 & 0 & 0\\-1.0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J} = \left(\begin{array}{ccc}0 & -1.0 & 1.0\\1.0 & 0 & 0\\-1.0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R} = \left(\begin{array}{ccc}1000.0 & 0 & 0\\0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+\end{document}

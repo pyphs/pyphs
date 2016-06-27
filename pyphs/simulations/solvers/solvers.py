@@ -90,58 +90,61 @@ def _init_structure(phs, fs):
 
     nxl, nwl = phs.dims.xl, phs.dims.wl
 
+    # Build iDl
     temp1 = sp.diag(sp.eye(nxl)*phs.simu.config['fs'], sp.eye(nwl))
     temp2_1 = sp.Matrix.hstack(phs.struc.Mxlxl(), phs.struc.Mxlwl())
     temp2_2 = sp.Matrix.hstack(phs.struc.Mwlxl(), phs.struc.Mwlwl())
     temp2 = sp.Matrix.vstack(temp2_1, temp2_2)
     tempQZl = sp.diag(phs.exprs.Q/2, phs.exprs.Zl)
     phs.exprs.setexpr('iDl', temp1 - temp2*tempQZl)
-
+    # Build barNlxl
     temp_1 = sp.Matrix.hstack(phs.struc.Mxlxl())
     temp_2 = sp.Matrix.hstack(phs.struc.Mwlxl())
     temp = sp.Matrix.vstack(temp_1, temp_2)
-    phs.exprs.setexpr('barNlxl', temp)
-
+    phs.exprs.setexpr('barNlxl', temp*phs.exprs.Q)
+    # Build barNlnl
     temp_1 = sp.Matrix.hstack(phs.struc.Mxlxnl(), phs.struc.Mxlwnl())
     temp_2 = sp.Matrix.hstack(phs.struc.Mwlxnl(), phs.struc.Mwlwnl())
     temp = sp.Matrix.vstack(temp_1, temp_2)
     phs.exprs.setexpr('barNlnl', temp)
-
+    # Build barNly
     temp_1 = sp.Matrix.hstack(phs.struc.Mxly())
     temp_2 = sp.Matrix.hstack(phs.struc.Mwly())
     temp = sp.Matrix.vstack(temp_1, temp_2)
     phs.exprs.setexpr('barNly', temp)
-
+    # Build barNnlnl
     temp_1 = sp.Matrix.hstack(phs.struc.Mxnlxnl(), phs.struc.Mxnlwnl())
     temp_2 = sp.Matrix.hstack(phs.struc.Mwnlxnl(), phs.struc.Mwnlwnl())
     temp = sp.Matrix.vstack(temp_1, temp_2)
     phs.exprs.setexpr('barNnlnl', temp)
-
+    # Build barNnll
     temp_1 = sp.Matrix.hstack(phs.struc.Mxnlxl(), phs.struc.Mxnlwl())
     temp_2 = sp.Matrix.hstack(phs.struc.Mwnlxl(), phs.struc.Mwnlwl())
     temp = sp.Matrix.vstack(temp_1, temp_2)
     phs.exprs.setexpr('barNnll', temp*tempQZl)
-
+    # Build barNnlxl
     temp_1 = sp.Matrix.hstack(phs.struc.Mxnlxl())
     temp_2 = sp.Matrix.hstack(phs.struc.Mwnlxl())
     temp = sp.Matrix.vstack(temp_1, temp_2)
     phs.exprs.setexpr('barNnlxl', temp*phs.exprs.Q)
-
+    # Build barNnly
     temp_1 = sp.Matrix.hstack(phs.struc.Mxnly())
     temp_2 = sp.Matrix.hstack(phs.struc.Mwnly())
     temp = sp.Matrix.vstack(temp_1, temp_2)
     phs.exprs.setexpr('barNnly', temp)
-
+    # Build vl
     phs.exprs.setexpr('vl', phs.symbs.dx()[:nxl] + phs.symbs.w[:nwl])
-
+    # Build vnl
     phs.exprs.setexpr('vnl', phs.symbs.dx()[nxl:] + phs.symbs.w[nwl:])
+    # Build fnl
     phs.exprs.setexpr('fnl', phs.exprs.dxHd[nxl:] + phs.exprs.z[nwl:])
+    # Build jac_fnl
     jac_fnl = jacobian(phs.exprs.fnl, phs.exprs.vnl)
     phs.exprs.setexpr('jac_fnl', jac_fnl)
 
     nxnl, nwnl = phs.dims.xnl(), phs.dims.wnl()
     temp = sp.diag(sp.eye(nxnl)*phs.simu.config['fs'], sp.eye(nwnl))
-    phs.exprs.setexpr('Inl', jac_fnl)
+    phs.exprs.setexpr('Inl', temp)
 
     from pyphs.misc.timer import timeout
     from pyphs.symbolics.tools import inverse

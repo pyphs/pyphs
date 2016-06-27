@@ -338,6 +338,17 @@ got %s' % type(label)
 
     ###########################################################################
 
+    def build_resistive_structure(self):
+        """
+        Build resistsive structure matrix R in PHS structure (J-R) associated \
+with the linear dissipative components. Notice the associated \
+dissipative variables w are no more accessible.
+        """
+        from symbolics.structures.tools import reduce_linear_dissipations
+        reduce_linear_dissipations(self)
+
+    ###########################################################################
+
     def plot_graph(self):
         """
         Plot the graph of the system (networkx.plot method).
@@ -350,29 +361,12 @@ got %s' % type(label)
             '_graph'
         plot(self.graph, save=fig_name)
 
-    def plot_powerbal(self, imin=0, imax=None):
+    def plot_powerbal(self, mode='single', opts=None):
         """
         Plot the power balance between imin and imax
         """
-        from plots.singleplots import singleplot
-        import os
-        datax = [el for el in self.data.t(imin=imin, imax=imax)]
-        datay = list()
-        datay.append([el for el in self.data.dtE(imin=imin, imax=imax)])
-        Psd = map(lambda x, y: float(x) - float(y),
-                  self.data.ps(imin=imin, imax=imax),
-                  self.data.pd(imin=imin, imax=imax))
-        datay.append(Psd)
-        if not os.path.exists(self.paths['figures']):
-            os.makedirs(self.paths['figures'])
-        plotopts = {'unitx': 'time $t$ (s)',
-                    'unity': r'Power (W)',
-                    'labels': [r'$\frac{\mathtt{d} \mathrm{E}}{\mathtt{d} t}$',
-                               r'$\mathrm{P_S}-\mathrm{P_D}$'],
-                    'filelabel':
-                        self.paths['figures']+os.sep+'power_balance',
-                    'maintitle': r'Power balance'}
-        singleplot(datax, datay, **plotopts)
+        from plots.phs import plot_powerbal
+        plot_powerbal(self, mode=mode, opts=opts)
 
     def plot_data(self, var_list, imin=0, imax=None):
         """

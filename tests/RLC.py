@@ -124,5 +124,5 @@ if __name__ is '__main__':
     phs = init_phs()
     build_graph(phs)
     u, nt = input_sequence()
-    simulation(phs, sequ, nt)
+    simulation(phs, u, nt)
     phs.plot_powerbal()

@@ -7,17 +7,28 @@ Created on Thu Jun  9 16:10:47 2016
 
 import progressbar
 import time
+from tools import update
+import numpy as np
 
 
 def process_py(simulation):
+
+    # lambdify exprs and define get/set for args
+    from tools import build_args, build_funcs
+    build_args(simulation)
+    build_funcs(simulation)
+
     # get generators of u and p
-    data = simulation.phs.data
+    data = simulation._phs.data
     seq_u = data.u()
     seq_p = data.p()
 
     from pyphs.misc.io import open_files, close_files, dump_files
-    data_path = simulation.phs.paths['data']
-    files_to_open = ['x', 'dx', 'dxHd', 'w', 'z', 'yd']
+
+    data_path = simulation._phs.paths['data']
+
+    files_to_open = ['x', 'dx', 'dxH', 'w', 'z', 'y']
+
     files = open_files(data_path, files_to_open)
 
     pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ',
@@ -30,7 +41,7 @@ def process_py(simulation):
     n = 0
     print "\n*** Simulation ***\n"
     for (u, p) in zip(seq_u, seq_p):
-        simulation.update(u=u, p=p)
+        update(simulation, u=np.array(u), p=np.array(p))
         dump_files(simulation, files)
         n += 1
         pbar.update(n)

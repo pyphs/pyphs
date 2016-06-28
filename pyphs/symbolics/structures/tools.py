@@ -159,7 +159,7 @@ def reduce_linear_dissipations(phs):
     Mnl = sympy.Matrix.vstack(*mat)
 
     phs.symbs.w = phs.symbs.w[phs.dims.wl:]
-    phs.symbs.z = phs.exprs.z[phs.dims.wl:]
+    phs.exprs.z = phs.exprs.z[phs.dims.wl:]
     phs.dims.wl = 0
     phs.struc.M = Mnlwl*phs.exprs.Zl*Dwl*Mwlnl + Mnl
 

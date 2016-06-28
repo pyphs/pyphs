@@ -10,7 +10,7 @@ import numpy
 
 def build_args(simu):
     """
-    define accessors and mutators of numerical values associated to arguments
+    define accessors and mutators of numerical values associated with arguments
     """
     # generators of 'get' and 'set':
     def get_generator(inds):

@@ -438,10 +438,12 @@ phs.paths['wav'].
         if not os.path.exists(path):
             os.makedirs(path)
         data = getattr(self.data, name)
-        sig = [gain*el[index] for el in data()]
-        for i, s in enumerate(sig):
+        sig = []
+        for el in data():
+            s = gain*el[index]
             if abs(s) >= 1:
-                sig[i] = 0.
+                s = 0.
+            sig.append(s)
         wavwrite(sig, fs_in, path + os.sep + filename, fs_out=fs_out)
 
     ###########################################################################

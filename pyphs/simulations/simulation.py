@@ -86,7 +86,7 @@ simulation.
             'language "{0!s}" unknown'.format(self.config['language'])
 
         if self.config['language'] == 'c++':
-            process_cpp(self.phs)
+            process_cpp(self)
 
         elif self.config['language'] == 'python':
             process_py(self)

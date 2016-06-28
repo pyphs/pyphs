@@ -15,7 +15,12 @@ corresponding c++ code
     """
     def __init__(self, phs):
         self._phs = phs
-        self.class_ref = phs.label.upper()+"::"
+        self.label = phs.label.upper()
+        self.exprs = phs.simu.exprs
+        self.config = phs.simu.config
+
+    def classref(self):
+        return self.label + '::'
 
     def accesors(self):
 
@@ -51,7 +56,7 @@ corresponding c++ code
 
         return str_accesors
 
-    def str_functions_full(self):
+    def functions(self):
 
         str_phs_functions = "\n// Port-Hamiltonian runtime functions\n"
         dict_args = {"x": self._phs.symbs.x,
@@ -96,9 +101,9 @@ corresponding c++ code
         str_u += "D7*u" if phs.dims.y() > 0 else ""
     
         if (phs.dims.xl+phs.dims.wl) > 0:
-            str_update_lin = "void "+class_ref(phs)+"UpDate_l() {\n    Fl << " + str_xl + str_xnl + str_wnl + str_u + "; \n    for(int i=0; i<get_nxl(); i++){\n        dx[i] = Fl[i];\n    }\n    for(int i=0; i<get_nwl(); i++){\n        w[i] = Fl[i+get_nxl()];\n    }\n}\n"
+            str_update_lin = "void "+self.class_ref+"UpDate_l() {\n    Fl << " + str_xl + str_xnl + str_wnl + str_u + "; \n    for(int i=0; i<get_nxl(); i++){\n        dx[i] = Fl[i];\n    }\n    for(int i=0; i<get_nwl(); i++){\n        w[i] = Fl[i+get_nxl()];\n    }\n}\n"
         else:
-            str_update_lin = "void "+class_ref(phs)+"UpDate_l() {\n}\n"
+            str_update_lin = "void "+self.class_ref+"UpDate_l() {\n}\n"
 
         str_phs_functions += str_update_lin
 
@@ -130,12 +135,12 @@ corresponding c++ code
         return str_phs_functions
 
 def str_pointer_full(phs):
-    str_phs_functions = "\nMatrix<double,"+str(phs.dims.xl)+","+str(1)+"> "+class_ref(phs)+"xl(){\n    return Map<Matrix<double,"+str(phs.dims.xl)+",1>>(pointer_xl); \n}\n\n"
-    str_phs_functions += "Matrix<double,"+str(phs.dims.xl)+","+str(1)+"> "+class_ref(phs)+"dxl(){\n    return Map<Matrix<double,"+str(phs.dims.xl)+",1>>(pointer_dxl); \n}\n\n"
-    str_phs_functions += "Matrix<double,"+str(phs.dims.xl)+","+str(1)+"> "+class_ref(phs)+"dxHl(){\n    return Map<Matrix<double,"+str(phs.dims.xl)+",1>>(pointer_dxHl); \n}\n\n"
+    str_phs_functions = "\nMatrix<double,"+str(phs.dims.xl)+","+str(1)+"> "+self.class_ref+"xl(){\n    return Map<Matrix<double,"+str(phs.dims.xl)+",1>>(pointer_xl); \n}\n\n"
+    str_phs_functions += "Matrix<double,"+str(phs.dims.xl)+","+str(1)+"> "+self.class_ref+"dxl(){\n    return Map<Matrix<double,"+str(phs.dims.xl)+",1>>(pointer_dxl); \n}\n\n"
+    str_phs_functions += "Matrix<double,"+str(phs.dims.xl)+","+str(1)+"> "+self.class_ref+"dxHl(){\n    return Map<Matrix<double,"+str(phs.dims.xl)+",1>>(pointer_dxHl); \n}\n\n"
     if phs.dims.wl > 0:
-        str_phs_functions += "Matrix<double,"+str(phs.dims.wl)+","+str(1)+"> "+class_ref(phs)+"wl(){\n    return Map<Matrix<double,"+str(phs.dims.wl)+",1>>(pointer_wl);\n}\n\n"
-        str_phs_functions += "Matrix<double,"+str(phs.dims.wl)+","+str(1)+"> "+class_ref(phs)+"zl(){\n    return Map<Matrix<double,"+str(phs.dims.wl)+",1>>(pointer_zl);\n}\n\n"
+        str_phs_functions += "Matrix<double,"+str(phs.dims.wl)+","+str(1)+"> "+self.class_ref+"wl(){\n    return Map<Matrix<double,"+str(phs.dims.wl)+",1>>(pointer_wl);\n}\n\n"
+        str_phs_functions += "Matrix<double,"+str(phs.dims.wl)+","+str(1)+"> "+self.class_ref+"zl(){\n    return Map<Matrix<double,"+str(phs.dims.wl)+",1>>(pointer_zl);\n}\n\n"
     return str_phs_functions
 
 def str_nonlinear_functions_full(phs, matcpp):
@@ -154,24 +159,24 @@ def str_nonlinear_functions_full(phs, matcpp):
         str_jacobian_nl_update = "    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> eye;\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> B;\n"+\
         "    eye << Matrix<double, "+str(phs.dims.xnl())+", "+str(phs.dims.xnl())+">::Identity() * fs , Matrix<double, "+str(phs.dims.xnl())+", "+str(phs.dims.wnl())+">::Zero() , Matrix<double, "+str(phs.dims.wnl())+", "+str(phs.dims.xnl())+">::Zero() , Matrix<double, " +str(phs.dims.wnl())+", "+str(phs.dims.wnl())+">::Identity(); " +\
         "    B << Bxnl, Bwnl;\n"
-        str_update_nonlinear = "void "+class_ref(phs)+"UpDate_nl() {\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+", "+str(1)+"> varnl;\n    varnl << dxnl(), wnl();\n    varnl -= iJacobianImplicitFunc()* ImpFunc;\n    for(int i=0; i<get_nxnl(); i++){\n        dx[i+get_nxl()] = varnl[i];\n    }\n    for(int i=0; i<get_nwnl(); i++){\n        w[i] = varnl[i+get_nxnl()];\n    }\n}\n"
+        str_update_nonlinear = "void "+self.class_ref+"UpDate_nl() {\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+", "+str(1)+"> varnl;\n    varnl << dxnl(), wnl();\n    varnl -= iJacobianImplicitFunc()* ImpFunc;\n    for(int i=0; i<get_nxnl(); i++){\n        dx[i+get_nxl()] = varnl[i];\n    }\n    for(int i=0; i<get_nwnl(); i++){\n        w[i] = varnl[i+get_nxnl()];\n    }\n}\n"
     elif phs.dims.xnl() > 0 and phs.dims.wnl() == 0:
         str_jacobian_nl_update = "    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> eye;\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> B;\n"+\
         "    eye << Matrix<double, "+str(phs.dims.xnl())+", "+str(phs.dims.xnl())+">::Identity() * fs; " +\
          "    B << Bxnl;\n"
-        str_update_nonlinear = "void "+class_ref(phs)+"UpDate_nl() {\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+", "+str(1)+"> varnl;\n    varnl  << dxnl();\n    varnl -= iJacobianImplicitFunc()* ImpFunc;\n    for(int i=0; i<get_nxnl(); i++){\n        dx[i+get_nxl()] = varnl[i];\n    }\n}\n"
+        str_update_nonlinear = "void "+self.class_ref+"UpDate_nl() {\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+", "+str(1)+"> varnl;\n    varnl  << dxnl();\n    varnl -= iJacobianImplicitFunc()* ImpFunc;\n    for(int i=0; i<get_nxnl(); i++){\n        dx[i+get_nxl()] = varnl[i];\n    }\n}\n"
     elif phs.dims.xnl() == 0 and phs.dims.wnl() > 0:
         str_jacobian_nl_update = " Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> eye;\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> B;\n"+\
         "    eye << Matrix<double, "+str(phs.dims.wnl())+", "+str(phs.dims.wnl())+">::Identity(); " +\
          "    B << Bwnl;\n"
-        str_update_nonlinear = "void "+class_ref(phs)+"UpDate_nl() {\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+", "+str(1)+"> varnl;\n    varnl  << wnl();\n    varnl -= iJacobianImplicitFunc()* ImpFunc;\n    for(int i=0; i<get_nwnl(); i++){\n        w[i+get_nwl()] = varnl[i+get_nxnl()];\n    }\n}\n"
+        str_update_nonlinear = "void "+self.class_ref+"UpDate_nl() {\n    Matrix<double, "+str(phs.dims.xnl()+phs.dims.wnl())+", "+str(1)+"> varnl;\n    varnl  << wnl();\n    varnl -= iJacobianImplicitFunc()* ImpFunc;\n    for(int i=0; i<get_nwnl(); i++){\n        w[i+get_nwl()] = varnl[i+get_nxnl()];\n    }\n}\n"
 
     str_phs_functions += str_update_nonlinear
     str_jacobian_nl_update += "    JacobianImplicitFunc << eye - B*JacobianFnl; \n" + "    return JacobianImplicitFunc.inverse();"
 
-    str_phs_functions += "Matrix<double,"+str(phs.dims.xnl()+phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> "+class_ref(phs)+"iJacobianImplicitFunc(){\n"+str_jacobian_nl_update+"\n}\n\n"
+    str_phs_functions += "Matrix<double,"+str(phs.dims.xnl()+phs.dims.wnl())+","+str(phs.dims.xnl()+phs.dims.wnl())+"> "+self.class_ref+"iJacobianImplicitFunc(){\n"+str_jacobian_nl_update+"\n}\n\n"
 
-    str_phs_functions += "void "+class_ref(phs)+"UpDate_residualNR(){\n    residual_NR = sqrt(ImpFunc.transpose()*ImpFunc); }\n\n"
+    str_phs_functions += "void "+self.class_ref+"UpDate_residualNR(){\n    residual_NR = sqrt(ImpFunc.transpose()*ImpFunc); }\n\n"
     str_xl4 = " - A4*xl() " if phs.dims.xl > 0 else ""
     str_xl5 = " - A5*xl() " if phs.dims.xl > 0 else ""
     if phs.dims.xnl() > 0 and phs.dims.wnl() > 0:
@@ -181,15 +186,15 @@ def str_nonlinear_functions_full(phs, matcpp):
     elif phs.dims.xnl() == 0 and phs.dims.wnl() > 0:
         str_implicit_func = "ImpFunc << wnl() " +str_xl5+" + Bwnl*Fnl + D5*u"
 
-    str_phs_functions += "void "+class_ref(phs)+"UpDate_ImpFunc(){\n    " + str_implicit_func + "; \n}\n"
+    str_phs_functions += "void "+self.class_ref+"UpDate_ImpFunc(){\n    " + str_implicit_func + "; \n}\n"
 
     if phs.dims.xnl() > 0:
-        str_phs_functions += "Matrix<double,"+str(phs.dims.xnl())+","+str(1)+"> "+class_ref(phs)+"xnl(){\n    return Map<Matrix<double,"+str(phs.dims.xnl())+",1>>(pointer_xnl); \n}\n\n"
-        str_phs_functions += "Matrix<double,"+str(phs.dims.xnl())+","+str(1)+"> "+class_ref(phs)+"dxnl(){\n    return Map<Matrix<double,"+str(phs.dims.xnl())+",1>>(pointer_dxnl); \n}\n\n"
-        str_phs_functions += "Matrix<double,"+str(phs.dims.xnl())+","+str(1)+"> "+class_ref(phs)+"dxHnl(){\n    return Map<Matrix<double,"+str(phs.dims.xnl())+",1>>(pointer_dxHnl); \n}\n\n"
+        str_phs_functions += "Matrix<double,"+str(phs.dims.xnl())+","+str(1)+"> "+self.class_ref+"xnl(){\n    return Map<Matrix<double,"+str(phs.dims.xnl())+",1>>(pointer_xnl); \n}\n\n"
+        str_phs_functions += "Matrix<double,"+str(phs.dims.xnl())+","+str(1)+"> "+self.class_ref+"dxnl(){\n    return Map<Matrix<double,"+str(phs.dims.xnl())+",1>>(pointer_dxnl); \n}\n\n"
+        str_phs_functions += "Matrix<double,"+str(phs.dims.xnl())+","+str(1)+"> "+self.class_ref+"dxHnl(){\n    return Map<Matrix<double,"+str(phs.dims.xnl())+",1>>(pointer_dxHnl); \n}\n\n"
     if phs.dims.wnl() > 0:
-        str_phs_functions += "Matrix<double,"+str(phs.dims.wnl())+","+str(1)+"> "+class_ref(phs)+"wnl(){\n    return Map<Matrix<double,"+str(phs.dims.wnl())+",1>>(pointer_wnl); \n}\n\n"
-        str_phs_functions += "Matrix<double,"+str(phs.dims.wnl())+","+str(1)+"> "+class_ref(phs)+"znl(){\n    return Map<Matrix<double,"+str(phs.dims.wnl())+",1>>(pointer_znl); \n}\n\n"
+        str_phs_functions += "Matrix<double,"+str(phs.dims.wnl())+","+str(1)+"> "+self.class_ref+"wnl(){\n    return Map<Matrix<double,"+str(phs.dims.wnl())+",1>>(pointer_wnl); \n}\n\n"
+        str_phs_functions += "Matrix<double,"+str(phs.dims.wnl())+","+str(1)+"> "+self.class_ref+"znl(){\n    return Map<Matrix<double,"+str(phs.dims.wnl())+",1>>(pointer_znl); \n}\n\n"
     return str_phs_functions
 
 def str_process_full(phs):
@@ -362,16 +367,16 @@ for(int i=get_nxl(); i<get_nx(); i++){
 for(int i=get_nwl(); i<get_nw(); i++){
     w[i] = 0;
 }"""
-    str_constructor = "\n// Default Constructor:\n"+class_ref(phs)+phs.label.upper()+"() {\n"+str_variables+"}\n"
-    str_initx_constructor = "\n// Constructor Initializing x:\n"+class_ref(phs)+\
+    str_constructor = "\n// Default Constructor:\n"+self.class_ref+phs.label.upper()+"() {\n"+str_variables+"}\n"
+    str_initx_constructor = "\n// Constructor Initializing x:\n"+self.class_ref+\
                             phs.label.upper()+"(vector<double>& x0) {\n"  +\
                             str_variables+'    if (x.size() == x0.size()) {\n        set_x(x0); \n    }\n    else {\n        cerr << "Size of x0 does not match size of x" << endl;\n        exit(1);\n    }\n}\n'
 
-    str_destructor = "\n// Default Destructor:\n"+class_ref(phs)+ "~"+phs.label.upper()+"() {\n\n}\n"
+    str_destructor = "\n// Default Destructor:\n"+self.class_ref+ "~"+phs.label.upper()+"() {\n\n}\n"
 
     str_modificators = "\n// Mutators of private variables\n"
-    str_modificators += "void "+class_ref(phs)+"set_u(vector<double> v) {\n        for (int i=0; i<get_ny(); i++) {\n        u[i] = v[i];\n}\n}\n"
-    str_modificators += "void "+class_ref(phs)+"set_x(vector<double> v) {\n        for (int i=0; i<get_nx(); i++) {\n        x[i] = v[i];\n}\n}\n"
+    str_modificators += "void "+self.class_ref+"set_u(vector<double> v) {\n        for (int i=0; i<get_ny(); i++) {\n        u[i] = v[i];\n}\n}\n"
+    str_modificators += "void "+self.class_ref+"set_x(vector<double> v) {\n        for (int i=0; i<get_nx(); i++) {\n        x[i] = v[i];\n}\n}\n"
 
     str_c = ""
     str_c += str_includes
@@ -497,59 +502,3 @@ def Expr2Cpp(expr, dict_args, phs_label, label_func, Out_variables, out="c"):
         str_h = "    "+"void " +str_header + ";\n"
         return str_h
 
-def Matrix2Cpp(matrixExpr, dict_args, phs_label, label_func, Out_Matrix, out="c"):
-
-    from sympy.printing import ccode
-    from sympy import Matrix
-    
-    arg_labels = dict_args.keys()
-    na = arg_labels.__len__()
-        
-    expr_symbols = Matrix(matrixExpr).free_symbols if matrixExpr.__len__()>0 else []    
-
-    listMatrixExpr = list(matrixExpr)
-    nexpr = listMatrixExpr.__len__()
-    
-    str_args = ""    
-    for n in range(na):
-        str_args += "vector<double>& " + arg_labels[n]
-        if n<na-1:
-            str_args += ", "    
-    str_header =  label_func +"()"
-
-    str_init = ""
-    for n in range(na):
-        list_args = [e for e in dict_args[arg_labels[n]] ]
-        str_args = ""
-        naa = list_args.__len__()
-        if naa>0:
-            for m in range(naa):
-                test = set([list_args[m]]).issubset(expr_symbols) if matrixExpr.__len__()>0 else False
-                if test:
-                    if str_args.__len__() == 0:
-                        str_args += '    const double '
-                    else:
-                        str_args += ', '
-                    str_args += str(list_args[m]) + " = "+arg_labels[n]+"["+str(m)+"]"
-            if str_args.__len__() > 0:
-                str_init += str_args +";\n"
-    
-    
-    if out=="c":
-        
-        if matrixExpr.__len__()>0:
-            str_out = '    ' + Out_Matrix + ' << '
-            for n in range(nexpr):
-                str_out += ccode(matrixExpr[n])
-                if n!=nexpr-1:
-                    str_out += ' , '
-    
-            str_out += ' ;\n '
-        else:
-            str_out = '\n'
-            
-        str_c = "\n"+"void "+phs_label+"::"+str_header + " {\n"+ str_init + "\n" + str_out + "\n}\n"
-        return str_c
-    else:
-        str_h = "    "+"void " + str_header + ";\n"
-        return str_h

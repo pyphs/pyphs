@@ -51,16 +51,16 @@ def process_py(simulation):
     close_files(files)
 
 
-def process_cpp(phs):
+def process_cpp(simu):
 
-    phs.cppwrite()
+    simu._phs.cppwrite()
 
     from pyphs.configs.cpp import cpp_build_and_run_script
     if cpp_build_and_run_script is None:
         import os
         print"\no==========================================================\
         ==o\n"
-        print " Please, execute:\n" + phs.paths['cpp'] + \
+        print " Please, execute:\n" + simu._phs.paths['cpp'] + \
             os.path.sep + \
             "/main.cpp"
         print"\no==========================================================\
@@ -70,7 +70,7 @@ def process_cpp(phs):
         import subprocess
         # Replace generic term 'phobj_path' by actual object path
         script = cpp_build_and_run_script.replace('phobj_path',
-                                                  phs.path)
+                                                  simu._phs.path)
         # exec Build and Run script
         p = subprocess.Popen(script, shell=True,
                              stdout=subprocess.PIPE,

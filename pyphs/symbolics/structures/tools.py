@@ -126,6 +126,13 @@ def split_linear(phs, force_nolin=False):
     phs.exprs.setexpr('Zl', jacz[:nwl, :nwl])
     # number of linear components
     setattr(phs.dims, 'wl', nwl)
+    phs.exprs.build()
+
+    names = ('xl', 'xnl', 'wl', 'wnl', 'y')
+    phs.inds._set_inds(names)
+
+    # get() and set() for structure matrices
+    phs.struc._build_getset(phs, dims_names=names)
 
 
 def reduce_linear_dissipations(phs):
@@ -152,7 +159,7 @@ def reduce_linear_dissipations(phs):
     Mnl = sympy.Matrix.vstack(*mat)
 
     phs.symbs.w = phs.symbs.w[phs.dims.wl:]
-    phs.symbs.z = phs.exprs.z[phs.dims.wl:]
+    phs.exprs.z = phs.exprs.z[phs.dims.wl:]
     phs.dims.wl = 0
     phs.struc.M = Mnlwl*phs.exprs.Zl*Dwl*Mwlnl + Mnl
 

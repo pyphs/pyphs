@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>E45CBDE8-9496-4BB2-9057-60583F4B7CD6</string>
+	<key>IDESourceControlProjectName</key>
+	<string>RLC</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3CBD1A3768BA0C4760A68F93A81A8B331172D8F4</key>
+		<string>https://github.com/A-Falaize/pyphs.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>tests/RLC/xcode/RLC/RLC.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3CBD1A3768BA0C4760A68F93A81A8B331172D8F4</key>
+		<string>../../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/A-Falaize/pyphs.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3CBD1A3768BA0C4760A68F93A81A8B331172D8F4</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3CBD1A3768BA0C4760A68F93A81A8B331172D8F4</string>
+			<key>IDESourceControlWCCName</key>
+			<string>pyphs</string>
+		</dict>
+	</array>
+</dict>
+</plist>

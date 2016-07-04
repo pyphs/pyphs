@@ -30,7 +30,6 @@ def plot_options():
             'format': plot_format,
             'limits': None,
             'labels': None,
-            'xpos_ylabel': None,
             'maintitle': None,
             'filelabel': None,
             'nfft': 2**12,

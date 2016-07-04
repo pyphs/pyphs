@@ -7,6 +7,8 @@ Created on Fri Jun  3 11:26:41 2016
 
 from sympy.printing.lambdarepr import lambdarepr
 import numpy
+import sympy
+import ast
 
 parser_sympy2numpy = {
             'sin': numpy.sin,
@@ -44,6 +46,10 @@ def lambdify(args, expr, subs=None, simplify=True):
     """
 #    from sympy.printing.theanocode import theano_function
 #    return theano_function(args, expr)
+
+    if hasattr(expr, 'index'):
+        expr = sympy.Matrix(expr)
+
     if subs is not None:
         if hasattr(expr, 'index'):
             for i, e in enumerate(expr):

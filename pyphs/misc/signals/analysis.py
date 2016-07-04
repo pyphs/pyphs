@@ -57,7 +57,7 @@ as a fraction of the sampling rate (in (0, 0.5)).
     else:
         fmin, fmax = limits
     from numpy import nonzero
-    nfmax = f.__len__() if fmax >= f[-1] else nonzero(f > fmax)[0][0]
+    nfmax = len(f) if fmax >= f[-1] else nonzero(f > fmax)[0][0]
     nfmin = nonzero(f > fmin)[0][0]
     f = f[nfmin:nfmax]
     TF = [el**0.5 for el in TF[nfmin:nfmax]]

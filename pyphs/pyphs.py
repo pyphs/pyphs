@@ -347,9 +347,7 @@ dissipative variables w are no more accessible.
 
     def split_linear(self):
         """
-        Build resistsive structure matrix R in PHS structure (J-R) associated \
-with the linear dissipative components. Notice the associated \
-dissipative variables w are no more accessible.
+        Split the system into linear and nonlinear parts.
         """
         from symbolics.structures.tools import split_linear
         split_linear(self)

@@ -289,7 +289,8 @@ def _get_x(phs):
             xFile << xVector[i] << " ";
             dxFile << dxVector[i] << " ";
             dxHFile << dxHVector[i] << " ";
-        }
+        }"""
+    string += """
         xFile << endl;
         dxFile << endl;
         dxHFile << endl;"""
@@ -305,7 +306,8 @@ def _get_w(phs):
         for (unsigned int i = 0; i < """ + name2dim('w') + """; i++) {
             wFile << wVector[i] << " ";
             zFile << zVector[i] << " ";
-        }
+        }"""
+    string += """
         wFile << endl;
         zFile << endl;"""
     return string
@@ -318,7 +320,8 @@ def _get_y(phs):
         string += """
         for (unsigned int i = 0; i < """ + name2dim('y') + """; i++) {
             yFile << yVector[i] << " ";
-        }
+        }"""
+    string += """
         yFile << endl;"""
     return string
 # -----------------------------------------------------------------------------

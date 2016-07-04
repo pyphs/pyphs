@@ -4,7 +4,7 @@
     Sound (UMR 9912), IRCAM-CNRS-UPMC, 1 place Igor Stravinsky, F-75004 Paris
     * contributors : Antoine Falaize, Thomas Hélie,
     * corresponding contributor: antoine.falaize@ircam.fr
-    * date: 2016/07/04 03:17:54
+    * date: 2016/07/04 03:16:59
 
     This software (pypHs) is a computer program whose purpose is to generate C++
     code for the simulation of multiphysics system described by graph structures.
@@ -35,7 +35,7 @@
     The fact that you are presently reading this means that you have had
     knowledge of the CeCILL-B license and that you accept its terms.
 
-    Created on 2016/07/04 03:17:54
+    Created on 2016/07/04 03:16:59
 
     @author: Antoine Falaize
 
@@ -44,15 +44,16 @@
 ===============================================================================
 
     This file was automatically generated 
-    by PyPHS v0.1.5, on 2016/07/04 03:17:54.
+    by PyPHS v0.1.5, on 2016/07/04 03:16:59.
 
     It contains the code for the simulation of system 'RLC'.
 
 ===============================================================================
 */
 
-# include "data.h"
+#ifndef DATA_H
+#define DATA_H
 
-const double subs[1][3] = {
-    {2e-06, 1000.0, 0.05},
-};
+extern const double subs[1][3];
+
+#endif /* defined(DATA_H) */

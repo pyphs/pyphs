@@ -24,7 +24,8 @@ def _simplify_expr(expr):
 
     def func(expr):
 #        return sympy.simplify(expr, ratio=1)
-        return sympy.nsimplify(expr)
+#        return sympy.nsimplify(expr)
+        return expr
     expr, _ = timeout(func, expr, dur=10)
     return expr
 

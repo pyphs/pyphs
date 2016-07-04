@@ -744,12 +744,6 @@ void """ + cppobj_name(phs) + '::' + """process(""" + str_u_cpp + str_coma +\
         string_cpp += '\n' + indent('set_u(u_vec);')
     if phs.simu.exprs.np > 0:
         string_cpp += '\n' + indent('set_p(p_vec);')
-    names = ('x', 'iDl', 'barNlxl', 'barNlnl', 'barNly',
-             'barNnlxl', 'barNnlnl', 'barNnly',
-             'Dl', 'Nlxl', 'Nlnl', 'Nly',
-             'Nnlxl', 'Nnlnl', 'Nnly',
-             'c', 'Fnl', 'jac_Fnl', 'vnl', 'fnl', 'vl', 'fl',
-             'dx', 'dxH', 'w', 'z', 'y')
     parser = {'x': 'x',
               'iDl': 'iDl',
               'barNlxl': 'barNlxl',
@@ -781,6 +775,33 @@ void """ + cppobj_name(phs) + '::' + """process(""" + str_u_cpp + str_coma +\
               'w': 'w',
               'z': 'z',
               'y': 'y'}
+    names = ('x', 'iDl', 'barNlxl', 'barNlnl', 'barNly',
+             'barNnlxl', 'barNnlnl', 'barNnly',
+             'Dl', 'Nlxl', 'Nlnl', 'Nly',
+             'Nnlxl', 'Nnlnl', 'Nnly',
+             'c', 'Fnl')
+    for name in names:
+        shape = sympy.Matrix(getattr(phs.simu.exprs,
+                                     parser[name] + '_expr')).shape
+        if not any(dim == 0 for dim in shape):
+            string_cpp += '\n' + indent(name + '_update();')
+
+    if phs.simu.exprs.nnl > 0:
+        string_cpp += """
+    unsigned int n = 0;
+    while (n<""" + str(phs.simu.config['maxit']) + \
+            """ & Fnl.transpose()*Fnl > """ + str(phs.simu.config['numtol']) + \
+        "){"
+        names = ('jac_fnl', 'jac_Fnl', 'vnl', 'fnl', 'Fnl')
+        for name in names:
+            shape = sympy.Matrix(getattr(phs.simu.exprs,
+                                         parser[name] + '_expr')).shape
+            if not any(dim == 0 for dim in shape):
+                string_cpp += '\n' + indent(indent(name + '_update();'))
+        string_cpp += '\n' + indent(indent('n++;'))
+    string_cpp += "\n    }"
+    names = ('vl', 'fl',
+             'dx', 'dxH', 'w', 'z', 'y')
     for name in names:
         shape = sympy.Matrix(getattr(phs.simu.exprs,
                                      parser[name] + '_expr')).shape

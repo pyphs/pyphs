@@ -236,6 +236,7 @@ got %s' % type(label)
                 attr = attr.subs(subs)
             setattr(self.exprs, name, attr)
         self.struc.M = self.struc.M.subs(subs)
+        self.symbs.subs = {}
 
     ###########################################################################
 
@@ -258,7 +259,7 @@ got %s' % type(label)
         except:
             _assert_expr(x)
             x = (x, )
-        self.symbs.x = tuple(list(self.symbs.x) + list(x))
+        self.symbs.x = self.symbs.x + list(x)
         self.exprs.H += H
 
     def add_dissipations(self, w, z):
@@ -284,8 +285,8 @@ got %s' % type(label)
             _assert_expr(w)
             w = (w, )
             z = (z, )
-        self.symbs.w = tuple(list(self.symbs.w) + list(w))
-        self.exprs.z = tuple(list(self.exprs.z) + list(z))
+        self.symbs.w = self.symbs.w + list(w)
+        self.exprs.z = self.exprs.z + list(z)
 
     def add_ports(self, u, y):
         """
@@ -308,20 +309,17 @@ got %s' % type(label)
             _assert_expr(y)
             u = (u, )
             y = (y, )
-        self.symbs.u = tuple(list(self.symbs.u) + list(u))
-        self.symbs.y = tuple(list(self.symbs.y) + list(y))
+        self.symbs.u = self.symbs.u + list(u)
+        self.symbs.y = self.symbs.y + list(y)
 
     def add_connectors(self, connectors):
         """
         add a connector (gyrator or transformer)
         """
         self.connectors += [connectors]
-        self.struc.connectors = tuple(list(self.struc.connectors) +
-                                      list(connectors))
-        self.symbs.cu = tuple(list(self.symbs.cu) +
-                              list(connectors['u']))
-        self.symbs.cy = tuple(list(self.symbs.cy) +
-                              list(connectors['y']))
+        self.struc.connectors = self.struc.connectors + list(connectors)
+        self.symbs.cu = self.symbs.cu + list(connectors['u'])
+        self.symbs.cy = self.symbs.cy + list(connectors['y'])
 
     def add_parameters(self, p):
         """
@@ -334,7 +332,7 @@ got %s' % type(label)
         except:
             _assert_expr(p)
             p = (p, )
-        self.symbs.p = tuple(list(self.symbs.p) + list(p))
+        self.symbs.p = self.symbs.p + list(p)
 
     ###########################################################################
 
@@ -346,6 +344,15 @@ dissipative variables w are no more accessible.
         """
         from symbolics.structures.tools import reduce_linear_dissipations
         reduce_linear_dissipations(self)
+
+    def split_linear(self):
+        """
+        Build resistsive structure matrix R in PHS structure (J-R) associated \
+with the linear dissipative components. Notice the associated \
+dissipative variables w are no more accessible.
+        """
+        from symbolics.structures.tools import split_linear
+        split_linear(self)
 
     ###########################################################################
 
@@ -408,13 +415,20 @@ phs.paths['latex'].
         latex = Latex(self)
         latex.export()
 
-    def cppwrite(self):
+    def cppbuild(self):
         """
         Export system's simulation code (c++) in the folder pointed by \
 phs.paths['cpp'].
         """
-        from generation.codecpp.phs2cpp import cppwrite
-        cppwrite(self)
+        from generation.codecpp.phs2cpp import CppCode
+        import os
+        path = self.paths['cpp']
+        if not os.path.exists(path):
+            os.makedirs(path)
+        self.cpp = CppCode(self)
+        self.cpp.gen_main()
+        self.cpp.gen_phobj()
+        self.cpp.gen_data()
 
     def wavwrite(self, name, index, fs_in, filename=None, gain=1, fs_out=None):
         """
@@ -431,10 +445,12 @@ phs.paths['wav'].
         if not os.path.exists(path):
             os.makedirs(path)
         data = getattr(self.data, name)
-        sig = [gain*el[index] for el in data()]
-        for i, s in enumerate(sig):
+        sig = []
+        for el in data():
+            s = gain*el[index]
             if abs(s) >= 1:
-                sig[i] = 0.
+                s = 0.
+            sig.append(s)
         wavwrite(sig, fs_in, path + os.sep + filename, fs_out=fs_out)
 
     ###########################################################################

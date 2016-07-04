@@ -23,9 +23,9 @@ def _simplify_expr(expr):
         "{0!s}\nexpr should be sp.Expr, got {1!s}".format(expr, type(expr))
 
     def func(expr):
-        return sympy.simplify(expr, ratio=1)
-#        return sympy.nsimplify(expr)
-    expr, _ = timeout(func, expr)
+#        return sympy.simplify(expr, ratio=1)
+        return sympy.nsimplify(expr)
+    expr, _ = timeout(func, expr, dur=10)
     return expr
 
 
@@ -64,12 +64,14 @@ def simplify(obj):
 ###############################################################################
 
 
-def inverse(Mat):
+def inverse(Mat, dosimplify=False):
     """
     same method for every matrix inversions
     """
     iMat = Mat.inv()
-    return simplify(iMat)
+    if dosimplify:
+        iMat = simplify(iMat)
+    return iMat
 
 
 ###############################################################################

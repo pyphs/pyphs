@@ -22,8 +22,8 @@ class Expressions:
     def __init__(self, phs):
         setattr(self, '_names', set())
         self.setexpr('H', sympy.sympify(0))
-        self.setexpr('z', tuple())
-        self.setexpr('g', tuple())
+        self.setexpr('z', list())
+        self.setexpr('g', list())
         self.phs = phs
 
     def __add__(exprs1, exprs2):

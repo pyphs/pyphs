@@ -17,7 +17,6 @@ multifigure
     conf = {'figsize': (6., 4.),
             'fontsize': 20,
             'axedef': (0.13, 0.1, 0.95, 0.9, 0.2, 0.3),
-            'filelabel': filelabel,
             'unitx': r'time $t$ (s)',
             'filelabel': filelabel,
             'loc': 0,

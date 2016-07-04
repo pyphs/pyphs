@@ -91,7 +91,7 @@ $\dim(\mathbf{x})=$ $ n_\mathbf{x} = 2 ; $
 %
 \\
 %
-$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 0 ; $ 
+$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 1 ; $ 
 %
 \\
 %
@@ -110,6 +110,10 @@ State variable $ \mathbf{x} = \left(\begin{array}{c}x_{\mathrm{L}}\\x_{\mathrm{C
 %
 \\
 %
+Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{R1}}\end{array}\right) ; $ 
+%
+\\
+%
 Input $ \mathbf{u} = \left(\begin{array}{c}u_{\mathrm{IN}}\end{array}\right) ; $ 
 %
 \\
@@ -121,11 +125,19 @@ Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{IN}}\end{array}\right) ; 
 %
 \section{Constitutive relations}
 %
-Hamiltonian $ \mathtt{H}(\mathbf{x}) = 250000.0 \cdot x_{\mathrm{C}}^{2} + 10.0 \cdot x_{\mathrm{L}}^{2} ; $ 
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{0.5}{\mathrm{L}} \cdot x_{\mathrm{L}}^{2} + \frac{0.5}{\mathrm{C}} \cdot x_{\mathrm{C}}^{2} ; $ 
 %
 \\
 %
-Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}20.0 \cdot x_{\mathrm{L}}\\500000.0 \cdot x_{\mathrm{C}}\end{array}\right) ; $ 
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{x_{\mathrm{L}}}{\mathrm{L}}\\\frac{x_{\mathrm{C}}}{\mathrm{C}}\end{array}\right) ; $ 
+%
+\\
+%
+Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{R1} \cdot w_{\mathrm{R1}}\end{array}\right) ; $ 
+%
+\\
+%
+Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{R1}\end{array}\right) ; $ 
 %
 \\
 %
@@ -153,15 +165,15 @@ L :& 0.05
 %
 \end{center}
 %
-$ \mathbf{M} = \left(\begin{array}{ccc}-1000.0 & -1.0 & 1.0\\1.0 & 0 & 0\\-1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M} = \left(\begin{array}{cccc}0 & -1.0 & -1.0 & 1.0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\\-1.0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{J} = \left(\begin{array}{ccc}0 & -1.0 & 1.0\\1.0 & 0 & 0\\-1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{J} = \left(\begin{array}{cccc}0 & -1.0 & -1.0 & 1.0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\\-1.0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{R} = \left(\begin{array}{ccc}1000.0 & 0 & 0\\0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{R} = \left(\begin{array}{cccc}0 & 0 & 0 & 0\\0 & 0 & 0 & 0\\0 & 0 & 0 & 0\\0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %

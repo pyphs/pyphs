@@ -415,13 +415,20 @@ phs.paths['latex'].
         latex = Latex(self)
         latex.export()
 
-    def cppwrite(self):
+    def cppbuild(self):
         """
         Export system's simulation code (c++) in the folder pointed by \
 phs.paths['cpp'].
         """
-        from generation.codecpp.phs2cpp import cppwrite
-        cppwrite(self)
+        from generation.codecpp.phs2cpp import CppCode
+        import os
+        path = self.paths['cpp']
+        if not os.path.exists(path):
+            os.makedirs(path)
+        self.cpp = CppCode(self)
+        self.cpp.gen_main()
+        self.cpp.gen_phobj()
+        self.cpp.gen_data()
 
     def wavwrite(self, name, index, fs_in, filename=None, gain=1, fs_out=None):
         """

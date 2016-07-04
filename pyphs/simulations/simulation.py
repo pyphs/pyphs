@@ -71,7 +71,6 @@ simulation.
             self.config.update(opts)
 
         self.init_expressions()
-
         self._phs.data.init_data(sequ, seqp, x0, nt)
 
     def process(self):

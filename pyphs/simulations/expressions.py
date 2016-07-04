@@ -24,6 +24,12 @@ class SimulationExpressions:
         self._names = []
 
         self.args = phs.symbs.args()
+        self.subs = [symb for symb in phs.symbs.subs]
+
+        self.ny = phs.dims.y()
+        self.np = phs.dims.p()
+
+        self.nsubs = len(self.subs)
 
         self.nx = phs.dims.x()
         self.nxl = phs.dims.xl
@@ -108,6 +114,17 @@ class SimulationExpressions:
         temp = sp.Matrix.vstack(temp_1, temp_2)
         self.setfunc('barNnly', temp)
 
+        # Build Nyl
+        temp = sp.Matrix.hstack(phs.struc.Myxl(), phs.struc.Mywl())
+        self.setfunc('Nyl', temp)
+
+        # Build Nynl
+        temp = sp.Matrix.hstack(phs.struc.Myxnl(), phs.struc.Mywnl())
+        self.setfunc('Nynl', temp)
+
+        # Build Nynl
+        self.setfunc('Nyy', phs.struc.Myy())
+
         # Build vl
         self.setfunc('vl', phs.symbs.dx()[:self.nxl] + phs.symbs.w[:self.nwl])
 
@@ -115,13 +132,30 @@ class SimulationExpressions:
         self.setfunc('vnl', phs.symbs.dx()[self.nxl:] +
                      phs.symbs.w[self.nwl:])
 
+        # Build fl
+        self.setfunc('fl', phs.exprs.dxHd[:self.nxl] + phs.exprs.z[:self.nwl])
+
         # Build fnl
         self.setfunc('fnl', phs.exprs.dxHd[self.nxl:] + phs.exprs.z[self.nwl:])
 
-#        # Build jac_fnl
-#        jac_fnl = jacobian(phs.exprs.fnl, phs.exprs.vnl)
-#        phs.exprs.setexpr('jac_fnl', jac_fnl)
-#
+        # Build dxHl
+        self.setfunc('dxHl', phs.exprs.dxHd[:self.nxl])
+        # Build dxHnl
+        self.setfunc('dxHnl', phs.exprs.dxHd[:self.nxl])
+
+        # Build zl
+        self.setfunc('zl', phs.exprs.z[:self.nwl])
+        # Build znl
+        self.setfunc('znl', phs.exprs.z[:self.nwl])
+
+        # Build fnl
+        self.setfunc('fnl', phs.exprs.dxHd[self.nxl:] + phs.exprs.z[self.nwl:])
+
+        # Build jac_fnl
+        jac_fnl = jacobian(self.fnl_expr,
+                           self.vnl_args)
+        self.setfunc('jac_fnl', jac_fnl)
+
         nxnl, nwnl = phs.dims.xnl(), phs.dims.wnl()
         temp = sp.diag(sp.eye(nxnl)*phs.simu.config['fs'], sp.eye(nwnl))
         self.setfunc('Inl', temp)
@@ -175,6 +209,14 @@ class SimulationExpressions:
                      regularize_dims(temp1) +
                      regularize_dims(temp2) +
                      regularize_dims(temp3))
+
+    def get(self, name):
+        "Return expression, arguments, indices and substitutions"
+        expr = getattr(self, name + '_expr')
+        args = getattr(self, name + '_args')
+        inds = getattr(self, name + '_inds')
+        subs = getattr(self, name + '_subs')
+        return expr, args, inds, subs
 
     def setfunc(self, name, expr):
         from pyphs.symbolics.tools import free_symbols

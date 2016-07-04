@@ -114,9 +114,9 @@ def input_sequence(amp=100., f0=100.):
 
 def simulation(phs, sequ, nt):
     opts = {'fs': samplerate(),
-            'language': 'c++'}
+            'language': 'c++',
+            'split': False}
     phs.simu.init(sequ=u, nt=nt, opts=opts)
-    phs.simu.process()
 
 
 if __name__ is '__main__':
@@ -126,4 +126,7 @@ if __name__ is '__main__':
     build_graph(phs)
     u, nt = input_sequence()
     simulation(phs, u, nt)
-#    phs.plot_powerbal()
+    phs.cppbuild()
+    phs.cpp.gen_main()
+    phs.cpp.gen_phobj()
+    phs.cpp.gen_data()

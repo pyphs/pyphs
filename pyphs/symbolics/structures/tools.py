@@ -162,6 +162,7 @@ def reduce_linear_dissipations(phs):
     phs.exprs.z = phs.exprs.z[phs.dims.wl:]
     phs.dims.wl = 0
     phs.struc.M = Mnlwl*phs.exprs.Zl*Dwl*Mwlnl + Mnl
+    phs.exprs.y, phs.exprs.yd = output_function(phs)
 
 
 def output_function(phs):
@@ -169,6 +170,7 @@ def output_function(phs):
     creates funtion phs.output_function
     """
     if phs.dims.y() > 0:
+
         Vyu = phs.struc.Myy()*sympy.Matrix(phs.symbs.u)
 
         if phs.dims.x() > 0:

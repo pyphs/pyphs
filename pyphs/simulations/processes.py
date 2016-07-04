@@ -53,9 +53,9 @@ def process_py(simulation):
 
 def process_cpp(simu):
 
-    simu._phs.cppwrite()
+    simu._phs.cppbuild()
 
-    from pyphs.configs.cpp import cpp_build_and_run_script
+    from pyphs.generation.codecpp.config import cpp_build_and_run_script
     if cpp_build_and_run_script is None:
         import os
         print"\no==========================================================\

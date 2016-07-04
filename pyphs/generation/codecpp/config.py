@@ -7,7 +7,7 @@ Created on Tue Jun 28 23:48:26 2016
 
 eigen_path = '/Users/Falaize/Documents/DEV/c++/bibliothèques/eigen'
 
-xcode_template_path = '/Users/Falaize/Documents/DEV/c++/xcode_template'
+xcode_template_path = '/Users/Falaize/Documents/DEV/c++/xcode_template_pyphs'
 
 cpp_build_and_run_script = """
 
@@ -16,13 +16,13 @@ mkdir phobj_path/xcode
 cp -r """ + xcode_template_path + """/* phobj_path/xcode
 
 echo "Copy cpp files"
-cp -r phobj_path/cpp/* phobj_path/xcode/xcode_template/
+cp -r phobj_path/cpp/* phobj_path/xcode/xcode_template_pyphs/
 
 echo "Build release"
-xcodebuild -project phobj_path/xcode/xcode_template.xcodeproj -alltargets \
+xcodebuild -project phobj_path/xcode/xcode_template_pyphs.xcodeproj -alltargets \
 -configuration Release
 
 echo "Run"
-phobj_path/xcode/build/Release/xcode_template
+phobj_path/xcode/build/Release/xcode_template_pyphs
 
 """

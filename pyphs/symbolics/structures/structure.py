@@ -18,6 +18,7 @@ class Structure:
     """
     def __init__(self, phs):
         self._names = list()
+        self.connectors = list()
         self.M = sympy.zeros(0)
         setattr(self,
                 '_build_get_mat',
@@ -38,7 +39,9 @@ M = block_diag(M1, M2).
                 Mij1 = getattr(struc1, 'M'+vari+varj)()
                 Mij2 = getattr(struc2, 'M'+vari+varj)()
                 Mij1 = sympy.diag(Mij1, Mij2)
-                getattr(struc, 'set_M'+vari+varj)(Mij1)
+                # getattr(struc, 'set_M'+vari+varj)(Mij1)
+                set_func = getattr(struc, 'set_M'+vari+varj)
+                set_func(Mij1)
         return struc
 
     def _build_getset(self, phs, dims_names=None):
@@ -104,6 +107,7 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
         """
         if struct.M.shape[0] != phs.dims.tot():
             struct.M = sympy.zeros(phs.dims.tot())
+            struct.M = sympy.zeros(phs.dims.tot())
         if name == 'J':
             J = val
             R = struct.R()
@@ -116,6 +120,8 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
             M = val
         debi, endi = getattr(phs.inds, vari)()
         debj, endj = getattr(phs.inds, varj)()
+        print endi-debi, endj-debj, 
+        print M.shape
         struct.M[debi:endi, debj:endj] = M
     return set_mat
 

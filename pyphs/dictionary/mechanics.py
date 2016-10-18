@@ -5,118 +5,125 @@ Created on Sat May 21 16:29:43 2016
 @author: Falaize
 """
 
+from classes.connectors.port import Port
+from classes.linears.dissipatives import LinearDissipationFreeCtrl
+from classes.linears.storages import LinearStorageFluxCtrl, \
+    LinearStorageEffortCtrl
+from classes.nonlinears.dissipatives import NonLinearDissipative
 
-from utils.dic import linear_storage_fc, linear_storage_ec, linear_diss_ic, \
-    linear_diss_fc, linear_diss_ec, nonlinear_dissipative
+from pyphs.dictionary.config import nice_var_label
+from tools import symbols
 
-import sympy as sp
-from utils.dic import nice_var_label
+import sympy
 
-class Stiffness(linear_storage_fc):
+# Minimal conductance for accelerating convergenc of solver (diode and bjt)
+GMIN = 1e-12
+
+
+class Source(Port):
+    """
+    Voltage or current source
+
+    Parameters
+    -----------
+
+    label : str, port label.
+
+    nodes: tuple of nodes labels
+
+        if a single label in nodes, port edge is "datum -> node"; \
+else, the edge corresponds to "nodes[0] -> nodes[1]".
+
+    kwargs: dic with following "keys:values"
+
+        * 'type' : source type in ('force', 'velocity').
+        * 'const': if not None, the input will be replaced by the value (subs).
+    """
+    def __init__(self, label, nodes, **kwargs):
+        type_ = kwargs['type']
+        type_ = type_.lower()
+        assert type_ in ('force', 'velocity')
+        if type_ == 'force':
+            ctrl = 'f'
+        elif type_ == 'velocity':
+            ctrl = 'e'
+        kwargs.update({'ctrl': ctrl})
+        Port.__init__(self, label, nodes, **kwargs)
+
+
+class Stiffness(LinearStorageFluxCtrl):
     """
     Linear stiffness
+
+    Parameters
+    -----------
+
+    label : str, port label.
+
+    nodes: tuple of nodes labels
+
+        Edge is "nodes[0] -> nodes[1]".
+
+    kwargs: dic with following "keys:values"
+
+        * 'K' : stiffness value or symbol label or tuple (label, value).
     """
-    def __init__(self, label, nodes_labels, value):
-        linear_storage_fc.__init__(self, label, nodes_labels,
-                                   value, inv_par=False)
+    def __init__(self, label, nodes, **kwargs):
+        par_name = 'K'
+        par_val = kwargs[par_name]
+        kwargs = {'name': par_name,
+                  'value': par_val,
+                  'inv_coeff': False}
+        LinearStorageFluxCtrl.__init__(self, label, nodes, **kwargs)
 
 
-class Mass(linear_storage_ec):
+class Mass(LinearStorageEffortCtrl):
     """
-    Linear inductor
+    Mass moving in 1D space
+
+    Parameters
+    -----------
+
+    label : str, port label.
+
+    nodes: tuple of nodes labels
+
+        Edge is "nodes[0] -> nodes[1]".
+
+    kwargs: dic with following "keys:values"
+
+        * 'M' : Mass value or symbol label or tuple (label, value).
     """
-    def __init__(self, label, nodes_labels, value):
-        linear_storage_ec.__init__(self, label, nodes_labels, value)
+    def __init__(self, label, nodes, **kwargs):
+        par_name = 'M'
+        par_val = kwargs[par_name]
+        kwargs = {'name': par_name,
+                  'value': par_val,
+                  'inv_coeff': True}
+        LinearStorageEffortCtrl.__init__(self, label, nodes, **kwargs)
 
 
-class Damper(linear_diss_ic):
-    """ Linear resistor (indeterminate control)
+class Damper(LinearDissipationFreeCtrl):
     """
-    def __init__(self, label, nodes_labels, value):
-        linear_diss_ic.__init__(self, label, nodes_labels, value)
+    Linear damper (unconstrained control)
 
+    Parameters
+    -----------
 
-class Damper_fc(linear_diss_fc):
-    """ Linear flux-controlled resistor
+    label : str, port label.
+
+    nodes: tuple of nodes labels
+
+        Edge is "nodes[0] -> nodes[1]".
+
+    kwargs: dic with following "keys:values"
+
+        * 'A' : Damping coefficient or symbol label (string) or tuple \
+(label, value).
     """
-    def __init__(self, label, nodes_labels, value):
-        linear_diss_fc.__init__(self, label, nodes_labels, value)
-
-
-class Damper_ec(linear_diss_ec):
-    """ Linear effort-controlled resistor
-    """
-    def __init__(self, label, nodes_labels, value):
-        linear_diss_ec.__init__(self, label, nodes_labels, value)
-
-
-#
-#from pypHs import pHobj
-#import sympy as sp
-#import numpy as np
-#from sympy.physics import units
-#
-#class stiffness(pHobj):
-#    """ Linear Capacitor
-#    usgae: capacitor label ['n1','n2'] [value]
-#
-#    """
-#    def __init__(self, label, nodes_labels, value):
-#        pHobj.__init__(self,label)
-#        if type(value[0])==tuple:
-#            string = value[0][0]
-#            K = sp.symbols(string)
-#            subs = {string:value[0][1]}            
-#            pars = [K]
-#        else:
-#            K = value[0]
-#            subs = {}            
-#            pars = []
-#        self.subs.update(subs)
-#        self.params += pars
-#
-#        self.AddLinearStorageComponents(["x"+label],[K], [units.m])
-#        edge_data_dic = {'ref':"x"+label, 'type':'storage', 'realizability':'flux_controlled', 'linear':True, 'link_ref':"x"+label}
-#        self.Graph.add_edges_from([(nodes_labels[0], nodes_labels[1], edge_data_dic)])
-#        
-#class mass(pHobj):
-#    """ Linear Inductor
-#    """
-#    def __init__(self,label,nodes_labels,value):
-#        pHobj.__init__(self,label)
-#        if type(value[0])==tuple:
-#            string = value[0][0]
-#            m = sp.symbols(string)
-#            subs = {string:value[0][1]}            
-#            pars = [m]
-#        else:
-#            m = value[0]
-#            subs = {}            
-#            pars = []
-#        self.subs.update(subs)
-#        self.params += pars
-#
-#        self.AddLinearStorageComponents(["x"+label],[1./m], [units.kg*units.m/units.s])
-#        edge_data_dic = {'ref':"x"+label, 'type':'storage', 'realizability':'effort_controlled', 'linear':True, 'link_ref':"x"+label}
-#        self.Graph.add_edges_from([(nodes_labels[0], nodes_labels[1], edge_data_dic)])
-#
-#class damper(pHobj):
-#    """ Linear Resistor
-#    """
-#    def __init__(self,label,nodes_labels,value):
-#        pHobj.__init__(self,label)
-#        if type(value[0])==tuple:
-#            string = value[0][0]
-#            a = sp.symbols(string)
-#            subs = {string:value[0][1]}            
-#            pars = [a]
-#        else:
-#            a = value[0]
-#            subs = {}            
-#            pars = []
-#        self.subs.update(subs)
-#        self.params += pars
-#
-#        self.AddLinearDissipativeComponents(["w"+label],[a], [units.m/units.s])
-#        edge_data_dic = {'ref':"w"+label, 'type':'dissipative', 'realizability':'?', 'linear':True, 'link_ref':"w"+label}
-#        self.Graph.add_edges_from([(nodes_labels[0], nodes_labels[1], edge_data_dic)])
+    def __init__(self, label, nodes, **kwargs):
+        if kwargs['A'] is None:
+            coeff = 0.
+        else:
+            coeff = kwargs['A']
+        LinearDissipationFreeCtrl.__init__(self, label, nodes, coeff=coeff)

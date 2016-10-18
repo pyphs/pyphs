@@ -44,7 +44,7 @@ port-Hamiltonian systems.
         from importlib import import_module
         for l in range(self.netlist.nlines()):
             line = self.netlist[l]
-            dic_name = 'pyphs.dictionary' + '.' + line['dictionary']
+            dic_name = 'pyphs.dictionary.' + line['dictionary']
             dic = import_module(dic_name)
             name = line['component'].lower()
             klass = name[0].upper() + name[1:]

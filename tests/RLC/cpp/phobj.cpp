@@ -4,7 +4,7 @@
     Sound (UMR 9912), IRCAM-CNRS-UPMC, 1 place Igor Stravinsky, F-75004 Paris
     * contributors : Antoine Falaize, Thomas Hélie,
     * corresponding contributor: antoine.falaize@ircam.fr
-    * date: 2016/07/04 03:17:54
+    * date: 2016/10/04 19:05:37
 
     This software (pypHs) is a computer program whose purpose is to generate C++
     code for the simulation of multiphysics system described by graph structures.
@@ -35,7 +35,7 @@
     The fact that you are presently reading this means that you have had
     knowledge of the CeCILL-B license and that you accept its terms.
 
-    Created on 2016/07/04 03:17:54
+    Created on 2016/10/04 19:05:37
 
     @author: Antoine Falaize
 
@@ -44,7 +44,7 @@
 ===============================================================================
 
     This file was automatically generated 
-    by PyPHS v0.1.5, on 2016/07/04 03:17:54.
+    by PyPHS v0.1.5, on 2016/10/04 19:05:37.
 
     It contains the code for the simulation of system 'RLC'.
 
@@ -137,6 +137,7 @@ void RLC::process(vector<double> & u_vec){
     Fnl_update();
     unsigned int n = 0;
     while (n<100 & Fnl.transpose()*Fnl > 2.22044604925e-16){
+        jac_fnl_update();
         jac_Fnl_update();
         vnl_update();
         fnl_update();
@@ -241,23 +242,23 @@ void RLC::dxH_update(){
 
 // Functions updates
 void RLC::fnl_update(){
-fnl(0, 0) = (((*dxL) < -222044604925031.0L/1000000000000000000000000000000.0L) ? (
-   (-1.0L/2.0L*pow((*xL), 2)/(*L) + (1.0L/2.0L)*pow((*dxL) + (*xL), 2)/(*L))/(*dxL)
+fnl(0, 0) = (((*dxL) < -2.22044604925031e-16) ? (
+   (-0.5*pow((*xL), 2)/(*L) + 0.5*pow((*dxL) + (*xL), 2)/(*L))/(*dxL)
 )
-: (((*dxL) < 222044604925031.0L/1000000000000000000000000000000.0L) ? (
-   (*xL)/(*L)
+: (((*dxL) < 2.22044604925031e-16) ? (
+   1.0*(*xL)/(*L)
 )
 : (
-   (-1.0L/2.0L*pow((*xL), 2)/(*L) + (1.0L/2.0L)*pow((*dxL) + (*xL), 2)/(*L))/(*dxL)
+   (-0.5*pow((*xL), 2)/(*L) + 0.5*pow((*dxL) + (*xL), 2)/(*L))/(*dxL)
 )));
-fnl(1, 0) = (((*dxC) < -222044604925031.0L/1000000000000000000000000000000.0L) ? (
-   (-1.0L/2.0L*pow((*xC), 2)/(*C) + (1.0L/2.0L)*pow((*dxC) + (*xC), 2)/(*C))/(*dxC)
+fnl(1, 0) = (((*dxC) < -2.22044604925031e-16) ? (
+   (-0.5*pow((*xC), 2)/(*C) + 0.5*pow((*dxC) + (*xC), 2)/(*C))/(*dxC)
 )
-: (((*dxC) < 222044604925031.0L/1000000000000000000000000000000.0L) ? (
-   (*xC)/(*C)
+: (((*dxC) < 2.22044604925031e-16) ? (
+   1.0*(*xC)/(*C)
 )
 : (
-   (-1.0L/2.0L*pow((*xC), 2)/(*C) + (1.0L/2.0L)*pow((*dxC) + (*xC), 2)/(*C))/(*dxC)
+   (-0.5*pow((*xC), 2)/(*C) + 0.5*pow((*dxC) + (*xC), 2)/(*C))/(*dxC)
 )));
 fnl(2, 0) = (*R1)*(*wR1);
 };
@@ -300,23 +301,23 @@ void RLC::barNnlnl_update(){
 void RLC::barNnly_update(){
 };
 void RLC::jac_fnl_update(){
-jac_fnl(0, 0) = (((*dxL) < -222044604925031.0L/1000000000000000000000000000000.0L) ? (
-   -(-1.0L/2.0L*pow((*xL), 2)/(*L) + (1.0L/2.0L)*pow((*dxL) + (*xL), 2)/(*L))/pow((*dxL), 2) + (1.0L/2.0L)*(2*(*dxL) + 2*(*xL))/((*L)*(*dxL))
+jac_fnl(0, 0) = (((*dxL) < -2.22044604925031e-16) ? (
+   -(-0.5*pow((*xL), 2)/(*L) + 0.5*pow((*dxL) + (*xL), 2)/(*L))/pow((*dxL), 2) + 0.5*(2*(*dxL) + 2*(*xL))/((*L)*(*dxL))
 )
-: (((*dxL) < 222044604925031.0L/1000000000000000000000000000000.0L) ? (
+: (((*dxL) < 2.22044604925031e-16) ? (
    0
 )
 : (
-   -(-1.0L/2.0L*pow((*xL), 2)/(*L) + (1.0L/2.0L)*pow((*dxL) + (*xL), 2)/(*L))/pow((*dxL), 2) + (1.0L/2.0L)*(2*(*dxL) + 2*(*xL))/((*L)*(*dxL))
+   -(-0.5*pow((*xL), 2)/(*L) + 0.5*pow((*dxL) + (*xL), 2)/(*L))/pow((*dxL), 2) + 0.5*(2*(*dxL) + 2*(*xL))/((*L)*(*dxL))
 )));
-jac_fnl(1, 1) = (((*dxC) < -222044604925031.0L/1000000000000000000000000000000.0L) ? (
-   -(-1.0L/2.0L*pow((*xC), 2)/(*C) + (1.0L/2.0L)*pow((*dxC) + (*xC), 2)/(*C))/pow((*dxC), 2) + (1.0L/2.0L)*(2*(*dxC) + 2*(*xC))/((*C)*(*dxC))
+jac_fnl(1, 1) = (((*dxC) < -2.22044604925031e-16) ? (
+   -(-0.5*pow((*xC), 2)/(*C) + 0.5*pow((*dxC) + (*xC), 2)/(*C))/pow((*dxC), 2) + 0.5*(2*(*dxC) + 2*(*xC))/((*C)*(*dxC))
 )
-: (((*dxC) < 222044604925031.0L/1000000000000000000000000000000.0L) ? (
+: (((*dxC) < 2.22044604925031e-16) ? (
    0
 )
 : (
-   -(-1.0L/2.0L*pow((*xC), 2)/(*C) + (1.0L/2.0L)*pow((*dxC) + (*xC), 2)/(*C))/pow((*dxC), 2) + (1.0L/2.0L)*(2*(*dxC) + 2*(*xC))/((*C)*(*dxC))
+   -(-0.5*pow((*xC), 2)/(*C) + 0.5*pow((*dxC) + (*xC), 2)/(*C))/pow((*dxC), 2) + 0.5*(2*(*dxC) + 2*(*xC))/((*C)*(*dxC))
 )));
 };
 void RLC::Inl_update(){

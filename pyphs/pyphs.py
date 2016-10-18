@@ -129,6 +129,7 @@ got %s' % type(label)
         path = phs1.path
         phs = PortHamiltonianObject(label=label, path=path)
         for attr in ['symbs', 'exprs', 'struc', 'graph']:
+            print 'Append ' + attr
             sumattrs = getattr(phs1, attr) + getattr(phs2, attr)
             setattr(phs, attr, sumattrs)
         return phs
@@ -316,6 +317,8 @@ got %s' % type(label)
         """
         add a connector (gyrator or transformer)
         """
+        if not hasattr(self, 'connectors'):
+            setattr(self, 'connectors', list())
         self.connectors += [connectors]
         self.struc.connectors = self.struc.connectors + list(connectors)
         self.symbs.cu = self.symbs.cu + list(connectors['u'])
@@ -476,12 +479,13 @@ phs.paths['wav'].
         Effectively connect inputs and outputs defined in phs.connectors.
         """
         import sympy as sp
-        J = phs.J
-        nxwy = phs.nx() + phs.nw() + phs.ny()
+        nxwy = phs.dims.x() + phs.dims.w() + phs.dims.y()
         switch_list = [connector['alpha'] * sp.Matrix([[0, 1], [-1, 0]])
-                       for connector in phs.connectors]
+                       for connector in phs.struc.connectors]
         Mswitch = sp.diag(*switch_list)
-        G_connectors = sp.Matrix(J[:nxwy, nxwy:])
+        M = phs.struc.M
+        G_connectors = sp.Matrix(M[:nxwy, nxwy:])
+        print G_connectors
         J_connectors = G_connectors * Mswitch * G_connectors.T
-        J = J[:nxwy, :nxwy] + J_connectors
-        phs.addStructure(J=J)
+        M = M[:nxwy, :nxwy] + J_connectors
+        phs.struc.M = M

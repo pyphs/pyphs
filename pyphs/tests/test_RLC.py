@@ -5,20 +5,12 @@ Created on Sat May 21 10:50:30 2016
 @author: Falaize
 """
 
-
-def add_path():
-    """
-    add pypHs path to sys path
-    """
-    import sys
-    # path to pyphs
-    pypHs_path = "/Users/Falaize/Documents/DEV/python/pypHs/"
-    # add path
-    sys.path.append(pypHs_path)
+from unittest import TestCase
 
 
-def workingdirectory():
-    return '/Users/Falaize/Documents/DEV/python/pypHs/tests'
+class TestRLC(TestCase):
+    def test_rlc(self):
+        self.assertTrue(run_test())
 
 
 def label():
@@ -28,9 +20,12 @@ def label():
     return "RLC"
 
 
-def netlist_filename():
+def netlist_filename(phs=None):
     import os
-    return workingdirectory() + os.sep + label() + '.net'
+    if phs is None:
+        return os.getcwd() + os.sep + label() + '.net'
+    else:
+        return phs.path + os.sep + label() + '.net'
 
 
 def samplerate():
@@ -40,15 +35,12 @@ def samplerate():
     return 96e3
 
 
-def write_netlist(R1=1e3, L=5e-2, C=2e-6):
+def write_netlist(phs, R1=1e3, L=5e-2, C=2e-6):
     """
     Write netlist for RLC circuit
     """
-    from pyphs.graphs.netlists import Netlist
 
-    netlist = Netlist()
-
-    datum = netlist.datum
+    datum = phs.graph.netlist.datum
 
     # input voltage
     source = {'dictionary': 'electronics',
@@ -56,7 +48,7 @@ def write_netlist(R1=1e3, L=5e-2, C=2e-6):
               'label': 'IN',
               'nodes': ('A', datum),
               'arguments': {'type': "'voltage'"}}
-    netlist.add_line(source)
+    phs.graph.netlist.add_line(source)
 
     # resistor 1
     resistance = {'dictionary': 'electronics',
@@ -64,7 +56,7 @@ def write_netlist(R1=1e3, L=5e-2, C=2e-6):
                   'label': 'R1',
                   'nodes': ('A', 'B'),
                   'arguments': {'R': ('R1', R1)}}
-    netlist.add_line(resistance)
+    phs.graph.netlist.add_line(resistance)
 
     # inductor
     inductor = {'dictionary': 'electronics',
@@ -72,7 +64,7 @@ def write_netlist(R1=1e3, L=5e-2, C=2e-6):
                 'label': 'L',
                 'nodes': ('B', 'C'),
                 'arguments': {'L': ('L', L)}}
-    netlist.add_line(inductor)
+    phs.graph.netlist.add_line(inductor)
 
     # capacitor
     capacitor = {'dictionary': 'electronics',
@@ -80,9 +72,9 @@ def write_netlist(R1=1e3, L=5e-2, C=2e-6):
                  'label': 'C',
                  'nodes': ('C', datum),
                  'arguments': {'C': ('C', C)}}
-    netlist.add_line(capacitor)
+    phs.graph.netlist.add_line(capacitor)
 
-    netlist.write(filename=netlist_filename())
+    phs.graph.netlist.write(filename=netlist_filename(phs))
 
 
 def init_phs():
@@ -90,12 +82,12 @@ def init_phs():
     from pyphs import PortHamiltonianObject
     import os
     phs = PortHamiltonianObject(label=label(),
-                                path=workingdirectory() + os.sep + label())
+                                path=os.getcwd() + os.sep + label())
     return phs
 
 
 def build_graph(phs):
-    phs.build_from_netlist(netlist_filename())
+    phs.build_from_netlist(netlist_filename(phs))
 
 
 def input_sequence(amp=100., f0=100.):
@@ -116,17 +108,30 @@ def simulation(phs, sequ, nt):
     opts = {'fs': samplerate(),
             'language': 'c++',
             'split': False}
-    phs.simu.init(sequ=u, nt=nt, opts=opts)
-
-
-if __name__ is '__main__':
-    add_path()
-    write_netlist()
-    phs = init_phs()
-    build_graph(phs)
     u, nt = input_sequence()
-    simulation(phs, u, nt)
+    phs.simu.init(sequ=u, nt=nt, opts=opts)
+    phs.simu.process()
+
+
+def gen_cpp(phs):
     phs.cppbuild()
     phs.cpp.gen_main()
     phs.cpp.gen_phobj()
     phs.cpp.gen_data()
+
+
+def run_test():
+    phs = init_phs()
+    write_netlist(phs)
+    build_graph(phs)
+    u, nt = input_sequence()
+    simulation(phs, u, nt)
+    gen_cpp(phs)
+    phs.plot_powerbal()
+    phs.plot_data([('x', 0), ('dx', 1), ('dxH', 1)])
+    import shutil
+    shutil.rmtree(phs.path, ignore_errors=True)
+    return True
+
+if __name__ is '__main__':
+    succeed = run_test()

@@ -42,6 +42,7 @@ M = block_diag(M1, M2).
                 # getattr(struc, 'set_M'+vari+varj)(Mij1)
                 set_func = getattr(struc, 'set_M'+vari+varj)
                 set_func(Mij1)
+        struc.connectors += struc2.connectors
         return struc
 
     def _build_getset(self, phs, dims_names=None):

@@ -40,13 +40,13 @@ Created on Thu Jun  2 21:33:07 2016
 @author: Antoine Falaize
 """
 
-###############################################################################
-
-__licence__ = "CeCILL-B"
+__licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
-__version__ = "0.1.5"
 __copyright__ = "Copyright 2012-2016"
+__version__ = '0.1.4'
+_author_email_='antoine.falaize@gmail.com'
+
 
 ###############################################################################
 
@@ -200,6 +200,7 @@ got %s' % type(label)
         self.graph.build_from_netlist(self)
         self.graph._perform_analysis()
         self.graph.analysis.build_phs(self)
+        self.apply_connectors()
 
     ###########################################################################
 
@@ -317,12 +318,9 @@ got %s' % type(label)
         """
         add a connector (gyrator or transformer)
         """
-        if not hasattr(self, 'connectors'):
-            setattr(self, 'connectors', list())
-        self.connectors += [connectors]
-        self.struc.connectors = self.struc.connectors + list(connectors)
-        self.symbs.cu = self.symbs.cu + list(connectors['u'])
-        self.symbs.cy = self.symbs.cy + list(connectors['y'])
+        self.struc.connectors += [connectors, ]
+        self.symbs.cu = list(connectors['u'])
+        self.symbs.cy = list(connectors['y'])
 
     def add_parameters(self, p):
         """
@@ -371,7 +369,8 @@ dissipative variables w are no more accessible.
 
     def plot_powerbal(self, mode='single', opts=None):
         """
-        Plot the power balance between imin and imax
+        Plot the power balance. mode is 'single' or 'multi' for single figure \
+or multifigure (default is 'single').
         """
         from plots.phs import plot_powerbal
         plot_powerbal(self, mode=mode, opts=opts)

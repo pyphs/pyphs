@@ -6,19 +6,20 @@ Created on Fri Oct 7 23:33:48 2016
 """
 
 
-def add_path():
-    """
-    add pypHs path to sys path
-    """
-    import sys
-    # path to pyphs
-    pypHs_path = "/Users/Falaize/Documents/DEV/python/pypHs/"
-    # add path
-    sys.path.append(pypHs_path)
+from unittest import TestCase
 
 
-def workingdirectory():
-    return '/Users/Falaize/Documents/DEV/python/pypHs/tests'
+class TestTS(TestCase):
+    def test_ts(self):
+        self.assertTrue(run_test())
+
+
+def netlist_filename(phs=None):
+    import os
+    if phs is None:
+        return os.getcwd() + os.sep + label() + '.net'
+    else:
+        return phs.path + os.sep + label() + '.net'
 
 
 def label():
@@ -28,11 +29,6 @@ def label():
     return "ThieleSmall"
 
 
-def netlist_filename():
-    import os
-    return workingdirectory() + os.sep + label() + '.net'
-
-
 def samplerate():
     """
     global sample rate
@@ -40,15 +36,12 @@ def samplerate():
     return 96e3
 
 
-def write_netlist(R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
+def write_netlist(phs, R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
     """
     Write netlist for Thiele/Small model of loudspeaker
     """
-    from pyphs.graphs.netlists import Netlist
 
-    netlist = Netlist()
-
-    datum = netlist.datum
+    datum = phs.graph.netlist.datum
 
 #    from utils.graphs import build_netlist
 
@@ -58,7 +51,7 @@ def write_netlist(R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
               'label': 'IN',
               'nodes': ('A', datum),
               'arguments': {'type': "'voltage'"}}
-    netlist.add_line(source)
+    phs.graph.netlist.add_line(source)
 
     # resistor 1
     resistance = {'dictionary': 'electronics',
@@ -66,7 +59,7 @@ def write_netlist(R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
                   'label': 'R',
                   'nodes': ('A', 'B'),
                   'arguments': {'R': ('R', R)}}
-    netlist.add_line(resistance)
+    phs.graph.netlist.add_line(resistance)
 
     # inductor
     inductor = {'dictionary': 'electronics',
@@ -74,7 +67,7 @@ def write_netlist(R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
                 'label': 'L',
                 'nodes': ('B', 'C'),
                 'arguments': {'L': ('L', L)}}
-    netlist.add_line(inductor)
+    phs.graph.netlist.add_line(inductor)
 
     # gyrator
     gyrator = {'dictionary': 'connectors',
@@ -82,7 +75,7 @@ def write_netlist(R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
                'label': 'G',
                'nodes': ('C', datum, 'D', datum),
                'arguments': {'alpha': ('Bl', Bl)}}
-    netlist.add_line(gyrator)
+    phs.graph.netlist.add_line(gyrator)
 
     # masse
     mass = {'dictionary': 'mechanics',
@@ -90,7 +83,7 @@ def write_netlist(R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
             'label': 'M',
             'nodes': ('D', 'E'),
             'arguments': {'M': ('M', M)}}
-    netlist.add_line(mass)
+    phs.graph.netlist.add_line(mass)
 
     # raideur
     stifness = {'dictionary': 'mechanics',
@@ -98,7 +91,7 @@ def write_netlist(R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
                 'label': 'K',
                 'nodes': ('E', 'F'),
                 'arguments': {'K': ('K', K)}}
-    netlist.add_line(stifness)
+    phs.graph.netlist.add_line(stifness)
 
     # amortissement
     damper = {'dictionary': 'mechanics',
@@ -106,9 +99,9 @@ def write_netlist(R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
                  'label': 'A',
                  'nodes': ('F', datum),
                  'arguments': {'A': ('A', A)}}
-    netlist.add_line(damper)
+    phs.graph.netlist.add_line(damper)
 
-    netlist.write(filename=netlist_filename())
+    phs.graph.netlist.write(filename=netlist_filename(phs))
 
 
 def init_phs():
@@ -116,12 +109,12 @@ def init_phs():
     from pyphs import PortHamiltonianObject
     import os
     phs = PortHamiltonianObject(label=label(),
-                                path=workingdirectory() + os.sep + label())
+                                path=os.getcwd() + os.sep + label())
     return phs
 
 
 def build_graph(phs):
-    phs.build_from_netlist(netlist_filename())
+    phs.build_from_netlist(netlist_filename(phs))
 
 
 def input_sequence(amp=100., f0=100.):
@@ -140,21 +133,29 @@ def input_sequence(amp=100., f0=100.):
 
 def simulation(phs, sequ, nt):
     opts = {'fs': samplerate(),
-            'language': 'c++',
+            'language': 'python',
             'split': False}
+    u, nt = input_sequence()
     phs.simu.init(sequ=u, nt=nt, opts=opts)
+    phs.simu.process()
 
+
+def run_test():
+    phs = init_phs()
+    write_netlist(phs)
+    build_graph(phs)
+    u, nt = input_sequence()
+    simulation(phs, u, nt)
+    phs.cppbuild()
+    phs.cpp.gen_main()
+    phs.cpp.gen_phobj()
+    phs.cpp.gen_data()
+    phs.plot_powerbal()
+    phs.plot_powerbal(mode='multi')
+    phs.plot_data([('x', 0), ('dx', 1), ('dxH', 1)])
+    import shutil
+    shutil.rmtree(phs.path, ignore_errors=True)
+    return True
 
 if __name__ is '__main__':
-    add_path()
-    write_netlist()
-    phs = init_phs()
-    build_graph(phs)
-#    u, nt = input_sequence()
-#    simulation(phs, u, nt)
-#    phs.cppbuild()
-#    phs.cpp.gen_main()
-#    phs.cpp.gen_phobj()
-#    phs.cpp.gen_data()
-#    phs.plot_powerBal()
-#    phs.plot_variables([('x', 0), ('dtx', 1), ('dxHd', 1)])
+    succeed = run_test()

@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Oct 7 23:33:48 2016
+Created on Sat May 21 10:50:30 2016
 
 @author: Falaize
 """
+
+
+def label():
+    """
+    System's netlist and folder label
+    """
+    return "RLC"
 
 
 def netlist_filename(phs=None):
@@ -14,13 +21,6 @@ def netlist_filename(phs=None):
         return phs.path + os.sep + label() + '.net'
 
 
-def label():
-    """
-    System's netlist and folder label
-    """
-    return "ThieleSmall"
-
-
 def samplerate():
     """
     global sample rate
@@ -28,14 +28,12 @@ def samplerate():
     return 96e3
 
 
-def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
+def write_netlist(phs, R1=1e3, L=5e-2, C=2e-6):
     """
-    Write netlist for Thiele/Small model of loudspeaker
+    Write netlist for RLC circuit
     """
 
     datum = phs.graph.netlist.datum
-
-#    from utils.graphs import build_netlist
 
     # input voltage
     source = {'dictionary': 'electronics',
@@ -48,9 +46,9 @@ def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
     # resistor 1
     resistance = {'dictionary': 'electronics',
                   'component': 'resistor',
-                  'label': 'R',
+                  'label': 'R1',
                   'nodes': ('A', 'B'),
-                  'arguments': {'R': ('R', R)}}
+                  'arguments': {'R': ('R1', R1)}}
     phs.graph.netlist.add_line(resistance)
 
     # inductor
@@ -61,39 +59,13 @@ def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
                 'arguments': {'L': ('L', L)}}
     phs.graph.netlist.add_line(inductor)
 
-    # gyrator
-    gyrator = {'dictionary': 'connectors',
-               'component': 'gyrator',
-               'label': 'G',
-               'nodes': ('C', datum, 'D', datum),
-               'arguments': {'alpha': ('Bl', Bl)}}
-    phs.graph.netlist.add_line(gyrator)
-
-    # masse
-    mass = {'dictionary': 'mechanics',
-            'component': 'mass',
-            'label': 'M',
-            'nodes': ('D', 'E'),
-            'arguments': {'M': ('M', M)}}
-    phs.graph.netlist.add_line(mass)
-
-    # raideur
-    stifness = {'dictionary': 'mechanics',
-                'component': 'springcubic',
-                'label': 'K',
-                'nodes': ('E', 'F'),
-                'arguments': {'K0': ('K0', K),
-                              'K2': ('K2', 1e20)}
-                }
-    phs.graph.netlist.add_line(stifness)
-
-    # amortissement
-    damper = {'dictionary': 'mechanics',
-              'component': 'damper',
-              'label': 'A',
-              'nodes': ('F', datum),
-              'arguments': {'A': ('A', A)}}
-    phs.graph.netlist.add_line(damper)
+    # capacitor
+    capacitor = {'dictionary': 'electronics',
+                 'component': 'capacitor',
+                 'label': 'C',
+                 'nodes': ('C', datum),
+                 'arguments': {'C': ('C', C)}}
+    phs.graph.netlist.add_line(capacitor)
 
     phs.graph.netlist.write(filename=netlist_filename(phs))
 
@@ -111,10 +83,10 @@ def build_graph(phs):
     phs.build_from_netlist(netlist_filename(phs))
 
 
-def input_sequence(amp=10000., f0=100.):
+def input_sequence(amp=100., f0=100.):
     from pyphs.misc.signals.synthesis import signalgenerator
     fs = samplerate()
-    nsin = int(5.*fs/f0)
+    nsin = int(2*fs/f0)
     SigIn = signalgenerator(which="sin", n=nsin, ramp_on=False,
                             A=amp, f0=f0, fs=fs)
 
@@ -128,30 +100,31 @@ def input_sequence(amp=10000., f0=100.):
 def simulation(phs, sequ, nt):
     opts = {'fs': samplerate(),
             'language': 'python',
-            'split': True}
+            'split': False}
     u, nt = input_sequence()
     phs.simu.init(sequ=u, nt=nt, opts=opts)
     phs.simu.process()
 
 
-def run_test(clean=True):
+def gen_cpp(phs):
+    phs.cppbuild()
+    phs.cpp.gen_main()
+    phs.cpp.gen_phobj()
+    phs.cpp.gen_data()
+
+
+def run_test():
     phs = init_phs()
     write_netlist(phs)
     build_graph(phs)
     u, nt = input_sequence()
     simulation(phs, u, nt)
-    phs.cppbuild()
-    phs.cpp.gen_main()
-    phs.cpp.gen_phobj()
-    phs.cpp.gen_data()
-    phs.plot_powerbal()
-    phs.texwrite()
-    if clean:
-        import shutil
-        shutil.rmtree(phs.path, ignore_errors=True)
+    gen_cpp(phs)
+#    phs.plot_powerbal()
+#    phs.plot_data([('x', 0), ('dx', 1), ('dxH', 1)])
+    import shutil
+    shutil.rmtree(phs.path, ignore_errors=True)
     return True
 
-
 if __name__ is '__main__':
-    succeed = run_test(clean=True)
-    print('succeed = ' + str(succeed))
+    succeed = run_test()

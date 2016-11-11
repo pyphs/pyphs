@@ -47,7 +47,7 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 __author_email__ = 'antoine.falaize@gmail.com'
 
 
@@ -420,8 +420,7 @@ phs.paths['latex'].
 
     def cppbuild(self):
         """
-        Export system's simulation code (c++) in the folder pointed by \
-phs.paths['cpp'].
+        Build the module for c++ code generation.
         """
         from generation.codecpp.phs2cpp import CppCode
         import os
@@ -429,6 +428,12 @@ phs.paths['cpp'].
         if not os.path.exists(path):
             os.makedirs(path)
         self.cpp = CppCode(self)
+
+    def cppwrite(self):
+        """
+        Export system's simulation code (c++) in the folder pointed by \
+phs.paths['cpp'].
+        """
         self.cpp.gen_main()
         self.cpp.gen_phobj()
         self.cpp.gen_data()
@@ -491,3 +496,7 @@ phs.paths['wav'].
         J_connectors = G_connectors * Mswitch * G_connectors.T
         M = M[:nxwy, :nxwy] + J_connectors
         phs.struc.M = M
+        phs.symbs.cy = []
+        phs.symbs.cu =[]
+        phs.struc.connectors = []
+        

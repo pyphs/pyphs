@@ -5,13 +5,6 @@ Created on Sat May 21 10:50:30 2016
 @author: Falaize
 """
 
-from unittest import TestCase
-
-
-class TestRLC(TestCase):
-    def test_rlc(self):
-        self.assertTrue(run_test())
-
 
 def label():
     """
@@ -106,8 +99,8 @@ def input_sequence(amp=100., f0=100.):
 
 def simulation(phs, sequ, nt):
     opts = {'fs': samplerate(),
-            'language': 'c++',
-            'split': True}
+            'language': 'python',
+            'split': False}
     u, nt = input_sequence()
     phs.simu.init(sequ=u, nt=nt, opts=opts)
     phs.simu.process()
@@ -127,8 +120,8 @@ def run_test():
     u, nt = input_sequence()
     simulation(phs, u, nt)
     gen_cpp(phs)
-    phs.plot_powerbal()
-    phs.plot_data([('x', 0), ('dx', 1), ('dxH', 1)])
+#    phs.plot_powerbal()
+#    phs.plot_data([('x', 0), ('dx', 1), ('dxH', 1)])
     import shutil
     shutil.rmtree(phs.path, ignore_errors=True)
     return True

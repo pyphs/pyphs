@@ -71,8 +71,20 @@ class Data:
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
-        for w, z in zip(self.w(**options), self.z(**options)):
-            yield scalar_product(w, z)
+        R = self.phs.struc.R()
+        from pyphs.numerics.tools import lambdify
+        lambda_R = lambdify(self.phs.symbs.args(),
+                            R,
+                            subs=self.phs.symbs.subs)
+        for w, z, a, b, args in zip(self.w(**options),
+                                    self.z(**options),
+                                    self.a(**options),
+                                    self.b(**options),
+                                    self.args(**options)):
+            yield scalar_product(w, z) + \
+                scalar_product(a,
+                               a,
+                               lambda_R(*args))
 
     def ps(self, imin=None, imax=None, decim=None):
         """
@@ -83,8 +95,53 @@ class Data:
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
         for u, y in zip(self.u(**options),
-                        self.y(postprocess=lambda el: -el, **options)):
+                        self.y(**options)):
             yield scalar_product(u, y)
+
+    def a(self, imin=None, imax=None, decim=None):
+        """
+        right-hand side
+        """
+        options = self.phs.simu.config['load_options']
+        options = {'imin': options['imin'] if imin is None else imin,
+                   'imax': options['imax'] if imax is None else imax,
+                   'decim': options['decim'] if decim is None else decim}
+        for dxH, z, u in zip(self.dxH(**options),
+                             self.z(**options),
+                             self.u(**options)):
+            yield dxH + z + u
+
+    def args(self, imin=None, imax=None, decim=None):
+        """
+        arguments of the system function in exprs
+        """
+        options = self.phs.simu.config['load_options']
+        options = {'imin': options['imin'] if imin is None else imin,
+                   'imax': options['imax'] if imax is None else imax,
+                   'decim': options['decim'] if decim is None else decim}
+        for x, dx, w, u, p in zip(self.x(**options),
+                                  self.dx(**options),
+                                  self.w(**options),
+                                  self.u(**options),
+                                  self.p(**options)):
+            yield x + dx + w + u + p
+
+    def b(self, imin=None, imax=None, decim=None):
+        """
+        left-hand side
+        """
+        options = self.phs.simu.config['load_options']
+        options = {'imin': options['imin'] if imin is None else imin,
+                   'imax': options['imax'] if imax is None else imax,
+                   'decim': options['decim'] if decim is None else decim}
+
+        def dxtodtx(dx):
+            return dx*self.phs.simu.config['fs']
+
+        for dtx, w, y in zip(self.dx(postprocess=dxtodtx, **options),
+                             self.w(**options),
+                             self.y(**options)):
+            yield dtx + w + y
 
     def data_generator(self, name, ind=None, postprocess=None,
                        imin=None, imax=None, decim=None):
@@ -148,5 +205,9 @@ class Data:
         self.phs.simu.config['nt'] = nt
 
 
-def scalar_product(list1, list2):
-    return sum(el1*el2 for (el1, el2) in zip(list1, list2))
+def scalar_product(list1, list2, weight_matrix=None):
+    import numpy
+    if weight_matrix is None:
+        weight_matrix = numpy.eye(len(list1))
+    return numpy.dot(numpy.array(list1), 
+                     numpy.dot(weight_matrix, numpy.array(list2)))

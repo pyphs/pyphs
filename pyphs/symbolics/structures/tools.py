@@ -162,32 +162,48 @@ def reduce_linear_dissipations(phs):
     phs.exprs.z = phs.exprs.z[phs.dims.wl:]
     phs.dims.wl = 0
     phs.struc.M = Mnlwl*phs.exprs.Zl*Dwl*Mwlnl + Mnl
-    phs.exprs.y, phs.exprs.yd = output_function(phs)
+    phs.exprs.build()
 
 
 def output_function(phs):
     """
-    creates funtion phs.output_function
-    """
-    if phs.dims.y() > 0:
+    Returns the expression of the continuous output vector function y, and the\
+expression of the discrete output vector function yd.
 
+    Input:
+
+        - phs: pyphs.PortHamiltonianObject
+
+    Output:
+
+        - y: list of sympy expressions associated with output vector \
+components, considering the continuous version of storage function gradient
+        - y: list of sympy expressions associated with output vector \
+components, considering the discrete version of storage function gradient
+    """
+
+    if phs.dims.y() > 0:  # Check if system has external ports
+
+        # contribution of inputs to the output
         Vyu = phs.struc.Myy()*sympy.Matrix(phs.symbs.u)
 
-        if phs.dims.x() > 0:
+        if phs.dims.x() > 0:  # Check if system has storage parts
             Vyx = phs.struc.Myx()*sympy.Matrix(phs.exprs.dxH)
             Vyxd = phs.struc.Myx()*sympy.Matrix(phs.exprs.dxHd)
         else:
             Vyx = Vyxd = sympy.zeros(phs.dims.y(), 1)
 
-        if phs.dims.w() > 0:
+        if phs.dims.w() > 0:  # Check if system has dissipative parts
             Vyw = phs.struc.Myw()*sympy.Matrix(phs.exprs.z)
         else:
             Vyw = sympy.zeros(phs.dims.y(), 1)
 
         out = list(Vyx + Vyw + Vyu)
         out = simplify(out)
+
         outd = list(Vyxd + Vyw + Vyu)
         outd = simplify(outd)
+
     else:
         out = sympy.Matrix(list(list()))
         outd = sympy.Matrix(list(list()))

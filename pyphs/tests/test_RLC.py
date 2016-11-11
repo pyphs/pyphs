@@ -107,7 +107,7 @@ def input_sequence(amp=100., f0=100.):
 def simulation(phs, sequ, nt):
     opts = {'fs': samplerate(),
             'language': 'c++',
-            'split': False}
+            'split': True}
     u, nt = input_sequence()
     phs.simu.init(sequ=u, nt=nt, opts=opts)
     phs.simu.process()

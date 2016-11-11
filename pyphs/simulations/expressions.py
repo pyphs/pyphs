@@ -59,7 +59,7 @@ class SimulationExpressions:
         self.setfunc('z', phs.exprs.z)
 
         self.setfunc('u', phs.symbs.u)
-        self.setfunc('y', phs.exprs.y)
+        self.setfunc('y', phs.exprs.yd)
 
         self.setfunc('p', phs.symbs.p)
 

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>PyPHS Handbook</title><link>http://pythonhosted.org/pyphs/</link><description>This site gathers the documentations and the tutorials related to the python package PyPHS.</description><atom:link href="http://pythonhosted.org/pyphs/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Fri, 11 Nov 2016 10:44:03 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Getting started: The RLC circuit</title><link>http://pythonhosted.org/pyphs/tutos/getting-started-the-rlc-circuit/</link><dc:creator>Antoine Falaize</dc:creator><description>&lt;p&gt;Write your post here.&lt;/p&gt;</description><guid>http://pythonhosted.org/pyphs/tutos/getting-started-the-rlc-circuit/</guid><pubDate>Fri, 11 Nov 2016 10:43:16 GMT</pubDate></item><item><title>Building of the RLC circuit</title><link>http://pythonhosted.org/pyphs/tutos/RLC/</link><dc:creator>Antoine Falaize</dc:creator><description>&lt;div&gt;&lt;p&gt;The basic use of the &lt;em&gt;pyphs.PortHamiltonianObject&lt;/em&gt; is illustrated here
+with the modeling of the standard reistor-inductor-capacitor (RLC)
+circuit given by (see &lt;a class="reference external" href="http://www.mdpi.com/2076-3417/6/10/273/pdf"&gt;[1,
+§2.2]&lt;/a&gt;):&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+  \left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_C}{\mathrm d  t}\\ \hline w_R\\ \hline y \end{array}\right)=\left(\begin{array}{cc|c|c}
+  0 &amp;amp; -1 &amp;amp; -1 &amp;amp; -1\\
+  1 &amp;amp; 0 &amp;amp; 0 &amp;amp; 0 \\ \hline
+  1 &amp;amp; 0 &amp;amp; 0 &amp;amp; 0 \\  \hline
+  1 &amp;amp; 0 &amp;amp; 0 &amp;amp; 0
+  \end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right)
+\end{equation*}
+&lt;/div&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+The constitutive laws are: \* the quadratic storage function
+\end{equation*}
+&lt;/div&gt;
+&lt;div class="system-message"&gt;
+&lt;p class="system-message-title"&gt;System Message: WARNING/2 (&lt;tt class="docutils"&gt;&amp;lt;string&amp;gt;&lt;/tt&gt;, line 16)&lt;/p&gt;
+Explicit markup ends without a blank line; unexpected unindent.&lt;/div&gt;
+&lt;p&gt;&lt;span class="math"&gt;\(H(x_L, x_C)=\frac{x_L^2}{2L}+\frac{x_C^2}{2C},\)&lt;/span&gt; * the linear
+dissipation funciton &lt;span class="math"&gt;\(z_R(w_R)= R \,w_R.\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The physical parameters are * &lt;span class="math"&gt;\(C=2\times 12^{-9}\)&lt;/span&gt;F, *
+&lt;span class="math"&gt;\(L=50\times 10^{-3}\)&lt;/span&gt;H, * &lt;span class="math"&gt;\(R = 10^3\Omega\)&lt;/span&gt;.&lt;/p&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_58838249a1684ed89d65ade50920a794-1"&gt;&lt;/a&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;pyphs&lt;/span&gt;
+&lt;a name="rest_code_58838249a1684ed89d65ade50920a794-2"&gt;&lt;/a&gt;
+&lt;a name="rest_code_58838249a1684ed89d65ade50920a794-3"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pyphs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;PortHamiltonianObject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;label&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'RLC'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="code python"&gt;&lt;a name="rest_code_6223e8cd12714d228e44e701f4a01c24-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;L&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;'xL'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'L'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;a name="rest_code_6223e8cd12714d228e44e701f4a01c24-2"&gt;&lt;/a&gt;&lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;L&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_6223e8cd12714d228e44e701f4a01c24-3"&gt;&lt;/a&gt;
+&lt;a name="rest_code_6223e8cd12714d228e44e701f4a01c24-4"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_storages&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_6223e8cd12714d228e44e701f4a01c24-5"&gt;&lt;/a&gt;
+&lt;a name="rest_code_6223e8cd12714d228e44e701f4a01c24-6"&gt;&lt;/a&gt;&lt;span class="n"&gt;L_value&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;5e-3&lt;/span&gt;
+&lt;a name="rest_code_6223e8cd12714d228e44e701f4a01c24-7"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;subs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="n"&gt;L&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;L_value&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="code python"&gt;&lt;a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;xC&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;'xC'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'C'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-2"&gt;&lt;/a&gt;&lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;xC&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-3"&gt;&lt;/a&gt;
+&lt;a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-4"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_storages&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;xC&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-5"&gt;&lt;/a&gt;
+&lt;a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-6"&gt;&lt;/a&gt;&lt;span class="n"&gt;C_value&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;2e-9&lt;/span&gt;
+&lt;a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-7"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;subs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;C_value&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="code python"&gt;&lt;a name="rest_code_e5536187a5184b13b49cd59add1a7041-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;par_symb&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;'wR'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'R'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;a name="rest_code_e5536187a5184b13b49cd59add1a7041-2"&gt;&lt;/a&gt;&lt;span class="n"&gt;par_value&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;1e3&lt;/span&gt;
+&lt;a name="rest_code_e5536187a5184b13b49cd59add1a7041-3"&gt;&lt;/a&gt;
+&lt;a name="rest_code_e5536187a5184b13b49cd59add1a7041-4"&gt;&lt;/a&gt;&lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;par_symb&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;
+&lt;a name="rest_code_e5536187a5184b13b49cd59add1a7041-5"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_dissipations&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_e5536187a5184b13b49cd59add1a7041-6"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;subs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="n"&gt;par_symb&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;par_value&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="code python"&gt;&lt;a name="rest_code_3603b80f82be429ca123530753cc8b2e-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;'v'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'i'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;a name="rest_code_3603b80f82be429ca123530753cc8b2e-2"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_ports&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="code python"&gt;&lt;a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-1"&gt;&lt;/a&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt;
+&lt;a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-2"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_Mxx&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;numpy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]]))&lt;/span&gt;
+&lt;a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-3"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_Mxw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;numpy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]]))&lt;/span&gt;
+&lt;a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-4"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_Mxy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;numpy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]]))&lt;/span&gt;
+&lt;a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-5"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_Mwx&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;numpy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]]))&lt;/span&gt;
+&lt;a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-6"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_Myx&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;numpy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]]))&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="code python"&gt;&lt;a name="rest_code_f6bf4580a81c4a528e15467203285d2d-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+[xL, xC]
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_78eefd6d8ca9494d97f0b48a85a5e0c0-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exprs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;H&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+xL**2/(2*L) + xC**2/(2*C)
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_d028e2b477634fa08c5aeb1659fb33e3-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+[wR]
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_9dbe17df380b48e88dab38b954837a7e-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exprs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+[R*wR]
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_99cb4ecbe11a4cadae610bdcf3937c67-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;subs&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+{C: 2e-09, R: 1000.0, L: 0.005}
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_797afc8139244c098439dd704041c586-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;M&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([
+[0, -1, -1, -1],
+[1,  0,  0,  0],
+[1,  0,  0,  0],
+[1,  0,  0,  0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_4a9da3708f6e4da9bed6254800c6f8db-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;J&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([
+[  0, -1.0, -1.0, -1.0],
+[1.0,    0,    0,    0],
+[1.0,    0,    0,    0],
+[1.0,    0,    0,    0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_e55e0ef5686140b3b62d35fb6477a114-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Jxx&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([
+[  0, -1.0],
+[1.0,    0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_1277ffaa2aee4b4d8006da9900547cc9-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Jxw&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([
+[-1.0],
+[   0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_47bb0b4b6abd4bf59b6965a08cd2d2e9-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Jwx&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Jxw&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([[0, 0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_1b19fa72426a466c93fe02049bbf2928-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([
+[0, 0, 0, 0],
+[0, 0, 0, 0],
+[0, 0, 0, 0],
+[0, 0, 0, 0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_0fb7ed30b9aa465db59221f6d50276d0-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;build_resistive_structure&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="code python"&gt;&lt;a name="rest_code_51e290456ad440079af79e5a84d41cf7-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;M&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([
+[-R, -1, -1],
+[ 1,  0,  0],
+[ 1,  0,  0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_ec73236477114b3e8bad90c47195619b-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;J&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([
+[  0, -1.0, -1.0],
+[1.0,    0,    0],
+[1.0,    0,    0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_1f213932847045aaa06508750a8225ca-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;struc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+Matrix([
+[1.0*R, 0, 0],
+[    0, 0, 0],
+[    0, 0, 0]])
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_a51245384e054b119b9276f194016fe0-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;symbs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+[]
+&lt;/pre&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_b255a66b12e64508b0667b067d019c45-1"&gt;&lt;/a&gt;&lt;span class="n"&gt;rlc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exprs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;
+&lt;/pre&gt;&lt;pre class="literal-block"&gt;
+[]
+&lt;/pre&gt;&lt;/div&gt;</description><category>mathjax</category><guid>http://pythonhosted.org/pyphs/tutos/RLC/</guid><pubDate>Sat, 05 Nov 2016 14:30:33 GMT</pubDate></item></channel></rss>

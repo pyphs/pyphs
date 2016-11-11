@@ -40,12 +40,15 @@ Created on Thu Jun  2 21:33:07 2016
 @author: Antoine Falaize
 """
 
+###############################################################################
+
+
 __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.1.4'
-_author_email_='antoine.falaize@gmail.com'
+__version__ = '0.1.6'
+__author_email__ = 'antoine.falaize@gmail.com'
 
 
 ###############################################################################

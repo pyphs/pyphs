@@ -799,7 +799,7 @@ void """ + cppobj_name(phs) + '::' + """process(""" + str_u_cpp + str_coma +\
             if not any(dim == 0 for dim in shape):
                 string_cpp += '\n' + indent(indent(name + '_update();'))
         string_cpp += '\n' + indent(indent('n++;'))
-    string_cpp += "\n    }"
+        string_cpp += "\n    }"
     names = ('vl', 'fl',
              'dx', 'dxH', 'w', 'z', 'y')
     for name in names:

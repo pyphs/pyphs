@@ -55,6 +55,7 @@ M = block_diag(M1, M2).
             for vari in dims_names:
                 for varj in dims_names:
                     self._set_block(part, part+vari+varj, (vari, varj))
+        
 
     def _set_block(self, part, name, dims_names):
         "effectively adds get and set attributes"
@@ -100,14 +101,12 @@ def _build_set_mat(phs, struct, dims_names, name):
 and 'x' and 'y' the variables that corresponds to block of struct.name
     """
     vari, varj = dims_names
-
     def set_mat(val):
         """
         set bloc (""" + vari + ', ' + varj + """) of structure matrix """ + \
             name + """ to val
         """
         if struct.M.shape[0] != phs.dims.tot():
-            struct.M = sympy.zeros(phs.dims.tot())
             struct.M = sympy.zeros(phs.dims.tot())
         if name == 'J':
             J = val
@@ -119,11 +118,11 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
             M = J - R
         if name == 'M':
             M = val
+
         debi, endi = getattr(phs.inds, vari)()
         debj, endj = getattr(phs.inds, varj)()
-        print endi-debi, endj-debj, 
-        print M.shape
-        struct.M[debi:endi, debj:endj] = M
+        struct.M[debi:endi, debj:endj] = sympy.Matrix(M)
+
     return set_mat
 
 ###############################################################################

@@ -1,3 +1,6 @@
+# For mac only.
+.DS_Store
+
 # Compiled python modules.
 *.pyc
 

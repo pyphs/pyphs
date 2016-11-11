@@ -48,6 +48,8 @@ class CppCode:
         self.phobj = phobj(self._phs)
 
     def gen_phobj(self):
+        if not hasattr(self._phs.simu, 'exprs'):
+            self._phs.simu.init_expressions()
         if not hasattr(self, 'phobj'):
             self._set_phobj()
         self._gen('phobj', extension='cpp')

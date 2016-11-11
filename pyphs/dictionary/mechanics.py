@@ -10,6 +10,7 @@ from classes.linears.dissipatives import LinearDissipationFreeCtrl
 from classes.linears.storages import LinearStorageFluxCtrl, \
     LinearStorageEffortCtrl
 from classes.nonlinears.dissipatives import NonLinearDissipative
+from classes.nonlinears.storages import NonLinearStorage
 
 from pyphs.dictionary.config import nice_var_label
 from tools import symbols
@@ -127,3 +128,54 @@ class Damper(LinearDissipationFreeCtrl):
         else:
             coeff = kwargs['A']
         LinearDissipationFreeCtrl.__init__(self, label, nodes, coeff=coeff)
+
+
+class Springcubic(NonLinearStorage):
+    """
+    Spring with cubic nonlinearity F(q)=K0*(q + K2*q**3)
+
+    Usage
+    -----
+
+    mechanics.springcubic label nodes: **kwargs
+
+    Parameters:
+    -----------
+
+    nodes : (N1, N2)
+        tuple of nodes labels (int or string). The edge (ie. the velocity \
+'v') is directed from N1 to N2.
+
+    kwargs : dictionary with following "key: value"
+
+         * 'K0': Stiffness (N/m)
+         * 'K2': Nonlinear contribution (dimensionless unit)
+    """
+    def __init__(self, label, nodes, **kwargs):
+        # parameters
+        pars = ['K0', 'K2']
+        for par in pars:
+            assert par in kwargs.keys()
+        K0, K2 = symbols(pars)
+        # state  variable
+        x = symbols("x"+label)
+        # storage funcion
+        H = K0*x*(x + x**3/2)/2
+
+        print(label)
+        print(nodes)
+        print(kwargs)
+        N1, N2 = nodes
+
+        # edge data
+        data = {'label': x,
+                'type': 'storage',
+                'ctrl': 'f',
+                'link': None}
+
+        # edge
+        edge = (N1, N2, data)
+
+        # init component
+        NonLinearStorage.__init__(self, label, [edge],
+                                  x, H, **kwargs)

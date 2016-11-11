@@ -98,7 +98,9 @@ def split_linear(phs, force_nolin=False):
                 nxl += 1
             else:
                 # move the element at the end of states vector
+                print(str(nxl)+" "+str(phs.dims.x()-1))
                 move_stor(phs, nxl, phs.dims.x()-1)
+
     hess = hessian(phs.exprs.H, phs.symbs.x)
     phs.exprs.setexpr('Q', hess[:nxl, :nxl])
     # number of linear components

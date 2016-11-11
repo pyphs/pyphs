@@ -8,7 +8,7 @@ Created on Mon Jun 13 15:50:14 2016
 import signal
 
 
-_dur_process_max = 5
+_dur_process_max = 1.
 
 
 # Register an handler for the timeout

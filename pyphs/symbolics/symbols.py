@@ -27,17 +27,18 @@ class Symbols:
     def __init__(self):
         # init subs with empty dictionary
         setattr(self, 'subs', dict())
-        setattr(self, '_names', set())
+        setattr(self, '_names', set())  # to be filled below with _setsymb()
         # init symbols with empty lists
         for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
             self._setsymb(name, list())
+        # Ordered list of names of variables considered as arguments            
         self._args_names = ('x', 'dx', 'w', 'u', 'p')
 
     def __add__(symbs1, symbs2):
         """
         method to concatenates (add) two pHs objects.
         """
-        symbs = symbs1
+        symbs = symbs1 # The reference is the first object
         for name in symbs._names:
             symbs._setsymb(name, list(getattr(symbs, name)) +
                            list(getattr(symbs2, name)))
@@ -47,7 +48,7 @@ class Symbols:
     def dx(self):
         """
         returns the states increment symbols "dxi" associated with state \
-symbol "xi" for "xi" in state vector "x".
+symbol "xi" for each "xi" in state vector "x".
         """
         symbs = []
         for x in self.x:
@@ -67,7 +68,7 @@ symbol "xi" for "xi" in state vector "x".
 
     def _setsymb(self, name, list_symbs):
         """
-        define list of symbol "name" (eg "x", "w" or "y") and add "name" \
+        define list of symbols "name" (eg "x", "w" or "y") and add "name" \
 to list of names.
         """
         if name not in self._names:
@@ -76,7 +77,7 @@ to list of names.
 
     def _allsymbs(self):
         """
-        return all symbols in lists with name in Symbols._names
+        return all symbols in lists with names in Symbols._names
         """
         symbs = set()
         for attr in self._names:

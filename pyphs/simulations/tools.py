@@ -48,7 +48,7 @@ def build_args(simu):
 
 def build_funcs(simu):
     """
-    link and lambdify all funcions for python simu
+    link and lambdify all functions for python simulation
     """
 
     # generator of evaluation functions

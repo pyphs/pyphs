@@ -27,6 +27,9 @@ class Expressions:
         self.phs = phs
 
     def __add__(exprs1, exprs2):
+        """
+        method to concatenates (add) two pHs objects.
+        """
         exprs = exprs1
         exprs.setexpr('H', exprs.H + exprs2.H)
         exprs.setexpr('z', list(exprs.z)+list(exprs2.z))
@@ -34,6 +37,17 @@ class Expressions:
         return exprs
 
     def build(self):
+        """
+        Build the following system functions as sympy expressions and append \
+them as attributes to the exprs module:
+    - 'dxH' the continuous gradient vector of storage scalar function exprs.H,
+    - 'dxHd' the discrete gradient vector of storage scalar function exprs.H,
+    - 'hessH' the continuous hessian matrix of storage scalar function exprs.H,
+    - 'jacz' the continuous jacobian matrix of dissipative vector function \
+exprs.z,
+    - 'y' the continuous output vector function,
+    - 'yd' the discrete output vector function.
+        """
         self.setexpr('dxH', gradient(self.H, self.phs.symbs.x))
         self.setexpr('dxHd', discrete_gradient(self.H,
                                                self.phs.symbs.x,
@@ -45,6 +59,10 @@ class Expressions:
         self.setexpr('yd', yd)
 
     def setexpr(self, name, expr):
+        """
+        Add the sympy expression 'expr' to the exprs module, with argument \
+'name', and add 'name' to the set of _names
+        """
         if name not in self._names:
             self._names.add(name)
         if name is 'H':
@@ -53,6 +71,9 @@ class Expressions:
         setattr(self, name, expr)
 
     def freesymbols(self):
+        """
+        Retrun a set of freesymbols in all exprs in _names
+        """
         symbs = set()
         for name in self._names:
             attr = getattr(self, name)

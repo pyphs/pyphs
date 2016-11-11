@@ -95,10 +95,10 @@ def write_netlist(phs, R=1e3, L=5e-2, Bl=5, M=0.1, K=5e3, A=1):
 
     # amortissement
     damper = {'dictionary': 'mechanics',
-                 'component': 'damper',
-                 'label': 'A',
-                 'nodes': ('F', datum),
-                 'arguments': {'A': ('A', A)}}
+              'component': 'damper',
+              'label': 'A',
+              'nodes': ('F', datum),
+              'arguments': {'A': ('A', A)}}
     phs.graph.netlist.add_line(damper)
 
     phs.graph.netlist.write(filename=netlist_filename(phs))
@@ -120,7 +120,7 @@ def build_graph(phs):
 def input_sequence(amp=100., f0=100.):
     from pyphs.misc.signals.synthesis import signalgenerator
     fs = samplerate()
-    nsin = int(2*fs/f0)
+    nsin = int(5.*fs/f0)
     SigIn = signalgenerator(which="sin", n=nsin, ramp_on=False,
                             A=amp, f0=f0, fs=fs)
 
@@ -133,14 +133,14 @@ def input_sequence(amp=100., f0=100.):
 
 def simulation(phs, sequ, nt):
     opts = {'fs': samplerate(),
-            'language': 'python',
-            'split': False}
+            'language': 'c++',
+            'split': True}
     u, nt = input_sequence()
     phs.simu.init(sequ=u, nt=nt, opts=opts)
     phs.simu.process()
 
 
-def run_test():
+def run_test(clean=True):
     phs = init_phs()
     write_netlist(phs)
     build_graph(phs)
@@ -153,9 +153,12 @@ def run_test():
     phs.plot_powerbal()
     phs.plot_powerbal(mode='multi')
     phs.plot_data([('x', 0), ('dx', 1), ('dxH', 1)])
-    import shutil
-    shutil.rmtree(phs.path, ignore_errors=True)
+    phs.texwrite()
+    if clean:
+        import shutil
+        shutil.rmtree(phs.path, ignore_errors=True)
     return True
 
+
 if __name__ is '__main__':
-    succeed = run_test()
+    succeed = run_test(clean=True)

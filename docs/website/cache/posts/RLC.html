@@ -1,0 +1,147 @@
+<p>The basic use of the <em>pyphs.PortHamiltonianObject</em> is illustrated here
+with the modeling of the standard reistor-inductor-capacitor (RLC)
+circuit given by (see <a class="reference external" href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1,
+§2.2]</a>):</p>
+<div class="math">
+\begin{equation*}
+  \left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_C}{\mathrm d  t}\\ \hline w_R\\ \hline y \end{array}\right)=\left(\begin{array}{cc|c|c}
+  0 &amp; -1 &amp; -1 &amp; -1\\
+  1 &amp; 0 &amp; 0 &amp; 0 \\ \hline
+  1 &amp; 0 &amp; 0 &amp; 0 \\  \hline
+  1 &amp; 0 &amp; 0 &amp; 0
+  \end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right)
+\end{equation*}
+</div>
+<div class="math">
+\begin{equation*}
+The constitutive laws are: \* the quadratic storage function
+\end{equation*}
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 16)</p>
+Explicit markup ends without a blank line; unexpected unindent.</div>
+<p><span class="math">\(H(x_L, x_C)=\frac{x_L^2}{2L}+\frac{x_C^2}{2C},\)</span> * the linear
+dissipation funciton <span class="math">\(z_R(w_R)= R \,w_R.\)</span></p>
+<p>The physical parameters are * <span class="math">\(C=2\times 12^{-9}\)</span>F, *
+<span class="math">\(L=50\times 10^{-3}\)</span>H, * <span class="math">\(R = 10^3\Omega\)</span>.</p>
+<pre class="code python"><a name="rest_code_58838249a1684ed89d65ade50920a794-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_58838249a1684ed89d65ade50920a794-2"></a>
+<a name="rest_code_58838249a1684ed89d65ade50920a794-3"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;RLC&#39;</span><span class="p">)</span>
+</pre><pre class="code python"><a name="rest_code_6223e8cd12714d228e44e701f4a01c24-1"></a><span class="n">x</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">rlc</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xL&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">])</span>
+<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-2"></a><span class="n">h</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">L</span><span class="p">)</span>
+<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-3"></a>
+<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-4"></a><span class="n">rlc</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-5"></a>
+<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-6"></a><span class="n">L_value</span> <span class="o">=</span> <span class="mf">5e-3</span>
+<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-7"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">L</span><span class="p">:</span><span class="n">L_value</span><span class="p">})</span>
+</pre><pre class="code python"><a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-1"></a><span class="n">xC</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">rlc</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xC&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">])</span>
+<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-2"></a><span class="n">H</span> <span class="o">=</span> <span class="n">xC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">C</span><span class="p">)</span>
+<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-3"></a>
+<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-4"></a><span class="n">rlc</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xC</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-5"></a>
+<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-6"></a><span class="n">C_value</span> <span class="o">=</span> <span class="mf">2e-9</span>
+<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-7"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">C</span><span class="p">:</span><span class="n">C_value</span><span class="p">})</span>
+</pre><pre class="code python"><a name="rest_code_e5536187a5184b13b49cd59add1a7041-1"></a><span class="n">w</span><span class="p">,</span> <span class="n">par_symb</span> <span class="o">=</span> <span class="n">rlc</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;wR&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">])</span>
+<a name="rest_code_e5536187a5184b13b49cd59add1a7041-2"></a><span class="n">par_value</span> <span class="o">=</span> <span class="mf">1e3</span>
+<a name="rest_code_e5536187a5184b13b49cd59add1a7041-3"></a>
+<a name="rest_code_e5536187a5184b13b49cd59add1a7041-4"></a><span class="n">z</span> <span class="o">=</span> <span class="n">par_symb</span><span class="o">*</span><span class="n">w</span>
+<a name="rest_code_e5536187a5184b13b49cd59add1a7041-5"></a><span class="n">rlc</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+<a name="rest_code_e5536187a5184b13b49cd59add1a7041-6"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">par_symb</span><span class="p">:</span><span class="n">par_value</span><span class="p">})</span>
+</pre><pre class="code python"><a name="rest_code_3603b80f82be429ca123530753cc8b2e-1"></a><span class="n">u</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">rlc</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">])</span>
+<a name="rest_code_3603b80f82be429ca123530753cc8b2e-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">add_ports</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre><pre class="code python"><a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-1"></a><span class="kn">import</span> <span class="nn">numpy</span>
+<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxx</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxw</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
+<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-4"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxy</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
+<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-5"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mwx</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-6"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Myx</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+</pre><pre class="code python"><a name="rest_code_f6bf4580a81c4a528e15467203285d2d-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">x</span>
+</pre><pre class="literal-block">
+[xL, xC]
+</pre>
+<pre class="code python"><a name="rest_code_78eefd6d8ca9494d97f0b48a85a5e0c0-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">H</span>
+</pre><pre class="literal-block">
+xL**2/(2*L) + xC**2/(2*C)
+</pre>
+<pre class="code python"><a name="rest_code_d028e2b477634fa08c5aeb1659fb33e3-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">w</span>
+</pre><pre class="literal-block">
+[wR]
+</pre>
+<pre class="code python"><a name="rest_code_9dbe17df380b48e88dab38b954837a7e-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">z</span>
+</pre><pre class="literal-block">
+[R*wR]
+</pre>
+<pre class="code python"><a name="rest_code_99cb4ecbe11a4cadae610bdcf3937c67-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span>
+</pre><pre class="literal-block">
+{C: 2e-09, R: 1000.0, L: 0.005}
+</pre>
+<pre class="code python"><a name="rest_code_797afc8139244c098439dd704041c586-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">M</span>
+</pre><pre class="literal-block">
+Matrix([
+[0, -1, -1, -1],
+[1,  0,  0,  0],
+[1,  0,  0,  0],
+[1,  0,  0,  0]])
+</pre>
+<pre class="code python"><a name="rest_code_4a9da3708f6e4da9bed6254800c6f8db-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
+</pre><pre class="literal-block">
+Matrix([
+[  0, -1.0, -1.0, -1.0],
+[1.0,    0,    0,    0],
+[1.0,    0,    0,    0],
+[1.0,    0,    0,    0]])
+</pre>
+<pre class="code python"><a name="rest_code_e55e0ef5686140b3b62d35fb6477a114-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
+</pre><pre class="literal-block">
+Matrix([
+[  0, -1.0],
+[1.0,    0]])
+</pre>
+<pre class="code python"><a name="rest_code_1277ffaa2aee4b4d8006da9900547cc9-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span>
+</pre><pre class="literal-block">
+Matrix([
+[-1.0],
+[   0]])
+</pre>
+<pre class="code python"><a name="rest_code_47bb0b4b6abd4bf59b6965a08cd2d2e9-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jwx</span><span class="p">()</span> <span class="o">+</span> <span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+</pre><pre class="literal-block">
+Matrix([[0, 0]])
+</pre>
+<pre class="code python"><a name="rest_code_1b19fa72426a466c93fe02049bbf2928-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
+</pre><pre class="literal-block">
+Matrix([
+[0, 0, 0, 0],
+[0, 0, 0, 0],
+[0, 0, 0, 0],
+[0, 0, 0, 0]])
+</pre>
+<pre class="code python"><a name="rest_code_0fb7ed30b9aa465db59221f6d50276d0-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_resistive_structure</span><span class="p">()</span>
+</pre><pre class="code python"><a name="rest_code_51e290456ad440079af79e5a84d41cf7-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">M</span>
+</pre><pre class="literal-block">
+Matrix([
+[-R, -1, -1],
+[ 1,  0,  0],
+[ 1,  0,  0]])
+</pre>
+<pre class="code python"><a name="rest_code_ec73236477114b3e8bad90c47195619b-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
+</pre><pre class="literal-block">
+Matrix([
+[  0, -1.0, -1.0],
+[1.0,    0,    0],
+[1.0,    0,    0]])
+</pre>
+<pre class="code python"><a name="rest_code_1f213932847045aaa06508750a8225ca-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
+</pre><pre class="literal-block">
+Matrix([
+[1.0*R, 0, 0],
+[    0, 0, 0],
+[    0, 0, 0]])
+</pre>
+<pre class="code python"><a name="rest_code_a51245384e054b119b9276f194016fe0-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">w</span>
+</pre><pre class="literal-block">
+[]
+</pre>
+<pre class="code python"><a name="rest_code_b255a66b12e64508b0667b067d019c45-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">z</span>
+</pre><pre class="literal-block">
+[]
+</pre>

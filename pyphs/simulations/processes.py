@@ -36,7 +36,6 @@ def process_py(simulation):
     pbar = progressbar.ProgressBar(widgets=pb_widgets,
                                    maxval=simulation.config['nt'])
     pbar.start()
-
     # init time step
     n = 0
     print "\n*** Simulation ***\n"
@@ -46,7 +45,6 @@ def process_py(simulation):
         n += 1
         pbar.update(n)
     pbar.finish()
-#        progressbar(n/float(simulation.nt))
     time.sleep(0.5)
     close_files(files)
 

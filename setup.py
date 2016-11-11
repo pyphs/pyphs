@@ -16,8 +16,9 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.1.4'
-_author_email_ ='antoine.falaize@gmail.com'
+__version__ = '0.1.6'
+__author_email__ = 'antoine.falaize@gmail.com'
+
 
 ###############################################################################
 
@@ -27,11 +28,11 @@ setup(name='pyphs',
       description="Development Status :: 4 - Beta",
       long_description=readme(),
       classifiers=[
-        '',
         'Natural Language :: English',
         'Development Status :: 4 - Beta',
         'Operating System :: MacOS :: MacOS X',
         'Environment :: MacOS X',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: ' + __licence__,
@@ -41,7 +42,7 @@ setup(name='pyphs',
       passive systems, port-hamiltonian systems',
       url='https://github.com/A-Falaize/pyphs',
       author=__author__,
-      author_email=_author_email_,
+      author_email=__author_email__,
       license="""
 Copyright or (c) or Copr. Project-Team S3 (Sound Signals and Systems) and Analysis/Synthesis team, Laboratory of Sciences and Technologies of Music and Sound (UMR 9912), IRCAM-CNRS-UPMC, 1 place Igor Stravinsky, F-75004 Paris contributor(s) : Antoine Falaize, Thomas Hélie, Thu Jul 9 23:11:37 2015 corresponding contributor: antoine.falaize@ircam.fr
 

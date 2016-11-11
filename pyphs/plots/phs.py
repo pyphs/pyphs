@@ -5,6 +5,7 @@ Created on Mon Jun 27 13:12:43 2016
 @author: Falaize
 """
 
+
 def plot_powerbal(phs, mode='single', opts=None):
     """
     Plot the power balance. mode is 'single' or 'multi' for single figure or \
@@ -36,12 +37,12 @@ multifigure
         from pyphs.plots.singleplots import singleplot
         datay = list()
         datay.append([el for el in phs.data.dtE()])
-        Psd = map(lambda x, y: float(x) - float(y),
+        Psd = map(lambda x, y: - float(x) - float(y),
                   phs.data.ps(),
                   phs.data.pd())
         datay.append(Psd)
         opts.update({'unity': r'Power (W)',
-                     'labels': [labdtE, labPs+r'$-$'+labPd]})
+                     'labels': [labdtE, r'$-$('+labPs+r'$+$'+labPd + r')']})
         singleplot(datax, datay, **opts)
     else:
         assert mode == 'multi'
@@ -50,7 +51,7 @@ multifigure
         datay.append([el for el in phs.data.dtE()])
         datay.append([el for el in phs.data.pd()])
         datay.append([el for el in phs.data.ps()])
-        deltaP = map(lambda dte, d, s: float(dte) + float(d) - float(s),
+        deltaP = map(lambda dte, d, s: float(dte) + float(d) + float(s),
                      phs.data.dtE(),
                      phs.data.pd(),
                      phs.data.ps())
@@ -61,5 +62,5 @@ multifigure
                      'labels': [labdtE,
                                 labPd,
                                 labPs,
-                                labdtE+r'$+$'+labPd+r'$-$'+labPs]})
+                                labdtE+r'$+$'+labPd+r'$+$'+labPs]})
         multiplot(datax, datay, **opts)

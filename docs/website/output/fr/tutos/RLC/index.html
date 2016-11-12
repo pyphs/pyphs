@@ -30,17 +30,10 @@ MathJax.Hub.Config({
 });
 </script><!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css">
 <meta name="author" content="Antoine Falaize">
-<link rel="next" href="../getting-started-the-rlc-circuit/" title="Getting started: The RLC circuit" type="text/html">
 <meta property="og:site_name" content="PyPHS Handbook">
 <meta property="og:title" content="Building of the RLC circuit">
 <meta property="og:url" content="http://pythonhosted.org/pyphs/fr/tutos/RLC/">
-<meta property="og:description" content="The basic use of the pyphs.PortHamiltonianObject is illustrated here
-with the modeling of the standard reistor-inductor-capacitor (RLC)
-circuit given by (see [1,
-§2.2]):
-
-\begin{equation*}
-  \left(\be">
+<meta property="og:description" content="Introduction¶The basic use of the pyphs.PortHamiltonianObject is illustrated here with the modeling and time-domain simulation of the standard resistor-coil-capacitor (RLC) circuit (see [1, §2.2] for ">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2016-11-05T16:30:33+02:00">
 <meta property="article:tag" content="mathjax">
@@ -122,7 +115,7 @@ circuit given by (see [1,
                 
                     
     <li>
-    <a href="index.rst" id="sourcelink">Source</a>
+    <a href="index.ipynb" id="sourcelink">Source</a>
     </li>
 
                 
@@ -145,191 +138,1006 @@ circuit given by (see [1,
             </span></p>
             <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2016-11-05T16:30:33+02:00" itemprop="datePublished" title="2016-11-05 16:30">2016-11-05 16:30</time></a></p>
             
-        <p class="sourceline"><a href="index.rst" id="sourcelink">Source</a></p>
+        <p class="sourceline"><a href="index.ipynb" id="sourcelink">Source</a></p>
 
         </div>
         
 
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <div>
-<p>The basic use of the <em>pyphs.PortHamiltonianObject</em> is illustrated here
-with the modeling of the standard reistor-inductor-capacitor (RLC)
-circuit given by (see <a class="reference external" href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1,
-§2.2]</a>):</p>
-<div class="math">
-\begin{equation*}
-  \left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_C}{\mathrm d  t}\\ \hline w_R\\ \hline y \end{array}\right)=\left(\begin{array}{cc|c|c}
-  0 &amp; -1 &amp; -1 &amp; -1\\
-  1 &amp; 0 &amp; 0 &amp; 0 \\ \hline
-  1 &amp; 0 &amp; 0 &amp; 0 \\  \hline
-  1 &amp; 0 &amp; 0 &amp; 0
-  \end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right)
-\end{equation*}
+    <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
-<div class="math">
-\begin{equation*}
-The constitutive laws are: \* the quadratic storage function
-\end{equation*}
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a>
+</h2>
+<p>The basic use of the <em>pyphs.PortHamiltonianObject</em> is illustrated here with the modeling and time-domain simulation of the standard resistor-coil-capacitor (RLC) circuit (see <a href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1, §2.2]</a> for details).</p>
+<h2 id="System-declaration">System declaration<a class="anchor-link" href="#System-declaration">¶</a>
+</h2>
+<h3 id="Governing-equations">Governing equations<a class="anchor-link" href="#Governing-equations">¶</a>
+</h3>
+<p>Following the reference <a href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1, §2.2]</a>, the RLC circuit is described as follows:</p>
+<ul>
+<li>$x_L$ is the coil flux so that $v_L = \frac{\mathrm d x_L}{\mathrm d  t}$ is the coil voltage, </li>
+<li>$x_C$ is the electric charge associated with the capacitor so that $i_C = \frac{\mathrm d x_C}{\mathrm d  t}$ is the capacitor current, </li>
+<li>$w_R= i_R$ is the resistor current, </li>
+<li>$y=i_{\mathrm{out}}$ is the output current, and </li>
+<li>$u=v_{\mathrm{out}}$ is the input voltage.</li>
+</ul>
+<p>The constitutive laws are:</p>
+<ul>
+<li>the quadratic storage function $H(x_L, x_C)=\frac{x_L^2}{2L}+\frac{x_C^2}{2C},$ so that the coil current is $i_L=\frac{\partial H}{\partial x_L}=\frac{x_L}{L}$ and the capacitor voltage is $v_C=\frac{\partial H}{\partial x_C}=\frac{x_C}{C}$,</li>
+<li>the linear dissipation function $z_R(w_R)= R \,w_R = v_R$ with $v_R$ the resistor voltage. </li>
+</ul>
+<p>The Kirchhoff's laws for a serial connection read:</p>
+<ul>
+<li>Kirchhoff's current law: $ v_L=-v_C-v_R-v_{\mathrm{out}}$,</li>
+<li>Kirchhoff's voltage law: $i_L = i_C = i_R = i_{\mathrm{out}}$.</li>
+</ul>
+<p>This can be expressed in the <em>Port-Hamiltonian Systems</em> (PHS) formalism as:</p>
+$$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_C}{\mathrm d  t}\\ \hline w_R\\ \hline y \end{array}\right)=\left(\begin{array}{cc|c|c}
+0 &amp; -1 &amp; -1 &amp; -1\\ 
+1 &amp; 0 &amp; 0 &amp; 0 \\ \hline
+1 &amp; 0 &amp; 0 &amp; 0 \\  \hline
+1 &amp; 0 &amp; 0 &amp; 0
+\end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right) $$<p>The physical parameters are</p>
+<ul>
+<li>$C=2\times 10^{-9}$F, </li>
+<li>$L=50\times 10^{-3}$H, </li>
+<li>$R = 10^3\Omega$.</li>
+</ul>
+<h3 id="PyPHS-declaration">PyPHS declaration<a class="anchor-link" href="#PyPHS-declaration">¶</a>
+</h3>
+<h4 id="Import-pyphs">Import pyphs<a class="anchor-link" href="#Import-pyphs">¶</a>
+</h4>
+<p>As any python module, we need to timport <code>pyphs</code> before using it:</p>
+
 </div>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 16)</p>
-Explicit markup ends without a blank line; unexpected unindent.</div>
-<p><span class="math">\(H(x_L, x_C)=\frac{x_L^2}{2L}+\frac{x_C^2}{2C},\)</span> * the linear
-dissipation funciton <span class="math">\(z_R(w_R)= R \,w_R.\)</span></p>
-<p>The physical parameters are * <span class="math">\(C=2\times 12^{-9}\)</span>F, *
-<span class="math">\(L=50\times 10^{-3}\)</span>H, * <span class="math">\(R = 10^3\Omega\)</span>.</p>
-<pre class="code python"><a name="rest_code_58838249a1684ed89d65ade50920a794-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_58838249a1684ed89d65ade50920a794-2"></a>
-<a name="rest_code_58838249a1684ed89d65ade50920a794-3"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'RLC'</span><span class="p">)</span>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">pyphs</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Instantiation-of-a-port-Hamiltonian-system">Instantiation of a port-Hamiltonian system<a class="anchor-link" href="#Instantiation-of-a-port-Hamiltonian-system">¶</a>
+</h4>
+<p>The entry point to the pyphs package is the <code>pyphs.PortHamiltonianObject</code>. Help can be obtained with</p>
+<div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">)</span>
+</pre></div>
+<p>It is recommanded to pass the label argument at the instantation:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'RLC'</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, <code>phs</code> is an instance of <code>pyphs.PortHamiltonianObject</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;pyphs.pyphs.PortHamiltonianObject instance at 0x104d623f8&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Adding-the-components">Adding the components<a class="anchor-link" href="#Adding-the-components">¶</a>
+</h4>
+<h5 id="Defining-symbols">Defining symbols<a class="anchor-link" href="#Defining-symbols">¶</a>
+</h5>
+<p>The <code>pyphs</code> package is based on the <code>sympy</code> package to provide the symbolic manipulation of PHS structures. To declare symbols, we use the <code>phs.symbols</code> method. As an example, we declare below the symbols associated with the coil:</p>
+<ul>
+<li>the state $x_L$ (magnetic flux of the coil), and </li>
+<li>the parameter $L$ (coil inductance).</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">xL</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">'xL'</span><span class="p">,</span> <span class="s1">'L'</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Defining-expressions">Defining expressions<a class="anchor-link" href="#Defining-expressions">¶</a>
+</h5>
+<p>Now, the variables <code>xL</code> and <code>L</code> are instances of the <code>sympy.Symbol</code> object, with the assumption that quantities are real-valued only. Then, expressions can be defined with the standard <code>sympy</code> syntax. As an example, we define below the storage function associated with the coil $H_L(x_L)=\frac{x_L^2}{2L}$:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">HL</span> <span class="o">=</span> <span class="n">xL</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">L</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="the-phs.add_storages-method">the <code>phs.add_storages</code> method<a class="anchor-link" href="#the-phs.add_storages-method">¶</a>
+</h5>
+<p>To include a storage component to a <code>PortHamiltonianObject</code>, we make use of the <code>phs.add_storages</code> method:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">phs</span><span class="o">.</span><span class="n">add_storages</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on method add_storages in module pyphs.pyphs:
+
+add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
+    Add a storage component with state x and energy H.
+    * State x is append to the current list of states symbols,
+    * Expression H is added to the current expression of Hamiltonian.
+    
+    Parameters
+    ----------
+    
+    x : str, symbol, or list of
+    H : sympy.Expr
+
 </pre>
-<pre class="code python"><a name="rest_code_6223e8cd12714d228e44e701f4a01c24-1"></a><span class="n">x</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">rlc</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">'xL'</span><span class="p">,</span> <span class="s1">'L'</span><span class="p">])</span>
-<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-2"></a><span class="n">h</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">L</span><span class="p">)</span>
-<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-3"></a>
-<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-4"></a><span class="n">rlc</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
-<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-5"></a>
-<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-6"></a><span class="n">L_value</span> <span class="o">=</span> <span class="mf">5e-3</span>
-<a name="rest_code_6223e8cd12714d228e44e701f4a01c24-7"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">L</span><span class="p">:</span><span class="n">L_value</span><span class="p">})</span>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As an example, the coil is added to the <code>phs</code> object as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xL</span><span class="p">,</span> <span class="n">HL</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For the capacitor:</p>
+<ul>
+<li>the state is $x_C$ (electric charge),</li>
+<li>the parameter is $C$ (electric capacitance), and </li>
+<li>the storage function is $H_C(x_C)=\frac{x_C^2}{2C}$.</li>
+</ul>
+<p>This component is added to the <code>phs</code> object as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">xC</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">'xC'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">])</span>
+<span class="n">HC</span> <span class="o">=</span> <span class="n">xC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">C</span><span class="p">)</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xC</span><span class="p">,</span> <span class="n">HC</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, the state of the <code>phs</code> object includes both <code>xL</code> and <code>xC</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[9]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[xL, xC]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the storage function is given by the sum of <code>HL</code> and <code>HC</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">H</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[10]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>xL**2/(2*L) + xC**2/(2*C)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice the same results can be obtained with a single call to <code>add_storages</code> by</p>
+<ol>
+<li>defining a list of states:<div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">xL</span><span class="p">,</span> <span class="n">xC</span><span class="p">]</span>
+</pre></div>
+</li>
+<li>defining a total storage function:<div class="highlight"><pre><span></span><span class="n">H</span> <span class="o">=</span> <span class="n">HL</span> <span class="o">+</span> <span class="n">HC</span>
+</pre></div>
+</li>
+<li>calling:<div class="highlight"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+</pre></div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="the-phs.add_dissipations-method">the <code>phs.add_dissipations</code> method<a class="anchor-link" href="#the-phs.add_dissipations-method">¶</a>
+</h5>
+<p>To include a dissipative component to a <code>PortHamiltonianObject</code>, we make use of the <code>phs.add_dissipations</code> method:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">phs</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on method add_dissipations in module pyphs.pyphs:
+
+add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instance
+    Add a dissipative component with dissipation variable w and         dissipation function z.
+    
+    Parameters
+    ----------
+    
+    w : str, symbol, or list of
+    z : sympy.Expr or list of
+
 </pre>
-<pre class="code python"><a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-1"></a><span class="n">xC</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">rlc</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">'xC'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">])</span>
-<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-2"></a><span class="n">H</span> <span class="o">=</span> <span class="n">xC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">C</span><span class="p">)</span>
-<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-3"></a>
-<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-4"></a><span class="n">rlc</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xC</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
-<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-5"></a>
-<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-6"></a><span class="n">C_value</span> <span class="o">=</span> <span class="mf">2e-9</span>
-<a name="rest_code_e7cc782b0a2b4fdc85345db007c60564-7"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">C</span><span class="p">:</span><span class="n">C_value</span><span class="p">})</span>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall the resistor is decribed by:</p>
+<ul>
+<li>the dissipative variable $w_R$ (resistor current),</li>
+<li>the parameter $R$ (electric resistance), and </li>
+<li>the dissipation function $z_R(w_R)=R\,w_R$.</li>
+</ul>
+<p>This component is added to the <code>phs</code> object as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">wR</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">'wR'</span><span class="p">,</span> <span class="s1">'R'</span><span class="p">])</span>    <span class="c1"># define sympy symbols</span>
+<span class="n">zR</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">wR</span>                           <span class="c1"># define sympy expression</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">(</span><span class="n">wR</span><span class="p">,</span> <span class="n">zR</span><span class="p">)</span>        <span class="c1"># add dissipation to the `phs` object</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, the dissipative variable of the <code>rlc</code> object includes <code>wR</code> only:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">w</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[13]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[wR]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the dissipation function is given by <code>zR</code> only:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">z</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[14]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[R*wR]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="the-phs.add_ports-method">the <code>phs.add_ports</code> method<a class="anchor-link" href="#the-phs.add_ports-method">¶</a>
+</h5>
+<p>To include an external port to a <code>PortHamiltonianObject</code>, we make use of the <code>phs.add_ports</code> method:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">phs</span><span class="o">.</span><span class="n">add_ports</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Help on method add_ports in module pyphs.pyphs:
+
+add_ports(self, u, y) method of pyphs.pyphs.PortHamiltonianObject instance
+    Add one or several ports with input u and output y.
+    
+    Parameters
+    ----------
+    
+    u : str, symbol, or list of
+    y : str, symbol, or list of
+
 </pre>
-<pre class="code python"><a name="rest_code_e5536187a5184b13b49cd59add1a7041-1"></a><span class="n">w</span><span class="p">,</span> <span class="n">par_symb</span> <span class="o">=</span> <span class="n">rlc</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">'wR'</span><span class="p">,</span> <span class="s1">'R'</span><span class="p">])</span>
-<a name="rest_code_e5536187a5184b13b49cd59add1a7041-2"></a><span class="n">par_value</span> <span class="o">=</span> <span class="mf">1e3</span>
-<a name="rest_code_e5536187a5184b13b49cd59add1a7041-3"></a>
-<a name="rest_code_e5536187a5184b13b49cd59add1a7041-4"></a><span class="n">z</span> <span class="o">=</span> <span class="n">par_symb</span><span class="o">*</span><span class="n">w</span>
-<a name="rest_code_e5536187a5184b13b49cd59add1a7041-5"></a><span class="n">rlc</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
-<a name="rest_code_e5536187a5184b13b49cd59add1a7041-6"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">par_symb</span><span class="p">:</span><span class="n">par_value</span><span class="p">})</span>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Below, we define the external port with input $u=v_{\mathrm{out}}$ and output $y=i_{\mathrm{out}}$ (notice the symbols do not reflect the actual physical meaning of $u$ and $y$):</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">u</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">'vout'</span><span class="p">,</span> <span class="s1">'iout'</span><span class="p">])</span> <span class="c1"># define sympy symbols</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">add_ports</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>                  <span class="c1"># add port to the `phs` object</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Defining-the-interconnection-structure">Defining the interconnection structure<a class="anchor-link" href="#Defining-the-interconnection-structure">¶</a>
+</h4>
+<p>The interconnection structure of a PHS is defined by the matrix $\mathbf M$ structured as $$\mathbf M = \mathbf J- \mathbf R,$$ where</p>
+<ul>
+<li>the skew-symmetric matrix $\mathbf J = \frac{1}{2}\left(\mathbf M- \mathbf M^\intercal\right) $ encodes the <em>conservative interconnection</em>, and </li>
+<li>the symmetric positive definite matrix $\mathbf R = \frac{-1}{2}\left(\mathbf M + \mathbf M^\intercal\right)$ encodes the <em>dissipative interconnection</em>.</li>
+</ul>
+<p>These matrices are decomposed in blocks as follows:
+$$\mathbf M = \left( 
+\begin{array}{lll}
+\mathbf M_{\mathrm{xx}} &amp; \mathbf M_{\mathrm{xw}} &amp; \mathbf M_{\mathrm{xy}} \\
+\mathbf M_{\mathrm{wx}} &amp; \mathbf M_{\mathrm{ww}} &amp; \mathbf M_{\mathrm{wy}} \\
+\mathbf M_{\mathrm{yx}} &amp; \mathbf M_{\mathrm{ww}} &amp; \mathbf M_{\mathrm{yy}} \\
+\end{array}\right), 
+$$
+$$
+\mathbf J = \left( 
+\begin{array}{lll}
+\mathbf J_{\mathrm{xx}} &amp; \mathbf J_{\mathrm{xw}} &amp; \mathbf J_{\mathrm{xy}} \\
+\mathbf J_{\mathrm{wx}} &amp; \mathbf J_{\mathrm{ww}} &amp; \mathbf J_{\mathrm{wy}} \\
+\mathbf J_{\mathrm{yx}} &amp; \mathbf J_{\mathrm{ww}} &amp; \mathbf J_{\mathrm{yy}} \\
+\end{array}\right), \quad\mathbf R = \left( 
+\begin{array}{lll}
+\mathbf R_{\mathrm{xx}} &amp; \mathbf R_{\mathrm{xw}} &amp; \mathbf R_{\mathrm{xy}} \\
+\mathbf R_{\mathrm{wx}} &amp; \mathbf R_{\mathrm{ww}} &amp; \mathbf R_{\mathrm{wy}} \\
+\mathbf R_{\mathrm{yx}} &amp; \mathbf R_{\mathrm{ww}} &amp; \mathbf R_{\mathrm{yy}} \\
+\end{array}\right).$$</p>
+<p>For the above description of the RLC circuit, the matrices are $$\mathbf M = \mathbf J = \left(\begin{array}{cc|c|c}
+0 &amp; -1 &amp; -1 &amp; -1\\ 
+1 &amp; 0 &amp; 0 &amp; 0 \\ \hline
+1 &amp; 0 &amp; 0 &amp; 0 \\  \hline
+1 &amp; 0 &amp; 0 &amp; 0
+\end{array}\right),$$ 
+that is, $\mathbf R=0$. Each block of the $\mathbf M$ is defined as a <code>numpy.array</code> as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="n">Mxx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxx</span><span class="p">(</span><span class="n">Mxx</span><span class="p">)</span>
+
+<span class="n">Mxw</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxw</span><span class="p">(</span><span class="n">Mxw</span><span class="p">)</span>
+
+<span class="n">Mxy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxy</span><span class="p">(</span><span class="n">Mxy</span><span class="p">)</span>
+
+<span class="n">Mwx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mwx</span><span class="p">(</span><span class="n">Mwx</span><span class="p">)</span>
+
+<span class="n">Myx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Myx</span><span class="p">(</span><span class="n">Myx</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, the structure matrices are accessed as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">'M='</span><span class="p">)</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">M</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>M=
 </pre>
-<pre class="code python"><a name="rest_code_3603b80f82be429ca123530753cc8b2e-1"></a><span class="n">u</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">rlc</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">'v'</span><span class="p">,</span> <span class="s1">'i'</span><span class="p">])</span>
-<a name="rest_code_3603b80f82be429ca123530753cc8b2e-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">add_ports</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-</pre>
-<pre class="code python"><a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-1"></a><span class="kn">import</span> <span class="nn">numpy</span>
-<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxx</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
-<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxw</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
-<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-4"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mxy</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
-<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-5"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Mwx</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
-<a name="rest_code_382fbc45e15b486a95b3d9f367f1fdc1-6"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Myx</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
-</pre>
-<pre class="code python"><a name="rest_code_f6bf4580a81c4a528e15467203285d2d-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">x</span>
-</pre>
-<pre class="literal-block">
-[xL, xC]
-</pre>
-<pre class="code python"><a name="rest_code_78eefd6d8ca9494d97f0b48a85a5e0c0-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">H</span>
-</pre>
-<pre class="literal-block">
-xL**2/(2*L) + xC**2/(2*C)
-</pre>
-<pre class="code python"><a name="rest_code_d028e2b477634fa08c5aeb1659fb33e3-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">w</span>
-</pre>
-<pre class="literal-block">
-[wR]
-</pre>
-<pre class="code python"><a name="rest_code_9dbe17df380b48e88dab38b954837a7e-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">z</span>
-</pre>
-<pre class="literal-block">
-[R*wR]
-</pre>
-<pre class="code python"><a name="rest_code_99cb4ecbe11a4cadae610bdcf3937c67-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span>
-</pre>
-<pre class="literal-block">
-{C: 2e-09, R: 1000.0, L: 0.005}
-</pre>
-<pre class="code python"><a name="rest_code_797afc8139244c098439dd704041c586-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">M</span>
-</pre>
-<pre class="literal-block">
-Matrix([
+</div>
+</div>
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[18]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
 [0, -1, -1, -1],
 [1,  0,  0,  0],
 [1,  0,  0,  0],
-[1,  0,  0,  0]])
+[1,  0,  0,  0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">'J='</span><span class="p">)</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>J=
 </pre>
-<pre class="code python"><a name="rest_code_4a9da3708f6e4da9bed6254800c6f8db-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
-</pre>
-<pre class="literal-block">
-Matrix([
+</div>
+</div>
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
 [  0, -1.0, -1.0, -1.0],
 [1.0,    0,    0,    0],
 [1.0,    0,    0,    0],
-[1.0,    0,    0,    0]])
-</pre>
-<pre class="code python"><a name="rest_code_e55e0ef5686140b3b62d35fb6477a114-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
-</pre>
-<pre class="literal-block">
-Matrix([
-[  0, -1.0],
-[1.0,    0]])
-</pre>
-<pre class="code python"><a name="rest_code_1277ffaa2aee4b4d8006da9900547cc9-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span>
-</pre>
-<pre class="literal-block">
-Matrix([
-[-1.0],
-[   0]])
-</pre>
-<pre class="code python"><a name="rest_code_47bb0b4b6abd4bf59b6965a08cd2d2e9-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jwx</span><span class="p">()</span> <span class="o">+</span> <span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-</pre>
-<pre class="literal-block">
-Matrix([[0, 0]])
-</pre>
-<pre class="code python"><a name="rest_code_1b19fa72426a466c93fe02049bbf2928-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
-</pre>
-<pre class="literal-block">
-Matrix([
-[0, 0, 0, 0],
-[0, 0, 0, 0],
-[0, 0, 0, 0],
-[0, 0, 0, 0]])
-</pre>
-<pre class="code python"><a name="rest_code_0fb7ed30b9aa465db59221f6d50276d0-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_resistive_structure</span><span class="p">()</span>
-</pre>
-<pre class="code python"><a name="rest_code_51e290456ad440079af79e5a84d41cf7-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">M</span>
-</pre>
-<pre class="literal-block">
-Matrix([
-[-R, -1, -1],
-[ 1,  0,  0],
-[ 1,  0,  0]])
-</pre>
-<pre class="code python"><a name="rest_code_ec73236477114b3e8bad90c47195619b-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
-</pre>
-<pre class="literal-block">
-Matrix([
-[  0, -1.0, -1.0],
-[1.0,    0,    0],
-[1.0,    0,    0]])
-</pre>
-<pre class="code python"><a name="rest_code_1f213932847045aaa06508750a8225ca-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
-</pre>
-<pre class="literal-block">
-Matrix([
-[1.0*R, 0, 0],
-[    0, 0, 0],
-[    0, 0, 0]])
-</pre>
-<pre class="code python"><a name="rest_code_a51245384e054b119b9276f194016fe0-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">w</span>
-</pre>
-<pre class="literal-block">
-[]
-</pre>
-<pre class="code python"><a name="rest_code_b255a66b12e64508b0667b067d019c45-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">z</span>
-</pre>
-<pre class="literal-block">
-[]
+[1.0,    0,    0,    0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">'Jxx='</span><span class="p">)</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Jxx=
 </pre>
 </div>
+</div>
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[  0, -1.0],
+[1.0,    0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">'Jxw + Jwx.T ='</span><span class="p">)</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span> <span class="o">+</span> <span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jwx</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Jxw + Jwx.T =
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[21]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[0],
+[0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">'R='</span><span class="p">)</span>
+<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>R=
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[22]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[0, 0, 0, 0],
+[0, 0, 0, 0],
+[0, 0, 0, 0],
+[0, 0, 0, 0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Setting-parmeters-values">Setting parmeters values<a class="anchor-link" href="#Setting-parmeters-values">¶</a>
+</h4>
+<p>The correspondence between the parameters symbols (here <code>L</code>, <code>C</code> and <code>R</code>) and their actual value is stored in the python dictionary <code>phs.symbs.subs</code>, with parameters symbols as the dictionary's keys and numerical values as the dictionary's values. Here, the physical parameters are</p>
+<ul>
+<li>$L=50\times 10^{-3}$H, </li>
+<li>$C=2\times 10^{-9}$F, </li>
+<li>$R = 10^3\Omega$:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">L_value</span> <span class="o">=</span> <span class="mf">50e-3</span>
+<span class="n">C_value</span> <span class="o">=</span> <span class="mf">2e-9</span>
+<span class="n">R_value</span> <span class="o">=</span> <span class="mf">1e3</span>
+
+<span class="n">subs</span> <span class="o">=</span> <span class="p">{</span><span class="n">L</span><span class="p">:</span> <span class="n">L_value</span><span class="p">,</span>
+        <span class="n">C</span><span class="p">:</span> <span class="n">C_value</span><span class="p">,</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">R_value</span><span class="p">}</span>
+
+<span class="n">phs</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
     </div>
-    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags"></ul>
-<ul class="pager hidden-print">
-<li class="next">
-                <a href="../getting-started-the-rlc-circuit/" rel="next" title="Getting started: The RLC circuit">Article suivant</a>
-            </li>
-        </ul></nav></aside><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><script type="text/x-mathjax-config">
+  </div>
+
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags"></ul></nav></aside><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><script type="text/x-mathjax-config">
 MathJax.Hub.Config({
     tex2jax: {
         inlineMath: [ ['$','$'], ["\\(","\\)"] ],

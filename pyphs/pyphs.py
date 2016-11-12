@@ -270,7 +270,7 @@ got %s' % type(label)
     def add_dissipations(self, w, z):
         """
         Add a dissipative component with dissipation variable w and \
-        dissipation function z.
+dissipation function z.
 
         Parameters
         ----------

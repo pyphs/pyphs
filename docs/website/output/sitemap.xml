@@ -23,7 +23,7 @@
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/archive.html</loc>
-  <lastmod>2016-11-11T10:44:00Z</lastmod>
+  <lastmod>2016-11-12T16:43:00Z</lastmod>
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/building/</loc>
@@ -59,7 +59,7 @@
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/fr/archive.html</loc>
-  <lastmod>2016-11-11T10:44:00Z</lastmod>
+  <lastmod>2016-11-12T16:43:00Z</lastmod>
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/fr/building/</loc>
@@ -97,7 +97,6 @@
  <url>
   <loc>http://pythonhosted.org/pyphs/fr/tutos/getting-started-the-rlc-circuit/</loc>
   <lastmod>2016-11-11T10:44:00Z</lastmod>
-  <xhtml:link rel="alternate" hreflang="en" href="http://pythonhosted.org/pyphs/tutos/getting-started-the-rlc-circuit/" />
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/galleries/</loc>

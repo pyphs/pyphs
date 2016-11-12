@@ -7,11 +7,11 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>http://pythonhosted.org/pyphs/categories/mathjax.xml</loc>
-  <lastmod>2016-11-11T10:44:00Z</lastmod>
+  <lastmod>2016-11-12T16:43:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://pythonhosted.org/pyphs/fr/categories/mathjax.xml</loc>
-  <lastmod>2016-11-11T10:44:00Z</lastmod>
+  <lastmod>2016-11-12T16:43:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://pythonhosted.org/pyphs/fr/galleries/rss.xml</loc>
@@ -19,7 +19,7 @@
  </sitemap>
  <sitemap>
   <loc>http://pythonhosted.org/pyphs/fr/rss.xml</loc>
-  <lastmod>2016-11-11T10:44:00Z</lastmod>
+  <lastmod>2016-11-12T16:43:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://pythonhosted.org/pyphs/galleries/rss.xml</loc>
@@ -27,10 +27,10 @@
  </sitemap>
  <sitemap>
   <loc>http://pythonhosted.org/pyphs/rss.xml</loc>
-  <lastmod>2016-11-11T10:44:00Z</lastmod>
+  <lastmod>2016-11-12T16:43:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://pythonhosted.org/pyphs/sitemap.xml</loc>
-  <lastmod>2016-11-11T10:44:00Z</lastmod>
+  <lastmod>2016-11-12T16:43:00Z</lastmod>
  </sitemap>
 </sitemapindex>

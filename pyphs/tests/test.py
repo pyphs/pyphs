@@ -9,12 +9,6 @@ Created on Fri Nov 11 17:09:05 2016
 from unittest import TestCase
 
 
-class TestRLCcpp(TestCase):
-    def test_rlc(self):
-        from test_RLC_cpp import run_test
-        self.assertTrue(run_test())
-
-
 class TestRLC(TestCase):
     def test_rlc(self):
         from test_RLC_python import run_test

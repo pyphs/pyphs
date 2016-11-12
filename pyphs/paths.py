@@ -16,24 +16,23 @@ current working directory;
         * if path is a str, it is used for the system's path.
     """
     import os
-    if path is None:
-        path = 'dummy'
-    assert isinstance(path, str)
-    # define path
-    if path is 'cwd':
-        phs_path = os.getcwd()
-    elif path is 'label':
-        phs_path = os.getcwd() + os.path.sep + phs.label
-    else:
-        phs_path = path
-    # make dir if not existing
-    if not os.path.exists(phs_path):
-        os.makedirs(phs_path)
-    # Define path for exports (plots, waves, tex, c++, etc...)
-    phs.path = phs_path
-    phs.paths = {'tex': phs_path+os.sep+'tex',
-                 'cpp': phs_path+os.sep+'cpp',
-                 'main': phs_path,
-                 'figures': phs_path+os.sep+'figures',
-                 'data': phs_path+os.sep+'data',
-                 'graph': phs_path+os.sep+'graph'}
+    if path is not None:
+	    assert isinstance(path, str)
+	    # define path
+	    if path is 'cwd':
+	        phs_path = os.getcwd()
+	    elif path is 'label':
+	        phs_path = os.getcwd() + os.path.sep + phs.label
+	    else:
+	        phs_path = path
+	    # make dir if not existing
+	    if not os.path.exists(phs_path):
+	        os.makedirs(phs_path)
+	    # Define path for exports (plots, waves, tex, c++, etc...)
+	    phs.path = phs_path
+	    phs.paths = {'tex': phs_path+os.sep+'tex',
+	                 'cpp': phs_path+os.sep+'cpp',
+	                 'main': phs_path,
+	                 'figures': phs_path+os.sep+'figures',
+	                 'data': phs_path+os.sep+'data',
+	                 'graph': phs_path+os.sep+'graph'}

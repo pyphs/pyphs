@@ -31,11 +31,12 @@ def process_py(simulation):
 
     files = open_files(data_path, files_to_open)
 
-    pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ',
-                  progressbar.Bar(), ' ', progressbar.ETA()]
-    pbar = progressbar.ProgressBar(widgets=pb_widgets,
-                                   maxval=simulation.config['nt'])
-    pbar.start()
+    if simulation.config['progressbar']:
+        pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ',
+                      progressbar.Bar(), ' ', progressbar.ETA()]
+        pbar = progressbar.ProgressBar(widgets=pb_widgets,
+                                       maxval=simulation.config['nt'])
+        pbar.start()
     # init time step
     n = 0
     print "\n*** Simulation ***\n"
@@ -43,8 +44,10 @@ def process_py(simulation):
         update(simulation, u=np.array(u), p=np.array(p))
         dump_files(simulation, files)
         n += 1
-        pbar.update(n)
-    pbar.finish()
+        if simulation.config['progressbar']:
+            pbar.update(n)
+    if simulation.config['progressbar']:
+        pbar.finish()
     time.sleep(0.5)
     close_files(files)
 

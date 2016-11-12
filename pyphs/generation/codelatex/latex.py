@@ -16,6 +16,7 @@ class Latex:
 
         self.sys_label = phs.label
 
+        
         self.netlist_dic = phs.graph.netlist
 
         self.path_figs = phs.paths['figures']
@@ -38,7 +39,7 @@ class Latex:
         for key in self.subs.keys():
             self.symbol_names.update({key: r'\mathrm{'+str(key)+r'}'})
 
-        if hasattr(phs, 'graph'):
+        if self.netlist_dic.nlines() > 0:
             phs.plot_graph()
 
         if not hasattr(phs.exprs, 'dxH'):
@@ -168,7 +169,7 @@ class Latex:
 \usepackage{amssymb}
 %\date{\today}                              % Activate to display a """ + \
             r"""given date or no date
-\title{Structure of pHs \texttt{""" + self.sys_label + r"""}}
+\title{Structure of the port-Hamiltonian system\\\texttt{""" + self.sys_label + r"""}}
 %
 \usepackage{authblk}
 \usepackage{hyperref}
@@ -212,7 +213,7 @@ class Latex:
 
     def netlist(self):
         str_netlist = cr(2)
-        if hasattr(self, 'netlist_dic'):
+        if self.netlist_dic.nlines()>0:
             str_netlist += r"\section{System netlist}" + cr(2)
             str_netlist += r"\begin{center}" + cr(1)
             str_netlist += r"\texttt{" + cr(0)
@@ -298,27 +299,57 @@ class Latex:
         """
         str_structure = cr(1)
         str_structure += r"\section{System structure}" + cr(1)
+        str_structure += self.obj2tex(self.M, r"\mathbf{M}", "")
         if self.nx > 0:
-            str_structure += self.obj2tex(self.Jxx, r"\mathbf{J_x}", "")
+            str_structure += self.obj2tex(self.Mxx, r"\mathbf{M_{xx}}", "")
             if self.nw > 0:
-                str_structure += self.obj2tex(self.Jxw, r"\mathbf{K}", "")
+                str_structure += self.obj2tex(self.Mxw, r"\mathbf{M_{xw}}", "")
             if self.ny > 0:
-                str_structure += self.obj2tex(self.Jxy, r"\mathbf{G_x}", "")
+                str_structure += self.obj2tex(self.Mxy, r"\mathbf{M_{xy}}", "")
         if self.nw > 0:
-            str_structure += self.obj2tex(self.Jww, r"\mathbf{J_w}", "")
+            if self.nx > 0:
+                str_structure += self.obj2tex(self.Mwx, r"\mathbf{M_{wx}}", "")
+            str_structure += self.obj2tex(self.Mww, r"\mathbf{M_{ww}}", "")
             if self.ny > 0:
-                str_structure += self.obj2tex(self.Jwy, r"\mathbf{G_w}", "")
+                str_structure += self.obj2tex(self.Mwy, r"\mathbf{M_{wy}}", "")
         if self.ny > 0:
-            str_structure += self.obj2tex(self.Jyy, r"\mathbf{J_y}", "")
-        str_J = self.obj2tex(self.M, r"\mathbf{M}", "")
-        str_J += self.obj2tex(self.J, r"\mathbf{J}", "")
-        str_J += self.obj2tex(self.R, r"\mathbf{R}", "")
+            if self.nx > 0:
+                str_structure += self.obj2tex(self.Myx, r"\mathbf{M_{yx}}", "")
+            if self.nw > 0:
+                str_structure += self.obj2tex(self.Myw, r"\mathbf{M_{yw}}", "")
+            str_structure += self.obj2tex(self.Myy, r"\mathbf{M_{yy}}", "")
+        str_structure += self.obj2tex(self.J, r"\mathbf{J}", "")
+        if self.nx > 0:
+            str_structure += self.obj2tex(self.Jxx, r"\mathbf{J_{xx}}", "")
+            if self.nw > 0:
+                str_structure += self.obj2tex(self.Jxw, r"\mathbf{J_{xw}}", "")
+            if self.ny > 0:
+                str_structure += self.obj2tex(self.Jxy, r"\mathbf{J_{xy}}", "")
+        if self.nw > 0:
+            str_structure += self.obj2tex(self.Jww, r"\mathbf{J_{ww}}", "")
+            if self.ny > 0:
+                str_structure += self.obj2tex(self.Jwy, r"\mathbf{J_{wy}}", "")
+        if self.ny > 0:
+            str_structure += self.obj2tex(self.Jyy, r"\mathbf{J_{yy}}", "")
+        str_structure += self.obj2tex(self.R, r"\mathbf{R}", "")
+        if self.nx > 0:
+            str_structure += self.obj2tex(self.Rxx, r"\mathbf{R_{xx}}", "")
+            if self.nw > 0:
+                str_structure += self.obj2tex(self.Rxw, r"\mathbf{R_{xw}}", "")
+            if self.ny > 0:
+                str_structure += self.obj2tex(self.Rxy, r"\mathbf{R_{xy}}", "")
+        if self.nw > 0:
+            str_structure += self.obj2tex(self.Rww, r"\mathbf{R_{ww}}", "")
+            if self.ny > 0:
+                str_structure += self.obj2tex(self.Rwy, r"\mathbf{R_{wy}}", "")
+        if self.ny > 0:
+            str_structure += self.obj2tex(self.Ryy, r"\mathbf{R_{yy}}", "")
 #        str_J = str_J.replace('begin{matrix}', 'begin{array}{' +
 #                              r'c'*self.nx +
 #                              r'|' + r'c'*self.nw +
 #                              r'|' + r'c'*self.nw + r'}')
 #        str_J += str_J.replace('end{matrix}', 'end{array}')
-        return str_J
+        return str_structure
 
 
 def dic2table(labels, dic):

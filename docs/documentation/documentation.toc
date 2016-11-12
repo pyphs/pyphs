@@ -1,7 +1,7 @@
 \select@language {french}
 \contentsline {section}{\numberline {1}Introduction}{1}
 \contentsline {subsection}{\numberline {1.1}Installation}{1}
-\contentsline {subsection}{\numberline {1.2}The PHS formalism}{2}
+\contentsline {subsection}{\numberline {1.2}The PHS formalism}{1}
 \contentsline {section}{\numberline {2}Structure of the \texttt {pyphs.PortHamiltonianObject}}{3}
 \contentsline {subsection}{\numberline {2.1}The \texttt {symbs} module}{4}
 \contentsline {subsection}{\numberline {2.2}The \texttt {exprs} module}{4}

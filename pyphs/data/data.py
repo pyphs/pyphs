@@ -164,8 +164,8 @@ class Data:
             nt = len(seqp)
         else:
             assert nt is not None, 'Unknown number of \
-    iterations. Please tell either sequ (input sequence), seqp \
-    (sequence of parameters) or nt (number of time steps).'
+    iterations. Please tell either a list sequ (input sequence), a list seqp \
+    (sequence of parameters) or an int nt (number of time steps).'
             assert isinstance(nt, int), 'number of time steps is not integer, \
     got {0!s} '.format(nt)
 

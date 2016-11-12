@@ -1,6 +1,9 @@
 # For mac only.
 .DS_Store
 
+# spyder project infos.
+.spyproject/
+
 # Compiled python modules.
 *.pyc
 
@@ -8,7 +11,7 @@
 /dist/
 
 # Conda build folder.
-/build/
+build/
 
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info

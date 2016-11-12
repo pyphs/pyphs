@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2016.5.23)  11 NOV 2016 15:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2016.5.23)  12 NOV 2016 14:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -349,135 +349,190 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (/usr/local/texlive/2014/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 )
+\@input{python.aux}
+\openout2 = `python.aux'.
+
+(./python.tex
+LaTeX Font Info:    Try loading font information for T1+txtt on input line 2.
+ (/usr/local/texlive/2014/texmf-dist/tex/latex/txfonts/t1txtt.fd
+File: t1txtt.fd 2000/12/15 v3.1
+)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2014/04/23 v1.1a Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2014/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 137.
+
+(/usr/local/texlive/2014/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count103
+))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count104
+\lst@gtempboxa=\box28
+\lst@token=\toks22
+\lst@length=\count105
+\lst@currlwidth=\dimen115
+\lst@column=\count106
+\lst@pos=\count107
+\lst@lostspace=\dimen116
+\lst@width=\dimen117
+\lst@newlines=\count108
+\lst@lineno=\count109
+\lst@maxwidth=\dimen118
+
+(/usr/local/texlive/2014/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2014/03/04 1.5c (Carsten Heinz)
+\c@lstnumber=\count110
+\lst@skipnumbers=\count111
+\lst@framebox=\box29
+)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2014/03/04 1.5c listings configuration
+))
+Package: listings 2014/03/04 1.5c (Carsten Heinz)
+)
 (./documentation.aux)
 \openout1 = `documentation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Info: Redefining \degres on input line 11.
-LaTeX Info: Redefining \dots on input line 11.
-LaTeX Info: Redefining \up on input line 11.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 12.
+LaTeX Font Info:    ... okay on input line 12.
+LaTeX Info: Redefining \degres on input line 12.
+LaTeX Info: Redefining \dots on input line 12.
+LaTeX Info: Redefining \up on input line 12.
+
+(/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count112
+\scratchdimen=\dimen119
+\scratchbox=\box30
+\nofMPsegments=\count113
+\nofMParguments=\count114
+\everyMPshowfont=\toks23
+\MPscratchCnt=\count115
+\MPscratchDim=\dimen120
+\MPnumerator=\count116
+\makeMPintoPDFobject=\count117
+\everyMPtoPDFconversion=\toks24
+)
+\c@lstlisting=\count118
  (./commands.tex (./config.tex))
-LaTeX Font Info:    Try loading font information for U+msa on input line 14.
+LaTeX Font Info:    Try loading font information for U+msa on input line 15.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 14.
+LaTeX Font Info:    Try loading font information for U+msb on input line 15.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 23.
+(/usr/local/texlive/2014/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2014/03/04 1.5c listings language file
+)
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 45.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 23.
+) [1
 
-Overfull \hbox (0.14859pt too wide) in paragraph at lines 65--66
-[]\T1/cmr/m/n/10 : the conti-nuous hes-sian ma-trix of sto-rage sca-lar func-ti
-on (com-
- []
 
-[1
 
 {/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (5.86089pt too wide) in paragraph at lines 66--67
-[]\T1/cmr/m/n/10 : the ex-pres-sion of the conti-nuous out-put vec-tor func-tio
-n $\OT1/cmr/bx/n/10 y\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 r\OT1/cmr/m/n/10 H[]\OML
-/cmm/m/it/10 ; \OT1/cmr/bx/n/10 z\OML/cmm/m/it/10 ; \OT1/cmr/bx/n/10 u\OT1/cmr/
-m/n/10 )$\T1/cmr/m/n/10 , 
+Underfull \hbox (badness 10000) in paragraph at lines 127--129
+
+ []
+
+[2]
+Overfull \hbox (13.68027pt too wide) detected at line 172
+[] \OT1/cmr/m/n/10 = [] \OMS/cmsy/m/n/10 ^^A []
+ []
+
+(./documentation.toc
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 5.
+)
+\tf@toc=\write3
+\openout3 = `documentation.toc'.
+
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 176.
+
+Overfull \hbox (48.6801pt too wide) in paragraph at lines 178--180
+[]\T1/cmr/m/n/10 Below is a list of each mo-dule of prac-ti-cal use in the ob-j
+ect [][][][][],
+ []
+
+[3]
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 188.
+ [4]
+Overfull \hbox (39.34618pt too wide) in paragraph at lines 241--243
+[][][][][][][]\T1/cmr/m/n/10 , [][][][][][][], [][][][][][][], [][][][][][][], 
+[][][][][][][],
  []
 
 
-Overfull \hbox (7.03645pt too wide) in paragraph at lines 67--68
-[]\T1/cmr/m/n/10 : the dis-crete gra-dient vec-tor of sto-rage sca-lar func-tio
-n $[]\OT1/cmr/m/n/10 H[](\OT1/cmr/bx/n/10 x\OML/cmm/m/it/10 ; ^^N\OT1/cmr/bx/n/
-10 x\OT1/cmr/m/n/10 )$\T1/cmr/m/n/10 , 
- []
-
-
-Overfull \hbox (28.70131pt too wide) in paragraph at lines 80--81
-[]\T1/cmr/m/n/10 : the dis-crete gra-dient vec-tor of sto-rage sca-lar func-tio
-n $[]\OT1/cmr/m/n/10 H[](\OT1/cmr/bx/n/10 x\OML/cmm/m/it/10 ; ^^N\OT1/cmr/bx/n/
-10 x\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 2
- []
-
-
-Overfull \hbox (27.52574pt too wide) in paragraph at lines 83--84
-[]\T1/cmr/m/n/10 : the ex-pres-sion of the conti-nuous out-put vec-tor func-tio
-n $\OT1/cmr/bx/n/10 y\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 r\OT1/cmr/m/n/10 H[]\OML
-/cmm/m/it/10 ; \OT1/cmr/bx/n/10 z\OML/cmm/m/it/10 ; \OT1/cmr/bx/n/10 u\OT1/cmr/
-m/n/10 ) \OMS/cmsy/m/n/10 2
- []
-
-
-Overfull \hbox (19.47215pt too wide) in paragraph at lines 84--85
-[]\T1/cmr/m/n/10 : the ex-pres-sion of the dis-crete out-put vec-tor func-tion 
-$[]\OT1/cmr/m/n/10 ([]H[]\OML/cmm/m/it/10 ; \OT1/cmr/bx/n/10 z\OML/cmm/m/it/10 
-; \OT1/cmr/bx/n/10 u\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 2
- []
-
-
-Overfull \hbox (5.80275pt too wide) in paragraph at lines 87--90
-[]\T1/cmr/m/n/10 : Add the \T1/cmr/m/sc/10 SymPy \T1/cmr/m/n/10 ex-pres-sion \T
-1/cmtt/m/n/10 expr \T1/cmr/m/n/10 to the \T1/cmtt/m/n/10 exprs
- []
-
-
-Overfull \hbox (21.61447pt too wide) in paragraph at lines 87--90
+Overfull \hbox (6.61691pt too wide) in paragraph at lines 286--289
 \T1/cmr/m/n/10 mo-dule, with ar-gu-ment \T1/cmtt/m/n/10 name\T1/cmr/m/n/10 , an
 d add \T1/cmtt/m/n/10 name \T1/cmr/m/n/10 to the set of \T1/cmtt/m/n/10 exprs._
 names\T1/cmr/m/n/10 . 
  []
 
 
-Overfull \hbox (35.9454pt too wide) in paragraph at lines 90--91
+Overfull \hbox (20.94785pt too wide) in paragraph at lines 289--290
 []\T1/cmr/m/n/10 : Re-trun a py-thon set of all the free sym-bols (\T1/cmtt/m/n
 /10 sympy.symbols\T1/cmr/m/n/10 )
  []
 
 
-Overfull \hbox (24.36157pt too wide) in paragraph at lines 90--91
+Overfull \hbox (9.36401pt too wide) in paragraph at lines 289--290
 \T1/cmr/m/n/10 that ap-pear at least once in all ex-pres-sions with names in \T
 1/cmtt/m/n/10 exprs._names\T1/cmr/m/n/10 . 
  []
 
-[2] [3]
+[5]
 
-LaTeX Font Warning: Command \small invalid in math mode on input line 253.
+LaTeX Font Warning: Command \small invalid in math mode on input line 345.
 
 
-Overfull \hbox (94.54172pt too wide) detected at line 302
+Overfull \hbox (94.54172pt too wide) detected at line 394
 []
  []
 
 
-Overfull \hbox (69.40924pt too wide) detected at line 352
+Overfull \hbox (69.40924pt too wide) detected at line 444
 []
  []
 
-[4] [5] [6] (./documentation.aux) ) 
+[6] [7] [8] (./documentation.aux) ) 
 Here is how much of TeX's memory you used:
- 2678 strings out of 493117
- 32222 string characters out of 6135433
- 100573 words of memory out of 5000000
- 6113 multiletter control sequences out of 15000+600000
- 19916 words of font info for 58 fonts, out of 8000000 for 9000
+ 5394 strings out of 493117
+ 67748 string characters out of 6135433
+ 156860 words of memory out of 5000000
+ 8772 multiletter control sequences out of 15000+600000
+ 25075 words of font info for 70 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 28i,27n,30p,680b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 30i,27n,41p,825b,1689s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2014/texmf-dist/fonts/en
 c/dvips/cm-super/cm-super-t1.enc}</usr/local/texlive/2014/texmf-dist/fonts/type
 1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1
@@ -488,25 +543,34 @@ ic/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/publi
 c/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/am
 sfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmtt8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/s
-ymbols/msam7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfont
-s/symbols/msbm10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-
-super/sfbx1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-su
-per/sfbx1200.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-supe
-r/sfbx1440.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/
-sfcc1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sf
-cc1728.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm
-1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm12
-00.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm1728
-.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfti1000.p
-fb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb
->
-Output written on documentation.pdf (6 pages, 262606 bytes).
+nts/cm/cmr8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmtt10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmtt8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/symbo
+ls/msam7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/sy
+mbols/msbm10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-supe
+r/sfbi1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/
+sfbx1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sf
+bx1200.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfbx
+1440.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfcc10
+00.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfcc1728
+.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm0700.p
+fb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb
+></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb><
+/usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></u
+sr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr
+/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfti0800.pfb></usr/l
+ocal/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/loc
+al/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local
+/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb></usr/local/t
+exlive/2014/texmf-dist/fonts/type1/public/cm-super/sftt1440.pfb></usr/local/tex
+live/2014/texmf-dist/fonts/type1/public/txfonts/t1xbtt.pfb></usr/local/texlive/
+2014/texmf-dist/fonts/type1/public/txfonts/t1xtt.pfb>
+Output written on documentation.pdf (8 pages, 421997 bytes).
 PDF statistics:
- 116 PDF objects out of 1000 (max. 8388607)
- 84 compressed objects within 1 object stream
+ 165 PDF objects out of 1000 (max. 8388607)
+ 120 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

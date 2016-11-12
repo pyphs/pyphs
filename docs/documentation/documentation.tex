@@ -8,124 +8,55 @@
 \author{Antoine Falaize}
 \newcommand{\version}{0.1.5}
 \title{\textsc{PyPHS Documentation}\\ Version \version}
+\include{python}
 \begin{document}
 \input{commands}
 %
 \maketitle
 %
+\section{Introduction}
 %
-\section{Package structure}
-%
-Below is a list of each \textsc{PyPHS} module of practical use, along with a short description.
-%
-\begin{description}
-%
-\item[\texttt{symbs}] Container for all the \textsc{SymPy} symbolic variables. 
-\begin{description}
-%
-\item[Attributes] are ordered \emph{list of symbols} associated with the system's vectors components:
-%
-\begin{description}
-\item[\texttt{x}]: state vector symbols $\vx \in \RR^{\nx}$,
-\item[\texttt{w}]: dissipative vector variable symbols $\vw\in\RR^{\nw}$,
-\item[\texttt{u}]: input vector symbols $\vu\in\RR^{\ny}$,
-\item[\texttt{y}]: output vector symbols $\vy \in \RR^{\ny}$,
-\item[\texttt{cu}]: input vector symbols for connectors $\mathbf{c_u}\in\RR^{\nc}$,
-\item[\texttt{cy}]: output vector symbols for connectors $\mathbf{c_y}\in\RR^{\nc}$,
-\item[\texttt{p}]: Time-varying parameters symbols $\vp\in \RR^{\np}$.
-\end{description}
-%
-\item[Methods]:
-%
-\begin{description}
-%
-\item[\texttt{dx()}]: Returns the symbols associated with the state differential $\d\vx$ formed by appending the prefix $d$ to each symbol in \texttt{x}.
-%
-\item[\texttt{args()}]: Return the list of symbols associated with the vector of all arguments of the symbolic expressions (\texttt{expr} module).
-%
-\end{description}
-%
-\end{description}
-%
-\item[\texttt{exprs}] Container for all the \textsc{SymPy} symbolic expressions associated with the system's functions. 
-\begin{description}
-%
-\item[Attributes:] For scalar function (e.g. the storage function \texttt{H}), arguments are \textsc{SymPy} expressions; for vector functions (e.g. the disipative function $\vz$), arguments are ordered lists of \textsc{SymPy} expressions; for matrix functions (e.g. the Jacobian matrix of disipative function $\vz$), arguments are \texttt{sympy.Matrix} objects. Notice the expression arguments (\texttt{sympy.Symbols}) must belong to the following lists of the \texttt{pyphs.PorthamiltonianObject}: \texttt{symbs.x}, \texttt{symbs.dx()}, \texttt{symbs.w}, \texttt{symbs.u}, \texttt{symbs.p}, and the keys of the dictionary \texttt{symbs.subs}.
-%
-\begin{description}
-\item[\texttt{H}]: storage function $\H\in\RR$,
-\item[\texttt{z}]: dissipative function $\vz\in\RR^{\nw}$,
-\item[\texttt{g}]: input/output gains vector function $\vg \in \RR^{\ng}$,
-\end{description}
-%
-The following expression are computed from the \texttt{exprs.build()} metho (see below):
-%
-\begin{description}
-\item[\texttt{dxH}]: the continuous gradient vector of storage scalar function $\dxH{}(\vx)$,
-\item[\texttt{hessH}]: the continuous hessian matrix of storage scalar function (computed as $\nabla\nabla\H(\vx)$),
-\item[\texttt{y}]: the expression of the continuous output vector function $\vy(\dxH{}, \vz, \vu)$,
-\item[\texttt{dxHd}]: the discrete gradient vector of storage scalar function $\dxHd{}(\vx, \delta\vx)$,
-\item[\texttt{yd}]: the expression of the discrete output vector function $\vy(\dxHd{}, \vz, \vu)$,
-\item[\texttt{jacz}]: the continuous jacobian matrix of dissipative vector function $\nabla\vz(\vw)$.
-\end{description}
-%
-\item[Methods]:
-%
-\begin{description}
-%
-\item[\texttt{build()}]: Build the following system functions as \textsc{SymPy} expressions and append them as attributes to the \texttt{exprs} module:
-%
-\begin{description}
-\item[\texttt{dxH}]: the continuous gradient vector of storage scalar function $\dxH{}(\vx)\in\RR^{\nx}$,
-\item[\texttt{dxHd}]: the discrete gradient vector of storage scalar function $\dxHd{}(\vx, \delta\vx)\in\RR^{\nx}$,
-\item[\texttt{hessH}]: the continuous hessian matrix of storage scalar function (computed as $\nabla\nabla\H(\vx)\in\RR^{\nx\times\nx}$),
-\item[\texttt{jacz}]: the continuous jacobian matrix of dissipative vector function $\nabla\vz(\vw)\in\RR^{\nw\times\nw}$.
-\item[\texttt{y}]: the expression of the continuous output vector function $\vy(\dxH{}, \vz, \vu)\in\RR^{\ny}$,
-\item[\texttt{yd}]: the expression of the discrete output vector function $\overline{\vy}(\dxHd{}, \vz, \vu)\in\RR^{\ny}$,
-\end{description}
-%
-\item[\texttt{setexpr(name, expr)}]: Add the \textsc{SymPy} expression \texttt{expr} to the \texttt{exprs} module, with argument 
-\texttt{name}, and add \texttt{name} to the set of \texttt{exprs.\_names}.
-%
-\item[\texttt{freesymbols()}]: Retrun a python set of all the free symbols (\texttt{sympy.symbols}) that appear at least once in all expressions with names in \texttt{exprs.\_names}.
-\end{description}
-%
-\end{description}
-%
-\item \texttt{dims}
-%
-\item \texttt{inds}
-%
-\item \texttt{struc}
-%
-\item \texttt{exprs}
-%
-\item \texttt{funcs}
-%
-\item \texttt{simu}
-%
-\item \texttt{data}
-%
-\item \texttt{graph}
+The python package \pythoninline{pyphs} is dedicated to the treatment of \emph{passive multiphysical systems} in the \emph{Port-Hamiltonian Systems} (PHS) formalism. This formalism structures physical systems into 
 %
 \begin{itemize}
-%
-\item 
-%
-\begin{itemize}
-%
-\item
-%
+\item energy conserving parts, 
+\item power dissipating parts and 
+\item source parts.
 \end{itemize}
 %
-\end{itemize}
+
+This guarantees a \emph{power balance} is fulfilled, including for numerical \emph{simulations} based on an adapted \emph{numerical method}.   
 %
-\end{description}
+
+\begin{enumerate}
+\item Systems are described by \emph{directed multi-graphs} (\pythoninline{networkx.MultiDiGraph}).
+\item The time-continuous port-Hamiltonian structure is build from an \emph{automated graph analysis}.
+\item The discrete-time port-Hamiltonian structure is derived from a \emph{structure preserving numerical method}.
+\item \LaTeX description code and \textsc{C++} simulation code are automatically generated.
+\end{enumerate}
+\subsection{Installation}
+%
+\begin{center}
+\textbf{Notice only python 2.7 is supported.}
+\end{center}
+%
+It is recommanded to install \pythoninline{pyphs} using \textsc{PyPI} (the \textsc{Python Package Index}). In terminal:
+%
+\begin{verbatim}
+pip install pyphs
+\end{verbatim}
+%
+\textbf{Mac OSX only:} An installation for \emph{Anaconda} users is also available. In terminal:
+%
+\begin{verbatim}
+conda install -c afalaize pyphs
+\end{verbatim}
+%
+\subsection{The PHS formalism}
 %
 %
-\section{Port-Hamiltonian system}
 %
-%
+We consider systems that can be described by the following time-continuous non-linear state-space representation:
 %
 %
 \begin{equation}
@@ -137,8 +68,12 @@ The following expression are computed from the \texttt{exprs.build()} metho (see
 \end{array}
 \right)}_{\vec b}
 =
-\underbrace{\Big(\J{}-\R{}\Big)}_{\M{}}
-\,
+\underbrace{\left(\begin{array}{lll}
+\M{xx}&\M{xw} & \M{xy}\\ 
+\M{wx}&\M{ww} & \M{wy}\\ 
+\M{yx}&\M{yw} & \M{yy}
+\end{array}\right)}_{\M{}}
+\cdot
 \underbrace{\left(
 \begin{array}{c}
 \dxH{}(\vx)\\
@@ -149,24 +84,51 @@ The following expression are computed from the \texttt{exprs.build()} metho (see
 }_{\vec a}
 \end{equation}
 %
+where 
+\begin{equation}
+\M{}
+=
+\underbrace{\left(\begin{array}{lll}
+\J{xx}&\J{xw} & \J{xy}\\ 
+\J{wx}&\J{ww} & \J{wy}\\ 
+\J{yx}&\J{yw} & \J{yy}
+\end{array}\right)}_{\J{}}
+-
+\underbrace{\left(\begin{array}{lll}
+\R{xx}&\R{xw} & \R{xy}\\ 
+\R{wx}&\R{ww} & \R{wy}\\ 
+\R{yx}&\R{yw} & \R{yy}
+\end{array}\right)}_{\R{}}
+\end{equation}
 %
-with $\op P=\vu^\T\,\vy$ the power received \emph{by} the sources \emph{from} the system.
+and
 %
+\begin{itemize}
+\item $\J{}:\vx \mapsto \J{}(\vx)$ is a skew-symmetric matrix: $$\J{\alpha\beta}=-\J{\beta\alpha}^\T \mbox{~~for~~} (\alpha, \beta)\in\{\lab x, \lab w, \lab y\}^2,$$
+\item $\R{}:\vx \mapsto \R{}(\vx)\succeq 0$ is a positive definite matrix,
+\item $\vx: t \mapsto \vx(t)\in\RR^{\nx}$ is the \emph{state vector},
+\item $\H:\vx \mapsto \H(\vx)\in \RR_+$ is a \emph{storage function} (convex and positive-definite scalar function with $\H(0)=0$),
+\item $\nabla\H:\vx\mapsto\nabla \H(\vx)\in\RR^{\nx}$ denote the gradient of the storage function with the \emph{storage power} $$\op P_\vx = \D{\vx}{t}\cdot \nabla\H(\vx),$$
+\item $\vw: t \mapsto \vw(t)\in\RR^{\nw}$ is the \emph{dissipation vector variable},
+\item $\vz:\vw \mapsto \vz(\vw)\in \RR^{\nw}$ is a \emph{dissipation function} (with positive definite jacobian matrix and $\vz(0)=0$) for the \emph{dissipated power} $$\op P_\vw = \vw\cdot \vz(\vw) + \vec a\cdot\R{}\cdot\vec a,$$
+\item $\vu: t \mapsto \vu(t)\in\RR^{\ny}$ is the \emph{input vector},
+\item $\vy: t \mapsto \vy(t)\in\RR^{\ny}$ is the \emph{output vector},
+\item  \textbf{the power received \emph{by} the sources \emph{from} the system is} $$\op P=\vu\cdot\vy.$$
+\end{itemize}
 %
-%
-\section{Split in linear and nonlinear parts}
-%
-%
+
 The state is split according to $\vx=(\vxl^\T, \,\vxnl^\T)^\T $ with 
 %
+
 \begin{description}
 %
-\item[$\vxl = (x_1,\cdots,\,x_\nxl)^\T$] the states associated with the quadratic components of the Hamilotnian $\Hl(\vxl)=\vxl^\T\,\Q\,\vxl/2$
+\item[$\vxl = (x_1,\cdots,\,x_\nxl)^\T$] the states associated with the quadratic components of the storage function $\Hl(\vxl)=\frac{\vxl\cdot\Q\cdot\vxl}{2}$
 %
-\item[$\vxnl=(x_{\nxl+1},\cdots,\,x_\nx)^\T$] the states associated with the non-quadratic components of the Hamiltonian with $\nx = \nxl+\nxnl$.
+\item[$\vxnl=(x_{\nxl+1},\cdots,\,x_\nx)^\T$] the states associated with the non-quadratic components of the storage function with $\nx = \nxl+\nxnl$ and $$\H(\vx) = \Hl(\vxl) + \Hnl(\vxnl)$$.\\
 %
 \end{description}
 %
+
 %
 The set of dissipative variables is split according to $\vw = (\vxl^\T, \, \vwnl^\T)^\T$ with 
 %
@@ -174,16 +136,22 @@ The set of dissipative variables is split according to $\vw = (\vxl^\T, \, \vwnl
 %
 \item[$\vwl = (w_1,\cdots,\,w_\nwl)^\T$] the variables associated with the linear components of the dissipative relation $\vzl(\vwl)=\mat{Z}_{\lab l}\,\vwl$
 %
-\item[$\vwnl=(w_{\nwl+1},\cdots,\,w_\nw)^\T$] the variables associated with the nonlinear components of the dissipative relation $\vznl(\vwnl)$ with $\nw = \nwl+\nwnl$.
+\item[$\vwnl=(w_{\nwl+1},\cdots,\,w_\nw)^\T$] the variables associated with the nonlinear components of the dissipative relation $\vznl:\vwnl\mapsto\vznl(\vwnl)\in\RR^{\nwnl}$ with $\nw = \nwl+\nwnl$ and $$ \vz(\vw) = \left(\begin{array}{c}
+\mat{Z}_{\lab l}\,\vwl\\
+\vznl(\vwnl)
+\end{array} \right).$$
 %
 \end{description}
+%
+
+Accordingly, the structure matrices are split as
 %
 \begin{equation}
 \underbrace{\left(\begin{array}{c}
 \D{\vxl}{t}\\
-\D{\vxnl}{t}\\
+\D{\vxnl}{t}\\ \hline
 \vwl\\
-\vwnl\\
+\vwnl\\ \hline
 \vy
 \end{array}\right)}_{\vec b}
  = \underbrace{\left(\begin{array}{ll|ll|l}
@@ -193,15 +161,139 @@ The set of dissipative variables is split according to $\vw = (\vxl^\T, \, \vwnl
 \M{wnlwl}& \M{wnlxnl}& \M{wnlwl} & \M{wnlwnl} & \M{wnly}\\ \hline
 \M{yxl} &\M{yxnl}&\M{ywl} & \M{ywnl} &\M{yy}
 \end{array}\right)}_{\M{}}
-\,
+\cdot
 \underbrace{\left(\begin{array}{c}
-\nabla\Hl\\
-\nabla\Hnl\\
-\mat{Z}_{\lab l}\,\vwl\\
-\vznl\\
+\Q\cdot\vx\\
+\nabla\Hnl(\vxnl)\\ \hline
+\mat{Z}_{\lab l}\cdot\vwl\\
+\vznl(\vwnl)\\ \hline
 \vu
 \end{array}\right) }_{\vec a}
 \end{equation}
+%
+\tableofcontents
+%
+\section{Structure of the \texttt{pyphs.PortHamiltonianObject}}
+%
+Below is a list of each module of practical use in the object  \pythoninline{pyphs.PortHamiltonianObject}, along with a short description. We consider the following instantiation:
+%
+\begin{python}
+# import of (pre-installed) pyphs package:
+import pyphs
+
+# instantiate the PortHamiltonianObject:
+phs = pyphs.PortHamiltonianObject(label='mylabel')
+\end{python}
+%
+\subsection{The \texttt{symbs} module} Container for all the \textsc{SymPy} symbolic variables (\pythoninline{sympy.Symbol}). 
+\begin{description}
+%
+\item[Attributes] are ordered \emph{list of symbols} associated with the system's vectors components.
+%
+\begin{description}
+\item \pythoninline{phs.symbs.x}: state vector symbols $\vx \in \RR^{\nx}$,
+\item \pythoninline{phs.symbs.w}: dissipative vector variable symbols $\vw\in\RR^{\nw}$,
+\item \pythoninline{phs.symbs.u}: input vector symbols $\vu\in\RR^{\ny}$,
+\item \pythoninline{phs.symbs.y}: output vector symbols $\vy \in \RR^{\ny}$,
+\item \pythoninline{phs.symbs.cu}: input vector symbols for connectors $\mathbf{c_u}\in\RR^{\nc}$,
+\item \pythoninline{phs.symbs.cy}: output vector symbols for connectors $\mathbf{c_y}\in\RR^{\nc}$,
+\item \pythoninline{phs.symbs.p}: Time-varying parameters symbols $\vp\in \RR^{\np}$.
+\end{description}
+%
+\item[Methods]:
+%
+\begin{description}
+%
+\item \pythoninline{phs.symbs.dx()}: Returns the symbols associated with the state differential $\d\vx$ formed by appending the prefix $d$ to each symbol in \texttt{x}.
+%
+\item \pythoninline{phs.symbs.args()}: Return the list of symbols associated with the vector of all arguments of the symbolic expressions (\texttt{expr} module).
+%
+\end{description}
+%
+\end{description}
+%
+\subsection{The \texttt{exprs} module} Container for all the \textsc{SymPy} symbolic expressions \pythoninline{sympy.Expr}associated with the system's functions.
+\begin{description}
+%
+\item[Attributes:] For scalar function (e.g. the storage function $\H$), arguments of \pythoninline{phs.exprs} are \textsc{SymPy} expressions (\pythoninline{sympy.Expr}); for vector functions (e.g. the disipative function $\vz$), arguments are ordered lists of \textsc{SymPy} expressions; for matrix functions (e.g. the Jacobian matrix of disipative function $\vz$), arguments are \pythoninline{sympy.Matrix} objects. Notice the expressions arguments\footnote{Accessed through the \pythoninline{sympy.Expr.free\_symbols} (\textit{e.g.} \pythoninline{phs.exprs.H.free\_symbols} to recover the arguments of the Storage function $\H$).} must belong either to (i) the elements of \pythoninline{phs.symbs.args()}, or (ii) the keys of the dictionary \pythoninline{phs.symbs.subs}.
+%
+\begin{description}
+\item \pythoninline{phs.exprs.H}: storage function $\H\in\RR$,
+\item \pythoninline{phs.exprs.z}: dissipative function $\vz\in\RR^{\nw}$,
+\item \pythoninline{phs.exprs.g}: input/output gains vector function $\vg \in \RR^{\ng}$,
+\end{description}
+%
+The following expression are computed from the \texttt{exprs.build()} method (see below):
+%
+\begin{description}
+\item \pythoninline{phs.exprs.dxH}: the continuous gradient vector of storage scalar function $\dxH{}(\vx)\in\RR^{\nx}$,
+\item \pythoninline{phs.exprs.dxHd}: the discrete gradient vector of storage scalar function $\dxHd{}(\vx, \delta\vx)\in\RR^{\nx}$,
+\item \pythoninline{phs.exprs.hessH}: the continuous hessian matrix of storage scalar function (computed as $\nabla\nabla\H(\vx)\in\RR^{\nx\times\nx}$),
+\item \pythoninline{phs.exprs.jacz}: the continuous jacobian matrix of dissipative vector function $\nabla\vz(\vw)\in\RR^{\nw\times\nw}$.
+\item \pythoninline{phs.exprs.y}: the expression of the continuous output vector function $\vy(\dxH{}, \vz, \vu)\in\RR^{\ny}$,
+\item \pythoninline{phs.exprs.yd}: the expression of the discrete output vector function $\overline{\vy}(\dxHd{}, \vz, \vu)\in\RR^{\ny}$,
+\end{description}
+%
+\item[Methods]:
+%
+\begin{description}
+%
+\item \pythoninline{phs.exprs.build()}: Build the following system functions as \textsc{SymPy} expressions and append them as attributes to the \pythoninline{phs.exprs} module: \pythoninline{phs.exprs.dxH}, \pythoninline{phs.exprs.dxHd}, \pythoninline{phs.exprs.hessH}, \pythoninline{phs.exprs.jacz}, \pythoninline{phs.exprs.y}, and \pythoninline{phs.exprs.yd}.
+%
+\item \pythoninline{phs.exprs.setexpr(name, expr)}: Add the \textsc{SymPy} expression \pythoninline{expr} to the \pythoninline{phs.exprs} module, with argument 
+\pythoninline{name}, and add \pythoninline{name} to the set of \pythoninline{phs.exprs.\_names}.
+%
+\item \pythoninline{phs.exprs.freesymbols()}: Return a python set of all the free symbols (\pythoninline{sympy.Symbol}) that appear at least once in all expressions with names in \pythoninline{phs.exprs.\_names}.
+\end{description}
+%
+\end{description}
+%
+\subsection{The \texttt{dims} module} 
+Container for accessors to the system's dimensions. 
+%
+No attributes should be changed manually. 
+%
+To split the system into its linear and nonlinear part, use \pythoninline{phs.split_linear()} which organize the system vectors as
+%
+\begin{equation}
+\vx = \left(
+\begin{array}{c}
+\vx_{\lab{l}} \\
+\vx_{\lab{nl}}
+\end{array}
+\right), \quad \dim(\vx_{\lab{l}}) = 
+\end{equation}
+%
+\begin{description}
+%
+\item[Attributes:] 
+%
+\begin{description}
+\item \pythoninline{phs.dims.xl}: Number of state vector components associated with a quadratic storage function: $\H_{\lab{l}}(\vx_{\lab{l}}) = \vx_{\lab{l}}^\T\cdot\frac{\Q}{2}\cdot\vx_{\lab{l}}$, and \pythoninline{phs.dims.x()} is equal to \pythoninline{phs.dims.xl + phs.dims.xnl()}.
+\item \pythoninline{phs.dims.wl}: Number of dissipative vector variable components associated with a linear dissipative function: $\vz_{\lab{l}}(\vw_{\lab{l}})=\Z{l}\cdot\vw_{\lab{l}}$, and \pythoninline{phs.dims.w()} is equal to \pythoninline{phs.dims.wl + phs.dims.wnl()}.
+\end{description}
+%
+\item[Methods]:
+%
+\begin{description}
+%
+\item \pythoninline{phs.dims.x()}: Return the dimension of state vector \pythoninline{len(phs.symbs.x)}.
+%
+\item \pythoninline{phs.dims.xnl()}: Return the number of state vector components associated with a nonlinear storage function 
+
+\pythoninline{len(phs.symbs.x)}.
+%
+\item[\texttt{setexpr(name, expr)}]: Add the \textsc{SymPy} expression \texttt{expr} to the \texttt{exprs} module, with argument 
+\texttt{name}, and add \texttt{name} to the set of \texttt{exprs.\_names}.
+%
+\item[\texttt{freesymbols()}]: Retrun a python set of all the free symbols (\texttt{sympy.symbols}) that appear at least once in all expressions with names in \texttt{exprs.\_names}.
+\end{description}
+%
+\end{description}
+%
+%
+%
+%
 %
 \subsection{Linear subsystem}
 %

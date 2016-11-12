@@ -17,19 +17,18 @@ current working directory;
     """
     import os
     if path is None:
-        phs_path = 'dummy'
+        path = 'dummy'
+    assert isinstance(path, str)
+    # define path
+    if path is 'cwd':
+        phs_path = os.getcwd()
+    elif path is 'label':
+        phs_path = os.getcwd() + os.path.sep + phs.label
     else:
-        assert isinstance(path, str)
-        # define path
-        if path is 'cwd':
-            phs_path = os.getcwd()
-        elif path is 'label':
-            phs_path = os.getcwd() + os.path.sep + phs.label
-        else:
-            phs_path = path
-        # make dir if not existing
-        if not os.path.exists(phs_path):
-            os.makedirs(phs_path)
+        phs_path = path
+    # make dir if not existing
+    if not os.path.exists(phs_path):
+        os.makedirs(phs_path)
     # Define path for exports (plots, waves, tex, c++, etc...)
     phs.path = phs_path
     phs.paths = {'tex': phs_path+os.sep+'tex',

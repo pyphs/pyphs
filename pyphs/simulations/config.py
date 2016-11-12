@@ -15,6 +15,7 @@ standard = {'numtol': EPS,
             'solver': 'standard',
             'fs': 48e3,
             'language': 'python',
-            'timer': True,
+            'timer': False,
             'presubs': False,
-            'split': True}
+            'split': False,
+            'progressbar': False}

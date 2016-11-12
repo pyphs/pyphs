@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2016.5.23)  12 NOV 2016 14:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2016.5.23)  12 NOV 2016 18:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -453,17 +453,21 @@ LaTeX Font Info:    Try loading font information for T1+cmtt on input line 45.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-) [1
+)
+
+LaTeX Warning: Citation `W' on page 1 undefined on input line 62.
+
+[1
 
 
 
 {/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 127--129
+Underfull \hbox (badness 10000) in paragraph at lines 130--132
 
  []
 
 [2]
-Overfull \hbox (13.68027pt too wide) detected at line 172
+Overfull \hbox (13.68027pt too wide) detected at line 175
 [] \OT1/cmr/m/n/10 = [] \OMS/cmsy/m/n/10 ^^A []
  []
 
@@ -475,99 +479,103 @@ LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
 \openout3 = `documentation.toc'.
 
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 176.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 179.
 
-Overfull \hbox (48.6801pt too wide) in paragraph at lines 178--180
+Overfull \hbox (48.6801pt too wide) in paragraph at lines 181--183
 []\T1/cmr/m/n/10 Below is a list of each mo-dule of prac-ti-cal use in the ob-j
 ect [][][][][],
  []
 
 [3]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 188.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 191.
  [4]
-Overfull \hbox (39.34618pt too wide) in paragraph at lines 241--243
+Overfull \hbox (39.34618pt too wide) in paragraph at lines 244--246
 [][][][][][][]\T1/cmr/m/n/10 , [][][][][][][], [][][][][][][], [][][][][][][], 
 [][][][][][][],
  []
 
 
-Overfull \hbox (6.61691pt too wide) in paragraph at lines 286--289
+Overfull \hbox (6.61691pt too wide) in paragraph at lines 289--292
 \T1/cmr/m/n/10 mo-dule, with ar-gu-ment \T1/cmtt/m/n/10 name\T1/cmr/m/n/10 , an
 d add \T1/cmtt/m/n/10 name \T1/cmr/m/n/10 to the set of \T1/cmtt/m/n/10 exprs._
 names\T1/cmr/m/n/10 . 
  []
 
 
-Overfull \hbox (20.94785pt too wide) in paragraph at lines 289--290
+Overfull \hbox (20.94785pt too wide) in paragraph at lines 292--293
 []\T1/cmr/m/n/10 : Re-trun a py-thon set of all the free sym-bols (\T1/cmtt/m/n
 /10 sympy.symbols\T1/cmr/m/n/10 )
  []
 
 
-Overfull \hbox (9.36401pt too wide) in paragraph at lines 289--290
+Overfull \hbox (9.36401pt too wide) in paragraph at lines 292--293
 \T1/cmr/m/n/10 that ap-pear at least once in all ex-pres-sions with names in \T
 1/cmtt/m/n/10 exprs._names\T1/cmr/m/n/10 . 
  []
 
 [5]
 
-LaTeX Font Warning: Command \small invalid in math mode on input line 345.
+LaTeX Font Warning: Command \small invalid in math mode on input line 348.
 
 
-Overfull \hbox (94.54172pt too wide) detected at line 394
+Overfull \hbox (94.54172pt too wide) detected at line 397
 []
  []
 
 
-Overfull \hbox (69.40924pt too wide) detected at line 444
+Overfull \hbox (69.40924pt too wide) detected at line 447
 []
  []
 
-[6] [7] [8] (./documentation.aux) ) 
+[6] [7] [8] (./documentation.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 5394 strings out of 493117
- 67748 string characters out of 6135433
+ 5395 strings out of 493117
+ 67751 string characters out of 6135433
  156860 words of memory out of 5000000
- 8772 multiletter control sequences out of 15000+600000
+ 8773 multiletter control sequences out of 15000+600000
  25075 words of font info for 70 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 30i,27n,41p,825b,1689s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2014/texmf-dist/fonts/en
-c/dvips/cm-super/cm-super-t1.enc}</usr/local/texlive/2014/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmbx5.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmbx7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmr8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmtt10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmtt8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/symbo
-ls/msam7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/sy
-mbols/msbm10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-supe
-r/sfbi1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/
-sfbx1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sf
-bx1200.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfbx
-1440.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfcc10
-00.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfcc1728
-.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm0700.p
-fb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb
-></usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb><
-/usr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></u
-sr/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr
-/local/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfti0800.pfb></usr/l
-ocal/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/loc
-al/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local
-/texlive/2014/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb></usr/local/t
-exlive/2014/texmf-dist/fonts/type1/public/cm-super/sftt1440.pfb></usr/local/tex
-live/2014/texmf-dist/fonts/type1/public/txfonts/t1xbtt.pfb></usr/local/texlive/
-2014/texmf-dist/fonts/type1/public/txfonts/t1xtt.pfb>
-Output written on documentation.pdf (8 pages, 421997 bytes).
+ 30i,27n,41p,825b,1305s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2014/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
+</usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><
+/usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx5.pfb></u
+sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr
+/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/
+local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/l
+ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/loc
+al/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local
+/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/te
+xlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texli
+ve/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texliv
+e/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/
+2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2
+014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/local/texlive/201
+4/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb></usr/local/texlive/
+2014/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texl
+ive/2014/texmf-dist/fonts/type1/public/cm-super/sfbi1000.pfb></usr/local/texliv
+e/2014/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr/local/texlive/
+2014/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/20
+14/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/2014
+/texmf-dist/fonts/type1/public/cm-super/sfcc1000.pfb></usr/local/texlive/2014/t
+exmf-dist/fonts/type1/public/cm-super/sfcc1728.pfb></usr/local/texlive/2014/tex
+mf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2014/texmf
+-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2014/texmf-d
+ist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2014/texmf-dis
+t/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2014/texmf-dist/
+fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/texlive/2014/texmf-dist/fo
+nts/type1/public/cm-super/sfti0800.pfb></usr/local/texlive/2014/texmf-dist/font
+s/type1/public/cm-super/sfti1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/
+type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2014/texmf-dist/fonts/ty
+pe1/public/cm-super/sftt1200.pfb></usr/local/texlive/2014/texmf-dist/fonts/type
+1/public/cm-super/sftt1440.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/
+public/txfonts/t1xbtt.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/publi
+c/txfonts/t1xtt.pfb>
+Output written on documentation.pdf (8 pages, 422521 bytes).
 PDF statistics:
  165 PDF objects out of 1000 (max. 8388607)
  120 compressed objects within 2 object streams

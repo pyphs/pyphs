@@ -110,10 +110,10 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
             struct.M = sympy.zeros(phs.dims.tot())
         if name == 'J':
             J = val
-            R = struct.R()
+            R = getattr(struct, 'R'+vari + varj)()
             M = J - R
         if name == 'R':
-            J = struct.J()
+            J = getattr(struct, 'J'+vari + varj)()
             R = val
             M = J - R
         if name == 'M':

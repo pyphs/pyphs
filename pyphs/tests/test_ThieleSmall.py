@@ -154,4 +154,3 @@ def run_test(clean=True):
 
 if __name__ is '__main__':
     succeed = run_test(clean=True)
-    print('succeed = ' + str(succeed))

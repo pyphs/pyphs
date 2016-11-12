@@ -9,10 +9,10 @@ Created on Fri Jun 10 12:45:31 2016
 compiler_path = ':/usr/texbin'
 
 # author for latex exports
-authors = ['Antoine Falaize', 'Thomas Helie']
-affiliations = [r'Project-team S3\footnote{\url{http://s3.ircam.fr}}, \\' +
-                r'STMS, IRCAM-CNRS-UPMC (UMR 9912), \\' +
-                r'1 Place Igor-Stravinsky, 75004 Paris, France']*2
+authors = [r'The \textsc{PyPHS}\footnote{\url{https://github.com/A-Falaize/pyphs}} development team']
+affiliations = [r'Project-team S3\footnote{\url{http://s3.ircam.fr}}\\' +
+                r'STMS, IRCAM-CNRS-UPMC (UMR 9912)\\' +
+                r'1 Place Igor-Stravinsky, 75004 Paris, France']
 
 # Emit “p / q” instead of “frac{p}{q}” when the denominator is simple enough
 fold_short_frac = False

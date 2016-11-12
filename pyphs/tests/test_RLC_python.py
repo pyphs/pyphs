@@ -97,7 +97,7 @@ def input_sequence(amp=100., f0=100.):
     return genu(), nsin
 
 
-def simulation(phs, sequ, nt):
+def simulation(phs):
     opts = {'fs': samplerate(),
             'language': 'python',
             'split': False}
@@ -117,8 +117,7 @@ def run_test():
     phs = init_phs()
     write_netlist(phs)
     build_graph(phs)
-    u, nt = input_sequence()
-    simulation(phs, u, nt)
+    simulation(phs)
     gen_cpp(phs)
 #    phs.plot_powerbal()
 #    phs.plot_data([('x', 0), ('dx', 1), ('dxH', 1)])

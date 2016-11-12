@@ -47,7 +47,7 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.1.9a1'
+__version__ = '0.1.9a5'
 __author_email__ = 'antoine.falaize@gmail.com'
 
 
@@ -124,7 +124,10 @@ got %s' % type(label)
         # Include the pyphs.graphs tools
         from graphs.graph import Graph
         setattr(self, 'graph', Graph())
-
+        
+        from misc.signals.synthesis import signalgenerator
+        self.signalgenerator = signalgenerator
+        
     ###########################################################################
 
     def __add__(phs1, phs2):

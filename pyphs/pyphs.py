@@ -47,7 +47,7 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.1.9a5'
+__version__ = '0.1.9a6'
 __author_email__ = 'antoine.falaize@gmail.com'
 
 
@@ -135,7 +135,6 @@ got %s' % type(label)
         path = phs1.path
         phs = PortHamiltonianObject(label=label, path=path)
         for attr in ['symbs', 'exprs', 'struc', 'graph']:
-            print 'Append ' + attr
             sumattrs = getattr(phs1, attr) + getattr(phs2, attr)
             setattr(phs, attr, sumattrs)
         return phs
@@ -495,7 +494,6 @@ phs.paths['wav'].
         Mswitch = sp.diag(*switch_list)
         M = phs.struc.M
         G_connectors = sp.Matrix(M[:nxwy, nxwy:])
-        print G_connectors
         J_connectors = G_connectors * Mswitch * G_connectors.T
         M = M[:nxwy, :nxwy] + J_connectors
         phs.struc.M = M

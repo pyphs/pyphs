@@ -7,7 +7,7 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>http://pythonhosted.org/pyphs/</loc>
-  <lastmod>2016-11-13T11:45:00Z</lastmod>
+  <lastmod>2016-11-13T15:47:00Z</lastmod>
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/2016/</loc>
@@ -19,7 +19,7 @@
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/archive.html</loc>
-  <lastmod>2016-11-13T11:45:00Z</lastmod>
+  <lastmod>2016-11-13T18:44:00Z</lastmod>
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/building/</loc>
@@ -51,7 +51,7 @@
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/fr/archive.html</loc>
-  <lastmod>2016-11-13T11:45:00Z</lastmod>
+  <lastmod>2016-11-13T18:44:00Z</lastmod>
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/fr/building/</loc>
@@ -84,7 +84,6 @@
  <url>
   <loc>http://pythonhosted.org/pyphs/fr/tutos/RLC/</loc>
   <lastmod>2016-11-12T22:25:00Z</lastmod>
-  <xhtml:link rel="alternate" hreflang="en" href="http://pythonhosted.org/pyphs/tutos/RLC/" />
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/fr/tutos/tuto0/</loc>
@@ -202,7 +201,7 @@
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/tutos/</loc>
-  <lastmod>2016-11-13T11:18:00Z</lastmod>
+  <lastmod>2016-11-13T15:47:00Z</lastmod>
  </url>
  <url>
   <loc>http://pythonhosted.org/pyphs/tutos/RLC/</loc>

@@ -5,7 +5,7 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1479068711.380536
+_modified_time = 1479074086.266784
 _enable_loop = True
 _template_filename = u'themes/lanyon/templates/base.tmpl'
 _template_uri = u'base.tmpl'
@@ -82,7 +82,7 @@ def render_body(context,**pageargs):
             __M_writer(u'<body>\n')
         __M_writer(u'    <a href="#content" class="sr-only sr-only-focusable">')
         __M_writer(unicode(messages("Skip to main content")))
-        __M_writer(u'</a>\n    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular\n            styles, `#sidebar-checkbox` for behavior. -->\n    <input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">\n\n    <!-- Toggleable sidebar -->\n    <div class="sidebar" id="sidebar">\n        <div class="sidebar-item">\n            <p>You can visit the <a href="https://github.com/afalaize/pyphs/" target="_blank">GitHub repository</a> and the <a href="https://pypi.python.org/pypi/pyphs" target="_blank">PyPI reference</a>, or read the <a href="/docs/documentation.pdf" target="_blank">Documentation</a> and <a href="/blog/" target="_blank">Tutorials</a>.</p>\n        </div>\n        ')
+        __M_writer(u'</a>\n    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular\n            styles, `#sidebar-checkbox` for behavior. -->\n    <input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">\n\n    <!-- Toggleable sidebar -->\n    <div class="sidebar" id="sidebar">\n        <div class="sidebar-item">\n            <p><a href="https://github.com/afalaize/pyphs/" target="_blank">PyPHS</a> as been developed between 2012 and 2016 as part of the PhD project of Antoine Falaize, through EDITE (UPMC ED-130) funding in the <a href="http://s3.ircam.fr/?lang=en" target="_blank">project/team S3</a> (Sound Signals and Systems) at <a href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/" target="_blank">STMS Research Lab</a> (CNRS UMR 9912), hosted by IRCAM. It is distributed under the french <a href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html" target="_blank">CeCILL-B</a> licence.</p>\n        </div>\n        ')
         __M_writer(unicode(header.html_navigation_links()))
         __M_writer(u'\n    </div>\n\n    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the\n         content to avoid any CSS collisions with our real content. -->\n    <div class="wrap">\n      <div class="masthead">\n        <div class="container">\n          ')
         __M_writer(unicode(header.html_site_title()))

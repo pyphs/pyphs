@@ -6,7 +6,6 @@ Created on Thu Nov  3 22:17:28 2016
 """
 
 from setuptools import setup
-from pyphs import __version__
 
 def readme():
     with open('README.rst') as f:
@@ -17,7 +16,7 @@ __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
 __author_email__ = 'antoine.falaize@gmail.com'
-
+__version__ = '0.1.9b2'
 
 ###############################################################################
 

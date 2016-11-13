@@ -1,7 +1,7 @@
-doc_sphinx
-==========
+pyphs
+=====
 
 .. toctree::
    :maxdepth: 4
 
-   conf
+   pyphs

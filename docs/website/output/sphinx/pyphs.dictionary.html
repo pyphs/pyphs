@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyphs.dictionary package &#8212; PyPHS 0.1.9a5 documentation</title>
+    <title>pyphs.dictionary package &#8212; PyPHS 0.1.9b2 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.9a5',
+        VERSION:     '0.1.9b2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -263,6 +263,10 @@
 <em class="property">class </em><code class="descclassname">pyphs.dictionary.electronics.</code><code class="descname">Source</code><span class="sig-paren">(</span><em>label</em>, <em>nodes</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.dictionary.electronics.Source" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pyphs.dictionary.classes.connectors.html#pyphs.dictionary.classes.connectors.port.Port" title="pyphs.dictionary.classes.connectors.port.Port"><code class="xref py py-class docutils literal"><span class="pre">pyphs.dictionary.classes.connectors.port.Port</span></code></a></p>
 <p>Voltage or current source</p>
+<blockquote>
+<div><p>electronics.source label (&#8216;node1&#8217;, &#8216;node2&#8217;): type=&#8217;type&#8217;</p>
+<p>where &#8216;type&#8217; is the source type in (&#8216;voltage&#8217;, &#8216;current&#8217;).</p>
+</div></blockquote>
 <p>label : str, port label.</p>
 <p>nodes: tuple of nodes labels</p>
 <blockquote>
@@ -271,6 +275,10 @@
 <blockquote>
 <div><ul class="simple">
 <li>&#8216;type&#8217; : source type in (&#8216;voltage&#8217;, &#8216;current&#8217;).</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul class="simple">
 <li>&#8216;const&#8217;: if not None, the input will be replaced by the value (subs).</li>
 </ul>
 </div></blockquote>
@@ -499,7 +507,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Antoine Falaize.
+      &copy;2016, afalaize.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5b1</a>

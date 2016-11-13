@@ -8,16 +8,22 @@
 .. type: text
 
 
-This is a companion site for the python package **pyphs**, which is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. This formalism structures physical systems into
-— energy conserving parts,
-— power dissipating parts and
-— source parts.
+This is a companion site for the python package `PyPHS <https://github.com/afalaize/pyphs/>`__, which is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. This formalism structures physical systems into
+
+* energy conserving parts,
+* power dissipating parts and
+* source parts.
+
 This guarantees a power balance is fulfilled, including for numerical simulations based on an adapted numerical method.
 
 1. Systems are described by directed multi-graphs (networkx.MultiDiGraph).
 2. The time-continuous port-Hamiltonian structure is build from an automated graph analysis.
 3. The discrete-time port-Hamiltonian structure is derived from a structure preserving numerical method.
 4. **LaTeX** description code and **C++** simulation code are automatically generated.
+
+Licence
+--------------
+`PyPHS <https://github.com/afalaize/pyphs/>`__ as been developed between 2012 and 2016 as part of the PhD project of Antoine Falaize, through `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130) funding in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by IRCAM. It is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`__ licence.
 
 Installation
 --------------

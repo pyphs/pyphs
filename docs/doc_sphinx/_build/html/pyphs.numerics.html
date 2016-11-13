@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyphs.numerics package &#8212; PyPHS 0.1.9a5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.9a5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyphs-numerics-package">
+<h1>pyphs.numerics package<a class="headerlink" href="#pyphs-numerics-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyphs.numerics.config">
+<span id="pyphs-numerics-config-module"></span><h2>pyphs.numerics.config module<a class="headerlink" href="#module-pyphs.numerics.config" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun 10 13:48:45 2016</p>
+<p>&#64;author: Falaize</p>
+</div>
+<div class="section" id="module-pyphs.numerics.discrete_calculus">
+<span id="pyphs-numerics-discrete-calculus-module"></span><h2>pyphs.numerics.discrete_calculus module<a class="headerlink" href="#module-pyphs.numerics.discrete_calculus" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun  3 01:46:04 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.numerics.discrete_calculus.discrete_gradient">
+<code class="descclassname">pyphs.numerics.discrete_calculus.</code><code class="descname">discrete_gradient</code><span class="sig-paren">(</span><em>H</em>, <em>x</em>, <em>dx</em>, <em>numtol=2.2204460492503131e-16</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.numerics.discrete_calculus.discrete_gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symbolic computation here. Return the discrete gradient of scalar function H between x and x+dx, with H separable with respect to x: H = sum_i[H_i(x_i)].</p>
+<p>H : sympy.expression</p>
+<blockquote>
+<div>Scalar function of x.</div></blockquote>
+<p>x : list or sympy.Matrix</p>
+<blockquote>
+<div>1 dimensional array of sympy symbols.</div></blockquote>
+<p>dx : list or sympy.Matrix</p>
+<blockquote>
+<div>1 dimensional array of sympy symbols.</div></blockquote>
+<p>gradd : list</p>
+<blockquote>
+<div>discrete gradient of H with
+&#8216;gradd[i] = H.diff(x) if norm(dx[i]) &lt; numtol else (H(x+dx[i])-H(x))/dx[i]&#8217;</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.numerics.numeric">
+<span id="pyphs-numerics-numeric-module"></span><h2>pyphs.numerics.numeric module<a class="headerlink" href="#module-pyphs.numerics.numeric" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun  3 15:27:55 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="class">
+<dt id="pyphs.numerics.numeric.Functions">
+<em class="property">class </em><code class="descclassname">pyphs.numerics.numeric.</code><code class="descname">Functions</code><span class="sig-paren">(</span><em>phs</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.numerics.numeric.Functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that serves as a container for all numerical functions</p>
+<dl class="method">
+<dt id="pyphs.numerics.numeric.Functions.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.numerics.numeric.Functions.build" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.numerics.tools">
+<span id="pyphs-numerics-tools-module"></span><h2>pyphs.numerics.tools module<a class="headerlink" href="#module-pyphs.numerics.tools" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun  3 11:26:41 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.numerics.tools.find">
+<code class="descclassname">pyphs.numerics.tools.</code><code class="descname">find</code><span class="sig-paren">(</span><em>symbs</em>, <em>allsymbs</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.numerics.tools.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>sort elements in symbs according to listargs, and return args and list of positions in listargs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.numerics.tools.lambdify">
+<code class="descclassname">pyphs.numerics.tools.</code><code class="descname">lambdify</code><span class="sig-paren">(</span><em>args</em>, <em>expr</em>, <em>subs=None</em>, <em>simplify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.numerics.tools.lambdify" title="Permalink to this definition">¶</a></dt>
+<dd><p>call to lambdify with chosen options</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.numerics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyphs.numerics" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyphs.numerics package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyphs.numerics.config">pyphs.numerics.config module</a></li>
+<li><a class="reference internal" href="#module-pyphs.numerics.discrete_calculus">pyphs.numerics.discrete_calculus module</a></li>
+<li><a class="reference internal" href="#module-pyphs.numerics.numeric">pyphs.numerics.numeric module</a></li>
+<li><a class="reference internal" href="#module-pyphs.numerics.tools">pyphs.numerics.tools module</a></li>
+<li><a class="reference internal" href="#module-pyphs.numerics">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pyphs.numerics.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Antoine Falaize.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5b1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/pyphs.numerics.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

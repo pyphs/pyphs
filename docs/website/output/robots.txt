@@ -1,4 +1,0 @@
-Sitemap: http://pythonhosted.org/pyphs/sitemapindex.xml
-
-User-Agent: *
-Host: pythonhosted.org

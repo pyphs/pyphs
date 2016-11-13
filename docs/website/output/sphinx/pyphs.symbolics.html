@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyphs.symbolics package &#8212; PyPHS 0.1.9a5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.9a5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyphs-symbolics-package">
+<h1>pyphs.symbolics package<a class="headerlink" href="#pyphs-symbolics-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyphs.symbolics.structures.html">pyphs.symbolics.structures package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyphs.symbolics.structures.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyphs.symbolics.structures.html#module-pyphs.symbolics.structures.dimensions">pyphs.symbolics.structures.dimensions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyphs.symbolics.structures.html#module-pyphs.symbolics.structures.indices">pyphs.symbolics.structures.indices module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyphs.symbolics.structures.html#module-pyphs.symbolics.structures.structure">pyphs.symbolics.structures.structure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyphs.symbolics.structures.html#module-pyphs.symbolics.structures.tools">pyphs.symbolics.structures.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyphs.symbolics.structures.html#module-pyphs.symbolics.structures">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyphs.symbolics.calculus">
+<span id="pyphs-symbolics-calculus-module"></span><h2>pyphs.symbolics.calculus module<a class="headerlink" href="#module-pyphs.symbolics.calculus" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun  3 01:36:55 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.symbolics.calculus.gradient">
+<code class="descclassname">pyphs.symbolics.calculus.</code><code class="descname">gradient</code><span class="sig-paren">(</span><em>scalar_func</em>, <em>vars_</em>, <em>dosimplify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.calculus.gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symbolic computation here. Return the gradient of scalar function H
+w.r.t. vector variable x.</p>
+<p>scalar_func : sympy.Expr</p>
+<blockquote>
+<div>Scalar function.</div></blockquote>
+<p><a href="#id1"><span class="problematic" id="id2">vars_</span></a> : list or sympy.Matrix</p>
+<blockquote>
+<div>array of sympy symbols for variables</div></blockquote>
+<p>dosimplify : bool</p>
+<blockquote>
+<div>Apply simplification</div></blockquote>
+<p>grad : list</p>
+<blockquote>
+<div>gradient of H with grad[i] = H.diff(x[i])</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.symbolics.calculus.hessian">
+<code class="descclassname">pyphs.symbolics.calculus.</code><code class="descname">hessian</code><span class="sig-paren">(</span><em>scalar_func</em>, <em>vars_</em>, <em>dosimplify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.calculus.hessian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symbolic computation here. Return the hessian matrix of scalar function H
+w.r.t. vector variable x.</p>
+<p>scalar_func : sympy.Expr</p>
+<blockquote>
+<div>Scalar function.</div></blockquote>
+<p><a href="#id3"><span class="problematic" id="id4">vars_</span></a> : list or sympy.Matrix</p>
+<blockquote>
+<div>array of sympy symbols for variables</div></blockquote>
+<p>dosimplify : bool</p>
+<blockquote>
+<div>Apply simplification</div></blockquote>
+<p>hess : sympy.Matrix</p>
+<blockquote>
+<div>gradient of H with hess = Jac(Grad(H))</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.symbolics.calculus.jacobian">
+<code class="descclassname">pyphs.symbolics.calculus.</code><code class="descname">jacobian</code><span class="sig-paren">(</span><em>func</em>, <em>vars_</em>, <em>dosimplify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.calculus.jacobian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symbolic computation here. Return the jacobian matrix of vector function f
+w.r.t. vector variable x.</p>
+<p>func : list of sympy.Expr</p>
+<blockquote>
+<div>Vector function.</div></blockquote>
+<p><a href="#id5"><span class="problematic" id="id6">vars_</span></a> : list or sympy.Matrix</p>
+<blockquote>
+<div>List of sympy symbols for variables</div></blockquote>
+<p>dosimplify : bool</p>
+<blockquote>
+<div>Apply simplification</div></blockquote>
+<p>Jac : sympy.Matrix</p>
+<blockquote>
+<div>Jacobian of f with Jac[i, j] = f[i].diff(x[j])</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.symbolics.expressions">
+<span id="pyphs-symbolics-expressions-module"></span><h2>pyphs.symbolics.expressions module<a class="headerlink" href="#module-pyphs.symbolics.expressions" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun  3 14:23:19 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="class">
+<dt id="pyphs.symbolics.expressions.Expressions">
+<em class="property">class </em><code class="descclassname">pyphs.symbolics.expressions.</code><code class="descname">Expressions</code><span class="sig-paren">(</span><em>phs</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.expressions.Expressions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that serves as a container for all symbolic expressions
+* H: Hamiltonian function expressions
+* z: tuple of dissipation functions expressions
+* g: tuple of input/output gains functions expressions</p>
+<dl class="method">
+<dt id="pyphs.symbolics.expressions.Expressions.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.expressions.Expressions.build" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Build the following system functions as sympy expressions and append them as attributes to the exprs module:</div></blockquote>
+<ul class="simple">
+<li>&#8216;dxH&#8217; the continuous gradient vector of storage scalar function exprs.H,</li>
+<li>&#8216;dxHd&#8217; the discrete gradient vector of storage scalar function exprs.H,</li>
+<li>&#8216;hessH&#8217; the continuous hessian matrix of storage scalar function exprs.H,</li>
+<li>&#8216;jacz&#8217; the continuous jacobian matrix of dissipative vector function exprs.z,</li>
+<li>&#8216;y&#8217; the continuous output vector function,</li>
+<li>&#8216;yd&#8217; the discrete output vector function.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyphs.symbolics.expressions.Expressions.freesymbols">
+<code class="descname">freesymbols</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.expressions.Expressions.freesymbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrun a set of freesymbols in all exprs in _names</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyphs.symbolics.expressions.Expressions.setexpr">
+<code class="descname">setexpr</code><span class="sig-paren">(</span><em>name</em>, <em>expr</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.expressions.Expressions.setexpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the sympy expression &#8216;expr&#8217; to the exprs module, with argument &#8216;name&#8217;, and add &#8216;name&#8217; to the set of _names</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.symbolics.symbols">
+<span id="pyphs-symbolics-symbols-module"></span><h2>pyphs.symbolics.symbols module<a class="headerlink" href="#module-pyphs.symbolics.symbols" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun  3 14:22:39 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="class">
+<dt id="pyphs.symbolics.symbols.Symbols">
+<em class="property">class </em><code class="descclassname">pyphs.symbolics.symbols.</code><code class="descname">Symbols</code><a class="headerlink" href="#pyphs.symbolics.symbols.Symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that serves as a container for all symbols:
+* x: list of state variable symbols
+* w: list of dissipation variable symbols
+* u: list of input symbols
+* y: list of output symbols
+* p: list of parameter symbols
+* subs: dictionary with symbols as keys and substitution exprs as values
+* cu: list of connectors input symbols
+* cy: list of connectors outputs symbols
+* _names: set of names for all the lists</p>
+<dl class="method">
+<dt id="pyphs.symbolics.symbols.Symbols.args">
+<code class="descname">args</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.symbols.Symbols.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>return list of symbols associated with arguments of numerical functions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyphs.symbolics.symbols.Symbols.dx">
+<code class="descname">dx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.symbols.Symbols.dx" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the states increment symbols &#8220;dxi&#8221; associated with state symbol &#8220;xi&#8221; for each &#8220;xi&#8221; in state vector &#8220;x&#8221;.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.symbolics.tools">
+<span id="pyphs-symbolics-tools-module"></span><h2>pyphs.symbolics.tools module<a class="headerlink" href="#module-pyphs.symbolics.tools" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun  3 11:26:23 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.symbolics.tools.free_symbols">
+<code class="descclassname">pyphs.symbolics.tools.</code><code class="descname">free_symbols</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.tools.free_symbols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyphs.symbolics.tools.inverse">
+<code class="descclassname">pyphs.symbolics.tools.</code><code class="descname">inverse</code><span class="sig-paren">(</span><em>Mat</em>, <em>dosimplify=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.tools.inverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>same method for every matrix inversions</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.symbolics.tools.matvecprod">
+<code class="descclassname">pyphs.symbolics.tools.</code><code class="descname">matvecprod</code><span class="sig-paren">(</span><em>mat</em>, <em>vec</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.tools.matvecprod" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyphs.symbolics.tools.simplify">
+<code class="descclassname">pyphs.symbolics.tools.</code><code class="descname">simplify</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.tools.simplify" title="Permalink to this definition">¶</a></dt>
+<dd><p>simplify expression, list or matrix</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.symbolics.tools.symbols">
+<code class="descclassname">pyphs.symbolics.tools.</code><code class="descname">symbols</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.symbolics.tools.symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert all symbols are real</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.symbolics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyphs.symbolics" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyphs.symbolics package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyphs.symbolics.calculus">pyphs.symbolics.calculus module</a></li>
+<li><a class="reference internal" href="#module-pyphs.symbolics.expressions">pyphs.symbolics.expressions module</a></li>
+<li><a class="reference internal" href="#module-pyphs.symbolics.symbols">pyphs.symbolics.symbols module</a></li>
+<li><a class="reference internal" href="#module-pyphs.symbolics.tools">pyphs.symbolics.tools module</a></li>
+<li><a class="reference internal" href="#module-pyphs.symbolics">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pyphs.symbolics.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Antoine Falaize.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5b1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/pyphs.symbolics.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyphs.plots package &#8212; PyPHS 0.1.9a5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.9a5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyphs-plots-package">
+<h1>pyphs.plots package<a class="headerlink" href="#pyphs-plots-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyphs.plots.config">
+<span id="pyphs-plots-config-module"></span><h2>pyphs.plots.config module<a class="headerlink" href="#module-pyphs.plots.config" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun 10 12:45:42 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.plots.config.plot_options">
+<code class="descclassname">pyphs.plots.config.</code><code class="descname">plot_options</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.config.plot_options" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.config.plotopts">
+<code class="descclassname">pyphs.plots.config.</code><code class="descname">plotopts</code><span class="sig-paren">(</span><em>which='single'</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.config.plotopts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.plots.fonts">
+<span id="pyphs-plots-fonts-module"></span><h2>pyphs.plots.fonts module<a class="headerlink" href="#module-pyphs.plots.fonts" title="Permalink to this headline">¶</a></h2>
+<p>Created on Sat Jun 11 19:40:55 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.plots.fonts.font_lists">
+<code class="descclassname">pyphs.plots.fonts.</code><code class="descname">font_lists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.fonts.font_lists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.fonts.globalfonts">
+<code class="descclassname">pyphs.plots.fonts.</code><code class="descname">globalfonts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.fonts.globalfonts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.plots.multiplots">
+<span id="pyphs-plots-multiplots-module"></span><h2>pyphs.plots.multiplots module<a class="headerlink" href="#module-pyphs.plots.multiplots" title="Permalink to this headline">¶</a></h2>
+<p>Created on Sat Jun 11 20:06:50 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.plots.multiplots.multiplot">
+<code class="descclassname">pyphs.plots.multiplots.</code><code class="descname">multiplot</code><span class="sig-paren">(</span><em>datax</em>, <em>datay</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.multiplots.multiplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot multiple y-axis and possible multiple curves in each. Result is saved as a &#8216;.png&#8217; document.</p>
+<dl class="docutils">
+<dt>datax</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of floats</span><dd>x-axis values.</dd>
+<dt>datay</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of floats or list of tuples of list of floats</span><dd>y-axis values per axis and per curve in each axis, if tuple.</dd>
+<dt>labels</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list, optional</span><dd>list of or tupple of list of curve labels (the default is None).</dd>
+<dt>unitx</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span><dd>x-axis label (the default is None).</dd>
+<dt>unity</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of str, optional</span><dd>y-axis labels per axis (the default is None).</dd>
+<dt>limits=</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of tuples, optional</span><dd>List of (ymin, ymax) values. If None then (ymin, ymax) is set automatically.
+If &#8216;extend&#8217;, the y-axis is extend by 5% on both ends (the default is &#8216;extend&#8217;).</dd>
+<dt>linewidth</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span><dd>The default is 2.</dd>
+<dt>figsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple of float, optional</span><dd>The default is (5., 5.).</dd>
+<dt>filelabel</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span><dd>Figure is saved in &#8216;filelabel.png&#8217; if provided (the default is None).</dd>
+<dt>loc</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or string or pair of floats, default: 0</span><dd><p class="first">The location of the legend. Possible codes are:</p>
+<blockquote class="last">
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Location String</th>
+<th class="head">Location Code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#8216;best&#8217;</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>&#8216;upper right&#8217;</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>&#8216;upper left&#8217;</td>
+<td>2</td>
+</tr>
+<tr class="row-odd"><td>&#8216;lower left&#8217;</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>&#8216;lower right&#8217;</td>
+<td>4</td>
+</tr>
+<tr class="row-odd"><td>&#8216;right&#8217;</td>
+<td>5</td>
+</tr>
+<tr class="row-even"><td>&#8216;center left&#8217;</td>
+<td>6</td>
+</tr>
+<tr class="row-odd"><td>&#8216;center right&#8217;</td>
+<td>7</td>
+</tr>
+<tr class="row-even"><td>&#8216;lower center&#8217;</td>
+<td>8</td>
+</tr>
+<tr class="row-odd"><td>&#8216;upper center&#8217;</td>
+<td>9</td>
+</tr>
+<tr class="row-even"><td>&#8216;center&#8217;</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd>
+<dt>log</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of str, optional</span><dd><dl class="first last docutils">
+<dt>Log-scale activation for each axis according to</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Plot type</th>
+<th class="head">Code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#8216;plot&#8217;</td>
+<td>&#8216;&#8217;</td>
+</tr>
+<tr class="row-odd"><td>&#8216;semilogx&#8217;</td>
+<td>&#8216;x&#8217;</td>
+</tr>
+<tr class="row-even"><td>&#8216;semilogy&#8217;</td>
+<td>&#8216;y&#8217;</td>
+</tr>
+<tr class="row-odd"><td>&#8216;loglog&#8217;</td>
+<td>&#8216;xy&#8217;</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd>
+<dt>linestyles</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">iterable, otpional</span><dd>List of line styles; the default is (&#8216;-b&#8217;, &#8216;&#8211;r&#8217;, &#8216;:g&#8217;, &#8216;-.m&#8217;).</dd>
+<dt>fontsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span><dd>the default is figsize[0]*4</dd>
+<dt>legendfontsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span><dd>Figure legend font size. If None then set to 4/5 of fontsize (the default is None).</dd>
+<dt>maintitle</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span><dd>Figure main title. If set to None, the desactivated (the default is None).</dd>
+<dt>axedef</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple of floats, optional</span><dd><p class="first">Figure geometry (left, botom, right, top, height, width).
+The default is (.15, .15, .85, .85, .1, .3).</p>
+<table border="1" class="last docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>left</td>
+<td>the left side of the subplots of the figure.</td>
+</tr>
+<tr class="row-odd"><td>bottom</td>
+<td>the bottom of the subplots of the figure.</td>
+</tr>
+<tr class="row-even"><td>right</td>
+<td>the right side of the subplots of the figure.</td>
+</tr>
+<tr class="row-odd"><td>top</td>
+<td>the top of the subplots of the figure.</td>
+</tr>
+<tr class="row-even"><td>wspace</td>
+<td>the amount of width reserved for blank space between subplots.</td>
+</tr>
+<tr class="row-odd"><td>hspace</td>
+<td>the amount of height reserved for white space between subplots.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>markersize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Default is 6.</dd>
+<dt>markeredgewidth</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Width of line around markers (the default is 0.5).</dd>
+<dt>nbinsx, nbinsy</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span><dd>number of x-axis and y-axis ticks (the default is 4).</dd>
+<dt>minor</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>Activate the minor grid.</dd>
+<dt>xpos_ylabel</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span><dd>If provided, set the x-position of the ylabels so that they align (the default is None).
+You probably want it to be negative.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.plots.phs">
+<span id="pyphs-plots-phs-module"></span><h2>pyphs.plots.phs module<a class="headerlink" href="#module-pyphs.plots.phs" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Jun 27 13:12:43 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.plots.phs.plot_powerbal">
+<code class="descclassname">pyphs.plots.phs.</code><code class="descname">plot_powerbal</code><span class="sig-paren">(</span><em>phs</em>, <em>mode='single'</em>, <em>opts=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.phs.plot_powerbal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the power balance. mode is &#8216;single&#8217; or &#8216;multi&#8217; for single figure or multifigure</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.plots.plots_tickz_graph">
+<span id="pyphs-plots-plots-tickz-graph-module"></span><h2>pyphs.plots.plots_tickz_graph module<a class="headerlink" href="#module-pyphs.plots.plots_tickz_graph" title="Permalink to this headline">¶</a></h2>
+<p>Created on Tue Mar  8 00:29:41 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.plots.plots_tickz_graph.graph">
+<code class="descclassname">pyphs.plots.plots_tickz_graph.</code><code class="descname">graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.plots_tickz_graph.graph" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.plots_tickz_graph.graph2">
+<code class="descclassname">pyphs.plots.plots_tickz_graph.</code><code class="descname">graph2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.plots_tickz_graph.graph2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.plots_tickz_graph.string_script">
+<code class="descclassname">pyphs.plots.plots_tickz_graph.</code><code class="descname">string_script</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.plots_tickz_graph.string_script" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.plots_tickz_graph.write_tikz">
+<code class="descclassname">pyphs.plots.plots_tickz_graph.</code><code class="descname">write_tikz</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.plots_tickz_graph.write_tikz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.plots.singleplots">
+<span id="pyphs-plots-singleplots-module"></span><h2>pyphs.plots.singleplots module<a class="headerlink" href="#module-pyphs.plots.singleplots" title="Permalink to this headline">¶</a></h2>
+<p>Created on Sat Jun 11 19:28:12 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.plots.singleplots.singleplot">
+<code class="descclassname">pyphs.plots.singleplots.</code><code class="descname">singleplot</code><span class="sig-paren">(</span><em>datax</em>, <em>datay</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.singleplots.singleplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot multiple y-axis and possible multiple curves in each. Result is saved as a &#8216;.png&#8217; document.</p>
+<dl class="docutils">
+<dt>datax</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numerics</span><dd>x-axis values.</dd>
+<dt>datay</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of lists of numerics</span><dd>y-axis values for each curves curve.</dd>
+<dt>labels</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list, optional</span><dd>list of curve labels (the default is None).</dd>
+<dt>unitx</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span><dd>x-axis label (the default is None).</dd>
+<dt>unity</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of str, optional</span><dd>y-axis labels (the default is None).</dd>
+<dt>ylims</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple of float, optional</span><dd>(ymin, ymax) values. If None then (ymin, ymax) is set automatically (the default is None).
+If extend the y-axis is extended by 5% on both sides (the default is &#8216;extend&#8217;).</dd>
+<dt>linewidth</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span><dd>The default is 2.</dd>
+<dt>figsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple of float, optional</span><dd>The default is (5., 5.).</dd>
+<dt>filelabel</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span><dd>Figure is saved in &#8216;filelabel.png&#8217; (the default is &#8216;multiplot&#8217;).</dd>
+<dt>loc</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or string or pair of floats, default: 0</span><dd><p class="first">The location of the legend. Possible codes are:</p>
+<blockquote class="last">
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Location String</th>
+<th class="head">Location Code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#8216;best&#8217;</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>&#8216;upper right&#8217;</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>&#8216;upper left&#8217;</td>
+<td>2</td>
+</tr>
+<tr class="row-odd"><td>&#8216;lower left&#8217;</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>&#8216;lower right&#8217;</td>
+<td>4</td>
+</tr>
+<tr class="row-odd"><td>&#8216;right&#8217;</td>
+<td>5</td>
+</tr>
+<tr class="row-even"><td>&#8216;center left&#8217;</td>
+<td>6</td>
+</tr>
+<tr class="row-odd"><td>&#8216;center right&#8217;</td>
+<td>7</td>
+</tr>
+<tr class="row-even"><td>&#8216;lower center&#8217;</td>
+<td>8</td>
+</tr>
+<tr class="row-odd"><td>&#8216;upper center&#8217;</td>
+<td>9</td>
+</tr>
+<tr class="row-even"><td>&#8216;center&#8217;</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd>
+<dt>log</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span><dd><dl class="first last docutils">
+<dt>Log-scale activation according to</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Plot type</th>
+<th class="head">Code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#8216;plot&#8217;</td>
+<td>&#8216;&#8217;</td>
+</tr>
+<tr class="row-odd"><td>&#8216;semilogx&#8217;</td>
+<td>&#8216;x&#8217;</td>
+</tr>
+<tr class="row-even"><td>&#8216;semilogy&#8217;</td>
+<td>&#8216;y&#8217;</td>
+</tr>
+<tr class="row-odd"><td>&#8216;loglog&#8217;</td>
+<td>&#8216;xy&#8217;</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd>
+<dt>linestyles</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">iterable, otpional</span><dd>List of line styles; the default is (&#8216;-b&#8217;, &#8216;&#8211;r&#8217;, &#8216;:g&#8217;, &#8216;-.m&#8217;).</dd>
+<dt>fontsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span><dd>the default is figsize[0]*4.</dd>
+<dt>legendfontsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span><dd>Figure legend font size. If None then set to 4/5 of fontsize (the default is None).</dd>
+<dt>maintitle</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span><dd>Figure main title. If set to None, the desactivated (the default is None).</dd>
+<dt>axedef</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple of floats, optional</span><dd>Figure geometry (left, botom, right, top).
+The default is (.15, .15, .85, .85).</dd>
+<dt>nbinsx, nbinsy</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span><dd>number of x-axis and y-axis ticks (the default is 4).</dd>
+<dt>minor</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>Activate the minor grid.</dd>
+<dt>markersize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Default is 6.</dd>
+<dt>markeredgewidth</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Width of line around markers (the default is 0.5).</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="pyphs-plots-spectrograms-module">
+<h2>pyphs.plots.spectrograms module<a class="headerlink" href="#pyphs-plots-spectrograms-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyphs.plots.tools">
+<span id="pyphs-plots-tools-module"></span><h2>pyphs.plots.tools module<a class="headerlink" href="#module-pyphs.plots.tools" title="Permalink to this headline">¶</a></h2>
+<p>Created on Sat Jun 11 19:41:09 2016</p>
+<p>&#64;author: Falaize</p>
+<dl class="function">
+<dt id="pyphs.plots.tools.activate_latex">
+<code class="descclassname">pyphs.plots.tools.</code><code class="descname">activate_latex</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.tools.activate_latex" title="Permalink to this definition">¶</a></dt>
+<dd><p>activate latex for plot texts</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.tools.annotate">
+<code class="descclassname">pyphs.plots.tools.</code><code class="descname">annotate</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>pos</em>, <em>annote</em>, <em>legendfontsize</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.tools.annotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>function for plot annotation</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.tools.dec">
+<code class="descclassname">pyphs.plots.tools.</code><code class="descname">dec</code><span class="sig-paren">(</span><em>li</em>, <em>opts</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.tools.dec" title="Permalink to this definition">¶</a></dt>
+<dd><p>decimate liste li so that number of ploted points is no mode than opts[&#8216;maxnplot&#8217;].</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.tools.setlims">
+<code class="descclassname">pyphs.plots.tools.</code><code class="descname">setlims</code><span class="sig-paren">(</span><em>ax</em>, <em>x</em>, <em>miny</em>, <em>maxy</em>, <em>limy</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.tools.setlims" title="Permalink to this definition">¶</a></dt>
+<dd><p>manage limits of a plot</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.tools.setticks">
+<code class="descclassname">pyphs.plots.tools.</code><code class="descname">setticks</code><span class="sig-paren">(</span><em>ax</em>, <em>properties</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.tools.setticks" title="Permalink to this definition">¶</a></dt>
+<dd><p>manage ticks and grids of a figure</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyphs.plots.tools.whichplot">
+<code class="descclassname">pyphs.plots.tools.</code><code class="descname">whichplot</code><span class="sig-paren">(</span><em>which</em>, <em>axe</em><span class="sig-paren">)</span><a class="headerlink" href="#pyphs.plots.tools.whichplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>select plot function according to chosen log scale (if any).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyphs.plots">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyphs.plots" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyphs.plots package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyphs.plots.config">pyphs.plots.config module</a></li>
+<li><a class="reference internal" href="#module-pyphs.plots.fonts">pyphs.plots.fonts module</a></li>
+<li><a class="reference internal" href="#module-pyphs.plots.multiplots">pyphs.plots.multiplots module</a></li>
+<li><a class="reference internal" href="#module-pyphs.plots.phs">pyphs.plots.phs module</a></li>
+<li><a class="reference internal" href="#module-pyphs.plots.plots_tickz_graph">pyphs.plots.plots_tickz_graph module</a></li>
+<li><a class="reference internal" href="#module-pyphs.plots.singleplots">pyphs.plots.singleplots module</a></li>
+<li><a class="reference internal" href="#pyphs-plots-spectrograms-module">pyphs.plots.spectrograms module</a></li>
+<li><a class="reference internal" href="#module-pyphs.plots.tools">pyphs.plots.tools module</a></li>
+<li><a class="reference internal" href="#module-pyphs.plots">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pyphs.plots.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Antoine Falaize.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5b1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/pyphs.plots.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

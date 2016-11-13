@@ -1202,18 +1202,17 @@ NAVIGATION_LINKS = {
         	), 'Get PyPHS'
         ),
         (
-        	(
-        		('/building', 'Components'),
-		        ('/building', 'Interconnections'),
-		        ('/building', 'Simulations'),
-		        ('/building', 'Correction')
+        	(('/documentation/documentation.pdf', 'Not-so-short pdf'),
+        	 ('/sphinx/py-modindex.html', 'Package index')
         	), 'Documentation'
         ),        
         (
         	(
-        		('/tutos/RLC', 'Getting Started - the RLC circuit'),
-        		('/applis/analogcircuits', 'Analog circuits'),
-        		('/building', 'Electrodynamic loudspeaker'),
+        		('/tutos/tuto0', '0 - Getting Started'),
+        		('/tutos/tuto1', '1 - Graph analysis'),
+        		('/tutos/tuto2', '2 - Passive simulation'),
+        		('/tutos/tuto2', '3 - C++ code generation'),
+        		('/tutos/tuto2', '4 - Extend the dictionary'),
         	), 'Tutorials'
         )
     ),

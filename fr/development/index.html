@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="fr">
+<head>
+<meta charset="utf-8">
+<base href="http://pythonhosted.org/pyphs/fr/development/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pypHs Framework | PyPHS Handbook</title>
+<link href="../../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta content="#42659E" name="theme-color">
+<link rel="alternate" type="application/rss+xml" title="RSS (en)" href="../../rss.xml">
+<link rel="alternate" type="application/rss+xml" title="RSS (fr)" href="../rss.xml">
+<link rel="canonical" href="http://pythonhosted.org/pyphs/fr/development/">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'left', // Change this to 'center' to center equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css">
+<meta name="author" content="Antoine Falaize">
+<meta property="og:site_name" content="PyPHS Handbook">
+<meta property="og:title" content="pypHs Framework">
+<meta property="og:url" content="http://pythonhosted.org/pyphs/fr/development/">
+<meta property="og:description" content="Contents
+
+CeCILL-B license
+Ressources
+pypHs Library
+pypHs Dictionary
+
+
+
+CeCILL-B license
+This software is governed by the CeCILL-B license under French law and
+abiding by the rules of distribution of ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2015-12-14T22:45:10+02:00">
+<link rel="alternate" hreflang="en" href="../../development/">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Aller au contenu principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://pythonhosted.org/pyphs/fr/">
+
+                <span id="blog-title">PyPHS Handbook</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Get PyPHS <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html">Read the license</a>
+                    </li>
+<li>
+<a href="https://github.com/A-Falaize/pyphs">Get from Github</a>
+                    </li>
+<li>
+<a href="https://pypi.python.org/pypi/pyphs">Get from pyPI</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Documentation <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../../documentation/documentation.pdf">Not-so-short pdf</a>
+                    </li>
+<li>
+<a href="../../sphinx/py-modindex.html">Package index</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tutorials <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../../tutos/tuto0">0 - Getting Started</a>
+                    </li>
+<li>
+<a href="../../tutos/tuto1">1 - Graph analysis</a>
+                    </li>
+<li>
+<a href="../../tutos/tuto2">2 - Passive simulation</a>
+                    </li>
+<li>
+<a href="../../tutos/tuto2">3 - C++ code generation</a>
+                    </li>
+<li>
+<a href="../../tutos/tuto2">4 - Extend the dictionary</a>
+            </li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+            </li>
+<li><a href="http://pythonhosted.org/pyphs/" rel="alternate" hreflang="en">English</a></li>
+
+                
+                    
+    <li>
+    <a href=".././development/index.rst" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="storypage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">pypHs Framework</a></h1>
+
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#cecill-b-license" id="id2">CeCILL-B license</a></li>
+<li><a class="reference internal" href="#ressources" id="id3">Ressources</a></li>
+<li><a class="reference internal" href="#pyphs-library" id="id4">pypHs Library</a></li>
+<li><a class="reference internal" href="#pyphs-dictionary" id="id5">pypHs Dictionary</a></li>
+</ul>
+</div>
+<div class="section" id="cecill-b-license">
+<h2><a class="toc-backref" href="#id2">CeCILL-B license</a></h2>
+<p>This software is governed by the <a class="reference external" href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html">CeCILL-B license</a> under French law and
+abiding by the rules of distribution of free software.  You can  use,
+modify and/ or redistribute the software under the terms of the CeCILL-B
+license as circulated by CEA, CNRS and INRIA at the following <a class="reference external" href="http://www.cecill.info">URL</a> .</p>
+</div>
+<div class="section" id="ressources">
+<h2><a class="toc-backref" href="#id3">Ressources</a></h2>
+<p>The pypHs library is developed in python 2.7 langage. It has been successfully tested with the anaconda distribution (python 2.7) available <a class="reference external" href="https://www.continuum.io/downloads">here</a> with latest versions for all modules (december 15, 2015).
+Both the library and the dictionary have to be placed in the same folder. Only the pypHs.py module should be loaded in the main python script.</p>
+</div>
+<div class="section" id="pyphs-library">
+<h2><a class="toc-backref" href="#id4">pypHs Library</a></h2>
+<p>The library includes tools for the graph analysis, the simulation and the automated generation of c++ code. It is available <a class="reference external" href="../../code/pypHs.py">here</a></p>
+</div>
+<div class="section" id="pyphs-dictionary">
+<h2><a class="toc-backref" href="#id5">pypHs Dictionary</a></h2>
+<p>The dictionary includes standard elementary components involved in the modeling of multiphysics systems. It is available <a class="reference external" href="../../code/Dictionary.py">here</a> .</p>
+</div>
+</div>
+    </div>
+    
+
+</article>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2012-2016         <a href="mailto:antoine.falaize@gmail.com">Antoine Falaize</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../assets/js/jquery.min.js"></script><script src="../../assets/js/bootstrap.min.js"></script><script src="../../assets/js/moment-with-locales.min.js"></script><script src="../../assets/js/fancydates.js"></script><script src="../../assets/js/jquery.colorbox-min.js"></script><script src="../../assets/js/colorbox-i18n/jquery.colorbox-fr.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("fr");
+    fancydates(2, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

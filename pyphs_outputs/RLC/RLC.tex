@@ -1,0 +1,207 @@
+%
+\documentclass[11pt, oneside]{article}      % use 'amsart' instead of 'article' for AMSLaTeX format
+\usepackage{geometry}                       % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                      % ... or a4paper or a5paper or ...
+%\geometry{landscape}                       % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}               % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}                       % Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
+                                            % TeX will automatically convert eps --> pdf in pdflatex
+\usepackage{amssymb}
+%\date{\today}                              % Activate to display a given date or no date
+\title{Structure of the port-Hamiltonian system\\\texttt{RLC}}
+%
+\usepackage{authblk}
+\usepackage{hyperref}
+%\renewcommand\Authands{ and }
+%
+%
+\author[1]{The \textsc{PyPHS}\footnote{\url{https://github.com/A-Falaize/pyphs}} development team}
+%
+\affil[1]{Project-team S3\footnote{\url{http://s3.ircam.fr}}\\STMS, IRCAM-CNRS-UPMC (UMR 9912)\\1 Place Igor-Stravinsky, 75004 Paris, France}
+%
+\begin{document}
+%
+\maketitle
+%
+%
+\section{System dimensions}
+%
+$\dim(\mathbf{x})=$ $ n_\mathbf{x} = 2 ; $ 
+%
+\\
+%
+$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 1 ; $ 
+%
+\\
+%
+$\dim(\mathbf{y})=$ $ n_\mathbf{y} = 1 ; $ 
+%
+\\
+%
+$\dim(\mathbf{p})=$ $ n_\mathbf{p} = 0 ; $ 
+%
+\\
+%
+%
+\section{System variables}
+%
+State variable $ \mathbf{x} = \left(\begin{array}{c}x_{\mathrm{L}}\\x_{\mathrm{C}}\end{array}\right) ; $ 
+%
+\\
+%
+Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{R}}\end{array}\right) ; $ 
+%
+\\
+%
+Input $ \mathbf{u} = \left(\begin{array}{c}u_{\mathrm{out}}\end{array}\right) ; $ 
+%
+\\
+%
+Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{out}}\end{array}\right) ; $ 
+%
+\\
+%
+%
+\section{Constitutive relations}
+%
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{x_{\mathrm{L}}^{2}}{2 \cdot \mathrm{L}} + \frac{x_{\mathrm{C}}^{2}}{2 \cdot \mathrm{C}} ; $ 
+%
+\\
+%
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{x_{\mathrm{L}}}{\mathrm{L}}\\\frac{x_{\mathrm{C}}}{\mathrm{C}}\end{array}\right) ; $ 
+%
+\\
+%
+Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{R} \cdot w_{\mathrm{R}}\end{array}\right) ; $ 
+%
+\\
+%
+Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{R}\end{array}\right) ; $ 
+%
+\\
+%
+%
+\section{System parameters}
+%
+%
+\subsection{Constant}
+%
+\begin{center}
+%
+\begin{tabular}{ll}
+%
+\hline
+parameter & value (SI)
+\\ \hline
+C :& 2e-09
+\\
+R :& 1000.0
+\\
+L :& 0.05
+\\
+\hline
+\end{tabular}
+%
+\end{center}
+%
+\section{System structure}
+%
+
+%
+$ \mathbf{M} = \left(\begin{array}{cccc}0 & -1 & -1 & -1\\1 & 0 & 0 & 0\\0.5 & 0 & 0 & 0\\0.5 & 0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{xx}} = \left(\begin{array}{cc}0 & -1\\1 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{xw}} = \left(\begin{array}{c}-1\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{xy}} = \left(\begin{array}{c}-1\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{wx}} = \left(\begin{array}{cc}0.5 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{yx}} = \left(\begin{array}{cc}0.5 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{yw}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J} = \left(\begin{array}{cccc}0 & -1.0 & -0.75 & -0.75\\1.0 & 0 & 0 & 0\\0.75 & 0 & 0 & 0\\0.75 & 0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{xx}} = \left(\begin{array}{cc}0 & -1.0\\1.0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{xw}} = \left(\begin{array}{c}-0.75\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{xy}} = \left(\begin{array}{c}-0.75\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R} = \left(\begin{array}{cccc}0 & 0 & 0.25 & 0.25\\0 & 0 & 0 & 0\\0.25 & 0 & 0 & 0\\0.25 & 0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{xx}} = \left(\begin{array}{cc}0 & 0\\0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{xw}} = \left(\begin{array}{c}0.25\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{xy}} = \left(\begin{array}{c}0.25\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+\end{document}

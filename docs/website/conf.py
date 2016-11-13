@@ -129,20 +129,25 @@ TRANSLATIONS_PATTERN = "{path}.{lang}.{ext}"
 
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
+        ("/posts/tuto0", "0 - Getting started"),
+        ("/posts/tuto1", "1 - Graph analysis"),
         ("/docs/documentation.pdf", "Documentation"),
 		('/sphinx/py-modindex.html', 'Package index'),
-        ("/categories/", "Tags"),
-        ("/posts/tuto0", "Tuto 0 - Getting started"),
-        ("/posts/tuto1", "Tuto 1 - Graph analysis"),
+        ("/categories/", "Categories"),
     ),
 }
 
 # Name of the theme to use.
 THEME = "lanyon"
 
+# Theme lanyon 
+# GLOBAL_CONTEXT = {
+#         "lanyon_subtheme": "theme-base-08"
+#     }
+
 # Primary color of your theme. This will be used to customize your theme and
 # auto-generate related colors in POSTS_SECTION_COLORS. Must be a HEX value.
-THEME_COLOR = '#5670d4'
+THEME_COLOR = '#618AC8'
 
 # POSTS and PAGES contains (wildcard, destination, template) tuples.
 #

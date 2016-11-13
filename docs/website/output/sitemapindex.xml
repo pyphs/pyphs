@@ -6,15 +6,23 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/mathjax.xml</loc>
+  <lastmod>2016-11-13T20:16:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/tutorial.xml</loc>
+  <lastmod>2016-11-13T20:16:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://afalaize.github.io/pyphs/galleries/rss.xml</loc>
-  <lastmod>2016-11-13T19:30:00Z</lastmod>
+  <lastmod>2016-11-13T20:20:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/pyphs/rss.xml</loc>
-  <lastmod>2016-11-13T19:30:00Z</lastmod>
+  <lastmod>2016-11-13T20:16:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/pyphs/sitemap.xml</loc>
-  <lastmod>2016-11-13T19:30:00Z</lastmod>
+  <lastmod>2016-11-13T20:20:00Z</lastmod>
  </sitemap>
 </sitemapindex>

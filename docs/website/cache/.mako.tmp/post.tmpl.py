@@ -5,12 +5,12 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1479065433.413553
+_modified_time = 1479068711.732875
 _enable_loop = True
-_template_filename = u'/Users/Falaize/anaconda/lib/python2.7/site-packages/nikola/data/themes/bootstrap3/templates/post.tmpl'
+_template_filename = u'/Users/Falaize/anaconda/lib/python2.7/site-packages/nikola/data/themes/base/templates/post.tmpl'
 _template_uri = u'post.tmpl'
 _source_encoding = 'utf-8'
-_exports = [u'content', u'extra_head', u'sourcelink']
+_exports = [u'content', u'extra_head']
 
 
 def _mako_get_namespace(context, name):
@@ -41,15 +41,12 @@ def render_body(context,**pageargs):
             return render_extra_head(context._locals(__M_locals))
         parent = context.get('parent', UNDEFINED)
         helper = _mako_get_namespace(context, 'helper')
-        def sourcelink():
-            return render_sourcelink(context._locals(__M_locals))
         messages = context.get('messages', UNDEFINED)
         comments = _mako_get_namespace(context, 'comments')
         def content():
             return render_content(context._locals(__M_locals))
         site_has_comments = context.get('site_has_comments', UNDEFINED)
         post = context.get('post', UNDEFINED)
-        show_sourcelink = context.get('show_sourcelink', UNDEFINED)
         __M_writer = context.writer()
         __M_writer(u'\n')
         __M_writer(u'\n')
@@ -62,11 +59,6 @@ def render_body(context,**pageargs):
         __M_writer(u'\n\n')
         if 'parent' not in context._data or not hasattr(context._data['parent'], 'content'):
             context['self'].content(**pageargs)
-        
-
-        __M_writer(u'\n\n')
-        if 'parent' not in context._data or not hasattr(context._data['parent'], 'sourcelink'):
-            context['self'].sourcelink(**pageargs)
         
 
         __M_writer(u'\n')
@@ -131,7 +123,7 @@ def render_extra_head(context,**pageargs):
             __M_writer(filters.html_escape(unicode(post.meta('keywords'))))
             __M_writer(u'">\n')
         if post.description():
-            __M_writer(u'    <meta name="description" itemprop="description" content="')
+            __M_writer(u'    <meta name="description" content="')
             __M_writer(filters.html_escape(unicode(post.description())))
             __M_writer(u'">\n')
         __M_writer(u'    <meta name="author" content="')
@@ -163,29 +155,8 @@ def render_extra_head(context,**pageargs):
         context.caller_stack._pop_frame()
 
 
-def render_sourcelink(context,**pageargs):
-    __M_caller = context.caller_stack._push_frame()
-    try:
-        def sourcelink():
-            return render_sourcelink(context)
-        post = context.get('post', UNDEFINED)
-        messages = context.get('messages', UNDEFINED)
-        show_sourcelink = context.get('show_sourcelink', UNDEFINED)
-        __M_writer = context.writer()
-        __M_writer(u'\n')
-        if show_sourcelink:
-            __M_writer(u'    <li>\n    <a href="')
-            __M_writer(unicode(post.source_link()))
-            __M_writer(u'" id="sourcelink">')
-            __M_writer(unicode(messages("Source")))
-            __M_writer(u'</a>\n    </li>\n')
-        return ''
-    finally:
-        context.caller_stack._pop_frame()
-
-
 """
 __M_BEGIN_METADATA
-{"source_encoding": "utf-8", "line_map": {"128": 8, "129": 9, "130": 10, "131": 10, "132": 10, "133": 12, "134": 13, "135": 13, "136": 13, "137": 15, "138": 15, "139": 15, "140": 16, "141": 17, "142": 17, "143": 17, "144": 17, "145": 17, "146": 19, "147": 20, "148": 20, "149": 20, "150": 20, "23": 3, "152": 22, "153": 23, "26": 4, "155": 25, "156": 25, "29": 2, "158": 26, "159": 27, "160": 27, "35": 0, "166": 53, "154": 25, "157": 26, "176": 54, "177": 55, "178": 56, "179": 56, "180": 56, "181": 56, "54": 2, "55": 3, "56": 4, "57": 5, "187": 181, "151": 20, "62": 28, "175": 53, "67": 51, "72": 59, "78": 30, "90": 30, "91": 31, "92": 31, "93": 32, "94": 32, "95": 34, "96": 34, "97": 38, "98": 38, "99": 39, "100": 39, "101": 42, "102": 43, "103": 44, "104": 44, "105": 45, "106": 45, "107": 48, "108": 48, "109": 48, "110": 50, "111": 50, "117": 7, "126": 7, "127": 8}, "uri": "post.tmpl", "filename": "/Users/Falaize/anaconda/lib/python2.7/site-packages/nikola/data/themes/bootstrap3/templates/post.tmpl"}
+{"source_encoding": "utf-8", "line_map": {"128": 13, "129": 15, "130": 15, "131": 15, "132": 16, "133": 17, "134": 17, "135": 17, "136": 17, "137": 17, "138": 19, "139": 20, "140": 20, "141": 20, "142": 20, "143": 20, "144": 22, "145": 23, "146": 25, "147": 25, "148": 25, "149": 26, "150": 26, "23": 3, "152": 27, "26": 4, "29": 2, "158": 152, "35": 0, "51": 2, "52": 3, "53": 4, "54": 5, "59": 28, "151": 27, "64": 51, "70": 30, "82": 30, "83": 31, "84": 31, "85": 32, "86": 32, "87": 34, "88": 34, "89": 38, "90": 38, "91": 39, "92": 39, "93": 42, "94": 43, "95": 44, "96": 44, "97": 45, "98": 45, "99": 48, "100": 48, "101": 48, "102": 50, "103": 50, "109": 7, "118": 7, "119": 8, "120": 8, "121": 9, "122": 10, "123": 10, "124": 10, "125": 12, "126": 13, "127": 13}, "uri": "post.tmpl", "filename": "/Users/Falaize/anaconda/lib/python2.7/site-packages/nikola/data/themes/base/templates/post.tmpl"}
 __M_END_METADATA
 """

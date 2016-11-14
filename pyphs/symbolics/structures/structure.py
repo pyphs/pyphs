@@ -109,19 +109,25 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
         if struct.M.shape[0] != phs.dims.tot():
             struct.M = sympy.zeros(phs.dims.tot())
         if name == 'J':
-            J = val
-            R = getattr(struct, 'R'+vari + varj)()
-            M = J - R
+            Jab = sympy.Matrix(val)
+            Rab = getattr(struct, 'R'+vari + varj)()
+            Rba = getattr(struct, 'R'+varj + vari)()
+            Mab = Jab - Rab
+            Mba = -Jab.T - Rba
         if name == 'R':
-            J = getattr(struct, 'J'+vari + varj)()
-            R = val
-            M = J - R
+            Jab = getattr(struct, 'J'+vari + varj)()
+            Jba = getattr(struct, 'J'+varj + vari)()
+            R = sympy.Matrix(val)
+            Mab = Jab - R
+            Mba = Jba - R.T
         if name == 'M':
-            M = val
+            Mab = sympy.Matrix(val)
+            Mba = getattr(struct, 'M'+varj + vari)()
 
         debi, endi = getattr(phs.inds, vari)()
         debj, endj = getattr(phs.inds, varj)()
-        struct.M[debi:endi, debj:endj] = sympy.Matrix(M)
+        struct.M[debi:endi, debj:endj] = sympy.Matrix(Mab)
+        struct.M[debj:endj, debi:endi] = sympy.Matrix(Mba)
 
     return set_mat
 

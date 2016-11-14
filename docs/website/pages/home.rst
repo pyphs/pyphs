@@ -23,7 +23,7 @@ This guarantees a power balance is fulfilled, including for numerical simulation
 
 Licence
 --------------
-`PyPHS <https://github.com/afalaize/pyphs/>`__ as been developed between 2012 and 2016 as part of the PhD project of Antoine Falaize, through `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130) funding in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by IRCAM. It is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`__ licence.
+`PyPHS <https://github.com/afalaize/pyphs/>`__ has been developed between 2012 and 2016 as part of the PhD project of Antoine Falaize, through `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130) funding in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by IRCAM. It is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`__ licence.
 
 Installation
 --------------

@@ -1,0 +1,264 @@
+%
+\documentclass[11pt, oneside]{article}      % use 'amsart' instead of 'article' for AMSLaTeX format
+\usepackage{geometry}                       % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                      % ... or a4paper or a5paper or ...
+%\geometry{landscape}                       % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}               % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}                       % Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
+                                            % TeX will automatically convert eps --> pdf in pdflatex
+\usepackage{amssymb}
+%\date{\today}                              % Activate to display a given date or no date
+\title{Structure of the port-Hamiltonian system\\\texttt{rlc}}
+%
+\usepackage{authblk}
+\usepackage{hyperref}
+%\renewcommand\Authands{ and }
+%
+%
+\author[1]{The \textsc{PyPHS}\footnote{\url{https://github.com/A-Falaize/pyphs}} development team}
+%
+\affil[1]{Project-team S3\footnote{\url{http://s3.ircam.fr}}\\STMS, IRCAM-CNRS-UPMC (UMR 9912)\\1 Place Igor-Stravinsky, 75004 Paris, France}
+%
+\begin{document}
+%
+\maketitle
+%
+%
+\section{System netlist}
+%
+%
+\begin{center}
+%
+\texttt{
+\begin{tabular}{llllll}
+\hline
+line & label & dictionary.component & nodes &     parameters \\ \hline
+%
+$\ell_1$ & out & electronics.source & ('ref', 'A') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+type & voltage
+\\
+\end{tabular}\right.$
+ \\
+$\ell_2$ & R1 & electronics.resistor & ('A', 'B') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+R & 1000.0
+\\
+\end{tabular}\right.$
+ \\
+$\ell_3$ & L1 & electronics.inductor & ('B', 'C') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+L & 0.05
+\\
+\end{tabular}\right.$
+ \\
+$\ell_4$ & C1 & electronics.capacitor & ('C', 'ref') & $\left\{ 
+%
+\begin{tabular}{ll}
+%
+C & 2e-06
+\\
+\end{tabular}\right.$
+ \\
+\hline
+\end{tabular}
+%
+}
+%
+\end{center}
+%
+    %
+    \begin{figure}[!h]
+    \begin{center}
+    \includegraphics[width=\linewidth]{../figures/rlc_graph.pdf}
+    %
+    \caption{\label{fig:graph_rlc} Graph of system \texttt{rlc}. }
+    \end{center}
+    \end{figure}
+    %\section{System dimensions}
+%
+$\dim(\mathbf{x})=$ $ n_\mathbf{x} = 2 ; $ 
+%
+\\
+%
+$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 1 ; $ 
+%
+\\
+%
+$\dim(\mathbf{y})=$ $ n_\mathbf{y} = 1 ; $ 
+%
+\\
+%
+$\dim(\mathbf{p})=$ $ n_\mathbf{p} = 0 ; $ 
+%
+\\
+%
+%
+\section{System variables}
+%
+State variable $ \mathbf{x} = \left(\begin{array}{c}x_{\mathrm{L1}}\\x_{\mathrm{C1}}\end{array}\right) ; $ 
+%
+\\
+%
+Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{R1}}\end{array}\right) ; $ 
+%
+\\
+%
+Input $ \mathbf{u} = \left(\begin{array}{c}u_{\mathrm{out}}\end{array}\right) ; $ 
+%
+\\
+%
+Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{out}}\end{array}\right) ; $ 
+%
+\\
+%
+%
+\section{Constitutive relations}
+%
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{0.5}{\mathrm{LL1}} \cdot x_{\mathrm{L1}}^{2} + \frac{0.5}{\mathrm{CC1}} \cdot x_{\mathrm{C1}}^{2} ; $ 
+%
+\\
+%
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0}{\mathrm{LL1}} \cdot x_{\mathrm{L1}}\\\frac{1.0}{\mathrm{CC1}} \cdot x_{\mathrm{C1}}\end{array}\right) ; $ 
+%
+\\
+%
+Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{pR1} \cdot w_{\mathrm{R1}}\end{array}\right) ; $ 
+%
+\\
+%
+Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{pR1}\end{array}\right) ; $ 
+%
+\\
+%
+%
+\section{System parameters}
+%
+%
+\subsection{Constant}
+%
+\begin{center}
+%
+\begin{tabular}{ll}
+%
+\hline
+parameter & value (SI)
+\\ \hline
+CC1 :& 2e-06
+\\
+LL1 :& 0.05
+\\
+pR1 :& 1000.0
+\\
+\hline
+\end{tabular}
+%
+\end{center}
+%
+\section{System structure}
+%
+
+%
+$ \mathbf{M} = \left(\begin{array}{cccc}0 & -1.0 & -1.0 & -1.0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{xx}} = \left(\begin{array}{cc}0 & -1.0\\1.0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{xw}} = \left(\begin{array}{c}-1.0\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{xy}} = \left(\begin{array}{c}-1.0\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{wx}} = \left(\begin{array}{cc}1.0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{yx}} = \left(\begin{array}{cc}1.0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{yw}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{M_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J} = \left(\begin{array}{cccc}0 & -1.0 & -1.0 & -1.0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{xx}} = \left(\begin{array}{cc}0 & -1.0\\1.0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{xw}} = \left(\begin{array}{c}-1.0\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{xy}} = \left(\begin{array}{c}-1.0\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{J_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R} = \left(\begin{array}{cccc}0 & 0 & 0 & 0\\0 & 0 & 0 & 0\\0 & 0 & 0 & 0\\0 & 0 & 0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{xx}} = \left(\begin{array}{cc}0 & 0\\0 & 0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{xw}} = \left(\begin{array}{c}0\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{xy}} = \left(\begin{array}{c}0\\0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+$ \mathbf{R_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
+%
+\\
+%
+\end{document}

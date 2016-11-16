@@ -119,11 +119,11 @@ Run the following python code from the netlist file directory:
 
 This yields the following **tex** file:
 	
-* `rlc.tex </pyphs_outputs/rlc/tex/rlc.tex>`__
+* `rlc.tex </pyphs_outputs/RLC/tex/rlc.tex>`__
 
 which is compiled to produce the following **pdf** file:
 	
-* `rlc.pdf </pyphs_outputs/rlc/tex/rlc.pdf>`__
+* `rlc.pdf </pyphs_outputs/RLC/tex/rlc.pdf>`__
 
 
 4. Export **C++**
@@ -137,10 +137,10 @@ which is compiled to produce the following **pdf** file:
 	
 This yields the following **cpp** files:
 
-* `phobj.cpp </pyphs_outputs/rlc/cpp/phobj.cpp>`__
-* `phobj.h </pyphs_outputs/rlc/cpp/phobj.h>`__
-* `data.cpp </pyphs_outputs/rlc/cpp/data.cpp>`__
-* `data.h </pyphs_outputs/rlc/cpp/data.h>`__
-* `main.cpp </pyphs_outputs/rlc/cpp/main.cpp>`__
+* `phobj.cpp </pyphs_outputs/RLC/cpp/phobj.cpp>`__
+* `phobj.h </pyphs_outputs/RLC/cpp/phobj.h>`__
+* `data.cpp </pyphs_outputs/RLC/cpp/data.cpp>`__
+* `data.h </pyphs_outputs/RLC/cpp/data.h>`__
+* `main.cpp </pyphs_outputs/RLC/cpp/main.cpp>`__
 
 with the compilation and execution of **main.cpp** to run the passive simulation (no input here).

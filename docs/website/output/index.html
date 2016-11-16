@@ -69,18 +69,9 @@ This software was initially ">
 
     </header><div class="e-content entry-content" itemprop="articleBody text">
     <div>
-<p>This is a companion site for the python package <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a>, developped in the <a class="reference external" href="http://s3.ircam.fr/?lang=en">project/team S3</a> (Sound Signals and Systems) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a>.</p>
+<img alt="/figures/examples.jpg" src="figures/examples.jpg"><p>This is a companion site for the python package <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a>, developped in the <a class="reference external" href="http://s3.ircam.fr/?lang=en">project/team S3</a> (Sound Signals and Systems) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a>.</p>
 <p>This software was initially developed between 2012 and 2016 as a part of the PhD project of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a>, under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>, and through a funding from French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130).</p>
-<hr class="docutils">
-<p>This software is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.</p>
-<img alt="/figures/examples.jpg" src="figures/examples.jpg"><p>This formalism structures physical systems into</p>
-<ul class="simple">
-<li>energy conserving parts,</li>
-<li>power dissipating parts and</li>
-<li>source parts.</li>
-</ul>
-<p>This guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method.</p>
-<img alt="/figures/examples2.jpg" src="figures/examples2.jpg"><div class="section" id="licence">
+<div class="section" id="licence">
 <h2>Licence</h2>
 <p><a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a> is distributed under the french <a class="reference external" href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html">CeCILL-B</a> licence.</p>
 </div>
@@ -90,7 +81,7 @@ This software was initially ">
 <li>
 <p class="first">Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_7832d20264774dbb80f1198b971e198f-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_83b61f7dd42642818897061af26e38df-1"></a>pip install pyphs
 </pre>
 </blockquote>
 </li>
@@ -100,7 +91,7 @@ This software was initially ">
 <li>
 <p class="first">For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_ced1a6e2558041b98f557642159d785d-1"></a>conda install -c afalaize pyphs
+<pre class="code text"><a name="rest_code_2f74220011ba4c24926a49829c3c4936-1"></a>conda install -c afalaize pyphs
 </pre>
 </blockquote>
 </li>
@@ -108,7 +99,15 @@ This software was initially ">
 </div>
 <div class="section" id="introduction">
 <h2>Introduction</h2>
-<ol class="arabic simple">
+<p>This software is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.</p>
+<p>This formalism structures physical systems into</p>
+<ul class="simple">
+<li>energy conserving parts,</li>
+<li>power dissipating parts and</li>
+<li>source parts.</li>
+</ul>
+<p>This guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method.</p>
+<img alt="/figures/examples2.jpg" src="figures/examples2.jpg"><ol class="arabic simple">
 <li>Systems are described by directed multi-graphs.</li>
 <li>The time-continuous port-Hamiltonian structure is build from an automated graph analysis.</li>
 <li>The discrete-time port-Hamiltonian structure is derived from a structure preserving numerical method.</li>
@@ -133,22 +132,22 @@ This software was initially ">
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_bd1dea5feebd4ae880105cf88b08ec3b-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_bd1dea5feebd4ae880105cf88b08ec3b-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">)</span>
-<a name="rest_code_bd1dea5feebd4ae880105cf88b08ec3b-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'rlc_netlist.net'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_48c94470bf9b4240ae991dd38c6ef7b8-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_48c94470bf9b4240ae991dd38c6ef7b8-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">)</span>
+<a name="rest_code_48c94470bf9b4240ae991dd38c6ef7b8-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'rlc_netlist.net'</span><span class="p">)</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export <strong>LaTeX</strong>
 </h3>
-<pre class="code python"><a name="rest_code_afbe4c7c711f4e57b2e7fbec6ab4e204-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_29509485a6ee45e786e4020796f5c53b-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="export-c">
 <h3>4. Export <strong>C++</strong>
 </h3>
-<pre class="code python"><a name="rest_code_e9546994107640de9633afbce3dc762c-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_e9546994107640de9633afbce3dc762c-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_ceefd656f45b49ef9c2d7747720e72e1-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_ceefd656f45b49ef9c2d7747720e72e1-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre>
 </div>
 </div>

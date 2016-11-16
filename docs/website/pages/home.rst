@@ -9,7 +9,8 @@
 
 
 .. image:: /figures/examples.jpg
-
+	:width: 400
+	:align: center
 
 This is a companion site for the python package `PyPHS <https://github.com/afalaize/pyphs/>`__, developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
 
@@ -53,7 +54,13 @@ This formalism structures physical systems into
 
 This guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method.
 
+.. image:: /figures/examples.jpg
+	:width: 400
+	:align: center
+
 .. image:: /figures/examples2.jpg
+	:width: 400
+	:align: center
 
 1. Systems are described by directed multi-graphs.
 
@@ -64,8 +71,12 @@ This guarantees a power balance is fulfilled, including for simulations based on
 4. **LaTeX** description code and **C++** simulation code are automatically generated.
 
 .. image:: /galleries/intro/intro1.jpg
+	:width: 550
+	:align: center
 
 .. image:: /galleries/intro/intro2.jpg
+	:width: 550
+	:align: center
 
 Example
 --------------
@@ -73,6 +84,8 @@ Example
 Consider the following serial resistor-inductor-capacitor (RLC) electronic circuit:
 
 .. image:: /figures/RLC.jpg
+	:width: 400
+	:align: center
 
 1. Define the Netlist
 ~~~~~~~~~~~~~~~~~~~~~~

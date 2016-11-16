@@ -56,7 +56,7 @@ conda install -c afalaize pyphs
 %
 Below is a recall of the Port-Hamiltonian Systems (PHS) formalism.
 %
-For details, the reader is referred to the following academic references: \cite
+For details, the reader is referred to the \textit{e.g.} the acaemic reference \cite{falaize2016apassive}.
 %
 %
 We consider systems that can be described by the following time-continuous non-linear state-space representation:
@@ -298,52 +298,31 @@ To split the system into its linear and nonlinear part, use \pythoninline{phs.sp
 %
 %
 %
-\subsection{Linear subsystem}
+\section{Algorithms}
 %
-\begin{equation}
-\underbrace{\left(\begin{array}{c}
-\D{\vxl}{t}\\
-\vwl
-\end{array}\right)}_{\vec b_{\lab l}}
- = \underbrace{\left(\begin{array}{ll|ll|l}
-\M{xlxl}&\M{xlxnl}&\M{xlwl} & \M{xlwnl} & \M{xly}\\ 
-\M{wlxl}& \M{wlxnl}& \M{wlwl} & \M{wlwnl} & \M{wly}
-\end{array}\right)}_{\M{l}}
-\,
-\underbrace{\left(\begin{array}{c}
-\nabla\Hl\\
-\nabla\Hnl\\
-\mat{Z}_{\lab l}\,\vwl\\
-\vznl\\
-\vu
-\end{array}\right) }_{\vec a_{\lab{l}}}
-\end{equation}
+This section details the algorithms actually implemented for 
 %
-\subsection{Nonlinear subsystem}
+\begin{enumerate}
 %
-\begin{equation}
-\underbrace{\left(\begin{array}{c}
-\D{\vxnl}{t}\\
-\vwnl
-\end{array}\right)}_{\vec b_{\lab{nl}}}
- = \underbrace{\left(\begin{array}{ll|ll|l}
-\M{xnlxl}&\M{xnlxnl}&\M{xnlwl} &  \M{xnlwnl} & \M{xnly}\\ \hline
-\M{wnlwl}& \M{wnlxnl}& \M{wnlwl} & \M{wnlwnl} & \M{wnly}
-\end{array}\right)}_{\M{nl}}
-\,
-\underbrace{\left(\begin{array}{c}
-\nabla\Hl\\
-\nabla\Hnl\\
-\mat{Z}_{\lab l}\,\vwl\\
-\vznl\\
-\vu
-\end{array}\right) }_{\vec a_{\lab{nl}}}
-\end{equation}
+\item the graph analysis and\\
 %
-\section{Presolve linear part}
+\item the different simulation methods
 %
-\subsection{Numerical linear subsystem}
+\end{enumerate}
+%
+\subsection{Graph analysis}
+%
+The graph analysis method that derives the port-Hamiltonian system's differential-algebraic equations from with a given netlist is detailed in the reference \cite{falaize2016apassive}.
+%
+The algorithm implemented in \textsc{PyPHS} is exactly that in \cite[algorithm 1]{falaize2016apassive}.
+%
+\subsection{Simulation methods}
+%
+The discrete gradient method is used in conjunction with the port-Hamiltonian structure to produce a passive-guaranteed numerical scheme (see \cite{falaize2016apassive} for details).
+%
 In the sequel, quantities are defined on the current time step $\vx\equiv\vx(t_k)$, with $k\in\mathbb{N}_{+}^{*}$.
+%
+\subsubsection{Split of the linear part from the nonlinear part}
 %
 The dicrete gradient for the quadratic part of the Hamiltonian is ${\small \nabla\Hl =\frac{1}{2}\,\mat{Q}\, (2\vxl + \delta \vxl)}$ and the discret linear subsystem is
  %
@@ -396,9 +375,7 @@ The dicrete gradient for the quadratic part of the Hamiltonian is ${\small \nabl
 \end{array}
 \end{equation}
 %
-\section{Implicite nonlinear function}
-%
-\subsection{Numerical nonlinear subsystem}
+and the nonlinear subsystem is 
 %
 \begin{equation}
 \begin{array}{rcl}
@@ -445,7 +422,7 @@ The dicrete gradient for the quadratic part of the Hamiltonian is ${\small \nabl
 \vxl
 \end{array}
 \end{equation}
-\subsection{Presolve numerical nonlinear subsystem}
+\subsubsection{Presolve numerical nonlinear subsystem}
 \begin{equation}
 \begin{array}{rcl}
 \left(
@@ -459,8 +436,8 @@ The dicrete gradient for the quadratic part of the Hamiltonian is ${\small \nabl
 \end{array}
 \end{equation}
 %
-\section{Algorithm}
-\subsection{Inputs}
+\subsubsection{Algorithm}
+\paragraph{Inputs}
 \begin{equation}
 \begin{array}{rcl}
 \mat{iD}_{\lab l} &=& \left(\begin{array}{ll}
@@ -548,7 +525,7 @@ The dicrete gradient for the quadratic part of the Hamiltonian is ${\small \nabl
 \end{array}
 \end{equation}
 %
-\subsection{Process}
+\paragraph{Process}
 \begin{equation}
 \begin{array}{rcl}
 \mat D_{\lab l}&=& \mat{iD}_{\lab l}^{-1}\\
@@ -574,4 +551,7 @@ The dicrete gradient for the quadratic part of the Hamiltonian is ${\small \nabl
 \vy & = &\M{yxl}\,\nabla \Hl + \M{yxnl}\,\nabla \Hnl\M{ywl}\,\mat Z_{\lab l}\,\vwl + \M{ywnl}\,\vznl + \M{yy}\,\vu\\
 &=& \M{yxl}\,\nabla \Hl + \M{yxnl}\,\nabla \Hnl\M{ywl}\,\mat Z_{\lab l}\,\vwl + \M{ywnl}\,\vznl + \M{yy}\,\vu\\
 \end{eqnarray}
+
+\bibliographystyle{apalike}
+\bibliography{documentation}
 \end{document}

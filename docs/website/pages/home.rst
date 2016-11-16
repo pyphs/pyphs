@@ -76,7 +76,7 @@ Consider the following serial resistor-inductor-capacitor (RLC) electronic circu
 1. Define the Netlist
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Put the following content in a text file with **.net** extension (e.g. *rlc_netlist.net*):
+Put the following content in a text file with **.net** extension, (here *rlc_netlist.net*):
 
 .. line-block::
 
@@ -88,7 +88,7 @@ Put the following content in a text file with **.net** extension (e.g. *rlc_netl
 2. Perform graph analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the netlist file directory, run the following python code to process netlist analysis:
+Run the following python code from the netlist file directory:
 
 .. code:: python
 

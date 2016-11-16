@@ -90,7 +90,7 @@ This software was initially ">
 <li>
 <p class="first">Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_18f38671f81a44cd9433af29050a7ab6-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_7832d20264774dbb80f1198b971e198f-1"></a>pip install pyphs
 </pre>
 </blockquote>
 </li>
@@ -100,7 +100,7 @@ This software was initially ">
 <li>
 <p class="first">For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_f0429bff6fda4ec38fdfd0c739d587f7-1"></a>conda install -c afalaize pyphs
+<pre class="code text"><a name="rest_code_ced1a6e2558041b98f557642159d785d-1"></a>conda install -c afalaize pyphs
 </pre>
 </blockquote>
 </li>
@@ -133,22 +133,22 @@ This software was initially ">
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_0531d45f7b8f42c1aa539793a7bdd328-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_0531d45f7b8f42c1aa539793a7bdd328-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">)</span>
-<a name="rest_code_0531d45f7b8f42c1aa539793a7bdd328-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'rlc_netlist.net'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_bd1dea5feebd4ae880105cf88b08ec3b-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_bd1dea5feebd4ae880105cf88b08ec3b-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">)</span>
+<a name="rest_code_bd1dea5feebd4ae880105cf88b08ec3b-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'rlc_netlist.net'</span><span class="p">)</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export <strong>LaTeX</strong>
 </h3>
-<pre class="code python"><a name="rest_code_e196d76c47504b6992489b1ca0b0bee2-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_afbe4c7c711f4e57b2e7fbec6ab4e204-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="export-c">
 <h3>4. Export <strong>C++</strong>
 </h3>
-<pre class="code python"><a name="rest_code_645464f663c5415ebf5ffaed97360ef3-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_645464f663c5415ebf5ffaed97360ef3-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_e9546994107640de9633afbce3dc762c-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_e9546994107640de9633afbce3dc762c-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre>
 </div>
 </div>

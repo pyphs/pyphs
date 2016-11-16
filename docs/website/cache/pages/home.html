@@ -1,8 +1,8 @@
 <p>This is a companion site for the python package <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a>, developped in the <a class="reference external" href="http://s3.ircam.fr/?lang=en">project/team S3</a> (Sound Signals and Systems) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a>.</p>
 <p>This software was initially developed between 2012 and 2016 as a part of the PhD project of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a>, under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>, and through a funding from French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130).</p>
 <hr class="docutils" />
-<p>This software is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.
-.. image:: /figures/examples.jpg</p>
+<p>This software is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.</p>
+<img alt="/figures/examples.jpg" src="/figures/examples.jpg" />
 <p>This formalism structures physical systems into</p>
 <ul class="simple">
 <li>energy conserving parts,</li>
@@ -20,14 +20,14 @@
 <ul>
 <li><p class="first">Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_209e496dab4346809fa268d09489df53-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_fdc21a2ddf8b4e85a31b6aa75a41b7e2-1"></a>pip install pyphs
 </pre></blockquote>
 </li>
 <li><p class="first">See the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>.</p>
 </li>
 <li><p class="first">For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_99f67d2090a9460e8b187b6a5169981e-1"></a>conda install -c afalaize pyphs
+<pre class="code text"><a name="rest_code_fa7cd92c4ef54f20bc2da5d39f333b4f-1"></a>conda install -c afalaize pyphs
 </pre></blockquote>
 </li>
 </ul>
@@ -60,17 +60,17 @@
 <div class="section" id="perform-graph-analysis">
 <h2>2. Perform graph analysis</h2>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_8d17b29fb04b4841be5529e4ad995188-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_8d17b29fb04b4841be5529e4ad995188-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">)</span>
-<a name="rest_code_8d17b29fb04b4841be5529e4ad995188-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">&#39;rlc_netlist.net&#39;</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_ebc1abdb661e4f6b9344607b281f05e2-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_ebc1abdb661e4f6b9344607b281f05e2-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">)</span>
+<a name="rest_code_ebc1abdb661e4f6b9344607b281f05e2-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">&#39;rlc_netlist.net&#39;</span><span class="p">)</span>
 </pre></div>
 <div class="section" id="export-latex">
 <h2>3. Export <strong>LaTeX</strong></h2>
-<pre class="code python"><a name="rest_code_bfb57228205d4a49bb04cffb5868f7d2-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_c4f5f076618a4c1db0331c53de51b856-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre></div>
 <div class="section" id="export-c">
 <h2>4. Export <strong>C++</strong></h2>
-<pre class="code python"><a name="rest_code_9df0ef09d68b47a3b97e5347290fdc47-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_9df0ef09d68b47a3b97e5347290fdc47-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_faaf806fdae344d5a3443f50bdf89ed8-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_faaf806fdae344d5a3443f50bdf89ed8-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre></div>
 </div>

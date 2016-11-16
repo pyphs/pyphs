@@ -15,6 +15,7 @@ This software was initially developed between 2012 and 2016 as a part of the PhD
 ----------
 
 This software is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
+
 .. image:: /figures/examples.jpg
 
 This formalism structures physical systems into

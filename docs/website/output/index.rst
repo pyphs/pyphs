@@ -107,7 +107,7 @@ Run the following python code from the netlist file directory:
 .. code:: python
 
   import pyphs
-  rlc = pyphs.PortHamiltonianObject(label='rlc', path='rlc')
+  rlc = pyphs.PortHamiltonianObject(label='rlc', path='label')
   rlc.build_from_netlist('rlc_netlist.net')
 
 3. Export **LaTeX**
@@ -117,10 +117,30 @@ Run the following python code from the netlist file directory:
 
 	rlc.texwrite()
 
+This yields the following **tex** file:
+	
+* `rlc.tex </pyphs_outputs/rlc/tex/rlc.tex>`__
+
+which is compiled to produce the following **pdf** file:
+	
+* `rlc.pdf </pyphs_outputs/rlc/tex/rlc.pdf>`__
+
+
 4. Export **C++**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
+	rlc.simu.init(nt=10)
 	rlc.cppbuild()
 	rlc.cppwrite()
+	
+This yields the following **cpp** files:
+
+* `phobj.cpp </pyphs_outputs/rlc/cpp/phobj.cpp>`__
+* `phobj.h </pyphs_outputs/rlc/cpp/phobj.h>`__
+* `data.cpp </pyphs_outputs/rlc/cpp/data.cpp>`__
+* `data.h </pyphs_outputs/rlc/cpp/data.h>`__
+* `main.cpp </pyphs_outputs/rlc/cpp/main.cpp>`__
+
+with the compilation and execution of **main.cpp** to run the passive simulation (no input here).

@@ -1,4 +1,4 @@
-<img alt="/figures/examples.jpg" src="/figures/examples.jpg" />
+<img alt="/figures/examples.jpg" class="align-center" src="/figures/examples.jpg" style="width: 400px;" />
 <p>This is a companion site for the python package <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a>, developped in the <a class="reference external" href="http://s3.ircam.fr/?lang=en">project/team S3</a> (Sound Signals and Systems) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a>.</p>
 <p>This software was initially developed between 2012 and 2016 as a part of the PhD project of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a>, under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>, and through a funding from French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130).</p>
 <div class="section" id="licence">
@@ -10,14 +10,14 @@
 <ul>
 <li><p class="first">Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_83b61f7dd42642818897061af26e38df-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_4924681f4bca441aaaf3c0b8a0d5e4ba-1"></a>pip install pyphs
 </pre></blockquote>
 </li>
 <li><p class="first">See the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>.</p>
 </li>
 <li><p class="first">For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_2f74220011ba4c24926a49829c3c4936-1"></a>conda install -c afalaize pyphs
+<pre class="code text"><a name="rest_code_2bf0efc9370944b6bebba54df4e35dac-1"></a>conda install -c afalaize pyphs
 </pre></blockquote>
 </li>
 </ul>
@@ -32,20 +32,21 @@
 <li>source parts.</li>
 </ul>
 <p>This guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method.</p>
-<img alt="/figures/examples2.jpg" src="/figures/examples2.jpg" />
+<img alt="/figures/examples.jpg" class="align-center" src="/figures/examples.jpg" style="width: 400px;" />
+<img alt="/figures/examples2.jpg" class="align-center" src="/figures/examples2.jpg" style="width: 400px;" />
 <ol class="arabic simple">
 <li>Systems are described by directed multi-graphs.</li>
 <li>The time-continuous port-Hamiltonian structure is build from an automated graph analysis.</li>
 <li>The discrete-time port-Hamiltonian structure is derived from a structure preserving numerical method.</li>
 <li><strong>LaTeX</strong> description code and <strong>C++</strong> simulation code are automatically generated.</li>
 </ol>
-<img alt="/galleries/intro/intro1.jpg" src="/galleries/intro/intro1.jpg" />
-<img alt="/galleries/intro/intro2.jpg" src="/galleries/intro/intro2.jpg" />
+<img alt="/galleries/intro/intro1.jpg" class="align-center" src="/galleries/intro/intro1.jpg" style="width: 550px;" />
+<img alt="/galleries/intro/intro2.jpg" class="align-center" src="/galleries/intro/intro2.jpg" style="width: 550px;" />
 </div>
 <div class="section" id="example">
 <h1>Example</h1>
 <p>Consider the following serial resistor-inductor-capacitor (RLC) electronic circuit:</p>
-<img alt="/figures/RLC.jpg" src="/figures/RLC.jpg" />
+<img alt="/figures/RLC.jpg" class="align-center" src="/figures/RLC.jpg" style="width: 400px;" />
 <div class="section" id="define-the-netlist">
 <h2>1. Define the Netlist</h2>
 <p>Put the following content in a text file with <strong>.net</strong> extension, (here <em>rlc_netlist.net</em>):</p>
@@ -59,17 +60,17 @@
 <div class="section" id="perform-graph-analysis">
 <h2>2. Perform graph analysis</h2>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_48c94470bf9b4240ae991dd38c6ef7b8-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_48c94470bf9b4240ae991dd38c6ef7b8-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">)</span>
-<a name="rest_code_48c94470bf9b4240ae991dd38c6ef7b8-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">&#39;rlc_netlist.net&#39;</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_0e839362efb347d3b1390910acd58ca1-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_0e839362efb347d3b1390910acd58ca1-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">)</span>
+<a name="rest_code_0e839362efb347d3b1390910acd58ca1-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">&#39;rlc_netlist.net&#39;</span><span class="p">)</span>
 </pre></div>
 <div class="section" id="export-latex">
 <h2>3. Export <strong>LaTeX</strong></h2>
-<pre class="code python"><a name="rest_code_29509485a6ee45e786e4020796f5c53b-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_278629e994744ced8870d0333dc1602a-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre></div>
 <div class="section" id="export-c">
 <h2>4. Export <strong>C++</strong></h2>
-<pre class="code python"><a name="rest_code_ceefd656f45b49ef9c2d7747720e72e1-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_ceefd656f45b49ef9c2d7747720e72e1-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_120bd005498d46b5b451c9c03e1784dc-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_120bd005498d46b5b451c9c03e1784dc-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre></div>
 </div>

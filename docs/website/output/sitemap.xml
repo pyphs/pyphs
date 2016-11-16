@@ -7,7 +7,7 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://afalaize.github.io/pyphs/</loc>
-  <lastmod>2016-11-13T22:39:00Z</lastmod>
+  <lastmod>2016-11-16T13:32:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/2016/</loc>
@@ -39,7 +39,19 @@
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/galleries/</loc>
-  <lastmod>2016-11-13T22:39:00Z</lastmod>
+  <lastmod>2016-11-16T13:25:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/galleries/intro/</loc>
+  <lastmod>2016-11-16T13:25:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/galleries/intro1/</loc>
+  <lastmod>2016-11-16T13:25:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/galleries/intro2/</loc>
+  <lastmod>2016-11-16T13:25:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/listings/</loc>

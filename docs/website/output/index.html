@@ -69,7 +69,7 @@ This software was initially ">
 
     </header><div class="e-content entry-content" itemprop="articleBody text">
     <div>
-<img alt="/figures/examples.jpg" class="align-center" src="figures/examples.jpg" style="width: 400px;"><p>This is a companion site for the python package <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a>, developped in the <a class="reference external" href="http://s3.ircam.fr/?lang=en">project/team S3</a> (Sound Signals and Systems) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a>.</p>
+<img alt="/figures/examples.jpg" class="align-center" src="figures/examples.jpg" style="width: 500px;"><p>This is a companion site for the python package <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a>, developped in the <a class="reference external" href="http://s3.ircam.fr/?lang=en">project/team S3</a> (Sound Signals and Systems) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a>.</p>
 <p>This software was initially developed between 2012 and 2016 as a part of the PhD project of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a>, under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>, and through a funding from French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130).</p>
 <div class="section" id="licence">
 <h2>Licence</h2>
@@ -81,7 +81,7 @@ This software was initially ">
 <li>
 <p class="first">Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_c73444708c684ec983748c254f924afe-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_13384c8237c1420abc651452c48cc0e5-1"></a>pip install pyphs
 </pre>
 </blockquote>
 </li>
@@ -91,7 +91,7 @@ This software was initially ">
 <li>
 <p class="first">For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_897e51ab1f5e4d5593f173dd4a26a591-1"></a>conda install -c afalaize pyphs
+<pre class="code text"><a name="rest_code_0cf1ced1529444b4b75d0b783336b5ff-1"></a>conda install -c afalaize pyphs
 </pre>
 </blockquote>
 </li>
@@ -107,14 +107,14 @@ This software was initially ">
 <li>source parts.</li>
 </ul>
 <p>This guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method.</p>
-<img alt="/figures/examples.jpg" class="align-center" src="figures/examples.jpg" style="width: 400px;"><img alt="/figures/examples2.jpg" class="align-center" src="figures/examples2.jpg" style="width: 400px;"><ol class="arabic simple">
+<img alt="/figures/examples.jpg" class="align-center" src="figures/examples.jpg" style="width: 500px;"><img alt="/figures/examples2.jpg" class="align-center" src="figures/examples2.jpg" style="width: 400px;"><ol class="arabic simple">
 <li>Systems are described by directed multi-graphs.</li>
 <li>The time-continuous port-Hamiltonian structure is build from an automated graph analysis.</li>
 <li>The discrete-time port-Hamiltonian structure is derived from a structure preserving numerical method.</li>
 <li>
 <strong>LaTeX</strong> description code and <strong>C++</strong> simulation code are automatically generated.</li>
 </ol>
-<img alt="/galleries/intro/intro1.jpg" class="align-center" src="galleries/intro/intro1.jpg" style="width: 550px;"><img alt="/galleries/intro/intro2.jpg" class="align-center" src="galleries/intro/intro2.jpg" style="width: 550px;">
+<img alt="/galleries/intro/intro1.jpg" class="align-center" src="galleries/intro/intro1.jpg" style="width: 650px;"><img alt="/galleries/intro/intro2.jpg" class="align-center" src="galleries/intro/intro2.jpg" style="width: 650px;">
 </div>
 <div class="section" id="example">
 <h2>Example</h2>
@@ -132,15 +132,15 @@ This software was initially ">
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_d1d838ad8fd74d80bddd6a3602e3721c-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_d1d838ad8fd74d80bddd6a3602e3721c-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'label'</span><span class="p">)</span>
-<a name="rest_code_d1d838ad8fd74d80bddd6a3602e3721c-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'rlc_netlist.net'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_01dfc3f653ac47fbabeafde9c2ad47e1-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_01dfc3f653ac47fbabeafde9c2ad47e1-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'label'</span><span class="p">)</span>
+<a name="rest_code_01dfc3f653ac47fbabeafde9c2ad47e1-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'rlc_netlist.net'</span><span class="p">)</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export <strong>LaTeX</strong>
 </h3>
-<pre class="code python"><a name="rest_code_49ece9c3de1a4f53a958d452956fdc9b-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_566aeef554aa46c3806a12047492b37f-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre>
 <p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
@@ -154,9 +154,9 @@ This software was initially ">
 <div class="section" id="export-c">
 <h3>4. Export <strong>C++</strong>
 </h3>
-<pre class="code python"><a name="rest_code_843bd96359c942c6bd3da7edbd78a63a-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<a name="rest_code_843bd96359c942c6bd3da7edbd78a63a-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_843bd96359c942c6bd3da7edbd78a63a-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_ed5683e8d93343ad96bc7f0477eaf04b-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a name="rest_code_ed5683e8d93343ad96bc7f0477eaf04b-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_ed5683e8d93343ad96bc7f0477eaf04b-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre>
 <p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">

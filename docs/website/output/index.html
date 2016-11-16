@@ -82,7 +82,7 @@ This software is dedicated t">
 <li>
 <p class="first">Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_ccc1a29ed639470a84c1afd8bb0b9824-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_db0aedc019f84d0c8e0c575a529db5bf-1"></a>pip install pyphs
 </pre>
 </blockquote>
 </li>
@@ -92,7 +92,7 @@ This software is dedicated t">
 <li>
 <p class="first">For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_4a31e34850d640fead10d06d32f9eedc-1"></a>conda install -c afalaize pyphs
+<pre class="code text"><a name="rest_code_c5f38e57b4bd4d89961659706c396cd0-1"></a>conda install -c afalaize pyphs
 </pre>
 </blockquote>
 </li>
@@ -132,15 +132,15 @@ This software is dedicated t">
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_efc702f79b754fe48a6d917af97039fd-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_efc702f79b754fe48a6d917af97039fd-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'label'</span><span class="p">)</span>
-<a name="rest_code_efc702f79b754fe48a6d917af97039fd-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'rlc_netlist.net'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_a507b8247dc94564872881aa0cb7a58a-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_a507b8247dc94564872881aa0cb7a58a-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'rlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'label'</span><span class="p">)</span>
+<a name="rest_code_a507b8247dc94564872881aa0cb7a58a-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'rlc_netlist.net'</span><span class="p">)</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export <strong>LaTeX</strong>
 </h3>
-<pre class="code python"><a name="rest_code_e7d446e72fb340bca04868924b634565-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_2786ff5a472144e1adabd7c4c9937402-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre>
 <p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
@@ -154,9 +154,9 @@ This software is dedicated t">
 <div class="section" id="export-c">
 <h3>4. Export <strong>C++</strong>
 </h3>
-<pre class="code python"><a name="rest_code_b1b8c659994e4ae7a5e09cd0a3c6d30b-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<a name="rest_code_b1b8c659994e4ae7a5e09cd0a3c6d30b-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_b1b8c659994e4ae7a5e09cd0a3c6d30b-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_87bb59da88494171861f681f2d8f058e-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a name="rest_code_87bb59da88494171861f681f2d8f058e-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_87bb59da88494171861f681f2d8f058e-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre>
 <p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">
@@ -166,7 +166,7 @@ This software is dedicated t">
 <li><a class="reference external" href="pyphs_outputs/RLC/cpp/data.h">data.h</a></li>
 <li><a class="reference external" href="pyphs_outputs/RLC/cpp/main.cpp">main.cpp</a></li>
 </ul>
-<p>with the compilation and execution of <strong>main.cpp</strong> to run the passive simulation (no input here).</p>
+<p>The compilation and execution of <strong>main.cpp</strong> run the passive simulation (no input here).</p>
 </div>
 </div>
 </div>

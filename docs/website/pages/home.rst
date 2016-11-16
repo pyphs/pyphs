@@ -143,4 +143,4 @@ This yields the following **cpp** files:
 * `data.h </pyphs_outputs/RLC/cpp/data.h>`__
 * `main.cpp </pyphs_outputs/RLC/cpp/main.cpp>`__
 
-with the compilation and execution of **main.cpp** to run the passive simulation (no input here).
+The compilation and execution of **main.cpp** run the passive simulation (no input here).

@@ -18,6 +18,7 @@ This software is dedicated to the treatment of passive multiphysical systems in 
 
 .. image:: /figures/examples.jpg
 
+
 This formalism structures physical systems into
 
 * energy conserving parts,

@@ -14,3 +14,10 @@
 \contentsline {subsubsection}{\numberline {3.2.3}Algorithm}{7}
 \contentsline {paragraph}{Inputs}{7}
 \contentsline {paragraph}{Process}{7}
+\contentsline {subsection}{\numberline {3.3}Realizability solver}{7}
+\contentsline {paragraph}{Serial}{8}
+\contentsline {paragraph}{parallel}{8}
+\contentsline {paragraph}{Realizable}{8}
+\contentsline {paragraph}{Non-Realizable}{8}
+\contentsline {paragraph}{Realizable}{8}
+\contentsline {paragraph}{Non-Realizable}{8}

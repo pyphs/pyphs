@@ -6,8 +6,40 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/cat_components.xml</loc>
+  <lastmod>2016-11-16T17:55:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/cat_electronics.xml</loc>
+  <lastmod>2016-11-16T19:57:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/component.xml</loc>
+  <lastmod>2016-11-16T18:10:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/components.xml</loc>
+  <lastmod>2016-11-16T19:57:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/dissipative.xml</loc>
+  <lastmod>2016-11-16T18:10:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/dissipatives.xml</loc>
+  <lastmod>2016-11-16T18:26:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/electronics.xml</loc>
+  <lastmod>2016-11-16T17:55:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://afalaize.github.io/pyphs/categories/mathjax.xml</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <lastmod>2016-11-16T19:57:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/pyphs/categories/storages.xml</loc>
+  <lastmod>2016-11-16T19:57:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/pyphs/categories/tutorial.xml</loc>
@@ -31,10 +63,10 @@
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/pyphs/rss.xml</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <lastmod>2016-11-16T19:57:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/pyphs/sitemap.xml</loc>
-  <lastmod>2016-11-16T16:03:00Z</lastmod>
+  <lastmod>2016-11-16T19:57:00Z</lastmod>
  </sitemap>
 </sitemapindex>

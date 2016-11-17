@@ -552,6 +552,42 @@ and the nonlinear subsystem is
 &=& \M{yxl}\,\nabla \Hl + \M{yxnl}\,\nabla \Hnl\M{ywl}\,\mat Z_{\lab l}\,\vwl + \M{ywnl}\,\vznl + \M{yy}\,\vu\\
 \end{eqnarray}
 
+\subsection{Realizability solver}
+%
+\textbf{Connections\\}
+\paragraph{Serial}
+$\sum_{n=1}^N e_n = 0$, \\
+$f_1 = \cdots = f_N = \phi$ (variable commune)
+\paragraph{parallel}
+$\sum_{n=1}^N f_n = 0$,\\
+ $e_1 = \cdots = e_N = \phi$ (variable commune)
+
+\textbf{Storage}
+\paragraph{Realizable}
+$$\left\{ \begin{array}{rcl}
+\phi = u =\D{}{t} x &=& \D{x_1}{t} =\cdots = \D{}{t}{x_N} \\
+y = \dxH(x)&=& \sum_{i=1}^N\dxH{}{}_{}i(x_i) \end{array}\right.$$
+alors $ x = x_1 = x_2 $ et $\H(x) = \left(\sum_{i=1}^N \H_i\right)(x)$
+\paragraph{Non-Realizable}
+$$\left\{ \begin{array}{rcl}
+\phi = u =\dxH (x)& =& \dxH{}{}_{}{}1(x_1) =\cdots = \dxH{}{}_N(x_N),\\
+y=  \D{}{t}{x} & =& \sum_{i=1}^N \D{}{t}{x_i} \end{array}\right.$$
+alors $ x =\sum_{i=1}^N x_i $ et $\H(x) = \left(\sum_{i=1}^N H_i \dxH{}{}_i^{-1} G \right) (x) $ \\
+avec $G^{-1}(x) = \sum_{i=1}^N\dxH{}{}_i(x_i)$
+
+
+\textbf{Dissipatives}
+\paragraph{Realizable} 
+$$\left\{ \begin{array}{rcl}
+\phi = u =w &=& w_1 =\cdots = w_N ,\\
+y =z(w)&= &\sum_{i=1}^N z_i(x_i) 
+\end{array}\right.$$
+\paragraph{Non-Realizable}
+$$\left\{ \begin{array}{rcl}
+\phi = u =z(w) &=& z_1(w_1) =\cdots = z_N(w_N) ,\\
+y = w &=& \sum_{i=1}^Nw_i\end{array}\right.$$
+alors $ w =\sum_{i=1}^N w_i=\left(\sum_{i=1}^N z^{-1}_i\right)(\phi) $ et $z^{-1}(\phi) = w\Rightarrow z(w) =  \left(\sum_{i=1}^N z_i\right)^{-1}(w)$ 
+
 \bibliographystyle{apalike}
 \bibliography{documentation}
 \end{document}

@@ -1,12 +1,11 @@
 .. title: Passive modeling and simulation in python
 .. slug: index
 .. date: 2016-11-13 20:05:17 UTC+01:00
-.. tags: 
+.. tags: mathjax
 .. category: 
 .. link: 
 .. description: 
 .. type: text
-
 
 .. image:: /figures/examples.jpg
 	:width: 500
@@ -81,23 +80,43 @@ This guarantees a power balance is fulfilled, including for simulations based on
 Example
 --------------
 
-Consider the following serial resistor-inductor-capacitor (RLC) electronic circuit:
+Consider the following serial diode-inductor-capacitor (DLC) electronic circuit:
 
-.. image:: /figures/RLC.jpg
-	:width: 400
+.. image:: /figures/DLC.jpg
+	:width: 300
 	:align: center
+
+with the following physical parameters:
+
++------------+------------------------------------------+----------------+
+| Parameter  | Description (SI unit)                    | Typical value  |
++------------+------------------------------------------+----------------+
+| $I_s$      | Diode saturation current (A)             | 2e-9           |
++------------+------------------------------------------+----------------+
+| $v_0$      |  Diode thermal voltage (V)               | 26e-3          |
++------------+------------------------------------------+----------------+
+| $\\mu$     |  Diode ideality factor (dimensionless)   | 1.7            |
++------------+------------------------------------------+----------------+
+| $R$        |  Diode connectors resistance ($\\Omega$) | 0.5            |
++------------+------------------------------------------+----------------+
+| $L$        |  Inductance value (H)                    | 0.05           |
++------------+------------------------------------------+----------------+
+| $C$        |  Capacitance value (F)                   | 2e-06          |
++------------+------------------------------------------+----------------+
+
+
 
 1. Define the Netlist
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Put the following content in a text file with **.net** extension, (here *rlc_netlist.net*):
+Put the following content in a text file with **.net** extension, (here *dlc_netlist.net*):
 
 .. line-block::
 
-	electronics.source out ('ref', 'A'): type='voltage';
-	electronics.resistor R1 ('A', 'B'): R=1e3;
-	electronics.inductor L1 ('B', 'C'): L=0.05;
-	electronics.capacitor C1 ('C', 'ref'): C=2e-06;
+	electronics.source in ('ref', 'n1'): type='voltage';
+	electronics.diodepn D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);
+	electronics.inductor L ('n2', 'n3'): L=('L', 0.05);
+	electronics.capacitor C ('n3', 'ref'): C=('C', 2e-06);
 
 2. Perform graph analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,23 +126,23 @@ Run the following python code from the netlist file directory:
 .. code:: python
 
   import pyphs
-  rlc = pyphs.PortHamiltonianObject(label='rlc', path='label')
-  rlc.build_from_netlist('rlc_netlist.net')
+  dlc = pyphs.PortHamiltonianObject(label='dlc', path='label')
+  dlc.build_from_netlist('dlc_netlist.net')
 
 3. Export **LaTeX**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-	rlc.texwrite()
+	dlc.texwrite()
 
 This yields the following **tex** file:
 	
-* `rlc.tex </pyphs_outputs/RLC/tex/rlc.tex>`__
+* `dlc.tex </pyphs_outputs/RLC/tex/dlc.tex>`__
 
 which is compiled to produce the following **pdf** file:
 	
-* `rlc.pdf </pyphs_outputs/RLC/tex/rlc.pdf>`__
+* `dlc.pdf </pyphs_outputs/RLC/tex/dlc.pdf>`__
 
 
 4. Export **C++**
@@ -131,16 +150,16 @@ which is compiled to produce the following **pdf** file:
 
 .. code:: python
 
-	rlc.simu.init(nt=10)
-	rlc.cppbuild()
-	rlc.cppwrite()
+	dlc.simu.init(nt=10)
+	dlc.cppbuild()
+	dlc.cppwrite()
 	
 This yields the following **cpp** files:
 
-* `phobj.cpp </pyphs_outputs/RLC/cpp/phobj.cpp>`__
-* `phobj.h </pyphs_outputs/RLC/cpp/phobj.h>`__
-* `data.cpp </pyphs_outputs/RLC/cpp/data.cpp>`__
-* `data.h </pyphs_outputs/RLC/cpp/data.h>`__
-* `main.cpp </pyphs_outputs/RLC/cpp/main.cpp>`__
+* `phobj.cpp </pyphs_outputs/dlc/cpp/phobj.cpp>`__
+* `phobj.h </pyphs_outputs/dlc/cpp/phobj.h>`__
+* `data.cpp </pyphs_outputs/dlc/cpp/data.cpp>`__
+* `data.h </pyphs_outputs/dlc/cpp/data.h>`__
+* `main.cpp </pyphs_outputs/dlc/cpp/main.cpp>`__
 
 The compilation and execution of **main.cpp** run the passive simulation (no input here).

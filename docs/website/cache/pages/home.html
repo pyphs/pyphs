@@ -11,14 +11,14 @@
 <ul>
 <li><p class="first">Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_db0aedc019f84d0c8e0c575a529db5bf-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_da5f303a44d94684acd57298bd9b9204-1"></a>pip install pyphs
 </pre></blockquote>
 </li>
 <li><p class="first">See the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>.</p>
 </li>
 <li><p class="first">For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</p>
 <blockquote>
-<pre class="code text"><a name="rest_code_c5f38e57b4bd4d89961659706c396cd0-1"></a>conda install -c afalaize pyphs
+<pre class="code text"><a name="rest_code_48b7d615b2c64d279de7cbe8be1ee2a8-1"></a>conda install -c afalaize pyphs
 </pre></blockquote>
 </li>
 </ul>
@@ -45,49 +45,87 @@
 </div>
 <div class="section" id="example">
 <h1>Example</h1>
-<p>Consider the following serial resistor-inductor-capacitor (RLC) electronic circuit:</p>
-<img alt="/figures/RLC.jpg" class="align-center" src="/figures/RLC.jpg" style="width: 400px;" />
+<p>Consider the following serial diode-inductor-capacitor (DLC) electronic circuit:</p>
+<img alt="/figures/DLC.jpg" class="align-center" src="/figures/DLC.jpg" style="width: 300px;" />
+<p>with the following physical parameters:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="60%" />
+<col width="23%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>Parameter</td>
+<td>Description (SI unit)</td>
+<td>Typical value</td>
+</tr>
+<tr><td>$I_s$</td>
+<td>Diode saturation current (A)</td>
+<td>2e-9</td>
+</tr>
+<tr><td>$v_0$</td>
+<td>Diode thermal voltage (V)</td>
+<td>26e-3</td>
+</tr>
+<tr><td>$\mu$</td>
+<td>Diode ideality factor (dimensionless)</td>
+<td>1.7</td>
+</tr>
+<tr><td>$R$</td>
+<td>Diode connectors resistance ($\Omega$)</td>
+<td>0.5</td>
+</tr>
+<tr><td>$L$</td>
+<td>Inductance value (H)</td>
+<td>0.05</td>
+</tr>
+<tr><td>$C$</td>
+<td>Capacitance value (F)</td>
+<td>2e-06</td>
+</tr>
+</tbody>
+</table>
 <div class="section" id="define-the-netlist">
 <h2>1. Define the Netlist</h2>
-<p>Put the following content in a text file with <strong>.net</strong> extension, (here <em>rlc_netlist.net</em>):</p>
+<p>Put the following content in a text file with <strong>.net</strong> extension, (here <em>dlc_netlist.net</em>):</p>
 <div class="line-block">
-<div class="line">electronics.source out ('ref', 'A'): type='voltage';</div>
-<div class="line">electronics.resistor R1 ('A', 'B'): R=1e3;</div>
-<div class="line">electronics.inductor L1 ('B', 'C'): L=0.05;</div>
-<div class="line">electronics.capacitor C1 ('C', 'ref'): C=2e-06;</div>
+<div class="line">electronics.source in ('ref', 'n1'): type='voltage';</div>
+<div class="line">electronics.diodepn D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);</div>
+<div class="line">electronics.inductor L ('n2', 'n3'): L=0.05;</div>
+<div class="line">electronics.capacitor C ('n3', 'ref'): C=2e-06;</div>
 </div>
 </div>
 <div class="section" id="perform-graph-analysis">
 <h2>2. Perform graph analysis</h2>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_a507b8247dc94564872881aa0cb7a58a-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_a507b8247dc94564872881aa0cb7a58a-2"></a><span class="n">rlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;rlc&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
-<a name="rest_code_a507b8247dc94564872881aa0cb7a58a-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">&#39;rlc_netlist.net&#39;</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_706a6b277e1b4b798c4a8fc2934c28bd-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_706a6b277e1b4b798c4a8fc2934c28bd-2"></a><span class="n">dlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dlc&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
+<a name="rest_code_706a6b277e1b4b798c4a8fc2934c28bd-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">&#39;dlc_netlist.net&#39;</span><span class="p">)</span>
 </pre></div>
 <div class="section" id="export-latex">
 <h2>3. Export <strong>LaTeX</strong></h2>
-<pre class="code python"><a name="rest_code_2786ff5a472144e1adabd7c4c9937402-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_0f9e534399a0499ebe03fbcef6cdafff-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre><p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
-<li><a class="reference external" href="/pyphs_outputs/RLC/tex/rlc.tex">rlc.tex</a></li>
+<li><a class="reference external" href="/pyphs_outputs/RLC/tex/dlc.tex">dlc.tex</a></li>
 </ul>
 <p>which is compiled to produce the following <strong>pdf</strong> file:</p>
 <ul class="simple">
-<li><a class="reference external" href="/pyphs_outputs/RLC/tex/rlc.pdf">rlc.pdf</a></li>
+<li><a class="reference external" href="/pyphs_outputs/RLC/tex/dlc.pdf">dlc.pdf</a></li>
 </ul>
 </div>
 <div class="section" id="export-c">
 <h2>4. Export <strong>C++</strong></h2>
-<pre class="code python"><a name="rest_code_87bb59da88494171861f681f2d8f058e-1"></a><span class="n">rlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<a name="rest_code_87bb59da88494171861f681f2d8f058e-2"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_87bb59da88494171861f681f2d8f058e-3"></a><span class="n">rlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_163b53a46f3646aa9c81bbfdd1789792-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a name="rest_code_163b53a46f3646aa9c81bbfdd1789792-2"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_163b53a46f3646aa9c81bbfdd1789792-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre><p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">
-<li><a class="reference external" href="/pyphs_outputs/RLC/cpp/phobj.cpp">phobj.cpp</a></li>
-<li><a class="reference external" href="/pyphs_outputs/RLC/cpp/phobj.h">phobj.h</a></li>
-<li><a class="reference external" href="/pyphs_outputs/RLC/cpp/data.cpp">data.cpp</a></li>
-<li><a class="reference external" href="/pyphs_outputs/RLC/cpp/data.h">data.h</a></li>
-<li><a class="reference external" href="/pyphs_outputs/RLC/cpp/main.cpp">main.cpp</a></li>
+<li><a class="reference external" href="/pyphs_outputs/dlc/cpp/phobj.cpp">phobj.cpp</a></li>
+<li><a class="reference external" href="/pyphs_outputs/dlc/cpp/phobj.h">phobj.h</a></li>
+<li><a class="reference external" href="/pyphs_outputs/dlc/cpp/data.cpp">data.cpp</a></li>
+<li><a class="reference external" href="/pyphs_outputs/dlc/cpp/data.h">data.h</a></li>
+<li><a class="reference external" href="/pyphs_outputs/dlc/cpp/main.cpp">main.cpp</a></li>
 </ul>
 <p>The compilation and execution of <strong>main.cpp</strong> run the passive simulation (no input here).</p>
 </div>

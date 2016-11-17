@@ -60,7 +60,7 @@ $\ell_3$ & L & electronics.inductor & ('n2', 'n3') & $\left\{
 %
 \begin{tabular}{ll}
 %
-L & 0.05
+L & ('L', 0.05)
 \\
 \end{tabular}\right.$
  \\
@@ -68,7 +68,7 @@ $\ell_4$ & C & electronics.capacitor & ('n3', 'ref') & $\left\{
 %
 \begin{tabular}{ll}
 %
-C & 2e-06
+C & ('C', 2e-06)
 \\
 \end{tabular}\right.$
  \\
@@ -127,11 +127,11 @@ Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{in}}\end{array}\right) ; 
 %
 \section{Constitutive relations}
 %
-Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{0.5}{\mathrm{LL}} \cdot x_{\mathrm{L}}^{2} + \frac{0.5}{\mathrm{CC}} \cdot x_{\mathrm{C}}^{2} ; $ 
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{0.5}{\mathrm{L}} \cdot x_{\mathrm{L}}^{2} + \frac{0.5}{\mathrm{C}} \cdot x_{\mathrm{C}}^{2} ; $ 
 %
 \\
 %
-Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0}{\mathrm{LL}} \cdot x_{\mathrm{L}}\\\frac{1.0}{\mathrm{CC}} \cdot x_{\mathrm{C}}\end{array}\right) ; $ 
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0}{\mathrm{L}} \cdot x_{\mathrm{L}}\\\frac{1.0}{\mathrm{C}} \cdot x_{\mathrm{C}}\end{array}\right) ; $ 
 %
 \\
 %
@@ -156,15 +156,15 @@ Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(
 \hline
 parameter & value (SI)
 \\ \hline
-CC :& 2e-06
-\\
 mu :& 1.7
+\\
+C :& 2e-06
+\\
+L :& 0.05
 \\
 v0 :& 0.026
 \\
 Is :& 2e-09
-\\
-LL :& 0.05
 \\
 Rd :& 0.5
 \\

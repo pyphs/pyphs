@@ -115,8 +115,8 @@ Put the following content in a text file with **.net** extension, (here *dlc_net
 
 	electronics.source in ('ref', 'n1'): type='voltage';
 	electronics.diodepn D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);
-	electronics.inductor L ('n2', 'n3'): L=0.05;
-	electronics.capacitor C ('n3', 'ref'): C=2e-06;
+	electronics.inductor L ('n2', 'n3'): L=('L', 0.05);
+	electronics.capacitor C ('n3', 'ref'): C=('C', 2e-06);
 
 2. Perform graph analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

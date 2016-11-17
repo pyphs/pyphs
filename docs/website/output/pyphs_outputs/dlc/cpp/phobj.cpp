@@ -4,7 +4,7 @@
     Sound (UMR 9912), IRCAM-CNRS-UPMC, 1 place Igor Stravinsky, F-75004 Paris
     * contributors : Antoine Falaize, Thomas Hélie,
     * corresponding contributor: antoine.falaize@ircam.fr
-    * date: 2016/11/17 00:05:10
+    * date: 2016/11/17 00:08:59
 
     This software (pypHs) is a computer program whose purpose is to generate C++
     code for the simulation of multiphysics system described by graph structures.
@@ -35,7 +35,7 @@
     The fact that you are presently reading this means that you have had
     knowledge of the CeCILL-B license and that you accept its terms.
 
-    Created on 2016/11/17 00:05:10
+    Created on 2016/11/17 00:08:59
 
     @author: Antoine Falaize
 
@@ -44,7 +44,7 @@
 ===============================================================================
 
     This file was automatically generated 
-    by PyPHS v0.1.9b5, on 2016/11/17 00:05:10.
+    by PyPHS v0.1.9b5, on 2016/11/17 00:08:59.
 
     It contains the code for the simulation of system 'DLC'.
 
@@ -243,22 +243,22 @@ void DLC::dxH_update(){
 // Functions updates
 void DLC::fnl_update(){
 fnl(0, 0) = (((*dxL) < -2.22044604925031e-16) ? (
-   (-0.5*pow((*xL), 2)/(*LL) + 0.5*pow((*dxL) + (*xL), 2)/(*LL))/(*dxL)
+   (-0.5*pow((*xL), 2)/(*L) + 0.5*pow((*dxL) + (*xL), 2)/(*L))/(*dxL)
 )
 : (((*dxL) < 2.22044604925031e-16) ? (
-   1.0*(*xL)/(*LL)
+   1.0*(*xL)/(*L)
 )
 : (
-   (-0.5*pow((*xL), 2)/(*LL) + 0.5*pow((*dxL) + (*xL), 2)/(*LL))/(*dxL)
+   (-0.5*pow((*xL), 2)/(*L) + 0.5*pow((*dxL) + (*xL), 2)/(*L))/(*dxL)
 )));
 fnl(1, 0) = (((*dxC) < -2.22044604925031e-16) ? (
-   (-0.5*pow((*xC), 2)/(*CC) + 0.5*pow((*dxC) + (*xC), 2)/(*CC))/(*dxC)
+   (-0.5*pow((*xC), 2)/(*C) + 0.5*pow((*dxC) + (*xC), 2)/(*C))/(*dxC)
 )
 : (((*dxC) < 2.22044604925031e-16) ? (
-   1.0*(*xC)/(*CC)
+   1.0*(*xC)/(*C)
 )
 : (
-   (-0.5*pow((*xC), 2)/(*CC) + 0.5*pow((*dxC) + (*xC), 2)/(*CC))/(*dxC)
+   (-0.5*pow((*xC), 2)/(*C) + 0.5*pow((*dxC) + (*xC), 2)/(*C))/(*dxC)
 )));
 fnl(2, 0) = (*Rd)*(*wDR);
 fnl(3, 0) = (*mu)*(*v0)*log(1 + (*wD)/(*Is));
@@ -303,22 +303,22 @@ void DLC::barNnly_update(){
 };
 void DLC::jac_fnl_update(){
 jac_fnl(0, 0) = (((*dxL) < -2.22044604925031e-16) ? (
-   -(-0.5*pow((*xL), 2)/(*LL) + 0.5*pow((*dxL) + (*xL), 2)/(*LL))/pow((*dxL), 2) + 0.5*(2*(*dxL) + 2*(*xL))/((*LL)*(*dxL))
+   -(-0.5*pow((*xL), 2)/(*L) + 0.5*pow((*dxL) + (*xL), 2)/(*L))/pow((*dxL), 2) + 0.5*(2*(*dxL) + 2*(*xL))/((*L)*(*dxL))
 )
 : (((*dxL) < 2.22044604925031e-16) ? (
    0
 )
 : (
-   -(-0.5*pow((*xL), 2)/(*LL) + 0.5*pow((*dxL) + (*xL), 2)/(*LL))/pow((*dxL), 2) + 0.5*(2*(*dxL) + 2*(*xL))/((*LL)*(*dxL))
+   -(-0.5*pow((*xL), 2)/(*L) + 0.5*pow((*dxL) + (*xL), 2)/(*L))/pow((*dxL), 2) + 0.5*(2*(*dxL) + 2*(*xL))/((*L)*(*dxL))
 )));
 jac_fnl(1, 1) = (((*dxC) < -2.22044604925031e-16) ? (
-   -(-0.5*pow((*xC), 2)/(*CC) + 0.5*pow((*dxC) + (*xC), 2)/(*CC))/pow((*dxC), 2) + 0.5*(2*(*dxC) + 2*(*xC))/((*CC)*(*dxC))
+   -(-0.5*pow((*xC), 2)/(*C) + 0.5*pow((*dxC) + (*xC), 2)/(*C))/pow((*dxC), 2) + 0.5*(2*(*dxC) + 2*(*xC))/((*C)*(*dxC))
 )
 : (((*dxC) < 2.22044604925031e-16) ? (
    0
 )
 : (
-   -(-0.5*pow((*xC), 2)/(*CC) + 0.5*pow((*dxC) + (*xC), 2)/(*CC))/pow((*dxC), 2) + 0.5*(2*(*dxC) + 2*(*xC))/((*CC)*(*dxC))
+   -(-0.5*pow((*xC), 2)/(*C) + 0.5*pow((*dxC) + (*xC), 2)/(*C))/pow((*dxC), 2) + 0.5*(2*(*dxC) + 2*(*xC))/((*C)*(*dxC))
 )));
 jac_fnl(3, 3) = (*mu)*(*v0)/((*Is)*(1 + (*wD)/(*Is)));
 };

@@ -138,11 +138,11 @@ Run the following python code from the netlist file directory:
 
 This yields the following **tex** file:
 	
-* `dlc.tex </pyphs_outputs/RLC/tex/dlc.tex>`__
+* `dlc.tex </pyphs_outputs/dlc/tex/dlc.tex>`__
 
 which is compiled to produce the following **pdf** file:
 	
-* `dlc.pdf </pyphs_outputs/RLC/tex/dlc.pdf>`__
+* `dlc.pdf </pyphs_outputs/dlc/tex/dlc.pdf>`__
 
 
 4. Export **C++**

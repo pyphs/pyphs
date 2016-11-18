@@ -1,6 +1,7 @@
 <img alt="/figures/examples.jpg" class="align-center" src="/figures/examples.jpg" style="width: 500px;" />
 <p>This is a companion site for the python package <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a>, developped in the <a class="reference external" href="http://s3.ircam.fr/?lang=en">project/team S3</a> (Sound Signals and Systems) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a>.</p>
 <p>This software is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.</p>
+<img alt="/galleries/intro/intro2.jpg" class="align-center" src="/galleries/intro/intro2.jpg" style="width: 650px;" />
 <p>It was initially developed between 2012 and 2016 as a part of the PhD project of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a>, under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>,  through a funding from French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130), and in connection with the French National Research Agency project <a class="reference external" href="https://hamecmopsys.ens2m.fr/">HaMecMoPSys</a>.</p>
 <div class="section" id="licence">
 <h1>Licence</h1>
@@ -8,20 +9,15 @@
 </div>
 <div class="section" id="installation">
 <h1>Installation</h1>
-<ul>
-<li><p class="first">Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</p>
-<blockquote>
-<pre class="code text"><a name="rest_code_701f4deb947643a38415726687e66167-1"></a>pip install pyphs
-</pre></blockquote>
-</li>
-<li><p class="first">See the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>.</p>
-</li>
-<li><p class="first">For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</p>
-<blockquote>
-<pre class="code text"><a name="rest_code_4174dfb560534518bd8423cb3f0c5c69-1"></a>conda install -c afalaize pyphs
-</pre></blockquote>
-</li>
-</ul>
+<dl class="docutils">
+<dt>Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</dt>
+<dd><div class="first last"><pre class="code text"><a name="rest_code_1801239792a5477aa74ea31ef9b936ab-1"></a>pip install pyphs
+</pre></div></dd>
+<dt>For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</dt>
+<dd><div class="first last"><pre class="code text"><a name="rest_code_339f0ecd3abb4381a884f55f1173d22c-1"></a>conda install -c afalaize pyphs
+</pre></div></dd>
+</dl>
+<p>See also the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>.</p>
 </div>
 <div class="section" id="introduction">
 <h1>Introduction</h1>
@@ -31,17 +27,23 @@
 <li>power dissipating parts and</li>
 <li>source parts.</li>
 </ul>
-<p>This guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method.</p>
-<img alt="/figures/examples.jpg" class="align-center" src="/figures/examples.jpg" style="width: 500px;" />
-<img alt="/figures/examples2.jpg" class="align-center" src="/figures/examples2.jpg" style="width: 400px;" />
-<ol class="arabic simple">
-<li>Systems are described by directed multi-graphs.</li>
-<li>The time-continuous port-Hamiltonian structure is build from an automated graph analysis.</li>
-<li>The discrete-time port-Hamiltonian structure is derived from a structure preserving numerical method.</li>
-<li><strong>LaTeX</strong> description code and <strong>C++</strong> simulation code are automatically generated.</li>
-</ol>
 <img alt="/galleries/intro/intro1.jpg" class="align-center" src="/galleries/intro/intro1.jpg" style="width: 650px;" />
-<img alt="/galleries/intro/intro2.jpg" class="align-center" src="/galleries/intro/intro2.jpg" style="width: 650px;" />
+<p>This guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method.</p>
+<ol class="arabic simple">
+<li>Systems are described by directed multi-graphs:</li>
+</ol>
+<ul class="simple">
+<li>use of <a class="reference external" href="https://networkx.github.io/">Networkx MultiDiGraph</a> for graph structure,</li>
+<li>use of <a class="reference external" href="http://www.sympy.org/">Sympy</a> for symbolic computations.</li>
+</ul>
+<ol class="arabic simple" start="2">
+<li>The time-continuous port-Hamiltonian structure is build from an automated graph analysis (see <a class="citation-reference" href="#graphanalysis2016" id="id1">[GraphAnalysis2016]</a>).</li>
+<li>The discrete-time port-Hamiltonian structure is derived from a structure preserving numerical method (see <a class="citation-reference" href="#numericalmethod2015" id="id2">[NumericalMethod2015]</a>).</li>
+<li><strong>LaTeX</strong> description code and <strong>C++</strong> simulation code are automatically generated:</li>
+</ol>
+<ul class="simple">
+<li>Use of <a class="reference external" href="http://www.sympy.org/">Sympy</a> <a class="reference external" href="http://docs.sympy.org/latest/modules/printing.html#module-sympy.printing.ccode">Latex</a> and <a class="reference external" href="http://docs.sympy.org/latest/modules/printing.html#module-sympy.printing.ccode">CCode</a> printers.</li>
+</ul>
 </div>
 <div class="section" id="example">
 <h1>Example</h1>
@@ -98,13 +100,13 @@
 <div class="section" id="perform-graph-analysis">
 <h2>2. Perform graph analysis</h2>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_08b187bfd0324748b73a502ab995b2fe-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_08b187bfd0324748b73a502ab995b2fe-2"></a><span class="n">dlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dlc&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
-<a name="rest_code_08b187bfd0324748b73a502ab995b2fe-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">&#39;dlc_netlist.net&#39;</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_78e26c8c4b424a7b80b9dbdd64fecfa8-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_78e26c8c4b424a7b80b9dbdd64fecfa8-2"></a><span class="n">dlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dlc&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
+<a name="rest_code_78e26c8c4b424a7b80b9dbdd64fecfa8-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">&#39;dlc_netlist.net&#39;</span><span class="p">)</span>
 </pre></div>
 <div class="section" id="export-latex">
 <h2>3. Export <strong>LaTeX</strong></h2>
-<pre class="code python"><a name="rest_code_3f3532a10ca14c868470a0cb1c1d216d-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_6ed13e590d05486bb2c8e6a6e05f9922-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre><p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
 <li><a class="reference external" href="/pyphs_outputs/dlc/tex/dlc.tex">dlc.tex</a></li>
@@ -116,9 +118,9 @@
 </div>
 <div class="section" id="export-c">
 <h2>4. Export <strong>C++</strong></h2>
-<pre class="code python"><a name="rest_code_25b4101b5050418790320ecabd92df5d-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<a name="rest_code_25b4101b5050418790320ecabd92df5d-2"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_25b4101b5050418790320ecabd92df5d-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_376454ca102a46a48f63dbbef86b5acd-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a name="rest_code_376454ca102a46a48f63dbbef86b5acd-2"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_376454ca102a46a48f63dbbef86b5acd-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre><p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">
 <li><a class="reference external" href="/pyphs_outputs/dlc/cpp/phobj.cpp">phobj.cpp</a></li>
@@ -127,6 +129,21 @@
 <li><a class="reference external" href="/pyphs_outputs/dlc/cpp/data.h">data.h</a></li>
 <li><a class="reference external" href="/pyphs_outputs/dlc/cpp/main.cpp">main.cpp</a></li>
 </ul>
-<p>The compilation and execution of <strong>main.cpp</strong> run the passive simulation (no input here).</p>
+<p>The compilation and execution of <strong>main.cpp</strong> run the passive simulation (but, first, you must specify a sequence of input values).</p>
 </div>
+</div>
+<div class="section" id="references">
+<h1>References</h1>
+<table class="docutils citation" frame="void" id="graphanalysis2016" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[GraphAnalysis2016]</a></td><td>Falaize, A., &amp; Hélie, T. (2016). Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach. Applied Sciences, 6(10), 273.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="numericalmethod2015" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[NumericalMethod2015]</a></td><td>Lopes, N., Hélie, T., &amp; Falaize, A. (2015). Explicit second-order accurate method for the passive guaranteed simulation of port-Hamiltonian systems. IFAC-PapersOnLine, 48(13), 223-228.</td></tr>
+</tbody>
+</table>
 </div>

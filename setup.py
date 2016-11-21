@@ -16,7 +16,7 @@ __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
 __author_email__ = 'antoine.falaize@gmail.com'
-__version__ = '0.1.9b7_DEV'
+__version__ = '0.1.9c0_DEV'
 
 ###############################################################################
 
@@ -43,7 +43,26 @@ setup(name='pyphs',
       author=__author__,
       author_email=__author_email__,
       license=__licence__,
-      packages=['pyphs'],
+      packages=['pyphs', 
+      			'pyphs.symbolics',
+      			'pyphs.symbolics.structures',
+      			'pyphs.simulations',
+      			'pyphs.plots',
+      			'pyphs.numerics',
+      			'pyphs.misc',
+      			'pyphs.misc.signals',
+      			'pyphs.graphs',
+      			'pyphs.graphs.analysis',
+      			'pyphs.generation',
+      			'pyphs.generation.codelatex',
+      			'pyphs.generation.codecpp',
+      			'pyphs.dictionary',
+      			'pyphs.dictionary.classes',
+      			'pyphs.dictionary.classes.connectors',
+      			'pyphs.dictionary.classes.linears.',
+      			'pyphs.dictionary.classes.nonlinears',
+      			'pyphs.data',
+      			],
       zip_safe=False,
       install_requires=[
           'numpy',

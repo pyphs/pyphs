@@ -47,7 +47,7 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.1.9b7_DEV'
+__version__ = '0.1.9c0_DEV'
 __author_email__ = 'antoine.falaize@gmail.com'
 
 
@@ -90,42 +90,42 @@ got %s' % type(label)
         paths._init_paths(self, path)
 
         # Include the pyphs.symbolics tools
-        from pyphs.symbolics.symbols import Symbols
+        from symbolics.symbols import Symbols
         setattr(self, 'symbs', Symbols())
 
         # Include the pyphs.structures.dimensions tools
-        from pyphs.symbolics.structures.dimensions import Dimensions
+        from symbolics.structures.dimensions import Dimensions
         setattr(self, 'dims', Dimensions(self))
 
         # Include the pyphs.structures.indices tools
-        from pyphs.symbolics.structures.indices import Indices
+        from symbolics.structures.indices import Indices
         setattr(self, 'inds', Indices(self))
 
         # Include the pyphs.structures.indices tools
-        from pyphs.symbolics.structures.structure import Structure
+        from symbolics.structures.structure import Structure
         setattr(self, 'struc', Structure(self))
 
         # Include the pyphs.expressions tools
-        from pyphs.symbolics.expressions import Expressions
+        from symbolics.expressions import Expressions
         setattr(self, 'exprs', Expressions(self))
 
         # Include the pyphs.expressions tools
-        from pyphs.numerics.numeric import Functions
+        from numerics.numeric import Functions
         setattr(self, 'funcs', Functions(self))
 
         # Include the pyphs.simulation tools
-        from pyphs.simulations.simulation import Simulation
+        from simulations.simulation import Simulation
         setattr(self, 'simu', Simulation(self))
 
         # Include the pyphs.data tools
-        from pyphs.data.data import Data
+        from data.data import Data
         setattr(self, 'data', Data(self))
 
         # Include the pyphs.graphs tools
-        from pyphs.graphs.graph import Graph
+        from graphs.graph import Graph
         setattr(self, 'graph', Graph())
         
-        from pyphs.misc.signals.synthesis import signalgenerator
+        from misc.signals.synthesis import signalgenerator
         self.signalgenerator = signalgenerator
         
     ###########################################################################

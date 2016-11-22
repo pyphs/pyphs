@@ -8,7 +8,8 @@ Created on Sat May 21 16:31:24 2016
 import numpy as np
 
 from pyphs import PortHamiltonianObject
-from pyphs.dictionary.classes.linears.dissipatives import LinearDissipationFreeCtrl
+from pyphs.dictionary.classes.linears.dissipatives import \
+    LinearDissipationFluxCtrl, LinearDissipationEffortCtrl
 from pyphs.dictionary.classes.linears.storages import LinearStorageFluxCtrl, \
     LinearStorageEffortCtrl
 from pyphs.dictionary.connectors import Transformer
@@ -40,7 +41,7 @@ class Fracderec(PortHamiltonianObject):
         datum =  self.graph.netlist.datum
         for n in range(nbPoles):
             
-            Rn = diagRmu[n]**(-1) # here, diagRmu[n] is a conductance (effort-controlled)
+            Rn = diagRmu[n]**(-1) # here, diagRmu[n] is a conductance (e-ctrl)
             Ndeb = nodes[0]
             N1 = 'N'+label+str(n)+"_2"
             self += LinearDissipationEffortCtrl(label+'R'+str(n), 
@@ -128,18 +129,19 @@ class Fracintec(PortHamiltonianObject):
         nbPoles = diagRmu.__len__()
 
         for n in range(nbPoles):
-            Rn = diagRmu[n] # here, diagRmu[n] is a resistance (flux-controlled)
+            Rn = diagRmu[n] # here, diagRmu[n] is a resistance (f-ctrl)
             Nend = nodes[1]
             Ncomp = 'N'+label
-            self += LinearDissipationFluxCtrl(label+'R'+str(n), 
+            self += LinearDissipationFluxCtrl('R'+label+str(n), 
                                               (Ncomp, Nend), 
                                               coeff=Rn)
 
             Qn = diagQmu[n]
             Ndeb = nodes[0]
-            self += LinearStorageEffortCtrl(label+'Q'+str(n), 
+            self += LinearStorageEffortCtrl(label+str(n), 
                                            (Ndeb, Ncomp), 
-                                           coeff=Qn,
+                                           value=Qn,
+                                           name='L'+label+str(n),
                                            inv_coeff=True)
 
 class Fracintfc(PortHamiltonianObject):
@@ -180,8 +182,10 @@ class Fracintfc(PortHamiltonianObject):
                                            inv_coeff=True)
            
 
-def fractionalIntegratorWeights(p, beta, NbPoles=20, OptimPolesMinMax=(-10,10),  NbFreqPoints=200, OptimFreqsMinMax=(1, 48e3), DoPlot=True):
-    
+def fractionalIntegratorWeights(p, beta, NbPoles=10, OptimPolesMinMax=(-10,10),
+                                NbFreqPoints=200, OptimFreqsMinMax=(1, 48e3),
+                                DoPlot=False):
+    print(DoPlot)
     # Defintion of the frequency grid
     fmin, fmax = OptimFreqsMinMax
     wmin, wmax = 2*np.pi*fmin, 2*np.pi*fmax 

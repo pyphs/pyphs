@@ -77,7 +77,7 @@ def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
             'arguments': {'M': ('M', M)}}
     phs.graph.netlist.add_line(mass)
 
-    # raideur
+    # ressort cubic
     stifness = {'dictionary': 'mechanics',
                 'component': 'springcubic',
                 'label': 'K',

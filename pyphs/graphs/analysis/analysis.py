@@ -130,7 +130,7 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
                     self.link_connector(e, 'f')
 
     def perform(self):
-        # init memory of lambda to check for change or stop while loop
+        # init memory of lambda to: check for change or stop while loop
         lambd_temp = numpy.zeros(self.lambd.shape)
         # realizability analysis on the ic_edges
         while (len(self.ic_edges) + len(self.ic_nodes) > 0):

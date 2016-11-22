@@ -52,4 +52,5 @@ port-Hamiltonian systems.
             component_phs = component(line['label'],
                                       line['nodes'],
                                       **line['arguments'])
+            print(dic, klass)
             phs += component_phs

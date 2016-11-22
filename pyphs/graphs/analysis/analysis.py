@@ -145,7 +145,8 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
                 self.iterate_ic()
                 # iterate on indeterminate nodes
                 self.iterate_nodes()
-            # if locked, perform unlock
+                # if locked, perform unlock
+                print sum((lambd_temp-self.lambd)**2)
             if isequal(lambd_temp, self.lambd):
                 self.unlock()
         print '\n*** Realizability analysis succeed ***\n'

@@ -16,7 +16,7 @@ __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
 __author_email__ = 'antoine.falaize@gmail.com'
-__version__ = '0.1.9c1_DEV'
+__version__ = '0.1.9c2_DEV'
 
 ###############################################################################
 

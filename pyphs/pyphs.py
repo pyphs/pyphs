@@ -47,7 +47,7 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.1.9c2_DEV'
+__version__ = '0.1.9c21_DEV'
 __author_email__ = 'antoine.falaize@gmail.com'
 
 
@@ -132,7 +132,10 @@ got %s' % type(label)
 
     def __add__(phs1, phs2):
         label = phs1.label
-        path = phs1.path
+        if hasattr(phs1, 'path'):
+            path = phs1.path
+        else:
+            path = None
         phs = PortHamiltonianObject(label=label, path=path)
         for attr in ['symbs', 'exprs', 'struc', 'graph']:
             sumattrs = getattr(phs1, attr) + getattr(phs2, attr)
@@ -203,9 +206,9 @@ got %s' % type(label)
         """
         self.graph.netlist.read(filename)
         self.graph.build_from_netlist(self)
-        self.graph._perform_analysis()
-        self.graph.analysis.build_phs(self)
-        self.apply_connectors()
+#        self.graph._perform_analysis()
+#        self.graph.analysis.build_phs(self)
+#        self.apply_connectors()
 
     ###########################################################################
 

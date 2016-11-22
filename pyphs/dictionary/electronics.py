@@ -132,7 +132,7 @@ class Resistor(LinearDissipationFreeCtrl):
     """
     def __init__(self, label, nodes, **kwargs):
         if kwargs['R'] is None:
-            coeff = 0.
+            coeff = float('Inf')
         else:
             coeff = kwargs['R']
         LinearDissipationFreeCtrl.__init__(self, label, nodes, coeff=coeff)

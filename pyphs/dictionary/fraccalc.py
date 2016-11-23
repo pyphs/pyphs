@@ -123,7 +123,8 @@ class Fracintec(PortHamiltonianObject):
         else:
             alpha = kwargs.pop('alpha')
 
-        diagRmu, diagQmu = fractionalDifferenciatorWeights(p, alpha, **kwargs)
+        print(p, alpha)
+        diagRmu, diagQmu = fractionalIntegratorWeights(p, alpha, **kwargs)
         
         # Truncation of poles with null Q
         nbPoles = diagRmu.__len__()
@@ -161,7 +162,7 @@ class Fracintfc(PortHamiltonianObject):
         else:
             alpha = kwargs.pop('alpha')
 
-        diagRmu, diagQmu = fractionalDifferenciatorWeights(p, alpha, **kwargs)
+        diagRmu, diagQmu = fractionalIntegratorWeights(p, alpha, **kwargs)
         
         # Truncation of poles with null Q
         nbPoles = diagRmu.__len__()
@@ -185,7 +186,6 @@ class Fracintfc(PortHamiltonianObject):
 def fractionalIntegratorWeights(p, beta, NbPoles=10, OptimPolesMinMax=(-10,10),
                                 NbFreqPoints=200, OptimFreqsMinMax=(1, 48e3),
                                 DoPlot=False):
-    print(DoPlot)
     # Defintion of the frequency grid
     fmin, fmax = OptimFreqsMinMax
     wmin, wmax = 2*np.pi*fmin, 2*np.pi*fmax 

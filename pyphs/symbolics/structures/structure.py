@@ -33,17 +33,15 @@ class Structure:
         return concatenation of structures for phs 1 and 2 with \
 M = block_diag(M1, M2).
         """
-        struc = struc1
         for vari in dims_names:
             for varj in dims_names:
                 Mij1 = getattr(struc1, 'M'+vari+varj)()
                 Mij2 = getattr(struc2, 'M'+vari+varj)()
                 Mij1 = sympy.diag(Mij1, Mij2)
-                # getattr(struc, 'set_M'+vari+varj)(Mij1)
-                set_func = getattr(struc, 'set_M'+vari+varj)
+                set_func = getattr(struc1, 'set_M'+vari+varj)
                 set_func(Mij1)
-        struc.connectors += struc2.connectors
-        return struc
+        struc1.connectors += struc2.connectors
+        return struc1
 
     def _build_getset(self, phs, dims_names=None):
         """
@@ -106,7 +104,7 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
         set bloc (""" + vari + ', ' + varj + """) of structure matrix """ + \
             name + """ to val
         """
-        if struct.M.shape[0] != phs.dims.tot():
+        if struct.M.shape != (phs.dims.tot(), phs.dims.tot()):
             struct.M = sympy.zeros(phs.dims.tot())
         if name == 'J':
             Jab = sympy.Matrix(val)

@@ -56,8 +56,8 @@ def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
     fracintec = {'dictionary': 'fraccalc',
                 'component': 'fracintec',
                 'label': 'L',
-                'nodes': ('B', 'C'),
-                'arguments': {'p': ('L', L), 'alpha': 0.5}}
+                'nodes': ('B', datum),
+                'arguments': {'p': L, 'alpha': 0.5}}
     phs.graph.netlist.add_line(fracintec)
 #
 #    # gyrator

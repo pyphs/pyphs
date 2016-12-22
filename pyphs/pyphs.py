@@ -88,7 +88,7 @@ the components of the dictionary)
         # define path
         if path == 'cwd':
             phs_path = os.getcwd()
-        elif path is 'None':
+        elif path is None:
             phs_path = os.getcwd() + os.path.sep + phobj.label
         else:
             assert isinstance(path, str)

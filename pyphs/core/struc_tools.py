@@ -5,9 +5,9 @@ Created on Thu Jun  9 11:46:11 2016
 @author: Falaize
 """
 import sympy
-from pyphs.symbolics.calculus import hessian, jacobian
-from pyphs.symbolics.tools import simplify
-from pyphs.misc.tools import myrange, geteval
+from pyphs.core.calculus import hessian, jacobian
+from pyphs.core.symbs_tools import simplify
+from pyphs.core.misc_tools import myrange, geteval
 
 
 def moveJcolnrow(phs, indi, indf):

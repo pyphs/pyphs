@@ -11,13 +11,6 @@ from pyphs.misc.timer import timeout
 ###############################################################################
 
 
-def symbols(obj):
-    """
-    assert all symbols are real
-    """
-    return sympy.symbols(obj, real=True)
-
-
 def _simplify_expr(expr):
     assert isinstance(expr, sympy.Expr),\
         "{0!s}\nexpr should be sp.Expr, got {1!s}".format(expr, type(expr))

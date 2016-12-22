@@ -40,6 +40,9 @@ Created on Thu Jun  2 21:33:07 2016
 @author: Antoine Falaize
 """
 
+from core.core import PHSCore
+from numerics.numeric import Functions
+
 ###############################################################################
 
 
@@ -52,6 +55,55 @@ __author_email__ = 'antoine.falaize@gmail.com'
 
 
 ###############################################################################
+
+class PHSObject:
+    def __init__(self, label=None, path=None):
+
+        # object label
+        if label is None:
+            label = 'dummy_phs'
+        else:
+            assert isinstance(label, str), 'label argument should be a str, \
+got %s' % type(label)
+        self.label = label
+
+        _init_paths(self, path)
+
+        setattr(self, 'core', PHSCore())
+        setattr(self, 'numerics', Functions(self.core))
+
+
+def _init_paths(phobj, path):
+    """
+    set path for PHSObject 'phs'.
+        * if path is None, a new folder with phs label is created in \
+current working directory;
+        * if path is 'cwd', current working directory is used;
+        * if path is 'no_path', no path is defined (do not use except for \
+the components of the dictionary)
+        * if path is any other string, it is used for the system's path.
+    """
+    import os
+    if not path == 'no_path':
+        assert isinstance(path, str)
+        # define path
+        if path is 'cwd':
+            phs_path = os.getcwd()
+        elif path is 'None':
+            phs_path = os.getcwd() + os.path.sep + phobj.label
+        else:
+            phs_path = path
+        # make dir if not existing
+        if not os.path.exists(phs_path):
+            os.makedirs(phs_path)
+        # Define path for exports (plots, waves, tex, c++, etc...)
+        phobj.path = phs_path
+        phobj.paths = {'tex': phs_path+os.sep+'tex',
+                       'cpp': phs_path+os.sep+'cpp',
+                       'main': phs_path,
+                       'figures': phs_path+os.sep+'figures',
+                       'data': phs_path+os.sep+'data',
+                       'graph': phs_path+os.sep+'graph'}
 
 
 class PortHamiltonianObject:
@@ -124,10 +176,10 @@ got %s' % type(label)
         # Include the pyphs.graphs tools
         from graphs.graph import Graph
         setattr(self, 'graph', Graph(self))
-        
+
         from misc.signals.synthesis import signalgenerator
         self.signalgenerator = signalgenerator
-        
+
     ###########################################################################
 
     def __add__(phs1, phs2):
@@ -533,4 +585,3 @@ phs.paths['wav'].
         phs.symbs.cy = []
         phs.symbs.cu =[]
         phs.struc.connectors = []
-        

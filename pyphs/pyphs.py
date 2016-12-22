@@ -85,13 +85,13 @@ the components of the dictionary)
     """
     import os
     if not path == 'no_path':
-        assert isinstance(path, str)
         # define path
-        if path is 'cwd':
+        if path == 'cwd':
             phs_path = os.getcwd()
         elif path is 'None':
             phs_path = os.getcwd() + os.path.sep + phobj.label
         else:
+            assert isinstance(path, str)
             phs_path = path
         # make dir if not existing
         if not os.path.exists(phs_path):

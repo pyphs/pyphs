@@ -61,7 +61,7 @@ def lambdify(args, expr, subs=None, simplify=True):
         from pyphs.core.symbs_tools import simplify as simp
         expr = simp(expr)
 
-    lambda_expr = sympy.lambdify(*args, expr, modules='numpy', dummify=False)
+    lambda_expr = sympy.lambdify(args, expr, modules='numpy', dummify=False)
 
     def func(*args_):
         return lambda_expr(*[numpy.array(a) for a in args_])
@@ -100,7 +100,7 @@ class Functions:
                 for i, expr_i in enumerate(expr):
                     expr[i] = expr_i.subs(self.core.subs)
             else:
-                expr = expr.subs(self.phs.symbs.subs)
+                expr = expr.subs(self.core.subs)
             func, args, inds = self._expr_to_numerics(expr,
                                                       self.core.args())
             setattr(self, name, func)

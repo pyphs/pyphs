@@ -47,7 +47,7 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.1.9c3_DEV'
+__version__ = '0.2_DEV'
 __author_email__ = 'antoine.falaize@gmail.com'
 
 
@@ -123,7 +123,7 @@ got %s' % type(label)
 
         # Include the pyphs.graphs tools
         from graphs.graph import Graph
-        setattr(self, 'graph', Graph())
+        setattr(self, 'graph', Graph(self))
         
         from misc.signals.synthesis import signalgenerator
         self.signalgenerator = signalgenerator
@@ -137,9 +137,36 @@ got %s' % type(label)
         else:
             path = None
         phs = PortHamiltonianObject(label=label, path=path)
-        for attr in ['symbs', 'exprs', 'struc', 'graph']:
+        for attr in ['symbs', 'exprs', 'graph']:
+#            print(attr)
+#            print('phs1:', phs1.label)
+#            print('x', phs1.symbs.x)
+#            print('w', phs1.symbs.w)
+#            print('u', phs1.symbs.u)
+#            print('struc.M', phs1.struc.M)
+#            print('struc.Mxx()', phs1.struc.Mxx())
+#            print('phs2:', phs2.label)
+#            print('x', phs2.symbs.x)
+#            print('w', phs2.symbs.w)
+#            print('u', phs2.symbs.u)
+#            print('struc.M', phs2.struc.M)
+#            print('struc.Mxx()', phs2.struc.Mxx())
             sumattrs = getattr(phs1, attr) + getattr(phs2, attr)
             setattr(phs, attr, sumattrs)
+
+        # concatenation of phs structures 1 and 2 with M=block_diag(M1,M2).
+        from symbolics.structures.dimensions import dims_names
+        import sympy
+        for vari in dims_names:
+            for varj in dims_names:
+                Mij1 = getattr(phs1.struc, 'M'+vari+varj)()
+                Mij2 = getattr(phs2.struc, 'M'+vari+varj)()
+                Mij = sympy.diag(Mij1, Mij2)
+                if all([dim>0 for dim in Mij.shape]):
+                    set_func = getattr(phs.struc, 'set_M'+vari+varj)
+                    set_func(Mij)
+        phs.struc.connectors += phs1.struc.connectors
+        phs.struc.connectors += phs2.struc.connectors
         return phs
 
     ###########################################################################
@@ -193,7 +220,8 @@ got %s' % type(label)
 
     def symbols(self, obj):
         """
-        Standard symbols in PyPHS are REAL sympy.Symbol instances.
+        Standard symbols in PyPHS are sympy.Symbol instances with REAL \
+assumption.
         """
         from symbolics.tools import symbols
         return symbols(obj)
@@ -205,7 +233,9 @@ got %s' % type(label)
         build phs structure from netlist 'filename'
         """
         self.graph.netlist.read(filename)
-        self.graph.build_from_netlist(self)
+        self.graph.build_from_netlist()
+        print(self.symbs.x)
+        print(self.symbs.w)
         self.graph._perform_analysis()
         self.graph.analysis.build_phs(self)
         self.apply_connectors()

@@ -6,7 +6,6 @@ Created on Fri Jun  3 14:29:46 2016
 """
 import sympy
 from pyphs.misc.tools import geteval
-from dimensions import dims_names
 
 
 class Structure:
@@ -17,6 +16,7 @@ class Structure:
     * set_Mxx(): set bloc (x, x) of M
     """
     def __init__(self, phs):
+        self._phs = phs
         self._names = list()
         self.connectors = list()
         self.M = sympy.zeros(0)
@@ -28,20 +28,23 @@ class Structure:
                 lambda mat, name: _build_set_mat(phs, self, mat, name))
         self._build_getset(phs)
 
-    def __add__(struc1, struc2):
-        """
-        return concatenation of structures for phs 1 and 2 with \
-M = block_diag(M1, M2).
-        """
-        for vari in dims_names:
-            for varj in dims_names:
-                Mij1 = getattr(struc1, 'M'+vari+varj)()
-                Mij2 = getattr(struc2, 'M'+vari+varj)()
-                Mij1 = sympy.diag(Mij1, Mij2)
-                set_func = getattr(struc1, 'set_M'+vari+varj)
-                set_func(Mij1)
-        struc1.connectors += struc2.connectors
-        return struc1
+# The following has been moved to the pyphs.PortHamiltonianObject __add__ method
+# Because the struc init must correspond to theresult of phobj summation.
+#    def __add__(struc1, struc2):
+#        """
+#        return concatenation of structures for phs 1 and 2 with \
+#M = block_diag(M1, M2).
+#        """
+#        struc = 
+#        for vari in dims_names:
+#            for varj in dims_names:
+#                Mij1 = getattr(struc1, 'M'+vari+varj)()
+#                Mij2 = getattr(struc2, 'M'+vari+varj)()
+#                Mij = sympy.diag(Mij1, Mij2)
+#                set_func = getattr(struc, 'set_M'+vari+varj)
+#                set_func(Mij)
+#        struc.connectors += struc2.connectors
+#        return struc
 
     def _build_getset(self, phs, dims_names=None):
         """
@@ -65,13 +68,13 @@ M = block_diag(M1, M2).
 
     def J(self):
         """
-        return conservative part of structure matrix M = J - R
+        return conservative (skew-symetric) part of structure matrix M = J - R
         """
         return (self.M - self.M.T)/2.
 
     def R(self):
         """
-        return resistive part of structure matrix M = J - R
+        return resistive (symetric) part of structure matrix M = J - R
         """
         return -(self.M + self.M.T)/2.
 
@@ -104,7 +107,7 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
         set bloc (""" + vari + ', ' + varj + """) of structure matrix """ + \
             name + """ to val
         """
-        if struct.M.shape != (phs.dims.tot(), phs.dims.tot()):
+        if struct.M.shape[0] != phs.dims.tot():
             struct.M = sympy.zeros(phs.dims.tot())
         if name == 'J':
             Jab = sympy.Matrix(val)
@@ -121,11 +124,11 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
         if name == 'M':
             Mab = sympy.Matrix(val)
             Mba = getattr(struct, 'M'+varj + vari)()
-
         debi, endi = getattr(phs.inds, vari)()
         debj, endj = getattr(phs.inds, varj)()
         struct.M[debi:endi, debj:endj] = sympy.Matrix(Mab)
-        struct.M[debj:endj, debi:endi] = sympy.Matrix(Mba)
+        if vari != varj:
+            struct.M[debj:endj, debi:endi] = sympy.Matrix(Mba)
 
     return set_mat
 

@@ -54,10 +54,10 @@ def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
 
     # fractional inductor
     fracintec = {'dictionary': 'fraccalc',
-                'component': 'fracintec',
+                'component': 'int_e',
                 'label': 'L',
                 'nodes': ('B', datum),
-                'arguments': {'p': L, 'alpha': 0.5}}
+                'arguments': {'p': L, 'beta': 0.5}}
     phs.graph.netlist.add_line(fracintec)
 #
 #    # gyrator
@@ -152,4 +152,7 @@ def run_test(clean=True):
 
 
 if __name__ is '__main__':
-    succeed = run_test(clean=True)
+    phs = init_phs()
+    write_netlist(phs)
+    build_graph(phs)
+#    succeed = run_test(clean=True)

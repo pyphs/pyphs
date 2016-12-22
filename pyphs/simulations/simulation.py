@@ -5,8 +5,8 @@ Created on Tue May 24 11:20:26 2016
 @author: Falaize
 """
 
-from processes import process_py, process_cpp
-import config
+from pyphs.simulations.processes import process_py, process_cpp
+from pyphs.simulations.tools import standard
 import time
 
 
@@ -36,7 +36,7 @@ class Simulation:
         """
 
         # init config with standard configuration options
-        self.config = config.standard
+        self.config = standard
         # update with provided opts
         if opts is None:
             opts = {}

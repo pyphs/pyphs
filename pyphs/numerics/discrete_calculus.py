@@ -5,7 +5,7 @@ Created on Fri Jun  3 01:46:04 2016
 @author: Falaize
 """
 import sympy
-from config import EPS
+from pyphs.conf import EPS
 from pyphs.symbolics.tools import _assert_expr, _assert_vec, simplify
 
 

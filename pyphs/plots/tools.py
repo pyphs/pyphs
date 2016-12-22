@@ -22,13 +22,13 @@ def activate_latex(opts):
     """
     # Path for latex compiler
     import os
-    from pyphs.generation.codelatex.config import compiler_path
+    from pyphs.conf import compiler_path
     os.environ['PATH'] = os.environ['PATH'] + compiler_path
     # Activate use of latex expressions
     from matplotlib.pyplot import rc
     rc('text', usetex=opts['latex'])
     # Add Latex Preamble
-    from pyphs.plots.config import latex_preamble
+    from pyphs.conf import latex_preamble
     from matplotlib import rcParams
     rcParams['text.latex.preamble'] = latex_preamble
 
@@ -141,3 +141,36 @@ def whichplot(which, axe):
         return axe.semilogy
     elif which == 'xy':
         return axe.loglog
+
+
+from pyphs.conf import plot_format
+standard = {'loc': 1,									# legend location
+            'unitx': None,								# x axis label
+            'unity': None,								# y axis label	
+            'linestyles': ('-b', '--r', '-.g', ':m'),	# styles (1->4 lines)
+            'axedef': (.15, .15, .75, .75, .1, .3),		# left,bottom,right,top
+            'fontsize': 20,								# 
+            'log': None,								# logscale: 'x','y','xy'
+            'legendfontsize': None,						# 
+            'linewidth': 2.5,								# 
+            'figsize': (7., 6.),						# 
+            'nbinsx': 5,								# number of x axis ticks
+            'nbinsy': 5,								# number of y axis ticks
+            'minor': True,								# Show minor grid
+            'markersize': 6,							# 
+            'markeredgewidth': 0.5,						# 
+            'latex': False,								# Latex rendering
+            'maxnplot': int(1e5),						# max number of line bins 
+            											# before decimation
+            'ylims': 'extend',							# 
+            'format': plot_format,						# 
+            'limits': None,								# 
+            'labels': None,								# 
+            'maintitle': None,							# 
+            'filelabel': None,							# 
+            'nfft': 2**12,								# 
+            'colormap': 'BuPu',							# 
+            'xpos_ylabel': -0.08,						# 
+            'cmap': 'BuPu',  #  'inferno',  #'gnuplot2', # 'CMRmap',  # 'PuBu',
+            'dpi': 100,									#	 
+            }

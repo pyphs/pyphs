@@ -1,3 +1,0 @@
-electronics.source IN ('A', 'ref'): type='voltage';
-electronics.resistor R ('A', 'B'): R=('R', 1000.0);
-fraccalc.fracintec L ('B', 'ref'): p=0.05; alpha=0.5;

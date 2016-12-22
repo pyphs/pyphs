@@ -8,15 +8,16 @@ Created on Sat May 21 16:31:24 2016
 import numpy as np
 
 from pyphs import PortHamiltonianObject
+from pyphs.conf import EPS
 from pyphs.dictionary.classes.linears.dissipatives import \
     LinearDissipationFluxCtrl, LinearDissipationEffortCtrl
 from pyphs.dictionary.classes.linears.storages import LinearStorageFluxCtrl, \
     LinearStorageEffortCtrl
 from pyphs.dictionary.connectors import Transformer
 
-eps = np.finfo(float).resolution
 
-class Fracderec(PortHamiltonianObject):
+
+class Der_e(PortHamiltonianObject):
     """ Fractional Effort Controlled springpot element
     usgae: FracDerEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles]
 
@@ -60,7 +61,7 @@ class Fracderec(PortHamiltonianObject):
                             (N1, Nend, N2, datum),
                             alpha=diagRmu[n]**-1)
 
-class Fracderfc(PortHamiltonianObject):
+class Der_f(PortHamiltonianObject):
     """ Fractional Flux Controlled storage element
     usgae: FracIntEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles, (fmin, fmax)]
 
@@ -106,46 +107,109 @@ class Fracderfc(PortHamiltonianObject):
                             alpha=diagRmu[n]**-1)
 
 
-class Fracintec(PortHamiltonianObject):
-    """ Fractional Flux Controlled storage element
-    usgae: FracIntEffortCtrl label ['n1','n2'] [rAlphaMag, beta ,NbPoles]
+def Int_e(label, nodes, **kwargs):
+    """ 
+Effort-controlled fractional integrator:
+    f(s) = p * s^(-beta) * e(s)
 
+Usage: 
+    fraccalc.Int_e(('n1','n2'): p=1; beta=0.5; NbPoles=10; OptimPolesMinMax=(-10,10);
+                   NbFreqPoints=200; OptimFreqsMinMax=(1, 48e3); DoPlot=False;)
     """
-    def __init__(self, label, nodes, **kwargs):
-        PortHamiltonianObject.__init__(self, label)
-        if 'p' not in kwargs:
-            p = 1
-        else:
-            p = kwargs.pop('p')
+    
+    phs = PortHamiltonianObject(label=label)
 
-        if 'alpha' not in kwargs:
-            alpha = 0.5
-        else:
-            alpha = kwargs.pop('alpha')
+    if 'p' not in kwargs:
+        p = 1
+    else:
+        p = kwargs.pop('p')
 
-        print(p, alpha)
-        diagRmu, diagQmu = fractionalIntegratorWeights(p, alpha, **kwargs)
-        
-        # Truncation of poles with null Q
-        nbPoles = diagRmu.__len__()
+    if 'beta' not in kwargs:
+        beta = 0.5
+    else:
+        beta = kwargs.pop('beta')
 
-        for n in range(nbPoles):
-            Rn = diagRmu[n] # here, diagRmu[n] is a resistance (f-ctrl)
-            Nend = nodes[1]
-            Ncomp = 'N'+label
-            self += LinearDissipationFluxCtrl('R'+label+str(n), 
-                                              (Ncomp, Nend), 
-                                              coeff=Rn)
+    phs.symbs.subs.update({phs.symbols('p_'+label): p,
+                           phs.symbols('beta_'+label): beta})
 
-            Qn = diagQmu[n]
-            Ndeb = nodes[0]
-            self += LinearStorageEffortCtrl(label+str(n), 
+    diagRmu, diagQmu = fractionalIntegratorWeights(p, beta, **kwargs)
+    
+    # Truncation of poles with null Q
+    nbPoles = diagRmu.__len__()
+
+    for n in range(nbPoles):
+        Rn = diagRmu[n] # here, diagRmu[n] is a resistance (f-ctrl)
+        Nend = nodes[1]
+        Ncomp = 'iN_'+label + str(n)
+        temp_phs = LinearDissipationFluxCtrl('R_'+label+str(n), 
+                                             (Ncomp, Nend), 
+                                             coeff=Rn)
+        phs += temp_phs
+
+        Qn = diagQmu[n]
+        Ndeb = nodes[0]
+        temp_phs = LinearStorageEffortCtrl(label+str(n), 
                                            (Ndeb, Ncomp), 
                                            value=Qn,
-                                           name='L'+label+str(n),
+                                           name='pL_',
                                            inv_coeff=True)
+        phs += temp_phs
+    print(phs.symbs.x)
+    print(phs.symbs.w)
+    
+    return phs
+            
+#class Int_e(PortHamiltonianObject):
+#    """ 
+#Effort-controlled fractional integrator:
+#    f(s) = p * s^(-beta) * e(s)
+#
+#Usage: 
+#    fraccalc.Int_e(('n1','n2'): p=1; beta=0.5; NbPoles=10; OptimPolesMinMax=(-10,10);
+#                   NbFreqPoints=200; OptimFreqsMinMax=(1, 48e3); DoPlot=False;)
+#    """
+#    def __init__(self, label, nodes, **kwargs):
+#        PortHamiltonianObject.__init__(self, label)
+#        if 'p' not in kwargs:
+#            p = 1
+#        else:
+#            p = kwargs.pop('p')
+#
+#        if 'beta' not in kwargs:
+#            beta = 0.5
+#        else:
+#            beta = kwargs.pop('beta')
+#
+#        self.symbs.subs.update({self.symbols('p_'+label): p,
+#                                self.symbols('beta_'+label): beta})
+#
+#        diagRmu, diagQmu = fractionalIntegratorWeights(p, beta, **kwargs)
+#        
+#        # Truncation of poles with null Q
+#        nbPoles = diagRmu.__len__()
+#
+#        for n in range(nbPoles):
+#            Rn = diagRmu[n] # here, diagRmu[n] is a resistance (f-ctrl)
+#            Nend = nodes[1]
+#            Ncomp = 'iN_'+label + str(n)
+#            temp_phs = LinearDissipationFluxCtrl('R'+label+str(n), 
+#                                                 (Ncomp, Nend), 
+#                                                 coeff=Rn)
+#            self += temp_phs
+#
+#            Qn = diagQmu[n]
+#            Ndeb = nodes[0]
+#            temp_phs = LinearStorageEffortCtrl(label+str(n), 
+#                                               (Ndeb, Ncomp), 
+#                                               value=Qn,
+#                                               name='L'+label+str(n),
+#                                               inv_coeff=True)
+#            self += temp_phs
+#        print(self.symbs.x)
+#        print(self.symbs.w)
 
-class Fracintfc(PortHamiltonianObject):
+        
+class Int_f(PortHamiltonianObject):
     """ Fractional Flux Controlled storage element
     usgae: FracIntFluxCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles]
 
@@ -222,7 +286,7 @@ def fractionalIntegratorWeights(p, beta, NbPoles=10, OptimPolesMinMax=(-10,10),
    
     # Optimization
     from scipy.optimize import minimize
-    MuOpt = minimize(CostFunction, np.ones(NbPoles), bounds=bnds, tol=eps)
+    MuOpt = minimize(CostFunction, np.ones(NbPoles), bounds=bnds, tol=EPS)
     Mu = MuOpt.x # Get the solution
 
     # Conversion to phs parameters
@@ -299,7 +363,7 @@ def fractionalDifferenciatorWeights(p, alpha, NbPoles=20, OptimPolesMinMax=(-5,1
    
     # Optimization
     from scipy.optimize import minimize
-    MuOpt = minimize(CostFunction, np.ones(NbPoles), bounds=bnds, tol=eps)
+    MuOpt = minimize(CostFunction, np.ones(NbPoles), bounds=bnds, tol=EPS)
     Mu = MuOpt.x # Get the solution
 
     # Conversion to phs parameters

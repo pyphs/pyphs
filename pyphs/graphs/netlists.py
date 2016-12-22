@@ -32,9 +32,9 @@ i-th parameter is defined as 'label_pari'.
         """
         init with filename to read data from 'filename.net'
         """
-        import config
+        from pyphs.conf import datum
         self.filename = filename
-        self.datum = config.datum
+        self.datum = datum
         self.dictionaries = tuple()
         self.components = tuple()
         self.labels = tuple()

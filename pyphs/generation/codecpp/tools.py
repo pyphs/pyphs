@@ -51,7 +51,7 @@ def name2dim(name):
 
 
 def include_Eigen():
-    from config import eigen_path
+    from pyphs.conf import eigen_path
     return '#include <' + eigen_path + '/Eigen/Dense>'
 
 

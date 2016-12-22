@@ -8,7 +8,7 @@ Created on Fri Jun  3 11:26:41 2016
 from sympy.printing.lambdarepr import lambdarepr
 import numpy
 import sympy
-import ast
+
 
 parser_sympy2numpy = {
             'sin': numpy.sin,
@@ -39,6 +39,7 @@ parser_sympy2numpy = {
             'ImmutableDenseMatrix': numpy.array,
             'ImmutableMatrix': numpy.array,
             'Matrix': numpy.array}
+
 
 def lambdify(args, expr, subs=None, simplify=True):
     """

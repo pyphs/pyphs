@@ -5,7 +5,8 @@ Created on Fri Jun  3 01:36:55 2016
 @author: Falaize
 """
 
-from tools import simplify, _assert_expr, _assert_vec
+from pyphs.core.symbs_tools import simplify, _assert_expr, _assert_vec
+import sympy
 
 
 def gradient(scalar_func, vars_, dosimplify=True):
@@ -105,8 +106,6 @@ def jacobian(func, vars_, dosimplify=True):
 
         Jacobian of f with Jac[i, j] = f[i].diff(x[j])
     """
-    import sympy
-    from tools import simplify
     vars_ = _assert_vec(vars_)
     func = _assert_vec(func)
     nv, nf = len(vars_), len(func)

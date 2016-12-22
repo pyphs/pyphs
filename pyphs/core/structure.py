@@ -35,7 +35,7 @@ class Structure:
 #        return concatenation of structures for phs 1 and 2 with \
 #M = block_diag(M1, M2).
 #        """
-#        struc = 
+#        struc =
 #        for vari in dims_names:
 #            for varj in dims_names:
 #                Mij1 = getattr(struc1, 'M'+vari+varj)()
@@ -46,7 +46,7 @@ class Structure:
 #        struc.connectors += struc2.connectors
 #        return struc
 
-    def _build_getset(self, phs, dims_names=None):
+    def _struc_getset(self, phs, dims_names=None):
         """
         define atttributes set and get for all structure matrices
         """
@@ -56,9 +56,9 @@ class Structure:
             for vari in dims_names:
                 for varj in dims_names:
                     self._set_block(part, part+vari+varj, (vari, varj))
-        
 
-    def _set_block(self, part, name, dims_names):
+
+    def _struc_setblock(self, part, name, dims_names):
         "effectively adds get and set attributes"
         self._names += (name, )
         setattr(self,

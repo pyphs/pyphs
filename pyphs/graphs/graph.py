@@ -14,7 +14,9 @@ class Graph(nx.MultiDiGraph):
     Class that stores and manipulates graph representation of \
 port-Hamiltonian systems.
     """
-    def __init__(self):
+    def __init__(self, phs):
+        
+        self._phs = phs
         nx.MultiDiGraph.__init__(self)
 
         from netlists import Netlist
@@ -36,7 +38,7 @@ port-Hamiltonian systems.
             self._build_analysis()
         self.analysis.perform()
 
-    def build_from_netlist(self, phs):
+    def build_from_netlist(self):
         """
         build the graph of the system from the netlist structure (see \
     'netlists' module).
@@ -52,4 +54,6 @@ port-Hamiltonian systems.
             component_phs = component(line['label'],
                                       line['nodes'],
                                       **line['arguments'])
-            phs += component_phs
+            self._phs += component_phs
+            print(self._phs.symbs.x)
+            print(self._phs.symbs.w)

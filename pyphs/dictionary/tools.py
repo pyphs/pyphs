@@ -60,3 +60,11 @@ for parameters in component expression 'dicpars' and for parameters in phs \
         dicpars.update({symbols(key): symb})
         subs.update(sub)
     return dicpars, subs
+    
+
+def nice_var_label(var, label):
+    """
+    return a formated string eg. xcapa if 'var' is 'x' and label is 'capa'.
+    """
+    return var + label
+

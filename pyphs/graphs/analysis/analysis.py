@@ -7,7 +7,7 @@ Created on Sun Jun  5 08:54:45 2016
 import networkx
 import numpy
 from pyphs.misc.tools import myrange
-from pyphs.graphs.config import datum
+from pyphs.conf import datum
 from pyphs.misc.matrices import get_ind_nonzeros_col, get_ind_nonzeros_row, \
     isequal
 

@@ -39,7 +39,7 @@ def write_netlist(phs, R1=1e3, L=5e-2, C=2e-6):
     source = {'dictionary': 'electronics',
               'component': 'source',
               'label': 'IN',
-              'nodes': ('A', datum),
+              'nodes': (datum, 'A'),
               'arguments': {'type': "'voltage'"}}
     phs.graph.netlist.add_line(source)
 

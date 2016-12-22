@@ -9,8 +9,8 @@
 \newcommand{\version}{0.1.9b2}
 \title{\textsc{PyPHS Documentation}\\ Version \version}
 \include{python}
+\include{commands}
 \begin{document}
-\input{commands}
 %
 \maketitle
 %
@@ -588,6 +588,373 @@ $$\left\{ \begin{array}{rcl}
 y = w &=& \sum_{i=1}^Nw_i\end{array}\right.$$
 alors $ w =\sum_{i=1}^N w_i=\left(\sum_{i=1}^N z^{-1}_i\right)(\phi) $ et $z^{-1}(\phi) = w\Rightarrow z(w) =  \left(\sum_{i=1}^N z_i\right)^{-1}(w)$ 
 
+
+\section{Fractional calculus}
+\label{sec:fractional_calculus}
+%
+The diffusive process in loudspeakers suspension (creep phenomenon~\ref{pheno:viscoelasticity}) and loudspeakers ferromagnetic path (eddy current phenomenon~\ref{pheno:EddyCurrents}) can be described by linear models that include fractional order dynamics (see \cite{koeller1984applications, lewandowski2010identification, hu2011modal, Holm2013621} for fractional modeling of viscoelasticity, and \cite{schafer2008modelling, laudebat2003modelisation, rumeau2009modelisation} for fractional modeling of eddy currents).
+%
+A well established formalism for the realization of fractional transfer functions is the so called \emph{diffusive representations}, recalled thereafter (see detailed developements in \cite{helie2006representations,helie2006diffusive}, and \cite{le2012diffusive} for a port-Hamiltonian formulation).
+										%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+\subsection{Fractional integrator}
+%
+Defining $s \!=\! \rho.e^{i\theta}$, with $\rho\geq 0$ and $\theta \in [-\pi,\pi[$, the transfer function of the fractional integrator $\fracint_\beta(s) = s^{-\beta}$ exhibits a cut $\mathcal{C} =\mathbb{R}_{-}$.
+										%
+The residue theorem gives the realization of $\fracint_\beta$ as the continuous aggregation of linear damping along the cut $\mathcal{C}$. 
+%
+This leads to the following \emph{diffusive representation} \cite[\textsection 2]{le2012diffusive}:
+%
+\begin{equation}
+\begin{array}{rcl}
+\fracint_\beta(s): \mathbb{C}\setminus\mathbb{R}_{-}&\rightarrow&\mathbb{C}\\
+s &\mapsto& \int_0^\infty \mu_\beta(\xi)\frac{1}{s+\xi}\d\xi
+\end{array}
+\end{equation}
+where the weights $\mu_\beta(\xi) = \frac{\fracint_\beta(-\xi-i0^{+})-\fracint_\beta(-\xi+i0^{+})}{2i\pi}=\frac{sin(\beta \pi)}{\pi }\xi^{-\beta}$ correspond to the jump of $\fracint_\beta$ across $\mathcal{C}\equiv\{-\xi\in\mathbb{R}^{-}\}$).										%
+%
+A state-space representation with output $y_\beta(s) = \fracint_\beta(s) u_\beta(s)$ is:
+										%
+\begin{equation}
+\label{eq:state_frac_int}
+\left\{ \begin{array}{cl}
+\frac{\d x_\xi}{ \d t} &=  -\xi x_\xi  + u_\beta,\quad x_\xi(0)=0,\\
+y_\beta&= \int_0^{+\infty} \mu_\beta(\xi)x_\xi \d \xi .
+\end{array} \right.
+\end{equation}
+										%
+The system (\ref{eq:state_frac_int}) is recast as an infinite dimensional pH system (\ref{eq:PHS}), defining the \emph{hamiltonian density }$H_\xi(x_\xi) = \mu_\beta(\xi)  \frac{x_\xi^2}{2} $ and the \emph{resistance density }$r_\xi = \frac{\xi}{\mu_\beta(\xi)}$ with $z_\xi( w_\xi)=r_\xi w_\xi$:
+										%
+\begin{equation}
+\label{eq:phs_frac_int}
+\left(\begin{array}{c}
+\D{x_\xi}{t}
+w_\xi \\
+y_\beta
+\end{array}\right)
+=
+\left(\begin{array}{lcc}
+0&-1&1\\
+1&0&0\\
+\ones_\infty&0&0
+\end{array}\right)
+\left(\begin{array}{c}
+\frac{\partial H_\xi}{\d x_\xi}\\
+z_\xi( w_\xi) \\
+u_\beta
+\end{array}\right)
+\end{equation}
+										%
+where $\ones_\infty$ denotes an infinite dimensional row vector of 1, that is $y_\beta = \int_0^{\infty }\frac{\partial H_\xi}{\partial x_\xi} \d \xi$.
+%
+Notice the total energy is $H_\beta(\mathbf{x}_\beta)\!=\!\int_{\xi\in\mathcal{C}} H_\xi(x_\xi)  \d \xi$ with infinite dimensional state $\bf x_\beta\!\in\!\mathbb{R}^{\mathbb{R_+}}$. 
+										%
+The realization of the dynamical element with parameter $p$ and transfer function $\fracint_{p,\beta}(s) = (p s^\beta)^{-1}$ is given by (\ref{eq:phs_frac_int}), with $\tilde \mu_{\beta,p}(\xi)= \frac{ \mu_\beta(\xi)}{p}$.
+										%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+\subsection{Fractional differentiator}
+\label{sec:frac_diff}
+Fractional damping can be modeled as combination of fractional integrators and differentiators (see \cite{koeller1984applications,helie2006diffusive,sabatier2007advances,le2012diffusive}).
+%
+The realization of fractional differentiator of order $\alpha$ with input $u_\alpha$, transfer function $\fracdiff_\alpha(s)=s^{\alpha}$ and output $y_\alpha=\fracdiff_\alpha u_\alpha$, is built on the diffusive representation (\ref{eq:state_frac_int}) as follows \cite{helie2006diffusive, le2012diffusive}:
+%
+\begin{equation}
+\label{eq:state_frac_diff}
+\left\{ \begin{array}{cl}
+\frac{\d x_\xi}{ \d t} &=  -\xi\cdot x_\xi  + u_\alpha,\quad x_\xi(0)=0,\\
+y_\alpha&= \int_0^{+\infty} \mu_{1-\alpha}(\xi)\big(u_\alpha-\xi\cdot x_\xi)\d \xi .
+\end{array} \right.
+\end{equation}
+%
+Defining the \emph{hamiltonian density }$H_\xi(x_\xi) = \mu_{1-\alpha}(\xi) \xi \frac{x_\xi^2}{2} $, the \emph{resistance density }$r_\xi = \mu_{1-\alpha}(\xi)$ and $z_\xi( w_\xi)=r_\xi w_\xi$, the pH formulation of the fractional differentiator (\ref{eq:state_frac_diff}) is 
+										%
+\begin{equation}
+\label{eq:phs_frac_diff}
+\left(\begin{array}{c}
+\frac{\d x_\xi}{ \d t} \\
+w_\xi \\
+y_\alpha
+\end{array}\right)
+=
+\left(\begin{array}{lcc}
+0 & - \frac{1}{\mu_{1-\alpha}(\xi)} & 0\\
+ \frac{1}{\mu_{1-\alpha}(\xi)} & 0 & -1\\
+0 & -\ones_\infty & 0
+\end{array}\right)
+\left(\begin{array}{c}
+\frac{\partial H_\xi}{\d x_\xi}\\
+z_\xi( w_\xi) \\
+u_\alpha
+\end{array}\right).
+\end{equation}
+										%
+										%
+% 
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+\subsection{Finite order approximation}
+\label{sec:Finite_order_approximation}
+										%
+For implementation purpose, a finite approximation of
+diffusive representation (\ref{eq:phs_frac_int}) is built based on a
+finite set of $\npoles$ poles ($\xi_1, \dots, \xi_\npoles$) localized on the cut $\mathcal{C}$.
+										%
+The weights $\bmu=(\mu_1\cdots\mu_\npoles)^T$ are obtained from a least square optimization as detailed in \cite[sec. 5.1.2]{helie2006diffusive}, by minimizing an appropriate distance between $\fracint_\beta$ and its discretisation $\widehat{\fracint}_\beta$:
+										%
+\begin{equation}
+  \label{eq:ApproxHaMatrix}
+  \widehat{\fracint}_\beta(s) \!= \sum_{n=1}^\npoles \frac{\mu_n}{s+\xi_n} = \mathbf{E}(s)\cdot \bmu \quad \mbox{with}\quad \mathbf{E}(s)=
+  \left(\!
+     \begin{array}{c}
+      \frac{1}{s+\xi_1} \cdots  \frac{1}{s+\xi_\npoles}
+     \end{array}
+    \!\right)^\T.
+\end{equation}										%
+The poles $\xi_n$'s are chosen as $\xi_n  \!= \!\! 10^{\ell_n} \!\in\!\cC,
+\mbox{~for~} 
+0\!\leq n \leq\! \npoles\!+\!1$,
+where the $\ell_n$'s are equally spaced, with step
+$\delta\!=\!\frac{\ell_{\npoles+1}-\ell_0}{\npoles\!+\!1}$, from $\ell_0$ to
+$\ell_{N+1}$ .
+Since gain deviations are perceived relatively to
+  the reference gains on the audio range, the weights $\bmu$ are optimized with respect to the objective function
+\begin{equation}
+  \label{eq:ObjectiveFunction}
+  \mathcal{O}(\bmu) = \int_{\omega_{-}}^{\omega_{+}} \left|1-\frac{\widehat{\fracint}_\beta(s\!=\!\Icx\omega)}{{\fracint}_\beta (s\!=\!\Icx\omega)} \right|^2 \mathrm{d}\ln \omega.
+\end{equation}
+                                %
+where $\omega_{-}=2\pi f_{-}$, $\omega_{+}=2\pi f_{+}$ for $[f_{-},f_{+}]=[20\mbox{Hz},\,20\mbox{kHz}]$.
+%
+In practice, the integral in (\ref{eq:ObjectiveFunction})
+is approximated by a finite sum on a frequency grid,
+here, $\ln \omega_k\!=\!\ln \omega_{-}\!  +\!  \frac{k}{\nfreqs}
+\!\ln\frac{\omega_{+}}{\omega_{-}}$ for $0\!\leq\! k\!\leq\!\nfreqs$.
+                                %
+This yields the following practical objective function
+\begin{equation}
+  \widehat{\mathcal{O}}(\bmu) 
+=  \herm{(\bf M \bmu - \mathbf{T})}\!  \Wv (\bf M \bmu - \mathbf{T}),
+  \label{eq:ObjectiveFunctionNum}
+\end{equation}
+where matrix $\mathbf M$ is composed of the rows
+$[\mathbf M]_{k,:}\!=\!\mathbf E (s\!=\!\Icx\omega_{k-\frac{1}{2}})^T$
+defined in~(\ref{eq:ApproxHaMatrix}), where $\omega_{k-\frac{1}{2}}\!=\!\sqrt{
+  \omega_{k-1} \omega_k}$ denotes the mean of $\omega_{k-1}$
+and $\omega_k$ for $1\!\leq k\!\leq\! \nfreqs$. 
+                                %
+Vector $\boldsymbol{\fracint}$ is composed of
+$[\boldsymbol{\fracint}]_k\!=\!{\fracint}_\beta(s\!=\!\Icx\omega_{k-\frac{1}{2}})$ and
+                                %
+the diagonal
+matrix $\Wv$ is defined by $[\Wv]_{k,k}=(\ln \omega_{k} \!-\! \ln
+\omega_{k-1})\,/\, \big|\, [\boldsymbol{\fracint}]_k \big|^2$.
+                                %
+										%
+The minimization of (\ref{eq:ObjectiveFunctionNum}) is achieved by off-the-shelf optimization algorithm, imposing the weights to be positive: 
+\begin{equation}
+\label{eq:minimization}
+ \widehat{\bmu} = \{\min_{\bmu}  \widehat{\mathcal{O}}(\bmu) : \bmu>0\}
+\end{equation}
+The finite dimensional pH system realizing the weighted fractional integrator with transfer function $\fracint_{p,\beta} = (ps^\beta)^{-1}$ is given in table~\ref{tab:frac_int} with:
+										%
+\begin{equation}
+\label{eq:frac_int_parameters}
+\left\{\begin{array}{rcl}
+p_n&=&\frac{\widehat{\bmu}_n}{p},\\
+r_n&=&\frac{\xi_n}{p_n},
+\end{array}\right.\qquad n \in (1,\cdots \npoles).
+\end{equation}
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}[c]{|c|c|}
+    \hline
+   \begin{minipage}[c|]{5cm}
+\vspace{0.2em} \centering  State:\\ $
+	\vx_\beta = \left(x_1,\cdots,x_\npoles\right)^\T$
+	\\ \vspace{0.2em}
+  \end{minipage}
+    &\begin{minipage}[c|]{6cm}
+\vspace{0.5em} \centering  
+Energy:\\ $\H_\beta(\vx_\beta) = \frac{1}{2}\,\vx_\beta^\T\,\diag(p_1,\cdots,p_\npoles)\,\vx_\beta$
+\\ \vspace{0.2em}
+  \end{minipage}
+    \\
+    \hline
+   \begin{minipage}[c|]{5cm}
+\vspace{0.2em}
+\centering Dissipation variable:\\ $
+	\vw_\beta = \left(w_1,\cdots,w_\npoles\right)^\T
+        $\\ \vspace{0.2em}
+  \end{minipage}
+    &\begin{minipage}[c|]{5cm}
+\vspace{0.5em}
+\centering
+Dissipation law:\\ $\vz_\beta(\vw_\beta) = \diag(r_1,\cdots,r_\npoles)\,\vw_\beta$
+\\ \vspace{0.2em}
+  \end{minipage}
+    \\
+    \hline    
+    \begin{minipage}[c|]{5cm}
+\vspace{0.2em}
+\centering
+Input:\\
+$ u_\beta $\\ \vspace{0.2em} 
+  \end{minipage} & \begin{minipage}[c|]{5cm}
+\vspace{0.5em}
+\centering
+Output:\\
+$\widehat y_\beta$\\ \vspace{0.2em} 
+  \end{minipage}
+    \\
+    \hline
+    \multicolumn{2}{|c|}{
+\begin{minipage}[c|]{10cm}
+\vspace{0.5em}
+\centering
+Structure:\\
+$\J{xx} = \zeros_{\npoles\times \npoles}$, 
+$\J{xw} = -\Id_\npoles$, $\J{xy} =  \ones_{\npoles\times 1}$, \\ $\J{ww}=\zeros_{\npoles\times \npoles}$, $\J{wy}=\zeros_{\npoles\times 1}$, $\J{yy}=0$.
+\vspace{0.2em}
+  \end{minipage}}
+\\
+    \hline
+  \end{tabular}
+  \caption{\label{tab:frac_int} Port-Hamiltonian formulation (\ref{eq:PHS}) for the approximation of the fractional integrator $y_\beta(s)=(p s^\beta)^{-1} u_\beta(s)$ on a finite set of $\npoles$ poles. The parameters $p_n, r_n$ for $n \in (1,\cdots \npoles)$ are defined in (\ref{eq:frac_int_parameters}) based on the minimization of (\ref{eq:ObjectiveFunctionNum}). As an example, if $u_\beta\equiv i$ and $y_\beta \equiv v$, this structure corresponds to the serial connection of $\npoles$ parallel RC cells; if $y_\beta\equiv i$ and $u_\beta \equiv v$, this structure corresponds to the parallel connection of $\npoles$ serial LC cells.}
+\end{table}
+%
+According to section \ref{sec:frac_diff}, the finite dimensional approximation of the weighted fractional differentiator with transfer function $\fracdiff_{\alpha, p} = ps^\alpha$ is obtained from the minimization of (\ref{eq:ObjectiveFunctionNum}) for the transfer function $\fracint_{1-\alpha}$.
+%
+The corresponding pH formulation is given in table~\ref{tab:frac_diff} with:
+										%
+\begin{equation}
+\label{eq:frac_diff_parameters}
+\left\{\begin{array}{rcl}
+p_n&=&p\,\widehat{\bmu}_n\,\xi_n,\\
+r_n&=&p_n\widehat{\bmu}_n,
+\end{array}\right.\qquad n \in (1,\cdots \npoles).
+\end{equation}
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}[c]{|c|c|}
+    \hline
+   \begin{minipage}[c|]{5cm}
+\vspace{0.2em} \centering  State:\\ $
+	\vx_\alpha = \left(x_1,\cdots,x_\npoles\right)^\T$
+	\\ \vspace{0.2em}
+  \end{minipage}
+    &\begin{minipage}[c|]{6cm}
+\vspace{0.5em} \centering  
+Energy:\\ $\H_\alpha(\vx_\alpha) = \frac{1}{2}\,\vx_\alpha^\T\,\diag(p_1,\cdots,p_\npoles)\,\vx_\alpha$
+\\ \vspace{0.2em}
+  \end{minipage}
+    \\
+    \hline
+   \begin{minipage}[c|]{5cm}
+\vspace{0.2em}
+\centering Dissipation variable:\\ $
+	\vw_\alpha = \left(w_1,\cdots,w_\npoles\right)^\T
+        $\\ \vspace{0.2em}
+  \end{minipage}
+    &\begin{minipage}[c|]{5cm}
+\vspace{0.5em}
+\centering
+Dissipation law:\\ $\vz_\alpha(\vw_\alpha) = \diag(r_1,\cdots,r_\npoles)\,\vw_\alpha$
+\\ \vspace{0.2em}
+  \end{minipage}
+    \\
+    \hline    
+    \begin{minipage}[c|]{5cm}
+\vspace{0.2em}
+\centering
+Input:\\
+$ u_\alpha $\\ \vspace{0.2em} 
+  \end{minipage} & \begin{minipage}[c|]{5cm}
+\vspace{0.5em}
+\centering
+Output:\\
+$\widehat y_\alpha$\\ \vspace{0.2em} 
+  \end{minipage}
+    \\
+    \hline
+    \multicolumn{2}{|c|}{
+\begin{minipage}[c|]{10cm}
+\vspace{0.5em}
+\centering
+Structure:\\
+$\J{xx} = \zeros_{\npoles\times \npoles}$, 
+$\J{xw} = -\diag(\widehat{\bmu})^{-1} $, $\J{xy} = \zeros_{\npoles\times 1}$, \\ $\J{ww}=\zeros_{\npoles\times \npoles}$, $\J{wy}=-\ones_{\npoles\times 1}$, $\J{yy}=0$.
+\vspace{0.2em}
+  \end{minipage}}
+\\
+    \hline
+  \end{tabular}
+  \caption{\label{tab:frac_diff} Port-Hamiltonian formulation (\ref{eq:PHS}) for the approximation of the fractional differentiator $y_\alpha(s)=p s^\alpha\, u_\alpha(s)$ on a finite set of $\npoles$ poles. The parameters $p_n, r_n$ for $n \in (1,\cdots \npoles)$ are defined in (\ref{eq:frac_diff_parameters}) based on the minimization of (\ref{eq:ObjectiveFunctionNum}) for the transfer function $\fracint_{1-\alpha}$. The interpretation is less intuitive than for the fractional integrator of table~\ref{tab:frac_int} due to the coefficients in $\J{xw}$ that involves transformers.}
+\end{table}
+%
 \bibliographystyle{apalike}
 \bibliography{documentation}
 \end{document}

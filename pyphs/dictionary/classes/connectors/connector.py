@@ -5,8 +5,7 @@ Created on Tue Jun  7 19:06:45 2016
 @author: Falaize
 """
 from pyphs import PortHamiltonianObject
-from pyphs.dictionary.tools import mappars
-from pyphs.dictionary.config import nice_var_label
+from pyphs.dictionary.tools import mappars, nice_var_label
 
 
 class Connector(PortHamiltonianObject):

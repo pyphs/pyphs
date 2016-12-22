@@ -9,14 +9,9 @@ from classes.linears.dissipatives import LinearDissipationFreeCtrl
 from classes.linears.storages import LinearStorageFluxCtrl, \
     LinearStorageEffortCtrl
 from classes.nonlinears.dissipatives import NonLinearDissipative
-
-from pyphs.dictionary.config import nice_var_label
-from tools import symbols
-
+from pyphs.dictionary.tools import symbols, nice_var_label
 import sympy
-
-# Minimal conductance for accelerating convergenc of solver (diode and bjt)
-GMIN = 1e-12
+from pyphs.conf import GMIN
 
 
 class Source(Port):

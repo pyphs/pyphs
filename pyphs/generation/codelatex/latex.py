@@ -63,7 +63,7 @@ class Latex:
         """
         from sympy.printing import latex
         import sympy
-        from config import fold_short_frac, mat_delim,\
+        from pyphs.conf import fold_short_frac, mat_delim,\
             mat_str, mul_symbol
         if isinstance(sp_object, sympy.Matrix) and any(el == 0
                                                        for el in
@@ -128,7 +128,7 @@ class Latex:
         file_.close()
 
     def preamble(self):
-        from config import authors, affiliations
+        from pyphs.conf import authors, affiliations
         nb_authors = len(authors)
         nb_affiliations = len(affiliations)
         latex_affiliations = ""
@@ -195,7 +195,7 @@ class Latex:
         associate the plot of the graph to a latex figure
         """
         import os
-        from pyphs.plots.config import plot_format
+        from pyphs.conf import plot_format
         fig_name = self.path_figs + os.sep + \
             self.sys_label + '_graph.' + plot_format
         string = r"""%

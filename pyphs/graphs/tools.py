@@ -13,7 +13,7 @@ def plot(graph, save=None):
 
     import networkx as nx
     import matplotlib.pyplot as plt
-    from pyphs.plots.config import plot_format
+    from pyphs.conf import plot_format
 
     pos = nx.circular_layout(graph)  # spring
     fig = plt.figure()

@@ -38,10 +38,12 @@ class Symbols:
         """
         method to concatenates (add) two pHs objects.
         """
-        symbs = symbs1 # The reference is the first object
+        symbs = Symbols()
         for name in symbs._names:
-            symbs._setsymb(name, list(getattr(symbs, name)) +
-                           list(getattr(symbs2, name)))
+            attr1 = getattr(symbs1, name)
+            attr2 = getattr(symbs2, name)
+            symbs._setsymb(name, attr1 + attr2)
+        symbs.subs.update(symbs1.subs)
         symbs.subs.update(symbs2.subs)
         return symbs
 

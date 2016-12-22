@@ -136,3 +136,19 @@ def iter_solver(simu):
     # build updates for args
     vnl = vnl - numpy.dot(ijac_impfunc, impfunc)
     simu.set_vnl(vnl)
+    
+
+from pyphs.conf import EPS
+standard = {'numtol': EPS,
+            'maxit': 100,
+            'load_options': {'decim': 1,
+                             'imin': 0,
+                             'imax': None},
+            'method': 'standard',
+            'solver': 'standard',
+            'fs': 48e3,
+            'language': 'python',
+            'timer': False,
+            'presubs': False,
+            'split': False,
+            'progressbar': False}

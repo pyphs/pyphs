@@ -1,0 +1,4 @@
+electronics.source out ('ref', 'A'): type='voltage';
+electronics.resistor R ('A', 'B'): R=('R', 1000.0);
+electronics.inductor L ('B', 'C'): L=('L', 0.05);
+electronics.capacitor C ('C', 'ref'): C=('C', 2e-06);

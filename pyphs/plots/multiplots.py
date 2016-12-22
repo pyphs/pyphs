@@ -4,9 +4,8 @@ Created on Sat Jun 11 20:06:50 2016
 
 @author: Falaize
 """
-from pyphs.plots.config import plotopts
-from tools import activate_latex, annotate, whichplot, setlims, setticks, dec
-from fonts import globalfonts
+from pyphs.plots.tools import activate_latex, annotate, whichplot, setlims, setticks, dec, standard
+from pyphs.plots.fonts import globalfonts
 
 
 def multiplot(datax, datay, **kwargs):
@@ -128,7 +127,7 @@ subplots.
         You probably want it to be negative.
 
     """
-    opts = plotopts('multi')
+    opts = standard
     opts.update(kwargs)
     nplots = int(datay.__len__())
 

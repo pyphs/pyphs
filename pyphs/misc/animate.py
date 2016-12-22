@@ -43,11 +43,11 @@ def singletraj(trajx, trajy, label='trajectory', filename='traj_movie',\
     if fontsize is None: fontsize = int(4*figsize[0])
     if legendfontsize is None: legendfontsize = int(0.75*fontsize)
 
-    from utils.plots import latex_preamble
+    from pyphs.conf import latex_preamble
     latex_preamble()
 
     from matplotlib.pyplot import rc
-    from utils.plots import Globalfont
+    from pyphs.plots.fonts import globalfont
     rc('font', size=fontsize, **Globalfont())
 
     from matplotlib.pyplot import axes
@@ -62,7 +62,7 @@ def singletraj(trajx, trajy, label='trajectory', filename='traj_movie',\
                         'islog':log,
                         'minor':minor,
                         'ticksfontsize':legendfontsize}
-    from utils.plots import setticks
+    from pyphs.plots.tools import setticks
     setticks(ax, ticks_properties)
     
     label_init = r'$t_0$'
@@ -133,12 +133,12 @@ def multitraj(alltrajx, alltrajy, label='trajectory', filename='traj_movie',\
     if fontsize is None: fontsize = int(4*figsize[0])
     if legendfontsize is None: legendfontsize = int(0.75*fontsize)
 
-    from utils.plots import latex_preamble
+    from pyphs.conf import latex_preamble
     latex_preamble()
 
     from matplotlib.pyplot import rc
-    from utils.plots import Globalfont
-    rc('font', size=fontsize, **Globalfont())
+    from pyphs.plots.fonts import globalfont
+    rc('font', size=fontsize, **globalfont())
 
     from matplotlib.pyplot import axes
     ax = axes(axedef[:4])

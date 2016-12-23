@@ -5,8 +5,11 @@ Created on Sun Jun  5 08:50:42 2016
 @author: Falaize
 """
 
+import os
+
 # from pyphs.config import datum
 datum = 'ref'
+
 
 def sep():
     return ','
@@ -35,13 +38,16 @@ i-th parameter is defined as 'label_pari'.
         init with filename to read data from 'filename.net'
         """
         self.filename = filename
-        open(self.filename, 'w')
+        if not os.path.isfile(self.filename):
+            file_ = open(self.filename, 'w')
+            file_.close()
         self.datum = datum
         self.dictionaries = tuple()
         self.components = tuple()
         self.labels = tuple()
         self.nodes = tuple()
         self.arguments = tuple()
+        self.read()
 
     def __getitem__(self, n):
         item = {'dictionary': self.dictionaries[n],
@@ -75,17 +81,45 @@ components).
         """
         read and store data from netlist 'filename.net'
         """
-        read_netlist(self.filename, self)
+        import ast
+        file_ = open(self.filename, "r")
+        with file_ as openfileobject:
+            for line in openfileobject:
+                # get 'infos' (dic, comp and nodes) and parameters
+                infos, _, parameters = line.partition(':')
+                # get ‘dic.comp' and 'label nodes'
+                diccomp, _, labelnodes = infos.partition(' ')
+                dic, _, comp = diccomp.partition('.')
+                label, _, nodes = labelnodes.partition(' ')
+                self.dictionaries = list(self.dictionaries)+[dic, ]
+                self.components = list(self.components)+[comp, ]
+                self.labels = list(self.labels)+[label, ]
+                self.nodes = list(self.nodes)+[ast.literal_eval(nodes), ]
+                nb_pars = parameters.count('=')
+                pars = {}
+                for n in range(nb_pars):
+                    par, _, parameters = parameters.partition(';')
+                    par = par.replace(' ', '')
+                    key, _, value = par.partition('=')
+                    pars.update({key: value})
+                self.arguments = list(self.arguments)+[pars, ]
+        file_.close()
+
+    def netlist(self):
+        """
+        Return the netlist as a formated string
+        """
+        netlist = ""
+        for n in range(self.nlines()):
+            netlist += self.line(n)
+        return netlist[:-1]
 
     def write(self):
         """
         write the content of the netlist to file 'filename'
         """
-        netlist = ""
-        for n in range(self.nlines()):
-            netlist += self.line(n)
         file_ = open(self.filename, 'w')
-        file_.write(netlist[:-1])  # remove the last cariage return
+        file_.write(self.netlist())  # remove the last cariage return
         file_.close()
 
     def line(self, n):
@@ -93,6 +127,10 @@ components).
         print the netlist line 'n' whith appropriate format
         """
         return _print_netlist_line(self[n])
+
+    def close(self):
+        print('Close netlist file: '+self.path)
+        self.file.close()
 
 
 def _print_netlist_line(dic):
@@ -144,30 +182,3 @@ or tuple (str, float).
         pars += ' {}={};'.format(par, str(dic['arguments'][par]))
     line = component + pars + '\n'
     return line
-
-
-def read_netlist(filename, netlist):
-    import ast
-    file_ = open(filename, "r")
-    netlist.__init__()
-    with file_ as openfileobject:
-        for line in openfileobject:
-            # get 'infos' (dic, comp and nodes) and parameters
-            infos, _, parameters = line.partition(':')
-            # get ‘dic.comp' and 'label nodes'
-            diccomp, _, labelnodes = infos.partition(' ')
-            dic, _, comp = diccomp.partition('.')
-            label, _, nodes = labelnodes.partition(' ')
-            netlist.dictionaries = list(netlist.dictionaries)+[dic, ]
-            netlist.components = list(netlist.components)+[comp, ]
-            netlist.labels = list(netlist.labels)+[label, ]
-            netlist.nodes = list(netlist.nodes)+[ast.literal_eval(nodes), ]
-            nb_pars = parameters.count('=')
-            pars = {}
-            for n in range(nb_pars):
-                par, _, parameters = parameters.partition(';')
-                par = par.replace(' ', '')
-                key, _, value = par.partition('=')
-                pars.update({key: ast.literal_eval(value)})
-            netlist.arguments = list(netlist.arguments)+[pars, ]
-    file_.close()

@@ -19,13 +19,13 @@ def process_py(simulation):
     build_funcs(simulation)
 
     # get generators of u and p
-    data = simulation._phs.data
+    data = simulation.data
     seq_u = data.u()
     seq_p = data.p()
 
     from pyphs.misc.io import open_files, close_files, dump_files
 
-    data_path = simulation._phs.paths['data']
+    data_path = simulation.config['path']
 
     files_to_open = ['x', 'dx', 'dxH', 'w', 'z', 'y']
 

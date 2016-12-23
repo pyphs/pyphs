@@ -57,7 +57,7 @@ def build_funcs(simu):
         args = getattr(simu.exprs, name + '_args')
         inds = getattr(simu.exprs, name + '_inds')
         func = lambdify(args, expr,
-                        subs=simu._phs.symbs.subs)
+                        subs=simu.core.subs)
 
         if len(inds) > 0:
             inds = numpy.array(inds)
@@ -86,7 +86,7 @@ is numerics.fs).
     simu.set_p(p)
     # update state from previous iteration
     simu.set_x(simu.x() + simu.dx())
-    if simu._phs.is_nl():
+    if simu.core.is_nl():
         # update nl variables (dxnl and wnl)
         update_nl(simu)
     # update l variables (dxnl and wnl)
@@ -136,19 +136,3 @@ def iter_solver(simu):
     # build updates for args
     vnl = vnl - numpy.dot(ijac_impfunc, impfunc)
     simu.set_vnl(vnl)
-    
-
-from pyphs.conf import EPS
-standard = {'numtol': EPS,
-            'maxit': 100,
-            'load_options': {'decim': 1,
-                             'imin': 0,
-                             'imax': None},
-            'method': 'standard',
-            'solver': 'standard',
-            'fs': 48e3,
-            'language': 'python',
-            'timer': False,
-            'presubs': False,
-            'split': False,
-            'progressbar': False}

@@ -41,7 +41,12 @@ Created on Thu Jun  2 21:33:07 2016
 """
 
 from core.core import PHSCore
-from numerics.numeric import Functions
+from numerics.numeric import PHSNums
+from simulations.simulation import PHSSimu
+from graphs.graph import Graph
+from config import standard_PHSObject
+from misc.signals.synthesis import signalgenerator
+import os
 
 ###############################################################################
 
@@ -57,7 +62,12 @@ __author_email__ = 'antoine.falaize@gmail.com'
 ###############################################################################
 
 class PHSObject:
-    def __init__(self, label=None, path=None):
+    def __init__(self, label=None, path=None, **config):
+
+        # PHSObject configuration
+        self.config = standard_PHSObject
+        for k in config.keys():
+            self.config[k].update(config[k])
 
         # object label
         if label is None:
@@ -67,29 +77,11 @@ class PHSObject:
 got %s' % type(label)
         self.label = label
 
-        _init_paths(self, path)
-
-        setattr(self, 'core', PHSCore())
-        setattr(self, 'numerics', Functions(self.core))
-
-
-def _init_paths(phobj, path):
-    """
-    set path for PHSObject 'phs'.
-        * if path is None, a new folder with phs label is created in \
-current working directory;
-        * if path is 'cwd', current working directory is used;
-        * if path is 'no_path', no path is defined (do not use except for \
-the components of the dictionary)
-        * if path is any other string, it is used for the system's path.
-    """
-    import os
-    if not path == 'no_path':
         # define path
         if path == 'cwd':
             phs_path = os.getcwd()
         elif path is None:
-            phs_path = os.getcwd() + os.path.sep + phobj.label
+            phs_path = os.getcwd() + os.path.sep + self.label
         else:
             assert isinstance(path, str)
             phs_path = path
@@ -97,14 +89,26 @@ the components of the dictionary)
         if not os.path.exists(phs_path):
             os.makedirs(phs_path)
         # Define path for exports (plots, waves, tex, c++, etc...)
-        phobj.path = phs_path
-        phobj.paths = {'tex': phs_path+os.sep+'tex',
-                       'cpp': phs_path+os.sep+'cpp',
-                       'main': phs_path,
-                       'figures': phs_path+os.sep+'figures',
-                       'data': phs_path+os.sep+'data',
-                       'graph': phs_path+os.sep+'graph'}
+        self.path = phs_path
+        self.paths = {'tex': phs_path+os.sep+'tex',
+                      'cpp': phs_path+os.sep+'cpp',
+                      'main': phs_path,
+                      'figures': phs_path+os.sep+'figures',
+                      'data': phs_path+os.sep+'data',
+                      'graph': phs_path+os.sep+'graph'}
+        setattr(self, 'core', PHSCore())
+        setattr(self, 'nums', PHSNums(self.core))
+        setattr(self, 'simu', PHSSimu(self.core,
+                                      self.config['simu'],
+                                      self.paths['data']))
+        setattr(self, 'graph', Graph(self))
+        setattr(self, 'signalgenerator', signalgenerator)
 
+    def __add__(phs1, phs2):
+        for name in ['core', ]:
+            attr = getattr(phs1, name)
+            attr += getattr(phs2, name)
+        return phs1
 
 class PortHamiltonianObject:
     """ Object oriented sympy (symbolic) representation of a port-Hamiltonian \
@@ -270,16 +274,6 @@ got %s' % type(label)
         return symbs, exprs, mats
     ###########################################################################
 
-    def symbols(self, obj):
-        """
-        Standard symbols in PyPHS are sympy.Symbol instances with REAL \
-assumption.
-        """
-        from symbolics.tools import symbols
-        return symbols(obj)
-
-    ###########################################################################
-
     def build_from_netlist(self, filename):
         """
         build phs structure from netlist 'filename'
@@ -296,39 +290,6 @@ assumption.
 
     def is_nl(self):
         return bool(self.dims.xnl() + self.dims.wnl())
-
-    ###########################################################################
-
-    def apply_subs(self, subs=None):
-        """
-        replace all instances of key by value for each key:value in self.subs
-        """
-        if subs is None:
-            subs = {}
-        subs.update(self.symbs.subs)
-        for name in self.symbs._names:
-            attr = getattr(self.symbs, name)
-            attr = list(attr)
-            for i in range(len(attr)):
-                try:
-                    attr[i] = attr[i].subs(subs)
-                except:
-                    pass
-            setattr(self.symbs, name, attr)
-        for name in self.exprs._names:
-            attr = getattr(self.exprs, name)
-            if hasattr(attr, "__len__"):
-                attr = list(attr)
-                for i, at in enumerate(attr):
-                    try:
-                        attr[i] = at.subs(subs)
-                    except:
-                        pass
-            else:
-                attr = attr.subs(subs)
-            setattr(self.exprs, name, attr)
-        self.struc.M = self.struc.M.subs(subs)
-        self.symbs.subs = {}
 
     ###########################################################################
 

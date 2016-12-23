@@ -5,6 +5,8 @@ Created on Sun Jun  5 08:50:42 2016
 @author: Falaize
 """
 
+from pyphs.config import datum
+
 
 def sep():
     return ','
@@ -28,11 +30,10 @@ free-parameter that can be continuously controlled during the simulations. \
 Else if no label is provided for the new component, the new label for the \
 i-th parameter is defined as 'label_pari'.
     """
-    def __init__(self, filename=None):
+    def __init__(self, filename):
         """
         init with filename to read data from 'filename.net'
         """
-        from pyphs.conf import datum
         self.filename = filename
         self.datum = datum
         self.dictionaries = tuple()
@@ -69,20 +70,20 @@ components).
         self.nodes = list(self.nodes)+[dic['nodes'], ]
         self.arguments = list(self.arguments)+[dic['arguments'], ]
 
-    def read(self, filename):
+    def read(self):
         """
         read and store data from netlist 'filename.net'
         """
-        read_netlist(filename, self)
+        read_netlist(self.filename, self)
 
-    def write(self, filename):
+    def write(self):
         """
         write the content of the netlist to file 'filename'
         """
         netlist = ""
         for n in range(self.nlines()):
             netlist += self.line(n)
-        file_ = open(filename, 'w')
+        file_ = open(self.filename, 'w')
         file_.write(netlist[:-1])  # remove the last cariage return
         file_.close()
 

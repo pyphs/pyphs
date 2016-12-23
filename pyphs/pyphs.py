@@ -43,7 +43,8 @@ Created on Thu Jun  2 21:33:07 2016
 from core.core import PHSCore
 from numerics.numeric import PHSNums
 from simulations.simulation import PHSSimu
-from graphs.graph import Graph
+from graphs.netlists import PHSNetlist
+from graphs.graph import PHSGraph
 from config import standard_PHSObject
 from misc.signals.synthesis import signalgenerator
 import os
@@ -96,12 +97,13 @@ got %s' % type(label)
                       'figures': phs_path+os.sep+'figures',
                       'data': phs_path+os.sep+'data',
                       'graph': phs_path+os.sep+'graph'}
+        setattr(self, 'netlist', PHSNetlist(self.path))
         setattr(self, 'core', PHSCore())
         setattr(self, 'nums', PHSNums(self.core))
         setattr(self, 'simu', PHSSimu(self.core,
                                       self.config['simu'],
                                       self.paths['data']))
-        setattr(self, 'graph', Graph(self))
+        setattr(self, 'graph', PHSGraph(self))
         setattr(self, 'signalgenerator', signalgenerator)
 
     def __add__(phs1, phs2):
@@ -186,30 +188,6 @@ got %s' % type(label)
 
     ###########################################################################
 
-    def __add__(phs1, phs2):
-        label = phs1.label
-        if hasattr(phs1, 'path'):
-            path = phs1.path
-        else:
-            path = None
-        phs = PortHamiltonianObject(label=label, path=path)
-        for attr in ['symbs', 'exprs', 'graph']:
-#            print(attr)
-#            print('phs1:', phs1.label)
-#            print('x', phs1.symbs.x)
-#            print('w', phs1.symbs.w)
-#            print('u', phs1.symbs.u)
-#            print('struc.M', phs1.struc.M)
-#            print('struc.Mxx()', phs1.struc.Mxx())
-#            print('phs2:', phs2.label)
-#            print('x', phs2.symbs.x)
-#            print('w', phs2.symbs.w)
-#            print('u', phs2.symbs.u)
-#            print('struc.M', phs2.struc.M)
-#            print('struc.Mxx()', phs2.struc.Mxx())
-            sumattrs = getattr(phs1, attr) + getattr(phs2, attr)
-            setattr(phs, attr, sumattrs)
-
         # concatenation of phs structures 1 and 2 with M=block_diag(M1,M2).
         from symbolics.structures.dimensions import dims_names
         import sympy
@@ -285,124 +263,6 @@ got %s' % type(label)
         self.graph._perform_analysis()
         self.graph.analysis.build_phs(self)
         self.apply_connectors()
-
-    ###########################################################################
-
-    def is_nl(self):
-        return bool(self.dims.xnl() + self.dims.wnl())
-
-    ###########################################################################
-
-    def add_storages(self, x, H):
-        """
-        Add a storage component with state x and energy H.
-        * State x is append to the current list of states symbols,
-        * Expression H is added to the current expression of Hamiltonian.
-
-        Parameters
-        ----------
-
-        x : str, symbol, or list of
-        H : sympy.Expr
-        """
-        from symbolics.tools import _assert_expr, _assert_vec
-        try:
-            hasattr(x, 'index')
-            x = _assert_vec(x)
-        except:
-            _assert_expr(x)
-            x = (x, )
-        self.symbs.x = self.symbs.x + list(x)
-        self.exprs.H += H
-
-    def add_dissipations(self, w, z):
-        """
-        Add a dissipative component with dissipation variable w and \
-dissipation function z.
-
-        Parameters
-        ----------
-
-        w : str, symbol, or list of
-        z : sympy.Expr or list of
-        """
-        from symbolics.tools import _assert_expr, _assert_vec
-        try:
-            hasattr(w, 'index')
-            w = _assert_vec(w)
-            z = _assert_vec(z)
-            assert len(w) == len(z), 'w and z should be have same\
- dimension.'
-        except:
-            _assert_expr(w)
-            _assert_expr(w)
-            w = (w, )
-            z = (z, )
-        self.symbs.w = self.symbs.w + list(w)
-        self.exprs.z = self.exprs.z + list(z)
-
-    def add_ports(self, u, y):
-        """
-        Add one or several ports with input u and output y.
-
-        Parameters
-        ----------
-
-        u : str, symbol, or list of
-        y : str, symbol, or list of
-        """
-        from symbolics.tools import _assert_expr, _assert_vec
-        if hasattr(u, '__len__'):
-            u = _assert_vec(u)
-            y = _assert_vec(y)
-            assert len(u) == len(y), 'u and y should be have same\
- dimension.'
-        else:
-            _assert_expr(u)
-            _assert_expr(y)
-            u = (u, )
-            y = (y, )
-        self.symbs.u = self.symbs.u + list(u)
-        self.symbs.y = self.symbs.y + list(y)
-
-    def add_connectors(self, connectors):
-        """
-        add a connector (gyrator or transformer)
-        """
-        self.struc.connectors += [connectors, ]
-        self.symbs.cu = list(connectors['u'])
-        self.symbs.cy = list(connectors['y'])
-
-    def add_parameters(self, p):
-        """
-        add a continuously varying parameter
-        """
-        from symbolics.tools import _assert_expr, _assert_vec
-        try:
-            hasattr(p, '__len__')
-            p = _assert_vec(p)
-        except:
-            _assert_expr(p)
-            p = (p, )
-        self.symbs.p = self.symbs.p + list(p)
-
-    ###########################################################################
-
-    def build_resistive_structure(self):
-        """
-        Build resistsive structure matrix R in PHS structure (J-R) associated \
-with the linear dissipative components. Notice the associated \
-dissipative variables w are no more accessible.
-        """
-        from symbolics.structures.tools import reduce_linear_dissipations
-        reduce_linear_dissipations(self)
-
-    def split_linear(self):
-        """
-        Split the system into linear and nonlinear parts.
-        """
-        from symbolics.structures.tools import split_linear
-        split_linear(self)
 
     ###########################################################################
 

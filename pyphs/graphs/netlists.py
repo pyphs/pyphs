@@ -5,14 +5,14 @@ Created on Sun Jun  5 08:50:42 2016
 @author: Falaize
 """
 
-from pyphs.config import datum
-
+# from pyphs.config import datum
+datum = 'ref'
 
 def sep():
     return ','
 
 
-class Netlist:
+class PHSNetlist:
     """
     Data structure for netlist elements. Each line of the netlist describes a\
  component, with data structured a follows
@@ -35,6 +35,7 @@ i-th parameter is defined as 'label_pari'.
         init with filename to read data from 'filename.net'
         """
         self.filename = filename
+        open(self.filename, 'w')
         self.datum = datum
         self.dictionaries = tuple()
         self.components = tuple()

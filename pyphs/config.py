@@ -72,22 +72,22 @@ mul_symbol = 'dot'
 #--------------------------------------------------------------------------
 # Below are the options for C++ files rendering, and C++ execution inside python.
 
-# We use the Eigen C++ library for matrix algebra in the generated c++ code. 
+# We use the Eigen C++ library for matrix algebra in the generated c++ code.
 # Inform below the path to your local eigen library
 eigen_path = '/Users/.../eigen'
 
-# You can automatize the compilation and execution of the c++ files by giving a 
-# shell script in "cpp_build_and_run_script" below. It is executed when the 
-# option "langage='c++'"" is used for the simulations. You can use the keyword 
-# 'phobj_path' to recover the path of the current PHobject (it is replaced at 
+# You can automatize the compilation and execution of the c++ files by giving a
+# shell script in "cpp_build_and_run_script" below. It is executed when the
+# option "langage='c++'"" is used for the simulations. You can use the keyword
+# 'phobj_path' to recover the path of the current PHobject (it is replaced at
 # execution)
 cpp_build_and_run_script = None
 
-# The following is an example which uses xcode on mac osx. First, generate the 
-# c++ code for a dummy PortHamiltonianObject, Second, init an empty xcode 
-# project named "xcode_template_pyphs" Third, associate the dummmy pyphs c++ files to 
-# that xcode project (this is to create the structure), and choose the compilation options 
-# to your liking and save. Finally, uncomment the following and inform the path to your 
+# The following is an example which uses xcode on mac osx. First, generate the
+# c++ code for a dummy PortHamiltonianObject, Second, init an empty xcode
+# project named "xcode_template_pyphs" Third, associate the dummmy pyphs c++ files to
+# that xcode project (this is to create the structure), and choose the compilation options
+# to your liking and save. Finally, uncomment the following and inform the path to your
 # template:
 #
 #xcode_template_path = '/Users/.../xcode_template_pyphs'
@@ -109,3 +109,19 @@ cpp_build_and_run_script = None
 #phobj_path/xcode/build/Release/xcode_template_pyphs
 #
 #"""
+
+#------------------------------------------------------------------------------
+
+standard_PHSSimu = {'numtol': EPS,
+                    'maxit': 100,
+                    'load_options': {'decim': 1, 'imin': 0, 'imax': None},
+                    'method': 'standard',
+                    'solver': 'standard',
+                    'fs': 48e3,
+                    'language': 'python',
+                    'timer': False,
+                    'presubs': False,
+                    'split': False,
+                    'progressbar': False}
+
+standard_PHSObject = {'simu': standard_PHSSimu}

@@ -8,11 +8,13 @@ Created on Thu Dec 22 18:26:56 2016
 from __future__ import division
 import sympy
 from pyphs.core.misc_tools import geteval
-from pyphs.core.struc_tools import output_function
-from pyphs.core.discrete_calculus import discrete_gradient
-from pyphs.core.calculus import gradient, jacobian, hessian
-from pyphs.core.dimensions import Dimensions
-from pyphs.core.indices import Indices
+from discrete_calculus import discrete_gradient
+from calculus import gradient, jacobian, hessian
+from dimensions import Dimensions
+from indices import Indices
+from symbs_tools import _assert_expr, _assert_vec
+from struc_tools import reduce_linear_dissipations, split_linear, \
+    output_function
 
 ###############################################################################
 
@@ -129,8 +131,24 @@ class PHSCore:
 
     def __add__(core1, core2):
 
+        core = PHSCore()
         # Concatenate lists of symbols
-        for name in phs1.symbs_names:
+        for name in core1.symbs_names:
+            attr1 = getattr(core1, name)
+            attr2 = getattr(core2, name)
+            core._setsymb(name, attr1 + attr2)
+
+        for vari in core.dims.names:
+            for varj in core.dims.names:
+                Mij1 = getattr(core1, 'M'+vari+varj)()
+                Mij2 = getattr(core2, 'M'+vari+varj)()
+                Mij = sympy.diag(Mij1, Mij2)
+                if all([dim > 0 for dim in Mij.shape]):
+                    set_func = getattr(core, 'set_M'+vari+varj)
+                    set_func(Mij)
+
+        # Concatenate lists of symbols
+        for name in core1.symbs_names:
             attr1 = getattr(core1, name)
             attr2 = getattr(core2, name)
             core1._setsymb(name, attr1 + attr2)
@@ -144,6 +162,15 @@ class PHSCore:
         # Concatenate lists of expressions
         core1._setexpr('z', list(core1.z)+list(core2.z))
         core1._setexpr('g', list(core1.g)+list(core2.g))
+
+        core1.connectors += core2.connectors
+
+        for vari in core.dims.names:
+            for varj in core.dims.names:
+                Mij = getattr(core, 'M'+vari+varj)()
+                if all([dim > 0 for dim in Mij.shape]):
+                    set_func = getattr(core1, 'set_M'+vari+varj)
+                    set_func(Mij)
 
         # Need build
         core1._built = False
@@ -267,7 +294,7 @@ argument 'name', and add 'name' to the set of expressions names \
 ###############################################################################
 ###############################################################################
 
-# EXPRESSIONS
+# STRUCTURE
 
 ###############################################################################
 ###############################################################################
@@ -304,6 +331,166 @@ argument 'name', and add 'name' to the set of expressions names \
         """
         return -(self.M + self.M.T)/2.
 
+    def build_R(self):
+        """
+        Build resistsive structure matrix R in PHS structure (J-R) associated \
+with the linear dissipative components. Notice the associated \
+dissipative variables w are no more accessible.
+        """
+        reduce_linear_dissipations(self)
+
+    def split_linear(self):
+        """
+        Split the system into linear and nonlinear parts.
+        """
+        split_linear(self)
+
+###########################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+
+# apply_subs
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+    def apply_subs(self, subs=None):
+        """
+        replace all instances of key by value for each key:value in
+\PHSCore.subs
+        """
+        if subs is None:
+            subs = {}
+        subs.update(self.subs)
+        for name in self.symbs_names:
+            attr = getattr(self, name)
+            attr = list(attr)
+            for i in range(len(attr)):
+                try:
+                    attr[i] = attr[i].subs(subs)
+                except:
+                    pass
+            setattr(self, name, attr)
+        for name in self.exprs_names:
+            attr = getattr(self, name)
+            if hasattr(attr, "__len__"):
+                attr = list(attr)
+                for i, at in enumerate(attr):
+                    try:
+                        attr[i] = at.subs(subs)
+                    except:
+                        pass
+            else:
+                attr = attr.subs(subs)
+            setattr(self, name, attr)
+        self.M = self.M.subs(subs)
+        self.subs = {}
+
+    def is_nl(self):
+        return bool(self.dims.xnl())
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+# ADD COMPONENTS
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+    def add_storages(self, x, H):
+        """
+        Add a storage component with state x and energy H.
+        * State x is append to the current list of states symbols,
+        * Expression H is added to the current expression of Hamiltonian.
+
+        Parameters
+        ----------
+
+        x : str, symbol, or list of
+        H : sympy.Expr
+        """
+        try:
+            hasattr(x, 'index')
+            x = _assert_vec(x)
+        except:
+            _assert_expr(x)
+            x = (x, )
+        self.x += list(x)
+        self.H += H
+
+    def add_dissipations(self, w, z):
+        """
+        Add a dissipative component with dissipation variable w and \
+dissipation function z.
+
+        Parameters
+        ----------
+
+        w : str, symbol, or list of
+        z : sympy.Expr or list of
+        """
+        try:
+            hasattr(w, 'index')
+            w = _assert_vec(w)
+            z = _assert_vec(z)
+            assert len(w) == len(z), 'w and z should be have same\
+ dimension.'
+        except:
+            _assert_expr(w)
+            _assert_expr(w)
+            w = (w, )
+            z = (z, )
+        self.w += list(w)
+        self.z += list(z)
+
+    def add_ports(self, u, y):
+        """
+        Add one or several ports with input u and output y.
+
+        Parameters
+        ----------
+
+        u : str, symbol, or list of
+        y : str, symbol, or list of
+        """
+        from symbolics.tools import _assert_expr, _assert_vec
+        if hasattr(u, '__len__'):
+            u = _assert_vec(u)
+            y = _assert_vec(y)
+            assert len(u) == len(y), 'u and y should be have same\
+ dimension.'
+        else:
+            _assert_expr(u)
+            _assert_expr(y)
+            u = (u, )
+            y = (y, )
+        self.symbs.u = self.symbs.u + list(u)
+        self.symbs.y = self.symbs.y + list(y)
+
+    def add_connectors(self, connectors):
+        """
+        add a connector (gyrator or transformer)
+        """
+        self.connectors += [connectors, ]
+        self.cu = list(connectors['u'])
+        self.cy = list(connectors['y'])
+
+    def add_parameters(self, p):
+        """
+        add a continuously varying parameter
+        """
+        try:
+            hasattr(p, '__len__')
+            p = _assert_vec(p)
+        except:
+            _assert_expr(p)
+            p = (p, )
+        self.p += list(p)
+
 ###############################################################################
 ###############################################################################
 ###############################################################################
@@ -316,12 +503,12 @@ argument 'name', and add 'name' to the set of expressions names \
 
 if __name__ == '__main__':
     import numpy as np
-    phs1 = PHSCore()
-    phs2 = PHSCore()
-    phs1.x += [phs1.symbols('x1'), ]
-    phs1.H += (1/2)*phs1.x[0]**2
-    phs1.set_Jxx(np.array([[0, -1], [1, 0]]))
-    phs2.x += [phs2.symbols('x2'), ]
-    phs2.H += (1/2)*phs2.x[0]**2
-    phs2.set_Jxx(np.array([[0, -1], [1, 0]]))
-    phs = phs1 + phs2
+    core1 = PHSCore()
+    core2 = PHSCore()
+    core1.x += [core1.symbols('x1'), ]
+    core1.H += (1/2)*core1.x[0]**2
+    core1.set_Jxx(np.array([[1]]))
+    core2.x += [core2.symbols('x2'), ]
+    core2.H += (1/2)*core2.x[0]**2
+    core2.set_Jxx(np.array([2]))
+    core = core1 + core2

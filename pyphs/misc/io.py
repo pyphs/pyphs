@@ -33,10 +33,10 @@ def dump_files(simu, files):
         _file.write(list2str(lis))
 
 
-def write_data(phs, seq, var):
-    if not os.path.exists(phs.paths['data']):
-        os.makedirs(phs.paths['data'])
-    _file = open(phs.paths['data'] + os.sep + var + '.txt', 'w')
+def write_data(path, seq, var):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    _file = open(path + os.sep + var + '.txt', 'w')
     for el in seq:
         _file.write(list2str(el))
     _file.close()

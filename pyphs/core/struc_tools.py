@@ -5,46 +5,46 @@ Created on Thu Jun  9 11:46:11 2016
 @author: Falaize
 """
 import sympy
-from pyphs.core.calculus import hessian, jacobian
-from pyphs.core.symbs_tools import simplify
-from pyphs.core.misc_tools import myrange, geteval
+from calculus import hessian, jacobian
+from symbs_tools import simplify
+from misc_tools import myrange, geteval
 
 
-def moveJcolnrow(phs, indi, indf):
-    new_indices = myrange(phs.dims.tot(), indi, indf)
-    phs.struc.M = phs.struc.M[new_indices, new_indices]
+def moveJcolnrow(core, indi, indf):
+    new_indices = myrange(core.dims.tot(), indi, indf)
+    core.M = core.M[new_indices, new_indices]
 
 
-def move_stor(phs, indi, indf):
-    new_indices = myrange(phs.dims.x(), indi, indf)
-    phs.symbs.x = [phs.symbs.x[el] for el in new_indices]
-    moveJcolnrow(phs, indi, indf)
+def move_stor(core, indi, indf):
+    new_indices = myrange(core.dims.x(), indi, indf)
+    core.x = [core.x[el] for el in new_indices]
+    moveJcolnrow(core, indi, indf)
 
 
-def move_diss(phs, indi, indf):
-    new_indices = myrange(phs.dims.w(), indi, indf)
-    phs.symbs.w = [phs.symbs.w[el] for el in new_indices]
-    phs.exprs.z = [phs.exprs.z[el] for el in new_indices]
-    moveJcolnrow(phs, phs.dims.x()+indi, phs.dims.x()+indf)
+def move_diss(core, indi, indf):
+    new_indices = myrange(core.dims.w(), indi, indf)
+    core.w = [core.w[el] for el in new_indices]
+    core.z = [core.z[el] for el in new_indices]
+    moveJcolnrow(core, core.dims.x()+indi, core.dims.x()+indf)
 
 
-def move_port(phs, indi, indf):
-    new_indices = myrange(phs.dims.y(), indi, indf)
-    phs.symbs.u = [phs.symbs.u[el] for el in new_indices]
-    phs.symbs.y = [phs.symbs.y[el] for el in new_indices]
-    moveJcolnrow(phs, phs.dims.x()+phs.dims.w()+indi,
-                 phs.dims.x()+phs.dims.w()+indf)
+def move_port(core, indi, indf):
+    new_indices = myrange(core.dims.y(), indi, indf)
+    core.u = [core.u[el] for el in new_indices]
+    core.y = [core.y[el] for el in new_indices]
+    moveJcolnrow(core, core.dims.x()+core.dims.w()+indi,
+                 core.dims.x()+core.dims.w()+indf)
 
 
-def split_separate(phs):
+def split_monovariate(core):
     """
     """
 
     from utils.structure import move_stor, move_diss
     # split storage part
     i = 0
-    for _ in range(phs.dims.x()):
-        hess = hessian(phs.exprs.H, phs.symbs.x)
+    for _ in range(core.dims.x()):
+        hess = hessian(core.H, core.x)
         hess_line = list(hess[i, :].T)
         # remove i-th element
         hess_line.pop(i)
@@ -54,15 +54,15 @@ def split_separate(phs):
             i += 1
         else:
             # move the element at the end of states vector
-            move_stor(phs, i, phs.dims.x())
+            move_stor(core, i, core.dims.x())
     # number of separate components
-    phs.dims.xs = i
+    core.dims.xs = i
     # number of non-separate components
-    phs.dims.xns = phs.dims.x()-i
+    core.dims.xns = core.dims.x()-i
     # split dissipative part
     i = 0
-    for _ in range(phs.dims.w()):
-        Jacz_line = list(phs.Jacz[i, :].T)
+    for _ in range(core.dims.w()):
+        Jacz_line = list(core.Jacz[i, :].T)
         # remove i-th element
         Jacz_line.pop(i)
         # if other elements are all 0
@@ -71,21 +71,21 @@ def split_separate(phs):
             i += 1
         else:
             # move the element at the end of variables vector
-            move_diss(phs, i, phs.dims.w())
+            move_diss(core, i, core.dims.w())
     # number of separate components
-    phs.dims.ws = i
+    core.dims.ws = i
     # number of non-separate components
-    phs.dims.wns = phs.dims.w()-i
+    core.dims.wns = core.dims.w()-i
 
 
-def split_linear(phs, force_nolin=False):
+def split_linear(core, force_nolin=False):
     """
     """
     # split storage part
     nxl = 0
     if not force_nolin:
-        for _ in range(phs.dims.x()):
-            hess = hessian(phs.exprs.H, phs.symbs.x)
+        for _ in range(core.dims.x()):
+            hess = hessian(core.H, core.x)
             hess_line = list(hess[nxl, :].T)
             # init line symbols
             line_symbols = set()
@@ -93,24 +93,24 @@ def split_linear(phs, force_nolin=False):
             for el in hess_line:
                 line_symbols = line_symbols.union(el.free_symbols)
             # if symbols are not states
-            if not any(el in line_symbols for el in phs.symbs.x):
+            if not any(el in line_symbols for el in core.x):
                 # do nothing and increment counter
                 nxl += 1
             else:
                 # move the element at the end of states vector
-                print(str(nxl)+" "+str(phs.dims.x()-1))
-                move_stor(phs, nxl, phs.dims.x()-1)
+                print(str(nxl)+" "+str(core.dims.x()-1))
+                move_stor(core, nxl, core.dims.x()-1)
 
-    hess = hessian(phs.exprs.H, phs.symbs.x)
-    phs.exprs.setexpr('Q', hess[:nxl, :nxl])
+    hess = hessian(core.H, core.x)
+    core._setexpr('Q', hess[:nxl, :nxl])
     # number of linear components
-    setattr(phs.dims, 'xl', nxl)
+    setattr(core.dims, '_xl', nxl)
 
     # split dissipative part
     nwl = 0
     if not force_nolin:
-        for _ in range(phs.dims.w()):
-            jacz = jacobian(phs.exprs.z, phs.symbs.w)
+        for _ in range(core.dims.w()):
+            jacz = jacobian(core.z, core.w)
             jacz_line = list(jacz[nwl, :].T)
             # init line symbols
             line_symbols = set()
@@ -118,63 +118,64 @@ def split_linear(phs, force_nolin=False):
             for el in jacz_line:
                 line_symbols = line_symbols.union(el.free_symbols)
             # if symbols are not dissipation variables
-            if not any(el in line_symbols for el in phs.symbs.w):
+            if not any(el in line_symbols for el in core.w):
                 # do nothing and increment counter
                 nwl += 1
             else:
                 # move the element to end of dissipation variables vector
-                move_diss(phs, nwl, phs.dims.w()-1)
-    jacz = jacobian(phs.exprs.z, phs.symbs.w)
-    phs.exprs.setexpr('Zl', jacz[:nwl, :nwl])
+                move_diss(core, nwl, core.dims.w()-1)
+    jacz = jacobian(core.z, core.w)
+    core._setexpr('Zl', jacz[:nwl, :nwl])
+
     # number of linear components
-    setattr(phs.dims, 'wl', nwl)
-    phs.exprs.build()
+    setattr(core.dims, '_wl', nwl)
+    core.exprs_build()
 
     names = ('xl', 'xnl', 'wl', 'wnl', 'y')
-    phs.inds._set_inds(names)
+    core.inds._set_inds(names, core)
 
     # get() and set() for structure matrices
-    phs.struc._build_getset(phs, dims_names=names)
+    core._struc_getset(dims_names=names)
 
 
-def reduce_linear_dissipations(phs):
-    if not hasattr(phs, 'nwl'):
-        split_linear(phs)
-    iDwl = sympy.eye(phs.dims.wl)-phs.struc.Mwlwl()*phs.exprs.Zl
+def reduce_linear_dissipations(core):
+    if not hasattr(core, 'nwl'):
+        split_linear(core)
+    iDwl = sympy.eye(core.dims.wl)-core.struc.Mwlwl()*core.Zl
     Dwl = iDwl.inv()
-    Mwlnl = sympy.Matrix.hstack(phs.struc.Mwlxl(),
-                                phs.struc.Mwlxnl(),
-                                phs.struc.Mwlwnl(),
-                                phs.struc.Mwly())
-    Mnlwl = sympy.Matrix.vstack(phs.struc.Mxlwl(),
-                                phs.struc.Mxnlwl(),
-                                phs.struc.Mwnlwl(),
-                                phs.struc.Mywl())
+    Mwlnl = sympy.Matrix.hstack(core.Mwlxl(),
+                                core.Mwlxnl(),
+                                core.Mwlwnl(),
+                                core.Mwly())
+    Mnlwl = sympy.Matrix.vstack(core.Mxlwl(),
+                                core.Mxnlwl(),
+                                core.Mwnlwl(),
+                                core.Mywl())
 
     names = ('xl', 'xnl', 'wnl', 'y')
     mat = []
     for namei in names:
         mati = []
         for namej in names:
-            mati.append(geteval(phs.struc, 'M'+namei+namej))
+            mati.append(geteval(core, 'M'+namei+namej))
         mat.append(sympy.Matrix.hstack(*mati))
     Mnl = sympy.Matrix.vstack(*mat)
 
-    phs.symbs.w = phs.symbs.w[phs.dims.wl:]
-    phs.exprs.z = phs.exprs.z[phs.dims.wl:]
-    phs.dims.wl = 0
-    phs.struc.M = Mnlwl*phs.exprs.Zl*Dwl*Mwlnl + Mnl
-    phs.exprs.build()
+    core.w = core.w[core.dims.wl:]
+    core.z = core.z[core.dims.wl:]
+    core.dims.wl = 0
+    core.M = Mnlwl*core.Zl*Dwl*Mwlnl + Mnl
+    core.build()
 
 
-def output_function(phs):
+def output_function(core):
     """
     Returns the expression of the continuous output vector function y, and the\
 expression of the discrete output vector function yd.
 
     Input:
 
-        - phs: pyphs.PortHamiltonianObject
+        - core: pyphs.PortHamiltonianObject
 
     Output:
 
@@ -184,21 +185,21 @@ components, considering the continuous version of storage function gradient
 components, considering the discrete version of storage function gradient
     """
 
-    if phs.dims.y() > 0:  # Check if system has external ports
+    if core.dims.y() > 0:  # Check if system has external ports
 
         # contribution of inputs to the output
-        Vyu = phs.struc.Myy()*sympy.Matrix(phs.symbs.u)
+        Vyu = core.Myy()*sympy.Matrix(core.u)
 
-        if phs.dims.x() > 0:  # Check if system has storage parts
-            Vyx = phs.struc.Myx()*sympy.Matrix(phs.exprs.dxH)
-            Vyxd = phs.struc.Myx()*sympy.Matrix(phs.exprs.dxHd)
+        if core.dims.x() > 0:  # Check if system has storage parts
+            Vyx = core.Myx()*sympy.Matrix(core.dxH)
+            Vyxd = core.Myx()*sympy.Matrix(core.dxHd)
         else:
-            Vyx = Vyxd = sympy.zeros(phs.dims.y(), 1)
+            Vyx = Vyxd = sympy.zeros(core.dims.y(), 1)
 
-        if phs.dims.w() > 0:  # Check if system has dissipative parts
-            Vyw = phs.struc.Myw()*sympy.Matrix(phs.exprs.z)
+        if core.dims.w() > 0:  # Check if system has dissipative parts
+            Vyw = core.Myw()*sympy.Matrix(core.z)
         else:
-            Vyw = sympy.zeros(phs.dims.y(), 1)
+            Vyw = sympy.zeros(core.dims.y(), 1)
 
         out = list(Vyx + Vyw + Vyu)
         out = simplify(out)

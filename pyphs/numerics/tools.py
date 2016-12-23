@@ -5,69 +5,30 @@ Created on Fri Jun  3 11:26:41 2016
 @author: Falaize
 """
 
-from sympy.printing.lambdarepr import lambdarepr
+from pyphs.core.symbs_tools import simplify as simp
 import numpy
 import sympy
-
-
-parser_sympy2numpy = {
-            'sin': numpy.sin,
-            'cos': numpy.cos,
-            'tan': numpy.tan,
-            'asin': numpy.arcsin,
-            'acos': numpy.arccos,
-            'atan': numpy.arctan,
-            'atan2': numpy.arctan2,
-            'sinh': numpy.sinh,
-            'cosh': numpy.cosh,
-            'tanh': numpy.tanh,
-            'asinh': numpy.arcsinh,
-            'acosh': numpy.arccosh,
-            'atanh': numpy.arctanh,
-            'ln': numpy.log,
-            'log': numpy.log,
-            'exp': numpy.exp,
-            'sqrt': numpy.sqrt,
-            'Abs': numpy.abs,
-            'conjugate': numpy.conj,
-            'im': numpy.imag,
-            're': numpy.real,
-            'where': numpy.where,
-            'complex': numpy.complex,
-            'MutableDenseMatrix': numpy.array,
-            'DenseMatrix': numpy.array,
-            'ImmutableDenseMatrix': numpy.array,
-            'ImmutableMatrix': numpy.array,
-            'Matrix': numpy.array}
 
 
 def lambdify(args, expr, subs=None, simplify=True):
     """
     call to lambdify with chosen options
     """
-#    from sympy.printing.theanocode import theano_function
-#    return theano_function(args, expr)
-
-    if hasattr(expr, 'index'):
+    vector_expr = hasattr(expr, 'index')
+    if vector_expr:
         expr = sympy.Matrix(expr)
 
     if subs is not None:
-        if hasattr(expr, 'index'):
+        if vector_expr:
             for i, e in enumerate(expr):
                 expr[i] = e.subs(subs)
         else:
             expr = expr.subs(subs)
     if simplify:
-        from pyphs.symbolics.tools import simplify as simp
         expr = simp(expr)
-    str_expr = lambdarepr(expr)
-    str_args = ""
-    for arg in args:
-        str_args += str(arg) + ', '
-    func = eval('lambda ' + str_args + ' : ' + str_expr,
-                parser_sympy2numpy,
-                {})
-    return func
+    array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
+    expr_lambda = sympy.lambdify(args, expr, dummify=False, modules=array2mat)
+    return expr_lambda
 
 
 def find(symbs, allsymbs):

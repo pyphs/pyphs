@@ -5,16 +5,19 @@ Created on Tue May 24 11:20:26 2016
 @author: Falaize
 """
 
+from pyphs.config import standard_PHSSimu
 from pyphs.simulations.processes import process_py, process_cpp
-from pyphs.simulations.tools import standard
+from pyphs.core.struc_tools import split_linear
+from expressions import SimulationExpressions
+from data import Data
 import time
+import os
 
-
-class Simulation:
+class PHSSimu:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
-    def __init__(self, phs, opts=None):
+    def __init__(self, core, config=None, path=None):
         """
         Parameters
         -----------
@@ -36,33 +39,37 @@ class Simulation:
         """
 
         # init config with standard configuration options
-        self.config = standard
+        self.config = standard_PHSSimu
+
         # update with provided opts
-        if opts is None:
-            opts = {}
-        self.config.update(opts)
-        # store phs
-        self._phs = phs
+        if config is None:
+            config = {}
+        self.config.update(config)
+
+        if path is None:
+            path = os.getcwd()
+        self.config.update({'path': path})
+
+        # store PHSCore
+        self.core = core
 
 ###############################################################################
 
     def init_expressions(self):
         """
-        Init the phs.simu.exprs module that contains all expressions for \
+        Init the PHSSimu.exprs module that contains all expressions for \
 simulation.
         """
 
         if self.config['presubs']:
-            self._phs.apply_subs()
+            self.core.apply_subs()
 
         # split system into linear and nonlinear parts
         force_nolin = not self.config['split']
 
-        from pyphs.symbolics.structures.tools import split_linear
-        split_linear(self._phs, force_nolin=force_nolin)
+        split_linear(self.core, force_nolin=force_nolin)
 
-        from expressions import SimulationExpressions
-        self.exprs = SimulationExpressions(self._phs)
+        self.exprs = SimulationExpressions(self.core, config=self.config)
 
 ###############################################################################
 
@@ -71,7 +78,8 @@ simulation.
             self.config.update(opts)
 
         self.init_expressions()
-        self._phs.data.init_data(sequ, seqp, x0, nt)
+        setattr(self, 'data', Data(self.core, self.config))
+        self.data.init_data(sequ, seqp, x0, nt)
 
     def process(self):
         """

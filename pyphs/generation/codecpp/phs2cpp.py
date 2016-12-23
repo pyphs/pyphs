@@ -20,7 +20,7 @@ class CppCode:
             filename = self._phs.paths['cpp'] + os.sep + name + "." + extension
             string = getattr(self, name)[extension]
         _file = open(filename, 'w')
-        print string
+        print(string)
         _file.write(string)
         _file.close()
 

@@ -7,13 +7,13 @@ Created on Thu Dec 22 18:26:56 2016
 """
 from __future__ import division
 import sympy
-from pyphs.core.misc_tools import geteval
-from discrete_calculus import discrete_gradient
-from calculus import gradient, jacobian, hessian
-from dimensions import Dimensions
-from indices import Indices
-from symbs_tools import _assert_expr, _assert_vec
-from struc_tools import reduce_linear_dissipations, split_linear, \
+from .misc_tools import geteval
+from .discrete_calculus import discrete_gradient
+from .calculus import gradient, jacobian, hessian
+from .dimensions import Dimensions
+from .indices import Indices
+from .symbs_tools import _assert_expr, _assert_vec
+from .struc_tools import reduce_linear_dissipations, split_linear, \
     output_function
 
 ###############################################################################
@@ -457,7 +457,6 @@ dissipation function z.
         u : str, symbol, or list of
         y : str, symbol, or list of
         """
-        from symbolics.tools import _assert_expr, _assert_vec
         if hasattr(u, '__len__'):
             u = _assert_vec(u)
             y = _assert_vec(y)
@@ -468,8 +467,8 @@ dissipation function z.
             _assert_expr(y)
             u = (u, )
             y = (y, )
-        self.symbs.u = self.symbs.u + list(u)
-        self.symbs.y = self.symbs.y + list(y)
+        self.u += list(u)
+        self.y += list(y)
 
     def add_connectors(self, connectors):
         """

@@ -59,8 +59,8 @@ i-th parameter is defined as 'label_pari'.
 
     def __add__(net1, net2):
         net = net1
-        for n2 in range(net2.nlines()):
-            net.add_line(net2[n2])
+        for l in net2:
+            net.add_line(l)
         return net
 
     def nlines(self):
@@ -101,6 +101,10 @@ components).
                     par, _, parameters = parameters.partition(';')
                     par = par.replace(' ', '')
                     key, _, value = par.partition('=')
+                    try:
+                        value = ast.literal_eval(value)
+                    except ValueError:
+                        pass
                     pars.update({key: value})
                 self.arguments = list(self.arguments)+[pars, ]
         file_.close()
@@ -114,11 +118,13 @@ components).
             netlist += self.line(n)
         return netlist[:-1]
 
-    def write(self):
+    def write(self, filename=None):
         """
         write the content of the netlist to file 'filename'
         """
-        file_ = open(self.filename, 'w')
+        if filename is None:
+            filename = self.filename
+        file_ = open(filename, 'w')
         file_.write(self.netlist())  # remove the last cariage return
         file_.close()
 

@@ -43,7 +43,7 @@ def write_tikz():
     cd """ + folder + """
     \nnx2tikz --input """+label+""".py --output out --format pdf"""
     p = subprocess.Popen(string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    for line in iter(p.stdout.readline, ''): print line,
+    for line in iter(p.stdout.readline, ''): print(line),
 
 def graph():
     g = nx.MultiDiGraph()

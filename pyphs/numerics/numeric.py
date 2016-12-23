@@ -6,7 +6,7 @@ Created on Fri Jun  3 15:27:55 2016
 """
 
 from pyphs.core.symbs_tools import free_symbols
-from tools import lambdify, find
+from .tools import lambdify, find
 
 
 class PHSNums:

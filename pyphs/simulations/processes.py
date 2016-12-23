@@ -5,9 +5,10 @@ Created on Thu Jun  9 16:10:47 2016
 @author: Falaize
 """
 
+from builtins import input
 import progressbar
 import time
-from tools import update
+from .tools import update
 import numpy as np
 
 
@@ -39,7 +40,7 @@ def process_py(simulation):
         pbar.start()
     # init time step
     n = 0
-    print "\n*** Simulation ***\n"
+    print("\n*** Simulation ***\n")
     for (u, p) in zip(seq_u, seq_p):
         update(simulation, u=np.array(u), p=np.array(p))
         dump_files(simulation, files)
@@ -59,14 +60,14 @@ def process_cpp(simu):
     from pyphs.conf import cpp_build_and_run_script
     if cpp_build_and_run_script is None:
         import os
-        print"\no==========================================================\
-        ==o\n"
-        print " Please, execute:\n" + simu._phs.paths['cpp'] + \
+        print("\no==========================================================\
+        ==o\n")
+        print(" Please, execute:\n" + simu._phs.paths['cpp'] + \
             os.path.sep + \
-            "/main.cpp"
-        print"\no==========================================================\
-        ==o\nWaiting....\n"
-        raw_input()
+            "/main.cpp")
+        print("\no==========================================================\
+        ==o\n")
+        input("Press a key when done.\nWaiting....\n")
     elif type(cpp_build_and_run_script) is str:
         import subprocess
         # Replace generic term 'phobj_path' by actual object path
@@ -77,4 +78,4 @@ def process_cpp(simu):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT)
         for line in iter(p.stdout.readline, ''):
-            print line,
+            print(line),

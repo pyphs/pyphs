@@ -5,19 +5,19 @@ Created on Tue Jun  7 19:14:24 2016
 @author: Falaize
 """
 
-from pyphs import PortHamiltonianObject
-from pyphs.conf import datum
-from pyphs.symbolics.tools import symbols
+from pyphs import PHSGraph
+from pyphs.config import datum
+from pyphs.core.core import symbols
 from pyphs.dictionary.tools import nice_var_label
 
 
-class Port(PortHamiltonianObject):
+class Port(PHSGraph):
     """
     port
     """
     def __init__(self, label, nodes, **kwargs):
 
-        PortHamiltonianObject.__init__(self, label)
+        PHSGraph.__init__(self, label=label)
         # set starting node to datum if not provided
         if nodes.__len__() == 1:
             node1 = datum
@@ -29,7 +29,7 @@ class Port(PortHamiltonianObject):
         u, y = symbols((nice_var_label('u', label),
                         nice_var_label('y', label)))
         # add port to phs
-        self.add_ports([u], [y])
+        self.Core.add_ports([u], [y])
         # check edge control type (dual of input control type in values[0])
         assert kwargs['ctrl'] in ('e', 'f', '?')
         # define edge data
@@ -38,7 +38,7 @@ class Port(PortHamiltonianObject):
                      'ctrl': kwargs['ctrl'],
                      'link': None}
         # add edge to phs.Graph
-        self.graph.add_edges_from([(node1, node2, edge_data)])
+        self.add_edges_from([(node1, node2, edge_data)])
         # check if constant value is provided
         if 'const' in kwargs.keys():
             self.symbs.subs.update({u: kwargs['const']})

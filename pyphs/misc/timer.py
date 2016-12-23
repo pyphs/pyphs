@@ -13,7 +13,7 @@ _dur_process_max = 1.
 
 # Register an handler for the timeout
 def handler(signum, frame):
-    print "A process has been ignored."
+    print("A process has been ignored.")
     raise Exception("time out")
 
 
@@ -29,8 +29,8 @@ def timeout(func, arg, dur=_dur_process_max):
         # Cancel the timer if the function returned before timeout
         signal.alarm(0)
         success = True
-    except Exception, exc:
+    except Exception as exc:
         success = False
-        print exc
+        print(exc)
         pass
     return arg, success

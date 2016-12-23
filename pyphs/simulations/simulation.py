@@ -8,8 +8,8 @@ Created on Tue May 24 11:20:26 2016
 from pyphs.config import standard_PHSSimu
 from pyphs.simulations.processes import process_py, process_cpp
 from pyphs.core.struc_tools import split_linear
-from expressions import SimulationExpressions
-from data import Data
+from .expressions import SimulationExpressions
+from .data import Data
 import time
 import os
 
@@ -103,7 +103,7 @@ simulation.
 
         if self.config['timer']:
             time_it = ((tstop-tstart)/float(self.config['nt']))
-            print 'time per iteration: {0!s} s'.format(format(time_it, 'f'))
+            print('time per iteration: {0!s} s'.format(format(time_it, 'f')))
             time_ratio = time_it*self.config['fs']
-            print 'ratio compared to real-time: {0!s}'.format(format(
-                time_ratio, 'f'))
+            print('ratio compared to real-time: {0!s}'.format(format(
+                time_ratio, 'f')))

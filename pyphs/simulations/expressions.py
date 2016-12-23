@@ -178,7 +178,7 @@ class SimulationExpressions:
             self.build_presolve()
 
     def build_presolve(self):
-        print '*** Resolution of linear subsystem succeed ***'
+        print('*** Resolution of linear subsystem succeed ***')
         for name in ['xl', 'nl', 'y']:
             temp = self.Dl_expr * getattr(self, 'barNl'+name+'_expr')
             self.setfunc('Nl'+name, temp)

@@ -4,11 +4,11 @@ Created on Tue Jun  7 19:50:15 2016
 
 @author: Falaize
 """
-from pyphs import PortHamiltonianObject
+from pyphs import PHSGraph
 from pyphs.dictionary.tools import mappars
 
 
-class NonLinearStorage(PortHamiltonianObject):
+class NonLinearStorage(PHSGraph):
     """
     nonlinear storage component class.
 
@@ -44,24 +44,15 @@ keys of the kwargs arguments.
     """
     def __init__(self, label, edges, x, H, **kwargs):
         # init PortHamiltonianObject
-        PortHamiltonianObject.__init__(self, label)
+        PHSGraph.__init__(self, label=label)
         # build correspondance between labels in subs and pars (dicpars)...
         # ... and build the correspondance between symbols and subs (subs)
         dicpars, subs = mappars(self, **kwargs)
         # update dict of subs in phs
-        self.symbs.subs.update(subs)
+        self.Core.subs.update(subs)
         # replace parameters in H by correspondances in 'dicpars'
         H = H.subs(dicpars)
         # add dissipative component
-        self.add_storages(x, H)
+        self.Core.add_storages(x, H)
         # update phs.Graph with edges
-        self.graph.add_edges_from(edges)
-
-
-#        edge_data_dic = {'label': x,
-#                         'type': 'storage',
-#                         'ctrl': kwargs['ctrl'],
-#                         'link': None}
-#        edge = (nodes[0], nodes[1], edge_data_dic)
-#        self.graph.add_edges_from([edge])
-#        self.symbs.subs.update(subs)
+        self.add_edges_from(edges)

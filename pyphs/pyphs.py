@@ -40,13 +40,13 @@ Created on Thu Jun  2 21:33:07 2016
 @author: Antoine Falaize
 """
 
-from core.core import PHSCore
-from numerics.numeric import PHSNums
-from simulations.simulation import PHSSimu
-from graphs.netlists import PHSNetlist
-from graphs.graph import PHSGraph
-from config import standard_PHSObject
-from misc.signals.synthesis import signalgenerator
+from .core.core import PHSCore
+from .numerics.numeric import PHSNums
+from .simulations.simulation import PHSSimu
+from .graphs.netlists import PHSNetlist
+from .graphs.graph import PHSGraph
+from .config import standard_PHSObject
+from .misc.signals.synthesis import signalgenerator
 import os
 
 ###############################################################################
@@ -258,8 +258,6 @@ got %s' % type(label)
         """
         self.graph.netlist.read(filename)
         self.graph.build_from_netlist()
-        print(self.symbs.x)
-        print(self.symbs.w)
         self.graph._perform_analysis()
         self.graph.analysis.build_phs(self)
         self.apply_connectors()

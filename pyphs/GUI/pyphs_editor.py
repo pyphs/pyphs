@@ -13,12 +13,16 @@ last edited: January 2015
 """
 
 import sys
-from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QFrame, QTextEdit,
-    QSplitter, QStyleFactory, QApplication, QAction, QFileDialog, qApp, QMainWindow)
+import os
+from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QVBoxLayout, QFrame, 
+    QSplitter, QStyleFactory, QApplication, QAction, QFileDialog, qApp, 
+    QPushButton, QMainWindow, QTextEdit, QDesktopWidget, QMessageBox, 
+    QDialog)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon 
 
-from netlists import Netlist
+from pyphs import PHSNetlist
+
 
 class NetlistGUI(QTextEdit):
   
@@ -29,35 +33,43 @@ class NetlistGUI(QTextEdit):
         
     def initUI(self):
         
-        self.data = ""               
-                
-    def _update(self):
-        self.setText(self.data)        
+        msgBox = QMessageBox()
+        msgBox.setText('Netlist file selection')
+        msgBox.addButton(QPushButton('New'), QMessageBox.YesRole)
+        msgBox.addButton(QPushButton('Open'), QMessageBox.NoRole)
+        init = msgBox.exec_()
         
+        if init == 0:
+            self._new()
+        else:
+            assert init == 1
+            self._open()
 
+    def _update(self):
+        self.setText(self.Netlist.netlist())        
+        
     def _new(self):
-        dir_ = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        open(dir_, 'a').close()
-
+        fname = QFileDialog.getSaveFileName(self, "New netlist file")[0]
+        if not fname[-4:] == '.net':
+            fname += '.net'
+        self.filename = fname
+        print('Netlist filename: ', fname)
+        self.Netlist = PHSNetlist(self.filename)
+        self._update()
                 
     def _open(self):
 
-        fname = QFileDialog.getOpenFileName(self, 'Open file', '/home')
-        if fname[0]:
-            f = open(fname[0], 'r')
-
-            with f:
-                self.data = f.read()
+        fname = QFileDialog.getOpenFileName(self, 'Open netlist file', os.getcwd())
+        self.filename = fname[0]
+        self.Netlist = PHSNetlist(self.filename)
         self._update()
-
                 
-    def _save(self):
-        fname = QFileDialog.getSaveFileName(self, "Save file")[0]
-        if not fname[-4:] == '.net':
-            fname += '.net'
-        f = open(fname, 'w')
-        f.write(self.data)
+    def _saveas(self):
+        fname = QFileDialog.getSaveFileName(self, "Save netlist file as")[0]
+        self.Netlist.write(fname)
 
+    def _save(self):
+        self.Netlist.write()
 
 class Splitter(QWidget):
     
@@ -115,12 +127,22 @@ class Editor(QMainWindow):
         self.setCentralWidget(self.splitter)
 
         #############################################################        
+        #############################################################        
+        #############################################################        
+
+        # Main Actions
 
         # Exit Action
         exitAction = QAction(QIcon('icons/exit.png'), '&Exit', self)        
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit PyPHS Editor')
         exitAction.triggered.connect(qApp.quit)
+
+        #############################################################        
+        #############################################################        
+        #############################################################        
+
+        # Netlist Actions
 
         # Open Action
         self.openAction = QAction(QIcon('icons/open.png'), '&Open', self)        
@@ -134,17 +156,41 @@ class Editor(QMainWindow):
         self.saveAction.setStatusTip('Save netlist')
         self.saveAction.triggered.connect(self.splitter.netlist._save)
 
+        # Save Action
+        self.saveAction = QAction(QIcon('icons/save.png'), '&Save', self)        
+        self.saveAction.setShortcut('Ctrl+S')
+        self.saveAction.setStatusTip('Save netlist')
+        self.saveAction.triggered.connect(self.splitter.netlist._save)
+
+        # Saveas Action
+        self.saveasAction = QAction(QIcon('icons/saveas.png'), '&Save as', self)        
+        self.saveasAction.setShortcut('Ctrl+Shift+S')
+        self.saveasAction.setStatusTip('Save as new netlist')
+        self.saveasAction.triggered.connect(self.splitter.netlist._saveas)
+
         #############################################################        
+        #############################################################        
+        #############################################################        
+        
+        # TOOLBAR
 
         self.toolbar = self.addToolBar('Tools')
         self.toolbar.addAction(self.openAction)
         self.toolbar.addAction(self.saveAction)
 
         #############################################################        
+        #############################################################        
+        #############################################################        
+        
+        # Status Bar
 
         self.statusBar()
 
         #############################################################        
+        #############################################################        
+        #############################################################        
+        
+        # MENU BAR
 
         menubar = self.menuBar()
         #############################################################
@@ -152,11 +198,19 @@ class Editor(QMainWindow):
         # This forces in-window menu instead of standard OSX menu   #
         menubar.setNativeMenuBar(False)                             #
         #############################################################        
-        fileMenu = menubar.addMenu('&File')
+
+        # PyPHS menu
+        fileMenu = menubar.addMenu('&PyPHS')
         fileMenu.addAction(self.openAction)
         fileMenu.addAction(self.saveAction)
         fileMenu.addAction(exitAction)
         
+        # Netlist menu
+        netlistMenu = menubar.addMenu('&Netlist')
+        netlistMenu.addAction(self.openAction)
+        netlistMenu.addAction(self.saveAction)
+        netlistMenu.addAction(self.saveasAction)
+
         #############################################################        
 
         self.setGeometry(640, 480, 300, 200)

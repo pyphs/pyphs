@@ -138,10 +138,10 @@ def test_parallel_map(func=factorial, njobs=10000, arg=int(2*10**4)):
     tser = time.time() - tinit
     # test if same output
     test = all( el1 == el2 for (el1, el2) in zip(lser, lpar))
-    print "time serial map: " + str(tser)
-    print "time parallel map: " + str(tpar)
-    print "Same output: " + str(test)
-    print "improvement: " + str(tser/tpar)
+    print("time serial map: " + str(tser))
+    print("time parallel map: " + str(tpar))
+    print("Same output: " + str(test))
+    print("improvement: " + str(tser/tpar))
 
 def test_parallel_exec(func=factorial, njobs=10000, arg=int(2*10**4)):
     """
@@ -160,10 +160,10 @@ def test_parallel_exec(func=factorial, njobs=10000, arg=int(2*10**4)):
     tser = time.time() - tinit
     # test if same output
     test = all( el1 == el2 for (el1, el2) in zip(lser, lpar))
-    print "time serial exec: " + str(tser)
-    print "time parallel exec: " + str(tpar)
-    print "Same output: " + str(test)
-    print "improvement: " + str(tser/tpar)
+    print("time serial exec: " + str(tser))
+    print("time parallel exec: " + str(tpar))
+    print("Same output: " + str(test))
+    print("improvement: " + str(tser/tpar))
 
 if __name__ == '__main__':
     NJOBS = 100

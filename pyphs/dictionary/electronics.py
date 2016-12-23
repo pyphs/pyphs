@@ -4,14 +4,14 @@ Created on Sat May 21 16:24:12 2016
 
 @author: Falaize
 """
-from classes.connectors.port import Port
-from classes.linears.dissipatives import LinearDissipationFreeCtrl
-from classes.linears.storages import LinearStorageFluxCtrl, \
+from .classes.connectors.port import Port
+from .classes.linears.dissipatives import LinearDissipationFreeCtrl
+from .classes.linears.storages import LinearStorageFluxCtrl, \
     LinearStorageEffortCtrl
-from classes.nonlinears.dissipatives import NonLinearDissipative
-from pyphs.dictionary.tools import symbols, nice_var_label
+from .classes.nonlinears.dissipatives import NonLinearDissipative
+from .tools import symbols, nice_var_label
 import sympy
-from pyphs.conf import GMIN
+from pyphs.config import GMIN
 
 
 class Source(Port):
@@ -216,7 +216,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
          * 'R': connectors resistance (Ohms)
     """
     def __init__(self, label, nodes, **kwargs):
-    	kwargs.update({'gmin': ('gmin', GMIN)})
+        kwargs.update({'gmin': ('gmin', GMIN)})
         # parameters
         pars = ['Is', 'v0', 'R', 'mu']
         for par in pars:

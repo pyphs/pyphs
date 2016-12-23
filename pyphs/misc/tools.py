@@ -30,7 +30,7 @@ def myrange(N, indi, indf):
     """
     return 'range(N)' with index 'indi' at position 'indf'
     """
-    lis = range(N)
+    lis = list(range(N))
     if indi < indf:
         deb = lis[:indi] + lis[indi+1:indf+1]
         end = lis[indf+1:]
@@ -51,7 +51,6 @@ def progressbar(progress):
      A value under 0 represents a 'halt'.
      A value at 1 or bigger represents 100%
      """
-    import sys
     barLength = 10  # Modify this to change the length of the progress bar
     status = ""
     if isinstance(progress, int):
@@ -68,7 +67,8 @@ def progressbar(progress):
     block = int(round(barLength*progress))
     text = "\rPercent: [{0}] {1}% {2}".format("#"*block+"-"*(barLength-block),
                                               progress*100, status)
-    print text
+    print(text)
+#    import sys
 #    sys.stdout.write(text)
 #    sys.stdout.flush()
 

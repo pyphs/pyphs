@@ -5,9 +5,9 @@ Created on Thu Jun  9 11:46:11 2016
 @author: Falaize
 """
 import sympy
-from calculus import hessian, jacobian
-from symbs_tools import simplify
-from misc_tools import myrange, geteval
+from .calculus import hessian, jacobian
+from .symbs_tools import simplify
+from .misc_tools import myrange, geteval
 
 
 def moveJcolnrow(core, indi, indf):

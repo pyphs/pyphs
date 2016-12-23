@@ -4,10 +4,10 @@ Created on Tue Jun  7 18:57:18 2016
 
 @author: Falaize
 """
-from pyphs.symbolics.tools import symbols
+from pyphs.core.core import symbols
 
 
-def parsub(phs, obj, par_name):
+def parsub(graph, obj, par_name):
     """
     format 'obj' to a symbol
 
@@ -43,11 +43,11 @@ def parsub(phs, obj, par_name):
         string = obj
         symb = symbols(string)
         sub = {}
-        phs.symbs.p += (symb, )
+        graph.Core.p += (symb, )    
     return symb, sub
 
 
-def mappars(phs, **kwargs):
+def mappars(graph, **kwargs):
     """
     map dictionary of 'par':('label', value) to dictionary of substitutions \
 for parameters in component expression 'dicpars' and for parameters in phs \
@@ -56,7 +56,7 @@ for parameters in component expression 'dicpars' and for parameters in phs \
     dicpars = {}
     subs = {}
     for key in kwargs.keys():
-        symb, sub = parsub(phs, kwargs[key], phs.label + '_' + str(key))
+        symb, sub = parsub(graph, kwargs[key], graph.label + '_' + str(key))
         dicpars.update({symbols(key): symb})
         subs.update(sub)
     return dicpars, subs

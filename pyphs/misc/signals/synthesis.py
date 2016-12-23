@@ -259,7 +259,7 @@ to PWM.
             elif which == "sweep":
                 Sig = sweep_cosine(non, fs, f0, f1, A, kwargs)
             else:
-                print '{0!s} unknown.'.format(which)
+                print('{0!s} unknown.'.format(which))
                 raise NameError
             i = 0
             for v in Sig:

@@ -4,11 +4,11 @@ Created on Tue Jun  7 19:50:15 2016
 
 @author: Falaize
 """
-from pyphs import PortHamiltonianObject
+from pyphs import PHSGraph
 from pyphs.dictionary.tools import mappars
 
 
-class NonLinearDissipative(PortHamiltonianObject):
+class NonLinearDissipative(PHSGraph):
     """
     nonlinear dissipative componen class.
 
@@ -47,12 +47,12 @@ keys of the kwargs arguments.
         assert len(w) == len(z),\
             'len(z)={0!s} is not equal to len(w)={1!s}.'.format(len(z), len(w))
         # init PortHamiltonianObject
-        PortHamiltonianObject.__init__(self, label)
+        PHSGraph.__init__(self, label=label)
         # build correspondance between labels in subs and pars (dicpars)...
         # ... and build the correspondance between symbols and subs (subs)
         dicpars, subs = mappars(self, **kwargs)
         # update dict of subs in phs
-        self.symbs.subs.update(subs)
+        self.Core.subs.update(subs)
         # replace parameters in z by correspondances in 'dicpars'
         for i, zz in enumerate(z):
             z[i] = zz.subs(dicpars)
@@ -62,6 +62,6 @@ keys of the kwargs arguments.
                     edges[e][2]['z'][k] = edge[2]['z'][k].subs(dicpars)
 
         # add dissipative component
-        self.add_dissipations(w, z)
+        self.Core.add_dissipations(w, z)
         # update phs.Graph with edges
-        self.graph.add_edges_from(edges)
+        self.add_edges_from(edges)

@@ -9,13 +9,13 @@ import sympy as sp
 import networkx as nx
 
 
-class Graph(nx.MultiDiGraph):
+class PHSGraph(nx.MultiDiGraph):
     """
     Class that stores and manipulates graph representation of \
 port-Hamiltonian systems.
     """
     def __init__(self, phs):
-        
+
         self._phs = phs
         nx.MultiDiGraph.__init__(self)
 

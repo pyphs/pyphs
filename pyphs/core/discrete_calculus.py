@@ -4,6 +4,7 @@ Created on Fri Jun  3 01:46:04 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
 import sympy
 from pyphs.config import EPS
 from pyphs.core.symbs_tools import _assert_expr, _assert_vec, simplify

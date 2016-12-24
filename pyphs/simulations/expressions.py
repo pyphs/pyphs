@@ -5,6 +5,7 @@ Created on Mon Jun 27 18:15:12 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
 import sympy as sp
 from pyphs.core.calculus import jacobian
 from pyphs.config import standard_PHSSimu
@@ -171,14 +172,17 @@ class SimulationExpressions:
 
         from pyphs.misc.timer import timeout
         from pyphs.core.symbs_tools import inverse
-        Dl, success = timeout(inverse, self.iDl_expr, dur=60)
-        self.presolve = success
-        if self.presolve:
+        if self.config['presolve']:
+            Dl, success = timeout(inverse, self.iDl_expr, dur=60)
+            self.config['presolve'] = success
+        if self.config['presolve']:
+            print('*** Resolution of linear subsystem succeed ***')
             self.setfunc('Dl', Dl)
             self.build_presolve()
+        else:
+            print('!!! Resolution of linear subsystem aborded !!!')
 
     def build_presolve(self):
-        print('*** Resolution of linear subsystem succeed ***')
         for name in ['xl', 'nl', 'y']:
             temp = self.Dl_expr * getattr(self, 'barNl'+name+'_expr')
             self.setfunc('Nl'+name, temp)

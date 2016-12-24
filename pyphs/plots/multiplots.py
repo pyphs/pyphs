@@ -4,8 +4,11 @@ Created on Sat Jun 11 20:06:50 2016
 
 @author: Falaize
 """
-from pyphs.plots.tools import activate_latex, annotate, whichplot, setlims, setticks, dec, standard
-from pyphs.plots.fonts import globalfonts
+from __future__ import absolute_import, division, print_function
+
+from .tools import activate_latex, annotate, whichplot, setlims, \
+    setticks, dec, standard
+from .fonts import globalfonts
 
 
 def multiplot(datax, datay, **kwargs):
@@ -127,9 +130,25 @@ subplots.
         You probably want it to be negative.
 
     """
-    opts = standard
+    opts = standard.copy()
+    print('\n')
+    print('\n')
+    print('\n')
+    print(opts)
+    print('\n')
+    print('\n')
+    print('\n')
+
     opts.update(kwargs)
-    nplots = int(datay.__len__())
+    print('\n')
+    print('\n')
+    print('\n')
+    print(opts)
+    print('\n')
+    print('\n')
+    print('\n')
+
+    nplots = len(datay)
 
     if opts['fontsize'] is None:
         opts['fontsize'] = int(6*opts['figsize'][0])
@@ -145,7 +164,6 @@ subplots.
         opts['labels'] = [None, ] * nplots
     if opts['log'] is None:
         opts['log'] = ['', ] * nplots
-
     from matplotlib.pyplot import subplots, close
     close('all')
     fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'])
@@ -157,6 +175,14 @@ subplots.
     rc('font', size=opts['fontsize'], **globalfonts())
 
     x = dec(datax, opts)
+
+    print('\n')
+    print('\n')
+    print('\n')
+    print(opts)
+    print('\n')
+    print('\n')
+    print('\n')
 
     for n in range(nplots):
 

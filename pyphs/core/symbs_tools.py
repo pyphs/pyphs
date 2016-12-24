@@ -4,6 +4,7 @@ Created on Fri Jun  3 11:26:23 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
 
 import sympy
 from pyphs.misc.timer import timeout
@@ -23,12 +24,10 @@ def _simplify_expr(expr):
     return expr
 
 
-def _parallel_simplify(lis):
+def _simplify_list(lis):
     assert hasattr(lis, '__len__'), "{0!s}\ntype({1!s}) not a valid argument for\
 'utils.calculus.simplify_list' ".format(lis, type(lis))
-#    from pyphs.misc.parallelize import parallel_map
-#    return parallel_map(_simplify_expr, lis)
-    return map(_simplify_expr, lis)
+    return sympy.simplify(lis)
 
 
 def _simplify_mat(mat):
@@ -37,7 +36,7 @@ def _simplify_mat(mat):
     dim1, dim2 = mat.shape
     for i in range(dim1):
         row = [elt for elt in mat[i, :]]
-        row = _parallel_simplify(row)
+        row = _simplify_list(row)
         for j in range(dim2):
             mat[i, j] = row[j]
     return mat
@@ -50,7 +49,7 @@ def simplify(obj):
     if hasattr(obj, 'shape'):
         return _simplify_mat(obj)
     elif hasattr(obj, '__len__'):
-        return _parallel_simplify(obj)
+        return _simplify_list(obj)
     else:
         return _simplify_expr(obj)
 

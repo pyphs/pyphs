@@ -7,6 +7,13 @@ Created on Sat Mar  5 13:53:43 2016
 import numpy
 
 
+def pause():
+    try:
+        raw_input()
+    except NameError:
+        input()
+
+
 def geteval(obj, attr):
     """
     if getattr(obj, attr) is function, return evaluation with no arguments, \

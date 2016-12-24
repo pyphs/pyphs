@@ -4,6 +4,7 @@ Created on Thu Jun  9 11:46:11 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
 import sympy
 from .calculus import hessian, jacobian
 from .symbs_tools import simplify

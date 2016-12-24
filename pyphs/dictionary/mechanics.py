@@ -5,12 +5,13 @@ Created on Sat May 21 16:29:43 2016
 @author: Falaize
 """
 
-from classes.connectors.port import Port
-from classes.linears.dissipatives import LinearDissipationFreeCtrl
-from classes.linears.storages import LinearStorageFluxCtrl, \
+from __future__ import absolute_import, division, print_function
+from .classes.connectors.port import Port
+from .classes.linears.dissipatives import LinearDissipationFreeCtrl
+from .classes.linears.storages import LinearStorageFluxCtrl, \
     LinearStorageEffortCtrl
-from classes.nonlinears.dissipatives import NonLinearDissipative
-from classes.nonlinears.storages import NonLinearStorage
+from .classes.nonlinears.dissipatives import NonLinearDissipative
+from .classes.nonlinears.storages import NonLinearStorage
 from pyphs.dictionary.tools import symbols, nice_var_label
 
 import sympy

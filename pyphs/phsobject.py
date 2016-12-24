@@ -42,24 +42,11 @@ Created on Thu Jun  2 21:33:07 2016
 
 from .numerics.numeric import PHSNums
 from .simulations.simulation import PHSSimu
-from .graphs.netlists import PHSNetlist
 from .graphs.graph import PHSGraph
 from .config import standard_PHSObject
 from .misc.signals.synthesis import signalgenerator
-from shutil import copyfile
 
 import os
-
-###############################################################################
-
-
-__licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
-__author__ = "Antoine Falaize"
-__maintainer__ = "Antoine Falaize"
-__copyright__ = "Copyright 2012-2016"
-__version__ = '0.2_DEV'
-__author_email__ = 'antoine.falaize@gmail.com'
-
 
 ###############################################################################
 
@@ -86,7 +73,7 @@ current working directory;
     def __init__(self, netlist, label=None, path=None, **config):
 
         # PHSObject configuration
-        self.config = standard_PHSObject
+        self.config = standard_PHSObject.copy()
         for k in config.keys():
             self.config[k].update(config[k])
 
@@ -122,10 +109,6 @@ got %s' % type(label)
         netlist.filename = new_netlist_filename
         netlist.write()
         setattr(self, 'Graph', PHSGraph(netlist=netlist))
-        print('\n')
-        print(self.Graph.Netlist.netlist())
-        print('\n')
-        print(self.Graph.edges(data=True))
         setattr(self, 'Core', self.Graph.buildCore())
         setattr(self, 'Nums', PHSNums(self.Core))
         setattr(self, 'Simu', PHSSimu(self.Core,

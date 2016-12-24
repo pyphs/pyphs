@@ -9,6 +9,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import pyphs
 
+
 def label():
     """
     System's netlist and folder label
@@ -41,7 +42,7 @@ def netlist(R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
 
     datum = netlist.datum
 
-     # input voltage
+    # input voltage
     source = {'dictionary': 'electronics',
               'component': 'source',
               'label': 'IN',
@@ -59,10 +60,10 @@ def netlist(R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
 
     # fractional inductor
     fracintec = {'dictionary': 'fraccalc',
-                'component': 'int_e',
-                'label': 'L',
-                'nodes': ('B', datum),
-                'arguments': {'p': L, 'beta': 0.5}}
+                 'component': 'int_e',
+                 'label': 'L',
+                 'nodes': ('B', datum),
+                 'arguments': {'p': L, 'beta': 0.5}}
     netlist.add_line(fracintec)
 
     # gyrator
@@ -120,6 +121,7 @@ def input_sequence(amp=10000., f0=100.):
             yield [el, ]
 
     return genu(), nsin
+
 
 def simulation(phs):
     opts = {'fs': samplerate(),

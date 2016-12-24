@@ -107,7 +107,7 @@ None).
         Width of line around markers (the default is 0.5).
 
     """
-    opts = standard
+    opts = standard.copy()
     opts.update(kwargs)
     if opts['axedef'] is None:
         opts['axedef'] = [.15, .15, .75, .75]

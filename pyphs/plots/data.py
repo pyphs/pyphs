@@ -7,8 +7,9 @@ Created on Mon Jun 27 13:12:43 2016
 
 from __future__ import absolute_import, division, print_function
 from .multiplots import multiplot
-from pyphs.generation.codelatex.tools import nice_label
+from pyphs.latex.tools import nice_label
 import os
+
 
 def plot_powerbal(data, mode='single', opts=None):
     """
@@ -87,4 +88,3 @@ def plot(data, var_list, imin=0, imax=None):
                 'unity': labels,
                 'filelabel': filelabel}
     multiplot(datax, datay, **plotopts)
-    

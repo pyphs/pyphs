@@ -131,23 +131,7 @@ subplots.
 
     """
     opts = standard.copy()
-    print('\n')
-    print('\n')
-    print('\n')
-    print(opts)
-    print('\n')
-    print('\n')
-    print('\n')
-
     opts.update(kwargs)
-    print('\n')
-    print('\n')
-    print('\n')
-    print(opts)
-    print('\n')
-    print('\n')
-    print('\n')
-
     nplots = len(datay)
 
     if opts['fontsize'] is None:
@@ -175,15 +159,6 @@ subplots.
     rc('font', size=opts['fontsize'], **globalfonts())
 
     x = dec(datax, opts)
-
-    print('\n')
-    print('\n')
-    print('\n')
-    print(opts)
-    print('\n')
-    print('\n')
-    print('\n')
-
     for n in range(nplots):
 
         miny = float('Inf')
@@ -249,7 +224,7 @@ subplots.
 
     if not opts['filelabel'] is None:
         from matplotlib.pyplot import savefig
-        savefig(opts['filelabel'] + opts['format'])
+        savefig(opts['filelabel'] + '.' + opts['format'])
 
     from matplotlib.pyplot import show
     show()

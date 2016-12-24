@@ -41,9 +41,11 @@ def process_py(simulation):
         pbar = progressbar.ProgressBar(widgets=pb_widgets,
                                        maxval=simulation.config['nt'])
         pbar.start()
+    else:
+        print("\n*** Simulation... ***\n")
+
     # init time step
     n = 0
-    print("\n*** Simulation ***\n")
     for (u, p) in zip(seq_u, seq_p):
         update(simulation, u=np.array(u), p=np.array(p))
         dump_files(simulation, files)

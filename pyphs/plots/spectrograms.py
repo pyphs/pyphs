@@ -6,8 +6,8 @@ Created on Mon Jun 13 16:59:49 2016
 """
 
 
-from pyphs.plots.tools import activate_latex, annotate, setticks, dec, standard
-from pyphs.plots.fonts import globalfonts
+from .tools import activate_latex, annotate, setticks, dec, standard
+from .fonts import globalfonts
 import numpy as np
 
 

@@ -40,7 +40,7 @@ class PHSSimu:
         """
 
         # init config with standard configuration options
-        self.config = standard_PHSSimu
+        self.config = standard_PHSSimu.copy()
 
         # update with provided opts
         if config is None:

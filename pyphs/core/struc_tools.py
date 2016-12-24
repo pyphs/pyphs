@@ -99,7 +99,6 @@ def split_linear(core, force_nolin=False):
                 nxl += 1
             else:
                 # move the element at the end of states vector
-                print(str(nxl)+" "+str(core.dims.x()-1))
                 move_stor(core, nxl, core.dims.x()-1)
 
     hess = hessian(core.H, core.x)

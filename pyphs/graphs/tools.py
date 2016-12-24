@@ -28,4 +28,6 @@ def plot(graph, filename=None, ax=None):
                                  label_pos=0, font_size=7)
     plt.show()
     if filename is not None:
-        fig.savefig(filename + '.' + plot_format)
+        if not filename[-4:] == '.' + plot_format:
+            filename += '.' + plot_format
+        fig.savefig(filename)

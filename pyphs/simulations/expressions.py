@@ -24,7 +24,7 @@ class SimulationExpressions:
     def __init__(self, core, config=None):
 
         # init config with standard configuration options
-        self.config = standard_PHSSimu
+        self.config = standard_PHSSimu.copy()
 
         # update with provided config
         if config is None:

@@ -160,10 +160,6 @@ class Springcubic(NonLinearStorage):
         x = symbols("x"+label)
         # storage funcion
         H = K0*x*(x + x**3/2)/2
-
-        print(label)
-        print(nodes)
-        print(kwargs)
         N1, N2 = nodes
 
         # edge data

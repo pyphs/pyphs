@@ -29,13 +29,13 @@ def coredims2tex(core):
     latexize dimensions nx, nx, ny and np
     """
     sm = symbol_names(core)
-    str_variables = cr(2)
+    str_dimensions = cr(2)
     str_dimensions += r"\section{System dimensions}"
     for dim in [r'x', r'w', r'y', r'p']:
         val = getattr(core.dims, dim)()
         label = r"n_\mathbf{"+dim+r"}"
         desc = r"$\dim(\mathbf{"+dim+r"})=$"
-        str_dimensions += self.obj2tex(val, label, desc, toMatrix=False, sm)
+        str_dimensions += obj2tex(val, label, desc, sm, toMatrix=False)
     return str_dimensions
 
 
@@ -100,11 +100,11 @@ def corestruc2tex(core, which='all'):
     str_structure = cr(1)
     str_structure += r"\section{System structure}"
     if which == 'all' or which == 'M':
-        str_structure += corestructureM2tex(core)
+        str_structure += corestrucM2tex(core)
     if which == 'all' or which == 'J':
-        str_structure += corestructureJ2tex(core)
+        str_structure += corestrucJ2tex(core)
     if which == 'all' or which == 'R':
-        str_structure += corestructureR2tex(core)
+        str_structure += corestrucR2tex(core)
     return str_structure
 
 
@@ -245,7 +245,6 @@ def graphplot2tex(graph, name=None, path=None):
     return string
 
 
-
 def docpreamble(title):
     nb_authors = len(authors)
     nb_affiliations = len(affiliations)
@@ -296,21 +295,22 @@ def docpreamble(title):
     return str_preamble + latex_authors + latex_affiliations
 
 
-def document(self):
+def document(label):
     """
     return latex code as plain string for global phs description
     """
-    title = r"\title{Structure of the port-Hamiltonian system\\\texttt{" + sys_label + r"}}"
+    title = r"\title{Structure of the port-Hamiltonian system\\\texttt{" + \
+        label + r"}}"
     str_tex = ""
-    str_tex += self.preamble()
+    str_tex += self.preamble(title)
     str_tex += cr(1) + r"\begin{document}" + cr(1)
     str_tex += r"\maketitle"
-    str_tex += self.netlist()
-    str_tex += self.dimensions()
-    str_tex += self.symbols()
-    str_tex += self.expressions()
-    str_tex += self.parameters()
-    str_tex += self.structure()
+    str_tex += netlist()
+    str_tex += dimensions()
+    str_tex += symbols()
+    str_tex += expressions()
+    str_tex += parameters()
+    str_tex += structure()
     str_tex += cr(1)
     str_tex += r"\end{document}"
     for special_char in special_chars:

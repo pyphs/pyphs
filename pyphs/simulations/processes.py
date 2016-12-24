@@ -5,22 +5,25 @@ Created on Thu Jun  9 16:10:47 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
 from builtins import input
+
+import numpy as np
 import progressbar
 import time
+
 from .tools import update
-import numpy as np
 
 
 def process_py(simulation):
 
     # lambdify exprs and define get/set for args
-    from tools import build_args, build_funcs
+    from .tools import build_args, build_funcs
     build_args(simulation)
     build_funcs(simulation)
 
     # get generators of u and p
-    data = simulation.data
+    data = simulation.Data
     seq_u = data.u()
     seq_p = data.p()
 

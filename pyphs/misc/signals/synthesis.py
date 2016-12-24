@@ -240,7 +240,7 @@ to PWM.
 
     def background_noise():
         if isinstance(noisy, (int, float)):
-            return randomuniform(1, noisy).next()
+            return next(randomuniform(1, noisy))
         else:
             return 0.
 

@@ -5,7 +5,8 @@ Created on Thu Dec 22 18:26:56 2016
 
 @author: Falaize
 """
-from __future__ import division
+from __future__ import absolute_import, division, print_function
+
 import sympy
 from .misc_tools import geteval
 from .discrete_calculus import discrete_gradient
@@ -345,6 +346,40 @@ dissipative variables w are no more accessible.
         """
         split_linear(self)
 
+    def apply_connectors(self):
+        """
+        Effectively connect inputs and outputs defined in phs.connectors.
+        """
+        nxwy = self.dims.x() + self.dims.w() + self.dims.y()
+        switch_list = [connector['alpha'] * sympy.Matrix([[0, 1], [-1, 0]])
+                       for connector in self.connectors]
+        Mswitch = sympy.diag(*switch_list)
+        M = self.M
+        G_connectors = sympy.Matrix(M[:nxwy, nxwy:])
+        J_connectors = G_connectors * Mswitch * G_connectors.T
+        M = M[:nxwy, :nxwy] + J_connectors
+        self.cy = []
+        self.cu = []
+        self.connectors = []
+        self.M = M
+
+    def labels(self):
+        """
+        Return a list of edges labels
+        """
+        labels = list(self.x) + \
+            list(self.w) + \
+            list(self.y) + \
+            list(self.cy)
+        return [str(el) for el in labels]
+
+    def get_label(self, n):
+        """
+        return label of edge n
+        """
+        return self.labels[n]
+
+###########################################################################
 ###########################################################################
 ###############################################################################
 ###############################################################################

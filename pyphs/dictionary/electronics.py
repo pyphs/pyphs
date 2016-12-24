@@ -4,6 +4,8 @@ Created on Sat May 21 16:24:12 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
+
 from .classes.connectors.port import Port
 from .classes.linears.dissipatives import LinearDissipationFreeCtrl
 from .classes.linears.storages import LinearStorageFluxCtrl, \
@@ -17,7 +19,7 @@ from pyphs.config import GMIN
 class Source(Port):
     """
     Voltage or current source
-    
+
     Usage
     ------
         electronics.source label ('node1', 'node2'): type='type'
@@ -38,10 +40,10 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
     kwargs: dic with following "keys:values"
 
         * 'type' : source type in ('voltage', 'current').
-        
+
     Not implemented:
     ----------------
-        
+
         * 'const': if not None, the input will be replaced by the value (subs).
     """
     def __init__(self, label, nodes, **kwargs):
@@ -262,7 +264,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
                      'type': 'dissipative',
                      'ctrl': '?',
                      'link': None}
-        # edge 
+        # edge
         edge_gmin = (N1, iN2, data_gmin)
 
         # init component

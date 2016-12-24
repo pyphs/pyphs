@@ -4,10 +4,11 @@ Created on Sun Jun  5 08:54:45 2016
 
 @author: Falaize
 """
-from builtins import input
+from __future__ import absolute_import, division, print_function
+
 import networkx
 import numpy
-from pyphs.misc.tools import myrange
+from pyphs.misc.tools import myrange, pause
 from pyphs.config import datum
 from pyphs.misc.matrices import get_ind_nonzeros_col, get_ind_nonzeros_row, \
     isequal
@@ -175,7 +176,7 @@ effort-controlled (0 in lambda).
         if self._verbose:
             print('unlock')
             print(numpy.sum(self.lambd, axis=1))
-            input()
+            pause()
 
     def get_edges_data(self, key):
         """
@@ -246,7 +247,7 @@ effort-controlled (0 in lambda).
             print('edges', self.get_edges_data('label'))
             print('nodes', self.nodes)
             print(self.lambd)
-            input()
+            pause()
 
     def set_edge_fc(self, e):
         """
@@ -269,7 +270,7 @@ controlled node from node list
             print('edges', self.get_edges_data('label'))
             print('nodes', self.nodes)
             print(self.lambd)
-            input()
+            pause()
 
     def set_node_dc(self, args):
         """
@@ -294,7 +295,7 @@ controlled node from node list
             print('edges', self.get_edges_data('label'))
             print('nodes', self.nodes)
             print(self.lambd)
-            input()
+            pause()
 
     def rowindexGamma(self, c):
         """

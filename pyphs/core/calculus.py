@@ -4,7 +4,7 @@ Created on Fri Jun  3 01:36:55 2016
 
 @author: Falaize
 """
-
+from __future__ import absolute_import, division, print_function
 from pyphs.core.symbs_tools import simplify, _assert_expr, _assert_vec
 import sympy
 

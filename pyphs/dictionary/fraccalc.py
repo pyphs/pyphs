@@ -5,10 +5,12 @@ Created on Sat May 21 16:31:24 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
+
 import numpy as np
 
-from pyphs import PortHamiltonianObject
-from pyphs.conf import EPS
+from pyphs import PHSGraph
+from pyphs.config import EPS
 from pyphs.dictionary.classes.linears.dissipatives import \
     LinearDissipationFluxCtrl, LinearDissipationEffortCtrl
 from pyphs.dictionary.classes.linears.storages import LinearStorageFluxCtrl, \
@@ -16,14 +18,13 @@ from pyphs.dictionary.classes.linears.storages import LinearStorageFluxCtrl, \
 from pyphs.dictionary.connectors import Transformer
 
 
-
-class Der_e(PortHamiltonianObject):
+class Der_e(PHSGraph):
     """ Fractional Effort Controlled springpot element
     usgae: FracDerEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles]
 
     """
     def __init__(self, label, nodes, **kwargs):
-        PortHamiltonianObject.__init__(self, label)
+        PHSGraph.__init__(self, label)
         if 'p' not in kwargs:
             p = 1
         else:
@@ -35,40 +36,40 @@ class Der_e(PortHamiltonianObject):
             alpha = kwargs.pop('alpha')
 
         diagRmu, diagQmu = fractionalDifferenciatorWeights(p, alpha, **kwargs)
-        
+
         # Truncation of poles with null Q
         nbPoles = diagRmu.__len__()
 
-        datum =  self.graph.netlist.datum
+        datum = self.graph.netlist.datum
         for n in range(nbPoles):
-            
-            Rn = diagRmu[n]**(-1) # here, diagRmu[n] is a conductance (e-ctrl)
+
+            Rn = diagRmu[n]**(-1)  # here, diagRmu[n] is a conductance (e-ctrl)
             Ndeb = nodes[0]
             N1 = 'N'+label+str(n)+"_2"
-            self += LinearDissipationEffortCtrl(label+'R'+str(n), 
-                                              (Ndeb, N1), 
-                                              coeff=Rn)
+            self += LinearDissipationEffortCtrl(label+'R'+str(n),
+                                                (Ndeb, N1),
+                                                coeff=Rn)
 
             Qn = diagQmu[n]
             N2 = 'N'+label+str(n)+"_2"
-            self += LinearStorageFluxCtrl(label+'Q'+str(n), 
-                                          (N2, datum), 
+            self += LinearStorageFluxCtrl(label+'Q'+str(n),
+                                          (N2, datum),
                                           coeff=Qn,
                                           inv_coeff=True)
 
             Nend = nodes[1]
             self += Transformer(label+'alpha'+str(n),
-                            (N1, Nend, N2, datum),
-                            alpha=diagRmu[n]**-1)
+                                (N1, Nend, N2, datum),
+                                alpha=diagRmu[n]**-1)
 
-class Der_f(PortHamiltonianObject):
+
+class Der_f(PHSGraph):
     """ Fractional Flux Controlled storage element
-    usgae: FracIntEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles, (fmin, fmax)]
-
-
+    usgae: FracIntEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles, \
+(fmin, fmax)]
     """
     def __init__(self, label, nodes, **kwargs):
-        PortHamiltonianObject.__init__(self, label)
+        PHSGraph.__init__(self, label)
         if 'p' not in kwargs:
             p = 1
         else:
@@ -80,44 +81,45 @@ class Der_f(PortHamiltonianObject):
             alpha = kwargs.pop('alpha')
 
         diagRmu, diagQmu = fractionalDifferenciatorWeights(p, alpha, **kwargs)
-        
+
         # Truncation of poles with null Q
         nbPoles = diagRmu.__len__()
 
-        datum =  self.graph.netlist.datum
+        datum = self.graph.netlist.datum
         for n in range(nbPoles):
-            
-            Rn = diagRmu[n] # here, diagRmu[n] is a resistance (flux-controlled)
+
+            Rn = diagRmu[n]  # here, diagRmu[n] is a res (flux-controlled)
             Ndeb = nodes[0]
             N1 = 'N'+label+str(n)+"_2"
-            self += LinearDissipationFluxCtrl(label+'R'+str(n), 
-                                              (Ndeb, N1), 
+            self += LinearDissipationFluxCtrl(label+'R'+str(n),
+                                              (Ndeb, N1),
                                               coeff=Rn)
 
             Qn = diagQmu[n]
             N2 = 'N'+label+str(n)+"_2"
-            self += LinearStorageFluxCtrl(label+'Q'+str(n), 
-                                          (N2, datum), 
+            self += LinearStorageFluxCtrl(label+'Q'+str(n),
+                                          (N2, datum),
                                           coeff=Qn,
                                           inv_coeff=True)
 
             Nend = nodes[1]
             self += Transformer(label+'alpha'+str(n),
-                            (Ndeb, Nend, N2, datum),
-                            alpha=diagRmu[n]**-1)
+                                (Ndeb, Nend, N2, datum),
+                                alpha=diagRmu[n]**-1)
 
 
 def Int_e(label, nodes, **kwargs):
-    """ 
+    """
 Effort-controlled fractional integrator:
     f(s) = p * s^(-beta) * e(s)
 
-Usage: 
-    fraccalc.Int_e(('n1','n2'): p=1; beta=0.5; NbPoles=10; OptimPolesMinMax=(-10,10);
-                   NbFreqPoints=200; OptimFreqsMinMax=(1, 48e3); DoPlot=False;)
+Usage:
+    fraccalc.Int_e(('n1','n2'): p=1; beta=0.5; NbPoles=10; \
+OptimPolesMinMax=(-10,10); NbFreqPoints=200; OptimFreqsMinMax=(1, 48e3); \
+DoPlot=False;)
     """
-    
-    phs = PortHamiltonianObject(label=label)
+
+    graph = PHSGraph(label=label)
 
     if 'p' not in kwargs:
         p = 1
@@ -129,93 +131,41 @@ Usage:
     else:
         beta = kwargs.pop('beta')
 
-    phs.symbs.subs.update({phs.symbols('p_'+label): p,
-                           phs.symbols('beta_'+label): beta})
+    graph.Core.subs.update({graph.Core.symbols('p_'+label): p,
+                           graph.Core.symbols('beta_'+label): beta})
 
     diagRmu, diagQmu = fractionalIntegratorWeights(p, beta, **kwargs)
-    
+
     # Truncation of poles with null Q
     nbPoles = diagRmu.__len__()
 
     for n in range(nbPoles):
-        Rn = diagRmu[n] # here, diagRmu[n] is a resistance (f-ctrl)
+        Rn = diagRmu[n]  # here, diagRmu[n] is a resistance (f-ctrl)
         Nend = nodes[1]
         Ncomp = 'iN_'+label + str(n)
-        temp_phs = LinearDissipationFluxCtrl('R_'+label+str(n), 
-                                             (Ncomp, Nend), 
+        temp_phs = LinearDissipationFluxCtrl('R_'+label+str(n),
+                                             (Ncomp, Nend),
                                              coeff=Rn)
-        phs += temp_phs
+        graph += temp_phs
 
         Qn = diagQmu[n]
         Ndeb = nodes[0]
-        temp_phs = LinearStorageEffortCtrl(label+str(n), 
-                                           (Ndeb, Ncomp), 
+        temp_phs = LinearStorageEffortCtrl(label+str(n),
+                                           (Ndeb, Ncomp),
                                            value=Qn,
                                            name='pL_',
                                            inv_coeff=True)
-        phs += temp_phs
-    print(phs.symbs.x)
-    print(phs.symbs.w)
-    
-    return phs
-            
-#class Int_e(PortHamiltonianObject):
-#    """ 
-#Effort-controlled fractional integrator:
-#    f(s) = p * s^(-beta) * e(s)
-#
-#Usage: 
-#    fraccalc.Int_e(('n1','n2'): p=1; beta=0.5; NbPoles=10; OptimPolesMinMax=(-10,10);
-#                   NbFreqPoints=200; OptimFreqsMinMax=(1, 48e3); DoPlot=False;)
-#    """
-#    def __init__(self, label, nodes, **kwargs):
-#        PortHamiltonianObject.__init__(self, label)
-#        if 'p' not in kwargs:
-#            p = 1
-#        else:
-#            p = kwargs.pop('p')
-#
-#        if 'beta' not in kwargs:
-#            beta = 0.5
-#        else:
-#            beta = kwargs.pop('beta')
-#
-#        self.symbs.subs.update({self.symbols('p_'+label): p,
-#                                self.symbols('beta_'+label): beta})
-#
-#        diagRmu, diagQmu = fractionalIntegratorWeights(p, beta, **kwargs)
-#        
-#        # Truncation of poles with null Q
-#        nbPoles = diagRmu.__len__()
-#
-#        for n in range(nbPoles):
-#            Rn = diagRmu[n] # here, diagRmu[n] is a resistance (f-ctrl)
-#            Nend = nodes[1]
-#            Ncomp = 'iN_'+label + str(n)
-#            temp_phs = LinearDissipationFluxCtrl('R'+label+str(n), 
-#                                                 (Ncomp, Nend), 
-#                                                 coeff=Rn)
-#            self += temp_phs
-#
-#            Qn = diagQmu[n]
-#            Ndeb = nodes[0]
-#            temp_phs = LinearStorageEffortCtrl(label+str(n), 
-#                                               (Ndeb, Ncomp), 
-#                                               value=Qn,
-#                                               name='L'+label+str(n),
-#                                               inv_coeff=True)
-#            self += temp_phs
-#        print(self.symbs.x)
-#        print(self.symbs.w)
+        graph += temp_phs
+    return graph
 
-        
-class Int_f(PortHamiltonianObject):
+
+class Int_f(PHSGraph):
     """ Fractional Flux Controlled storage element
     usgae: FracIntFluxCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles]
 
     """
     def __init__(self, label, nodes, **kwargs):
-        PortHamiltonianObject.__init__(self, label)
+        PHSGraph.__init__(self, label)
         if 'p' not in kwargs:
             p = 1
         else:
@@ -227,63 +177,63 @@ class Int_f(PortHamiltonianObject):
             alpha = kwargs.pop('alpha')
 
         diagRmu, diagQmu = fractionalIntegratorWeights(p, alpha, **kwargs)
-        
+
         # Truncation of poles with null Q
         nbPoles = diagRmu.__len__()
 
         Ndeb = nodes.pop()
-        Nend = nodes[-1]        
+        Nend = nodes[-1]
         for n in range(nbPoles):
             Rn = diagRmu[n] # here, diagRmu[n] is a resistance (flux-controlled)
-            self += LinearDissipationEffortCtrl(label+'R'+str(n), 
-                                              (Ndeb, Nend), 
+            self += LinearDissipationEffortCtrl(label+'R'+str(n),
+                                              (Ndeb, Nend),
                                               coeff=Rn)
 
             Qn = diagQmu[n]
             Ndeb = nodes[0]
-            self += LinearStorageFluxCtrl(label+'Q'+str(n), 
-                                           (Ndeb, Nend), 
+            self += LinearStorageFluxCtrl(label+'Q'+str(n),
+                                           (Ndeb, Nend),
                                            coeff=Qn,
                                            inv_coeff=True)
-           
+
 
 def fractionalIntegratorWeights(p, beta, NbPoles=10, OptimPolesMinMax=(-10,10),
                                 NbFreqPoints=200, OptimFreqsMinMax=(1, 48e3),
                                 DoPlot=False):
     # Defintion of the frequency grid
     fmin, fmax = OptimFreqsMinMax
-    wmin, wmax = 2*np.pi*fmin, 2*np.pi*fmax 
+    wmin, wmax = 2*np.pi*fmin, 2*np.pi*fmax
     w = np.exp( np.log(wmin) + np.linspace(0,1,NbFreqPoints+1)*np.log(wmax/wmin) )
     w12 = np.sqrt(w[1:]*w[:-1])
 
     # Unpack min and max exponents to define the list of poles
     emin, emax = OptimPolesMinMax
     Xi  = np.logspace(emin, emax, NbPoles) # xi_0 -> xi_{N+1}
-    
+
     # Input to Output transfer function of the fractional integrator
     transferFunctionFracInt = lambda s: s**-beta
-    
+
     # Target transfer function evaluated on the frequency grid
     T = transferFunctionFracInt(1j*w12)
-    
+
     # Return the basis vector of elementary damping with poles Xi
     Basis = lambda s, Xi: (s+Xi)**-1
 
     # Matrix of basis transfer function for each poles on the frequency grid
-    M = np.zeros((NbFreqPoints,NbPoles), dtype = np.complex64)    
+    M = np.zeros((NbFreqPoints,NbPoles), dtype = np.complex64)
     for k in np.arange(NbFreqPoints):
-        M[k,:] = Basis(1j*w12[k], Xi)    
+        M[k,:] = Basis(1j*w12[k], Xi)
 
     # Perceptual weights
     WBuildingVector = (np.log(w[1:])-np.log(w[:-1]))/(np.abs(T)**2)
     W = np.diagflat(WBuildingVector)
-    
+
     # Definition of the cost function
     CostFunction = lambda mu: (np.dot(np.conjugate((np.dot(M,mu) - T).T),np.dot(W,np.dot(M,mu) - T))).real
-    
+
     # Optimization constraints
     bnds = [(0,None) for n in range(NbPoles)]
-   
+
     # Optimization
     from scipy.optimize import minimize
     MuOpt = minimize(CostFunction, np.ones(NbPoles), bounds=bnds, tol=EPS)
@@ -293,7 +243,7 @@ def fractionalIntegratorWeights(p, beta, NbPoles=10, OptimPolesMinMax=(-10,10),
     diagQ = []
     diagR = []
 
-    # Eliminate 0 valued weigths    
+    # Eliminate 0 valued weigths
     for n in np.arange(NbPoles):
         if Mu[n]>0:
             pn = p*Mu[n]**-1
@@ -301,7 +251,7 @@ def fractionalIntegratorWeights(p, beta, NbPoles=10, OptimPolesMinMax=(-10,10),
             diagQ.append(pn**-1)
 
     if DoPlot:
-        from matplotlib.pyplot import figure, subplot, plot, semilogx, ylabel, legend, grid, xlabel     
+        from matplotlib.pyplot import figure, subplot, plot, semilogx, ylabel, legend, grid, xlabel
         TOpt = np.array(M*np.matrix(Mu).T)
         wmin, wmax = 2*np.pi*fmin, 2*np.pi*fmax
         figure()
@@ -310,57 +260,57 @@ def fractionalIntegratorWeights(p, beta, NbPoles=10, OptimPolesMinMax=(-10,10),
         v1 = 20*np.log10(np.abs(T[(wmin<w12)&(w12<wmax)]))
         v2 = 20*np.log10(np.abs(TOpt[(wmin<w12)&(w12<wmax)]))
         v3 = map(lambda x,y: x-y, v1, v2)
-        semilogx(faxis,v1,label = 'Target') 
+        semilogx(faxis,v1,label = 'Target')
         semilogx(faxis,v2, label = 'Approx')
         ylabel('Transfert (dB)')
         legend(loc = 0)
-        grid()        
+        grid()
         subplot(2,1,2)
         plot(faxis, v3, label = 'Error')
         xlabel('Log-frequencies (log Hz)')
         ylabel('Error (dB)')
         legend(loc = 0)
-        grid()        
-    
+        grid()
+
     return diagR, diagQ
 
 def fractionalDifferenciatorWeights(p, alpha, NbPoles=20, OptimPolesMinMax=(-5,10),  NbFreqPoints=200, OptimFreqsMinMax=(1, 48e3), DoPlot=True):
 
     # Defintion of the frequency grid
     fmin, fmax = OptimFreqsMinMax
-    wmin, wmax = 2*np.pi*fmin, 2*np.pi*fmax 
+    wmin, wmax = 2*np.pi*fmin, 2*np.pi*fmax
     w = np.exp( np.log(wmin) + np.linspace(0,1,NbFreqPoints+1)*np.log(wmax/wmin) )
     w12 = np.sqrt(w[1:]*w[:-1])
 
     # Unpack min and max exponents to define the list of poles
     emin, emax = OptimPolesMinMax
     Xi  = np.logspace(emin, emax, NbPoles) # xi_0 -> xi_{N+1}
-    
+
     # Input to Output transfer function of the fractional integrator of order 1-alpha
     beta = 1.-alpha
     transferFunctionFracInt = lambda s: s**-beta
-    
+
     # Target transfer function evaluated on the frequency grid
     T = transferFunctionFracInt(1j*w12)
-    
+
     # Return the basis vector of elementary damping with poles Xi
     Basis = lambda s, Xi: (s+Xi)**-1
 
     # Matrix of basis transfer function for each poles on the frequency grid
-    M = np.zeros((NbFreqPoints,NbPoles), dtype = np.complex64)    
+    M = np.zeros((NbFreqPoints,NbPoles), dtype = np.complex64)
     for k in np.arange(NbFreqPoints):
-        M[k,:] = Basis(1j*w12[k], Xi)    
+        M[k,:] = Basis(1j*w12[k], Xi)
 
     # Perceptual weights
     WBuildingVector = (np.log(w[1:])-np.log(w[:-1]))/(np.abs(T)**2)
     W = np.diagflat(WBuildingVector)
-    
+
     # Definition of the cost function
     CostFunction = lambda mu: (np.dot(np.conjugate((np.dot(M,mu) - T).T),np.dot(W,np.dot(M,mu) - T))).real
-    
+
     # Optimization constraints
     bnds = [(0,None) for n in range(NbPoles)]
-   
+
     # Optimization
     from scipy.optimize import minimize
     MuOpt = minimize(CostFunction, np.ones(NbPoles), bounds=bnds, tol=EPS)
@@ -370,14 +320,14 @@ def fractionalDifferenciatorWeights(p, alpha, NbPoles=20, OptimPolesMinMax=(-5,1
     diagQ = []
     diagR = []
 
-    # Eliminate 0 valued weigths    
+    # Eliminate 0 valued weigths
     for n in np.arange(NbPoles):
         if Mu[n]>0:
             diagR.append(p*Mu[n])
             diagQ.append(p*Mu[n]*Xi[n])
 
     if DoPlot:
-        from matplotlib.pyplot import figure, subplot, plot, semilogx, ylabel, legend, grid, xlabel     
+        from matplotlib.pyplot import figure, subplot, plot, semilogx, ylabel, legend, grid, xlabel
         TOpt = np.array(M*np.matrix(Mu).T)
         wmin, wmax = 2*np.pi*fmin, 2*np.pi*fmax
         figure()
@@ -386,16 +336,16 @@ def fractionalDifferenciatorWeights(p, alpha, NbPoles=20, OptimPolesMinMax=(-5,1
         v1 = 20*np.log10(np.abs(T[(wmin<w12)&(w12<wmax)]))
         v2 = 20*np.log10(np.abs(TOpt[(wmin<w12)&(w12<wmax)]))
         v3 = map(lambda x,y: x-y, v1, v2)
-        semilogx(faxis,v1,label = 'Target') 
+        semilogx(faxis,v1,label = 'Target')
         semilogx(faxis,v2, label = 'Approx')
         ylabel('Transfert (dB)')
         legend(loc = 0)
-        grid()        
+        grid()
         subplot(2,1,2)
         plot(faxis, v3, label = 'Error')
         xlabel('Log-frequencies (log Hz)')
         ylabel('Error (dB)')
         legend(loc = 0)
-        grid()        
-    
+        grid()
+
     return diagR, diagQ

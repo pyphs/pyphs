@@ -5,6 +5,8 @@ Created on Sun Jun  5 08:50:42 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
+
 import os
 
 # from pyphs.config import datum
@@ -33,12 +35,12 @@ free-parameter that can be continuously controlled during the simulations. \
 Else if no label is provided for the new component, the new label for the \
 i-th parameter is defined as 'label_pari'.
     """
-    def __init__(self, filename):
+    def __init__(self, filename, clear=False):
         """
         init with filename to read data from 'filename.net'
         """
         self.filename = filename
-        if not os.path.isfile(self.filename):
+        if not os.path.isfile(self.filename) or clear:
             file_ = open(self.filename, 'w')
             file_.close()
         self.datum = datum

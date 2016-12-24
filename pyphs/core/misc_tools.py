@@ -5,6 +5,7 @@ Created on Thu Dec 22 18:35:17 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
 
 def geteval(obj, attr):
     """
@@ -22,7 +23,7 @@ def myrange(N, indi, indf):
     """
     return 'range(N)' with index 'indi' at position 'indf'
     """
-    lis = range(N)
+    lis = list(range(N))
     if indi < indf:
         deb = lis[:indi] + lis[indi+1:indf+1]
         end = lis[indf+1:]

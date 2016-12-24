@@ -5,7 +5,7 @@ Created on Sat Jun 11 19:28:12 2016
 @author: Falaize
 """
 from pyphs.plots.tools import activate_latex, annotate, whichplot, setlims, setticks, dec, standard
-from fonts import globalfonts
+from .fonts import globalfonts
 
 
 def singleplot(datax, datay, **kwargs):

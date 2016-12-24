@@ -32,5 +32,4 @@ def timeout(func, arg, dur=_dur_process_max):
     except Exception as exc:
         success = False
         print(exc)
-        pass
     return arg, success

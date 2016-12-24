@@ -4,10 +4,18 @@ Created on Thu Jun  9 10:22:56 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
+
 from pyphs.misc.io import data_generator, write_data
-
+from pyphs.misc.signals.waves import wavwrite
+from pyphs.plots.data import plot, plot_powerbal
 import os
+import numpy
 
+try:
+    import itertools.izip as zip
+except ImportError:
+    pass
 
 class Data:
     """
@@ -17,7 +25,7 @@ class Data:
 
         # init config with standard configuration options
         self.config = config
-        self.core = core
+        self.Core = core
 
         def dummy_func(name):
             def get_seq(ind=None, postprocess=None, imin=None, imax=None,
@@ -27,7 +35,7 @@ class Data:
                                            postprocess=postprocess)
             return get_seq
 
-        for name in list(self.core.args_names) + ['y', 'dxH', 'z', 'dx']:
+        for name in list(self.Core.args_names) + ['y', 'dxH', 'z', 'dx']:
             setattr(self, name, dummy_func(name))
 
     def t(self, imin=None, imax=None, decim=None):
@@ -74,11 +82,11 @@ class Data:
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
-        R = self.core.R()
+        R = self.Core.R()
         from pyphs.numerics.tools import lambdify
-        lambda_R = lambdify(self.core.args(),
+        lambda_R = lambdify(self.Core.args(),
                             R,
-                            subs=self.core.subs)
+                            subs=self.Core.subs)
         for w, z, a, b, args in zip(self.w(**options),
                                     self.z(**options),
                                     self.a(**options),
@@ -144,7 +152,7 @@ class Data:
         for dtx, w, y in zip(self.dx(postprocess=dxtodtx, **options),
                              self.w(**options),
                              self.y(**options)):
-            yield dtx + w + y
+            yield list(dtx) + list(w) + list(y)
 
     def data_generator(self, name, ind=None, postprocess=None,
                        imin=None, imax=None, decim=None):
@@ -185,17 +193,17 @@ class Data:
         if seqp is None:
             def generator_p():
                 for _ in range(nt):
-                    if self.core.dims.p() > 0:
-                        yield [0, ]*self.core.dims.p()
+                    if self.Core.dims.p() > 0:
+                        yield [0, ]*self.Core.dims.p()
                     else:
                         yield ""
             seqp = generator_p()
 
         if x0 is None:
-            x0 = [0, ]*self.core.dims.x()
+            x0 = [0, ]*self.Core.dims.x()
         else:
             assert isinstance(x0, list) and \
-                len(x0) == self.core.dims.x() and \
+                len(x0) == self.Core.dims.x() and \
                 isinstance(x0[0], (float, int)), 'x0 not understood, got \
     {0!s}'.format(x0)
         # write input sequence
@@ -207,9 +215,45 @@ class Data:
 
         self.config['nt'] = nt
 
+    def wavwrite(self, name, index, fs_in, filename=None, path=None, gain=1,
+                 fs_out=None):
+        """
+        write phs.simulation.data.name[index] in the folder pointed by \
+phs.paths['wav'].
+        """
+        if fs_out is None:
+            fs_out = fs_in
+        if filename is None:
+            filename = name
+        if path is None:
+            path = os.getcwd()
+        if not os.path.exists(path):
+            os.makedirs(path)
+        data = getattr(self, name)
+        sig = []
+        for el in data():
+            s = gain*el[index]
+            if abs(s) >= 1:
+                s = 0.
+            sig.append(s)
+        wavwrite(sig, fs_in, path + os.sep + filename, fs_out=fs_out)
 
+    def plot_powerbal(self, mode='single', opts=None):
+        """
+        Plot the power balance. mode is 'single' or 'multi' for single figure \
+or multifigure (default is 'single').
+        """
+        plot_powerbal(self, mode=mode, opts=opts)
+
+    def plot(self, var_list, imin=0, imax=None):
+        """
+        Plot each data.seq_'var'['ind'] in var_list = [(var1, ind1), (...)]
+        """
+        plot(self, var_list, imin=imin, imax=imax)
+
+###########################################################################
 def scalar_product(list1, list2, weight_matrix=None):
-    import numpy
+    list1, list2 = list(list1), list(list2)
     if weight_matrix is None:
         weight_matrix = numpy.eye(len(list1))
     return numpy.dot(numpy.array(list1),

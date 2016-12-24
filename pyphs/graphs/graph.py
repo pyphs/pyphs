@@ -5,11 +5,13 @@ Created on Wed Mar  9 04:32:46 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
+
 import networkx as nx
 from .analysis.analysis import GraphAnalysis
 from .analysis.build import buildCore
 from pyphs.core.core import PHSCore
-
+from .tools import plot
 
 class PHSGraph(nx.MultiDiGraph):
     """
@@ -37,7 +39,9 @@ port-Hamiltonian systems.
         self.Analysis = GraphAnalysis(self)
         self.Analysis.perform()
         buildCore(self)
-        
+        self.Core.apply_connectors()
+        return self.Core
+
     def build_from_netlist(self):
         """
         build the graph of the system from the netlist structure (see \
@@ -54,3 +58,9 @@ port-Hamiltonian systems.
                                         line['nodes'],
                                         **line['arguments'])
             self += component_graph
+
+    def plot(self, filename=None, ax=None):
+        """
+        Plot the graph (networkx.plot method).
+        """
+        plot(self, filename=filename, ax=ax)

@@ -5,6 +5,7 @@ Created on Tue May 24 11:20:26 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
 from pyphs.config import standard_PHSSimu
 from pyphs.simulations.processes import process_py, process_cpp
 from pyphs.core.struc_tools import split_linear
@@ -51,7 +52,7 @@ class PHSSimu:
         self.config.update({'path': path})
 
         # store PHSCore
-        self.core = core
+        self.Core = core
 
 ###############################################################################
 
@@ -62,14 +63,14 @@ simulation.
         """
 
         if self.config['presubs']:
-            self.core.apply_subs()
+            self.Core.apply_subs()
 
         # split system into linear and nonlinear parts
         force_nolin = not self.config['split']
 
-        split_linear(self.core, force_nolin=force_nolin)
+        split_linear(self.Core, force_nolin=force_nolin)
 
-        self.exprs = SimulationExpressions(self.core, config=self.config)
+        self.Exprs = SimulationExpressions(self.Core, config=self.config)
 
 ###############################################################################
 
@@ -78,8 +79,9 @@ simulation.
             self.config.update(opts)
 
         self.init_expressions()
-        setattr(self, 'data', Data(self.core, self.config))
-        self.data.init_data(sequ, seqp, x0, nt)
+        self.config['presolve'] = self.Exprs.config['presolve']
+        setattr(self, 'Data', Data(self.Core, self.config))
+        self.Data.init_data(sequ, seqp, x0, nt)
 
     def process(self):
         """

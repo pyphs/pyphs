@@ -4,7 +4,9 @@ Created on Tue Jun  7 19:13:35 2016
 
 @author: Falaize
 """
-from classes.connectors.connector import Connector
+from __future__ import absolute_import, division, print_function
+
+from .classes.connectors.connector import Connector
 
 
 class Gyrator(Connector):

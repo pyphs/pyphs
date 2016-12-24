@@ -5,6 +5,18 @@ Created on Sat Mar  5 13:56:52 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
+
+try:
+    import itertools.izip as zip
+except ImportError:
+    pass
+
+try:
+    import itertools.imap as map
+except ImportError:
+    pass
+
 def parallel_exec(funcs, args=None):
     """
     Parallel execution of each 'func' in 'funcs'.

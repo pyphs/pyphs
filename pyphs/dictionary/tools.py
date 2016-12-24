@@ -4,6 +4,8 @@ Created on Tue Jun  7 18:57:18 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
+
 from pyphs.core.core import symbols
 
 
@@ -43,7 +45,7 @@ def parsub(graph, obj, par_name):
         string = obj
         symb = symbols(string)
         sub = {}
-        graph.Core.p += (symb, )    
+        graph.Core.p += (symb, )
     return symb, sub
 
 
@@ -60,7 +62,7 @@ for parameters in component expression 'dicpars' and for parameters in phs \
         dicpars.update({symbols(key): symb})
         subs.update(sub)
     return dicpars, subs
-    
+
 
 def nice_var_label(var, label):
     """

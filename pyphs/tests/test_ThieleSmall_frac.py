@@ -5,19 +5,25 @@ Created on Fri Oct 7 23:33:48 2016
 @author: Falaize
 """
 
-def netlist_filename(phs=None):
-    import os
-    if phs is None:
-        return os.getcwd() + os.sep + label() + '.net'
-    else:
-        return phs.path + os.sep + label() + '.net'
-
+from __future__ import absolute_import, division, print_function
+import os
+import pyphs
 
 def label():
     """
     System's netlist and folder label
     """
     return "ThieleSmall"
+
+
+def path():
+    """
+    System's netlist and folder path
+    """
+    p = os.getcwd() + os.sep + label()
+    if not os.path.exists(p):
+        os.makedirs(p)
+    return p
 
 
 def samplerate():
@@ -27,22 +33,21 @@ def samplerate():
     return 96e3
 
 
-def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
+def netlist(R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
     """
-    Write netlist for Thiele/Small model of loudspeaker
+    Write netlist for RLC circuit
     """
+    netlist = pyphs.PHSNetlist(path() + os.sep + label() + '.net', clear=True)
 
-    datum = phs.graph.netlist.datum
+    datum = netlist.datum
 
-#    from utils.graphs import build_netlist
-
-    # input voltage
+     # input voltage
     source = {'dictionary': 'electronics',
               'component': 'source',
               'label': 'IN',
               'nodes': ('A', datum),
-              'arguments': {'type': "'voltage'"}}
-    phs.graph.netlist.add_line(source)
+              'arguments': {'type': "voltage"}}
+    netlist.add_line(source)
 
     # resistor 1
     resistance = {'dictionary': 'electronics',
@@ -50,7 +55,7 @@ def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
                   'label': 'R',
                   'nodes': ('A', 'B'),
                   'arguments': {'R': ('R', R)}}
-    phs.graph.netlist.add_line(resistance)
+    netlist.add_line(resistance)
 
     # fractional inductor
     fracintec = {'dictionary': 'fraccalc',
@@ -58,62 +63,55 @@ def write_netlist(phs, R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
                 'label': 'L',
                 'nodes': ('B', datum),
                 'arguments': {'p': L, 'beta': 0.5}}
-    phs.graph.netlist.add_line(fracintec)
-#
-#    # gyrator
-#    gyrator = {'dictionary': 'connectors',
-#               'component': 'gyrator',
-#               'label': 'G',
-#               'nodes': ('C', datum, 'D', datum),
-#               'arguments': {'alpha': ('Bl', Bl)}}
-#    phs.graph.netlist.add_line(gyrator)
-#
-#    # masse
-#    mass = {'dictionary': 'mechanics',
-#            'component': 'mass',
-#            'label': 'M',
-#            'nodes': ('D', 'E'),
-#            'arguments': {'M': ('M', M)}}
-#    phs.graph.netlist.add_line(mass)
-#
-#    # raideur
-#    stifness = {'dictionary': 'mechanics',
-#                'component': 'springcubic',
-#                'label': 'K',
-#                'nodes': ('E', 'F'),
-#                'arguments': {'K0': ('K0', K),
-#                              'K2': ('K2', 1e20)}
-#                }
-#    phs.graph.netlist.add_line(stifness)
-#
-#    # amortissement
-#    damper = {'dictionary': 'mechanics',
-#              'component': 'damper',
-#              'label': 'A',
-#              'nodes': ('F', datum),
-#              'arguments': {'A': ('A', A)}}
-#    phs.graph.netlist.add_line(damper)
+    netlist.add_line(fracintec)
 
-    phs.graph.netlist.write(filename=netlist_filename(phs))
+    # gyrator
+    gyrator = {'dictionary': 'connectors',
+               'component': 'gyrator',
+               'label': 'G',
+               'nodes': ('C', datum, 'D', datum),
+               'arguments': {'alpha': ('Bl', Bl)}}
+    netlist.add_line(gyrator)
+
+    # masse
+    mass = {'dictionary': 'mechanics',
+            'component': 'mass',
+            'label': 'M',
+            'nodes': ('D', 'E'),
+            'arguments': {'M': ('M', M)}}
+    netlist.add_line(mass)
+
+    # ressort cubic
+    stifness = {'dictionary': 'mechanics',
+                'component': 'springcubic',
+                'label': 'K',
+                'nodes': ('E', 'F'),
+                'arguments': {'K0': ('K0', K),
+                              'K2': ('K2', 1e20)}
+                }
+    netlist.add_line(stifness)
+
+    # amortissement
+    damper = {'dictionary': 'mechanics',
+              'component': 'damper',
+              'label': 'A',
+              'nodes': ('F', datum),
+              'arguments': {'A': ('A', A)}}
+    netlist.add_line(damper)
+
+    return netlist
 
 
 def init_phs():
     # import pHobj
-    from pyphs import PortHamiltonianObject
-    import os
-    phs = PortHamiltonianObject(label=label(),
-                                path=os.getcwd() + os.sep + label())
+    phs = pyphs.PHSObject(netlist(), label=label(), path=path())
     return phs
 
 
-def build_graph(phs):
-    phs.build_from_netlist(netlist_filename(phs))
-
-
 def input_sequence(amp=10000., f0=100.):
-    from pyphs.misc.signals.synthesis import signalgenerator
+    from pyphs import signalgenerator
     fs = samplerate()
-    nsin = int(5.*fs/f0)
+    nsin = int(1.*fs/f0)
     SigIn = signalgenerator(which="sin", n=nsin, ramp_on=False,
                             A=amp, f0=f0, fs=fs)
 
@@ -123,28 +121,21 @@ def input_sequence(amp=10000., f0=100.):
 
     return genu(), nsin
 
-
-def simulation(phs, sequ, nt):
+def simulation(phs):
     opts = {'fs': samplerate(),
             'language': 'python',
-            'split': True}
+            'split': True,
+            'progressbar': True,
+            'presolve': False}
     u, nt = input_sequence()
-    phs.simu.init(sequ=u, nt=nt, opts=opts)
-    phs.simu.process()
+    phs.Simu.config.update(opts)
+    phs.Simu.init(sequ=u, nt=nt)
+    phs.Simu.process()
 
 
 def run_test(clean=True):
     phs = init_phs()
-    write_netlist(phs)
-    build_graph(phs)
-#    u, nt = input_sequence()
-#    simulation(phs, u, nt)
-#    phs.cppbuild()
-#    phs.cpp.gen_main()
-#    phs.cpp.gen_phobj()
-#    phs.cpp.gen_data()
-#    phs.plot_powerbal()
-#    phs.texwrite()
+    simulation(phs)
     if clean:
         import shutil
         shutil.rmtree(phs.path, ignore_errors=True)
@@ -153,6 +144,7 @@ def run_test(clean=True):
 
 if __name__ is '__main__':
     phs = init_phs()
-    write_netlist(phs)
-    build_graph(phs)
+    simulation(phs)
+    phs.Simu.Data.plot_powerbal()
+    phs.Simu.Data.plot_powerbal(mode='multi')
 #    succeed = run_test(clean=True)

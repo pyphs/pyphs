@@ -8,6 +8,7 @@ from .graphs.graph import PHSGraph
 from .graphs.netlists import PHSNetlist
 from .simulations.simulation import PHSSimu
 from .misc.signals.synthesis import signalgenerator
+from .GUI import PHSNetlistGUI
 
 __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
@@ -18,4 +19,4 @@ __author_email__ = 'antoine.falaize@gmail.com'
 
 __all__ = ['__version__', '__copyright__', '__author__', '__licence__',
            'PHSObject', 'PHSCore', 'PHSNetlist', 'PHSSimu', 'PHSGraph',
-           'signalgenerator']
+           'signalgenerator', 'PHSNetlistGUI']

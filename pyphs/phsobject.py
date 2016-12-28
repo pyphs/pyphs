@@ -40,10 +40,12 @@ Created on Thu Jun  2 21:33:07 2016
 @author: Antoine Falaize
 """
 
+from __future__ import absolute_import, division, print_function
+
 from .numerics.numeric import PHSNums
 from .simulations.simulation import PHSSimu
 from .graphs.graph import PHSGraph
-from .config import standard_PHSObject
+from .config import standard_global
 from .misc.signals.synthesis import signalgenerator
 
 import os

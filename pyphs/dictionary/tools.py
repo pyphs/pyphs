@@ -9,24 +9,25 @@ from __future__ import absolute_import, division, print_function
 from pyphs.core.core import symbols
 
 
-def parsub(graph, obj, par_name):
+class PHSArgument:
+
+    def __init__(self, name, obj):
+        self.symb, self.sub = form(name, obj)
+
+
+def form(name, obj):
     """
-    format 'obj' to a symbol
+    Pyphs formating of argument format 'obj' to a symbol
 
     Parameters
     ----------
-    phs : pypHs.PortHamiltonianObject
-
-    obj : str, float or (str, float)
-
-    par_name : str
+    argname : str
+    argobj : {str, float, (str, float)}
 
     Outputs
     -------
-
-    symb : sympy.symbols(real=True)
-
-    subs : dic to be append on phs
+    symb : PHSCore.symbol
+    subs : PHSCore.subs
     """
     if isinstance(obj, tuple):
         assert isinstance(obj[0], str), 'for tupple parameter, \
@@ -38,14 +39,13 @@ def parsub(graph, obj, par_name):
         symb = symbols(string)
         sub = {symb: obj[1]}
     elif isinstance(obj, (float, int)):
-        string = par_name
+        string = name
         symb = symbols(string)
         sub = {symb: obj}
     elif isinstance(obj, str):
         string = obj
         symb = symbols(string)
         sub = {}
-        graph.Core.p += (symb, )
     return symb, sub
 
 
@@ -58,15 +58,14 @@ for parameters in component expression 'dicpars' and for parameters in phs \
     dicpars = {}
     subs = {}
     for key in kwargs.keys():
-        symb, sub = parsub(graph, kwargs[key], graph.label + '_' + str(key))
+        symb, sub = form(kwargs[key], graph.label + '_' + str(key))
         dicpars.update({symbols(key): symb})
         subs.update(sub)
     return dicpars, subs
 
 
-def nice_var_label(var, label):
+def nicevarlabel(var, label):
     """
     return a formated string eg. xcapa if 'var' is 'x' and label is 'capa'.
     """
     return var + label
-

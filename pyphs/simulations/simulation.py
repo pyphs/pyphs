@@ -6,10 +6,9 @@ Created on Tue May 24 11:20:26 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from pyphs.config import standard_PHSSimu
+from pyphs.config import standard_simulations
 from pyphs.simulations.processes import process_py, process_cpp
 from pyphs.core.struc_tools import split_linear
-from .expressions import SimulationExpressions
 from .data import Data
 import time
 import os
@@ -40,7 +39,7 @@ class PHSSimu:
         """
 
         # init config with standard configuration options
-        self.config = standard_PHSSimu.copy()
+        self.config = standard_simulations.copy()
 
         # update with provided opts
         if config is None:

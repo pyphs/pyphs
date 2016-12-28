@@ -11,7 +11,8 @@ import networkx as nx
 from .analysis.analysis import GraphAnalysis
 from .analysis.build import buildCore
 from pyphs.core.core import PHSCore
-from .tools import plot
+from pyphs.plots.graphs import plot
+
 
 class PHSGraph(nx.MultiDiGraph):
     """
@@ -40,6 +41,7 @@ port-Hamiltonian systems.
         self.Analysis.perform()
         buildCore(self)
         self.Core.apply_connectors()
+        self.Core.exprs_build()
         return self.Core
 
     def build_from_netlist(self):

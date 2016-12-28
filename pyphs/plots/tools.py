@@ -49,7 +49,7 @@ def annotate(x, y, pos, annote, legendfontsize):
          horizontalalignment='center', verticalalignment='center')
 
 
-def setticks(ax, properties):
+def setticks(ax, properties, plotindex=None):
     """
     manage ticks and grids of a figure
     """
@@ -64,26 +64,29 @@ def setticks(ax, properties):
 
     nbinsx = properties['nbinsx'] + 1
     nbinsy = properties['nbinsy'] + 1
-
-    if properties['log'] == '':
+    if plotindex is None:
+        log = properties['log']
+    else:
+        log = properties['log'][plotindex]
+    if log == '' or properties['log'] is None:
         locatorxMaj = MaxNLocator(nbins=nbinsx)
         locatoryMaj = MaxNLocator(nbins=nbinsy)
         locatorxMin = AutoMinorLocator()
         locatoryMin = AutoMinorLocator()
 
-    elif properties['log'] == 'x':
+    elif log == 'x':
         locatorxMaj = AutoLocator()
         locatoryMaj = MaxNLocator(nbins=nbinsy)
         locatorxMin = locatorxMaj
         locatoryMin = AutoMinorLocator()
 
-    elif properties['log'] == 'y':
+    elif log == 'y':
         locatorxMaj = MaxNLocator(nbins=nbinsx)
         locatoryMaj = AutoLocator()
         locatorxMin = AutoMinorLocator()
         locatoryMin = locatoryMaj
 
-    elif properties['log'] == 'xy':
+    elif log == 'xy':
         locatorxMaj = AutoLocator()
         locatoryMaj = AutoLocator()
         locatorxMin = locatorxMaj

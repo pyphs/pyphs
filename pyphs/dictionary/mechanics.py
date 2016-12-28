@@ -6,21 +6,13 @@ Created on Sat May 21 16:29:43 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from .classes.connectors.port import Port
-from .classes.linears.dissipatives import LinearDissipationFreeCtrl
-from .classes.linears.storages import LinearStorageFluxCtrl, \
-    LinearStorageEffortCtrl
-from .classes.nonlinears.dissipatives import NonLinearDissipative
-from .classes.nonlinears.storages import NonLinearStorage
-from pyphs.dictionary.tools import symbols, nice_var_label
-
-import sympy
-
-# Minimal conductance for accelerating convergenc of solver (diode and bjt)
-GMIN = 1e-12
+from .edges import (PHSPort,
+                    PHSDissipativeLinear,
+                    PHSStorageLinear, PHSStorageNonLinear)
+from pyphs.dictionary.tools import symbols
 
 
-class Source(Port):
+class Source(PHSPort):
     """
     Voltage or current source
 
@@ -48,10 +40,10 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         elif type_ == 'velocity':
             ctrl = 'e'
         kwargs.update({'ctrl': ctrl})
-        Port.__init__(self, label, nodes, **kwargs)
+        PHSPort.__init__(self, label, nodes, **kwargs)
 
 
-class Stiffness(LinearStorageFluxCtrl):
+class Stiffness(PHSStorageLinear):
     """
     Linear stiffness
 
@@ -73,11 +65,12 @@ class Stiffness(LinearStorageFluxCtrl):
         par_val = kwargs[par_name]
         kwargs = {'name': par_name,
                   'value': par_val,
-                  'inv_coeff': False}
-        LinearStorageFluxCtrl.__init__(self, label, nodes, **kwargs)
+                  'inv_coeff': False,
+                  'ctrl': 'f'}
+        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
 
 
-class Mass(LinearStorageEffortCtrl):
+class Mass(PHSStorageLinear):
     """
     Mass moving in 1D space
 
@@ -99,11 +92,12 @@ class Mass(LinearStorageEffortCtrl):
         par_val = kwargs[par_name]
         kwargs = {'name': par_name,
                   'value': par_val,
-                  'inv_coeff': True}
-        LinearStorageEffortCtrl.__init__(self, label, nodes, **kwargs)
+                  'inv_coeff': True,
+                  'ctrl': 'e'}
+        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
 
 
-class Damper(LinearDissipationFreeCtrl):
+class Damper(PHSDissipativeLinear):
     """
     Linear damper (unconstrained control)
 
@@ -126,10 +120,10 @@ class Damper(LinearDissipationFreeCtrl):
             coeff = 0.
         else:
             coeff = kwargs['A']
-        LinearDissipationFreeCtrl.__init__(self, label, nodes, coeff=coeff)
+        PHSDissipativeLinear.__init__(self, label, nodes, coeff=coeff)
 
 
-class Springcubic(NonLinearStorage):
+class Springcubic(PHSStorageNonLinear):
     """
     Spring with cubic nonlinearity F(q)=K0*(q + K2*q**3)
 
@@ -172,5 +166,5 @@ class Springcubic(NonLinearStorage):
         edge = (N1, N2, data)
 
         # init component
-        NonLinearStorage.__init__(self, label, [edge],
-                                  x, H, **kwargs)
+        PHSStorageNonLinear.__init__(self, label, [edge],
+                                     x, H, **kwargs)

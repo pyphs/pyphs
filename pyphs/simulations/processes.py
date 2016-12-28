@@ -12,34 +12,32 @@ import numpy as np
 import progressbar
 import time
 
-from .tools import update
+from .tools import update, build_args, build_funcs
+from pyphs.misc.io import open_files, close_files, dump_files
 
 
-def process_py(simulation):
+def process_py(simu):
 
     # lambdify exprs and define get/set for args
-    from .tools import build_args, build_funcs
-    build_args(simulation)
-    build_funcs(simulation)
+    build_args(simu)
+    build_funcs(simu)
 
     # get generators of u and p
-    data = simulation.Data
+    data = simu.Data
     seq_u = data.u()
     seq_p = data.p()
 
-    from pyphs.misc.io import open_files, close_files, dump_files
-
-    data_path = simulation.config['path']
+    data_path = simu.config['path']
 
     files_to_open = ['x', 'dx', 'dxH', 'w', 'z', 'y']
 
     files = open_files(data_path, files_to_open)
 
-    if simulation.config['progressbar']:
+    if simu.config['progressbar']:
         pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ',
                       progressbar.Bar(), ' ', progressbar.ETA()]
         pbar = progressbar.ProgressBar(widgets=pb_widgets,
-                                       maxval=simulation.config['nt'])
+                                       maxval=simu.config['nt'])
         pbar.start()
     else:
         print("\n*** Simulation... ***\n")
@@ -47,12 +45,12 @@ def process_py(simulation):
     # init time step
     n = 0
     for (u, p) in zip(seq_u, seq_p):
-        update(simulation, u=np.array(u), p=np.array(p))
-        dump_files(simulation, files)
+        update(simu, u=np.array(u), p=np.array(p))
+        dump_files(simu, files)
         n += 1
-        if simulation.config['progressbar']:
+        if simu.config['progressbar']:
             pbar.update(n)
-    if simulation.config['progressbar']:
+    if simu.config['progressbar']:
         pbar.finish()
     time.sleep(0.5)
     close_files(files)
@@ -67,9 +65,8 @@ def process_cpp(simu):
         import os
         print("\no==========================================================\
         ==o\n")
-        print(" Please, execute:\n" + simu._phs.paths['cpp'] + \
-            os.path.sep + \
-            "/main.cpp")
+        print(" Please, execute:\n" + simu._phs.paths['cpp'] +
+              os.path.sep + "/main.cpp")
         print("\no==========================================================\
         ==o\n")
         input("Press a key when done.\nWaiting....\n")

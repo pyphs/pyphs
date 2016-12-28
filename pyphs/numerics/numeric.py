@@ -5,6 +5,8 @@ Created on Fri Jun  3 15:27:55 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
+
 from pyphs.core.symbs_tools import free_symbols
 from .tools import lambdify, find
 

@@ -36,10 +36,10 @@ def build_args(simu):
 
         return set_func
 
-    names = {'vl', 'vnl', 
-             'x', 'dx', 
+    names = {'vl', 'vnl',
+             'x', 'dx',
              'xl', 'dxl',
-             'xnl', 'dxnl', 
+             'xnl', 'dxnl',
              'w', 'wl', 'wnl',
              'u', 'p'}
 
@@ -77,10 +77,10 @@ def build_funcs(simu):
     # link evaluation to internal values
     names = {'dxH', 'y', 'z'}
     if simu.config['presolve']:
-        names = names.union({'update_lin', 'impfunc', 
+        names = names.union({'update_lin', 'impfunc',
                              'res_impfunc', 'jac_impfunc'})
     else:
-        names = names.union({'iDl', 'barNlxl', 'barNlnl', 'barNly', 
+        names = names.union({'iDl', 'barNlxl', 'barNlnl', 'barNly',
                              'barNnlxl', 'barNnll', 'barNnlnl', 'Inl',
                              'fnl', 'jac_fnl', 'barNnly'})
     for name in names:
@@ -100,7 +100,10 @@ is numerics.fs).
     simu.set_x(simu.x() + simu.dx())
     if not simu.config['presolve']:
         # Update system matrices if presolve did not succeed
-        setattr(simu, 'Dl', numpy.linalg.inv(simu.iDl()))
+        if bool(simu.Core.dims.xl()):
+            setattr(simu, 'Dl', numpy.linalg.inv(simu.iDl()))
+        else:
+            setattr(simu, 'Dl', simu.iDl())
         setattr(simu, 'Nlxl', numpy.dot(simu.Dl, simu.barNlxl()))
         setattr(simu, 'Nlnl', numpy.dot(simu.Dl, simu.barNlnl()))
         setattr(simu, 'Nly', numpy.dot(simu.Dl, simu.barNly()))
@@ -137,20 +140,36 @@ def update_nl(simu):
             and step > simu.config['numtol']\
             and it < simu.config['maxit']:
         if not simu.config['presolve']:
-            # Update system matrices if presolve did not succeed    
-            setattr(simu, 'Nnlxl', 
-                    simu.barNnlxl() + numpy.dot(simu.barNnll(), 
-                                                simu.barNlxl()))
-            setattr(simu, 'Nnlnl', 
+            # Update system matrices if presolve did not succeed
+            if simu.Core.dims.xl() == 0:
+                temp = numpy.zeros((simu.Core.dims.xnl()+simu.Core.dims.wnl(),
+                                    simu.Core.dims.xl()))
+            else:
+                temp = simu.barNnlxl() + numpy.dot(simu.barNnll(),
+                                                   simu.barNlxl())
+            setattr(simu, 'Nnlxl', temp)
+
+            setattr(simu, 'Nnlnl',
                     simu.barNnlnl() + numpy.dot(simu.barNnll(),
                                                 simu.barNlnl()))
-            setattr(simu, 'Nnly', 
-                    simu.barNnly() + numpy.dot(simu.barNnll(), simu.barNly()))
-            setattr(simu, 'c', 
-                    numpy.dot(simu.Nnlxl, simu.xl()) + 
+
+            if simu.Core.dims.y() == 0:
+                temp = numpy.zeros((simu.Core.dims.xnl()+simu.Core.dims.wnl(),
+                                    simu.Core.dims.y()))
+            elif simu.Core.dims.xl() == 0:
+                temp = simu.barNnly()
+            else:
+                temp = simu.barNnly() + numpy.dot(simu.barNnll(),
+                                                  simu.barNly())
+
+            setattr(simu, 'Nnly', temp)
+
+            setattr(simu, 'c',
+                    numpy.dot(simu.Nnlxl, simu.xl()) +
                     numpy.dot(simu.Nnly, simu.u()))
-            simu.impfunc = numpy.dot(simu.Inl(), simu.vnl()) - \
-                    numpy.dot(simu.Nnlnl, simu.fnl()) - simu.c
+            simu.impfunc = (numpy.dot(simu.Inl(), simu.vnl()) -
+                            numpy.dot(simu.Nnlnl, simu.fnl().flatten()) -
+                            simu.c)
             # updated args
             iter_solver(simu)
             # eval residual
@@ -169,6 +188,7 @@ def update_nl(simu):
         # save args for comparison
         old_varsnl = simu.vnl().copy()
 
+
 def iter_solver_presolve(simu):
     # eval args
     vnl = simu.vnl()
@@ -180,14 +200,17 @@ def iter_solver_presolve(simu):
     vnl = vnl - numpy.dot(ijac_impfunc, impfunc)
     simu.set_vnl(vnl)
 
+
 def iter_solver(simu):
     # eval args
+    vnl = simu.vnl()
+    impfunc = simu.impfunc.flatten()
     jac_impfunc = simu.Inl() - numpy.dot(simu.Nnlnl, simu.jac_fnl())
     # compute inverse jacobian
     ijac_impfunc = numpy.linalg.inv(jac_impfunc)
     # build updates for args
-    vnl = simu.vnl() - numpy.dot(ijac_impfunc, simu.impfunc)
+    vnl = vnl - numpy.dot(ijac_impfunc, impfunc)
     simu.set_vnl(vnl)
-    simu.impfunc = numpy.dot(simu.Inl(), vnl) - \
-        numpy.dot(simu.Nnlnl, simu.fnl()) - simu.c
-    
+    simu.impfunc = (numpy.dot(simu.Inl(), vnl) -
+                    numpy.dot(simu.Nnlnl, simu.fnl().flatten()) -
+                    simu.c)

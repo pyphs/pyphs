@@ -6,22 +6,22 @@ Created on Tue Jun  7 19:13:35 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from .classes.connectors.connector import Connector
+from .edges.connectors import PHSConnector
 
 
-class Gyrator(Connector):
+class Gyrator(PHSConnector):
     """
     gyrator
     """
     def __init__(self, label, nodes, **kwargs):
         kwargs.update({'connector_type': 'gyrator'})
-        Connector.__init__(self, label, nodes, **kwargs)
+        PHSConnector.__init__(self, label, nodes, **kwargs)
 
 
-class Transformer(Connector):
+class Transformer(PHSConnector):
     """
     transformer
     """
     def __init__(self, label, nodes, **kwargs):
         kwargs.update({'connector_type': 'transformer'})
-        Connector.__init__(self, label, nodes, **kwargs)
+        PHSConnector.__init__(self, label, nodes, **kwargs)

@@ -9,8 +9,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-# from pyphs.config import datum
-datum = 'ref'
+from pyphs.config import datum
 
 
 def sep():
@@ -134,14 +133,14 @@ components).
         """
         print the netlist line 'n' whith appropriate format
         """
-        return _print_netlist_line(self[n])
+        return print_netlist_line(self[n])
 
     def close(self):
         print('Close netlist file: '+self.path)
         self.file.close()
 
 
-def _print_netlist_line(dic):
+def print_netlist_line(dic):
     """
     Return the line of the pyphs netlist associated to
     > dic.comp label nodes parameters

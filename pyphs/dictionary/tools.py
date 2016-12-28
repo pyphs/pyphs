@@ -58,7 +58,7 @@ for parameters in component expression 'dicpars' and for parameters in phs \
     dicpars = {}
     subs = {}
     for key in kwargs.keys():
-        symb, sub = form(kwargs[key], graph.label + '_' + str(key))
+        symb, sub = form(graph.label + '_' + str(key), kwargs[key])
         dicpars.update({symbols(key): symb})
         subs.update(sub)
     return dicpars, subs

@@ -51,7 +51,7 @@ class PHSSimu:
         self.config.update({'path': path})
 
         # store PHSCore
-        self.Core = core
+        self.core = core
 
 ###############################################################################
 
@@ -62,14 +62,14 @@ simulation.
         """
 
         if self.config['presubs']:
-            self.Core.apply_subs()
+            self.core.apply_subs()
 
         # split system into linear and nonlinear parts
         force_nolin = not self.config['split']
 
-        split_linear(self.Core, force_nolin=force_nolin)
+        split_linear(self.core, force_nolin=force_nolin)
 
-        self.Exprs = SimulationExpressions(self.Core, config=self.config)
+        self.Exprs = SimulationExpressions(self.core, config=self.config)
 
 ###############################################################################
 
@@ -79,7 +79,7 @@ simulation.
 
         self.init_expressions()
         self.config['presolve'] = self.Exprs.config['presolve']
-        setattr(self, 'Data', Data(self.Core, self.config))
+        setattr(self, 'Data', Data(self.core, self.config))
         self.Data.init_data(sequ, seqp, x0, nt)
 
     def process(self):

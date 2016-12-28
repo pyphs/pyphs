@@ -22,7 +22,7 @@ port-Hamiltonian systems.
     def __init__(self, label=None, netlist=None):
 
         nx.MultiDiGraph.__init__(self)
-        self.Core = PHSCore()
+        self.core = PHSCore()
         if label is not None:
             self.label = label
         if netlist is not None:
@@ -32,7 +32,7 @@ port-Hamiltonian systems.
     def __add__(graph1, graph2):
         if hasattr(graph1, 'Netlist') and hasattr(graph2, 'Netlist'):
             graph1.Netlist += graph2.Netlist
-        graph1.Core += graph2.Core
+        graph1.core += graph2.core
         graph1.add_edges_from(graph2.edges(data=True))
         return graph1
 
@@ -40,9 +40,9 @@ port-Hamiltonian systems.
         self.Analysis = GraphAnalysis(self)
         self.Analysis.perform()
         buildCore(self)
-        self.Core.apply_connectors()
-        self.Core.exprs_build()
-        return self.Core
+        self.core.apply_connectors()
+        self.core.exprs_build()
+        return self.core.__deepcopy__()
 
     def build_from_netlist(self):
         """

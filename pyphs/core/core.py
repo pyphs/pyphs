@@ -8,6 +8,7 @@ Created on Thu Dec 22 18:26:56 2016
 from __future__ import absolute_import, division, print_function
 
 import sympy
+import copy
 from .misc_tools import geteval
 from .discrete_calculus import discrete_gradient
 from .calculus import gradient, jacobian, hessian
@@ -89,6 +90,9 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
 class PHSCore:
 
     def __init__(self, label=None):
+
+        # Self Attrs to copy
+        self.attrstocopy = {'label', '_built', 'subs'}
 
         # Init label
         self.label = label
@@ -181,6 +185,27 @@ class PHSCore:
 
         return core1
 
+    def __copy__(self):
+        core = PHSCore()
+        for name in (list(set().union(
+                          self.attrstocopy,
+                          self.exprs_names,
+                          self.symbs_names)) +
+                     ['M']):
+            attr = getattr(self, name)
+            setattr(core, name, copy.copy(attr))
+        return core
+
+    def __deepcopy__(self, memo=None):
+        core = PHSCore()
+        for name in (list(set().union(
+                          self.attrstocopy,
+                          self.exprs_names,
+                          self.symbs_names)) +
+                     ['M']):
+            attr = getattr(self, name)
+            setattr(core, name, copy.deepcopy(attr, memo))
+        return core
 
 ###############################################################################
 ###############################################################################

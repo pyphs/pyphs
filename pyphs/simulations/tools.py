@@ -63,7 +63,7 @@ def build_funcs(simu):
         args = getattr(simu.Exprs, name + '_args')
         inds = getattr(simu.Exprs, name + '_inds')
         func = lambdify(args, expr,
-                        subs=simu.Core.subs)
+                        subs=simu.core.subs)
 
         if len(inds) > 0:
             inds = numpy.array(inds)
@@ -100,14 +100,14 @@ is numerics.fs).
     simu.set_x(simu.x() + simu.dx())
     if not simu.config['presolve']:
         # Update system matrices if presolve did not succeed
-        if bool(simu.Core.dims.xl()):
+        if bool(simu.core.dims.xl()):
             setattr(simu, 'Dl', numpy.linalg.inv(simu.iDl()))
         else:
             setattr(simu, 'Dl', simu.iDl())
         setattr(simu, 'Nlxl', numpy.dot(simu.Dl, simu.barNlxl()))
         setattr(simu, 'Nlnl', numpy.dot(simu.Dl, simu.barNlnl()))
         setattr(simu, 'Nly', numpy.dot(simu.Dl, simu.barNly()))
-    if simu.Core.is_nl():
+    if simu.core.is_nl():
         # update nl variables (dxnl and wnl)
         update_nl(simu)
     # update l variables (dxnl and wnl)
@@ -141,9 +141,9 @@ def update_nl(simu):
             and it < simu.config['maxit']:
         if not simu.config['presolve']:
             # Update system matrices if presolve did not succeed
-            if simu.Core.dims.xl() == 0:
-                temp = numpy.zeros((simu.Core.dims.xnl()+simu.Core.dims.wnl(),
-                                    simu.Core.dims.xl()))
+            if simu.core.dims.xl() == 0:
+                temp = numpy.zeros((simu.core.dims.xnl()+simu.core.dims.wnl(),
+                                    simu.core.dims.xl()))
             else:
                 temp = simu.barNnlxl() + numpy.dot(simu.barNnll(),
                                                    simu.barNlxl())
@@ -153,10 +153,10 @@ def update_nl(simu):
                     simu.barNnlnl() + numpy.dot(simu.barNnll(),
                                                 simu.barNlnl()))
 
-            if simu.Core.dims.y() == 0:
-                temp = numpy.zeros((simu.Core.dims.xnl()+simu.Core.dims.wnl(),
-                                    simu.Core.dims.y()))
-            elif simu.Core.dims.xl() == 0:
+            if simu.core.dims.y() == 0:
+                temp = numpy.zeros((simu.core.dims.xnl()+simu.core.dims.wnl(),
+                                    simu.core.dims.y()))
+            elif simu.core.dims.xl() == 0:
                 temp = simu.barNnly()
             else:
                 temp = simu.barNnly() + numpy.dot(simu.barNnll(),

@@ -42,7 +42,6 @@ Created on Thu Jun  2 21:33:07 2016
 
 from __future__ import absolute_import, division, print_function
 
-from .numerics.numeric import PHSNums
 from .simulations.simulation import PHSSimu
 from .graphs.graph import PHSGraph
 from .config import standard_global
@@ -112,8 +111,8 @@ got %s' % type(label)
         netlist.write()
         setattr(self, 'Graph', PHSGraph(netlist=netlist))
         setattr(self, 'Core', self.Graph.buildCore())
-        setattr(self, 'Nums', PHSNums(self.Core))
-        setattr(self, 'Simu', PHSSimu(self.Core,
+        setattr(self, 'Nums', PHSNums(self.core))
+        setattr(self, 'Simu', PHSSimu(self.core,
                                       self.config['simu'],
                                       self.paths['data']))
         setattr(self, 'signalgenerator', signalgenerator)

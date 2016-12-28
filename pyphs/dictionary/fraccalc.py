@@ -129,8 +129,8 @@ DoPlot=False;)
     else:
         beta = kwargs.pop('beta')
 
-    graph.Core.subs.update({graph.Core.symbols('p_'+label): p,
-                           graph.Core.symbols('beta_'+label): beta})
+    graph.core.subs.update({graph.core.symbols('p_'+label): p,
+                           graph.core.symbols('beta_'+label): beta})
 
     diagRmu, diagQmu = fractionalIntegratorWeights(p, beta, **kwargs)
 

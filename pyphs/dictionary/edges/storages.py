@@ -27,20 +27,20 @@ class PHSStorageLinear(PHSGraph):
         else:
             coeff = kwargs['value']
         x = nicevarlabel("x", label)
-        x = self.Core.symbols(x)
+        x = self.core.symbols(x)
         if kwargs['inv_coeff']:
             coeff.symb = coeff.symb**-1
         H = coeff.symb * x**2/2.
-        self.Core.add_storages([x], H)
+        self.core.add_storages([x], H)
         edge_data_dic = {'label': x,
                          'type': 'storage',
                          'ctrl': kwargs['ctrl'],
                          'link': None}
         edge = (nodes[0], nodes[1], edge_data_dic)
         self.add_edges_from([edge])
-        self.Core.subs.update(coeff.sub)
+        self.core.subs.update(coeff.sub)
         if len(coeff.sub) == 0:
-            self.Core.p  += [coeff.symb, ]
+            self.core.p  += [coeff.symb, ]
 
 
 ###############################################################
@@ -88,10 +88,10 @@ keys of the kwargs arguments.
         # ... and build the correspondance between symbols and subs (subs)
         dicpars, subs = mappars(self, **kwargs)
         # update dict of subs in phs
-        self.Core.subs.update(subs)
+        self.core.subs.update(subs)
         # replace parameters in H by correspondances in 'dicpars'
         H = H.subs(dicpars)
         # add dissipative component
-        self.Core.add_storages(x, H)
+        self.core.add_storages(x, H)
         # update phs.Graph with edges
         self.add_edges_from(edges)

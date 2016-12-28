@@ -11,10 +11,8 @@ import numpy as np
 
 from pyphs import PHSGraph
 from pyphs.config import EPS
-from pyphs.dictionary.classes.linears.dissipatives import \
-    LinearDissipationFluxCtrl, LinearDissipationEffortCtrl
-from pyphs.dictionary.classes.linears.storages import LinearStorageFluxCtrl, \
-    LinearStorageEffortCtrl
+
+from .edges import (PHSPort, PHSDissipativeLinear, PHSStorageLinear)
 from pyphs.dictionary.connectors import Transformer
 
 
@@ -46,7 +44,7 @@ class Der_e(PHSGraph):
             Rn = diagRmu[n]**(-1)  # here, diagRmu[n] is a conductance (e-ctrl)
             Ndeb = nodes[0]
             N1 = 'N'+label+str(n)+"_2"
-            self += LinearDissipationEffortCtrl(label+'R'+str(n),
+            self += PHSDissipativeLinear(label+'R'+str(n),
                                                 (Ndeb, N1),
                                                 coeff=Rn)
 

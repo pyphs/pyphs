@@ -141,7 +141,7 @@ def split_linear(core, force_nolin=False):
 def reduce_linear_dissipations(core):
     if not hasattr(core, 'nwl'):
         split_linear(core)
-    iDwl = sympy.eye(core.dims.wl)-core.struc.Mwlwl()*core.Zl
+    iDwl = sympy.eye(core.dims.wl())-core.struc.Mwlwl()*core.Zl
     Dwl = iDwl.inv()
     Mwlnl = sympy.Matrix.hstack(core.Mwlxl(),
                                 core.Mwlxnl(),

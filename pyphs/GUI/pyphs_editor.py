@@ -23,95 +23,8 @@ from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QVBoxLayout, QFrame,
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-from pyphs import PHSNetlist
+from netlist_editor import NetlistWidget
 
-
-class NetlistGUI(QWidget):
-
-    def __init__(self):
-        QWidget.__init__(self)
-
-        self.initUI()
-
-    def initUI(self):
-
-        self.grid = QGridLayout()
-        self.setLayout(self.grid)
-        self.grid.setSpacing(1)
-
-        msgBox = QMessageBox()
-        msgBox.setText('Netlist file selection')
-        msgBox.addButton(QPushButton('New'), QMessageBox.YesRole)
-        msgBox.addButton(QPushButton('Open'), QMessageBox.NoRole)
-        init = msgBox.exec_()
-
-        if init == 0:
-            self._new()
-        else:
-            assert init == 1
-            self._open()
-
-    def _update(self):
-
-        labels = ['#', 'Dictionary', 'Component', 'Label', 'Nodes', 'Arguments']
-        nlines = 1
-        nLines = 1
-        for netline in self.Netlist:
-            nargs = len(netline['arguments'])
-            if nargs == 0:
-                netline['arguments'] = {"":""}
-                nargs = 1
-            for i, k in enumerate(netline['arguments']):
-                if i == 0:
-                    num = str(nlines)
-                    dic = str(netline['dictionary'])
-                    comp = str(netline['component'])
-                    lab = str(netline['label'])
-                    nod = str(netline['nodes'])
-                else:
-                    num = ""
-                    dic = ""
-                    comp = ""
-                    lab = ""
-                    nod = ""
-                arg = str(netline['arguments'][k])
-                line = [num, dic, comp, lab, nod, arg]
-                labels += line
-                nLines += 1
-            nlines += 1
-
-        positions = [(i,j) for i in range(nLines) for j in range(6)]
-
-        for position, name in zip(positions, labels):
-
-            if name == '':
-                continue
-            label = QLabel()
-            label.setText(name)
-            self.grid.addWidget(label, *position)
-
-    def _new(self):
-        fname = QFileDialog.getSaveFileName(self, "New netlist file")[0]
-        if not fname[-4:] == '.net':
-            fname += '.net'
-        self.filename = fname
-        print('Netlist filename: ', fname)
-        self.Netlist = PHSNetlist(self.filename)
-        self._update()
-
-    def _open(self):
-
-        fname = QFileDialog.getOpenFileName(self, 'Open netlist file', os.getcwd())
-        self.filename = fname[0]
-        self.Netlist = PHSNetlist(self.filename)
-        self._update()
-
-    def _saveas(self):
-        fname = QFileDialog.getSaveFileName(self, "Save netlist file as")[0]
-        self.Netlist.write(fname)
-
-    def _save(self):
-        self.Netlist.write()
 
 class Splitter(QWidget):
 
@@ -119,7 +32,6 @@ class Splitter(QWidget):
         QWidget.__init__(self)
 
         self.initUI()
-
 
     def initUI(self):
 
@@ -129,8 +41,7 @@ class Splitter(QWidget):
 
         #############################################################
 
-        self.netlist = NetlistGUI()
-        #self.netlist.setFrameShape(QFrame.StyledPanel)
+        self.netlist = NetlistWidget()
 
         topright = QFrame(self)
         topright.setFrameShape(QFrame.StyledPanel)
@@ -150,11 +61,6 @@ class Splitter(QWidget):
 
         hbox.addWidget(splitter2)
         self.setLayout(hbox)
-
-    def onChanged(self, text):
-
-        self.lbl.setText(text)
-        self.lbl.adjustSize()
 
 class Editor(QMainWindow):
 
@@ -205,10 +111,18 @@ class Editor(QMainWindow):
         self.saveAction.triggered.connect(self.splitter.netlist._save)
 
         # Saveas Action
-        self.saveasAction = QAction(QIcon('icons/saveas.png'), '&Save as', self)
+        self.saveasAction = QAction(QIcon('icons/saveas.png'),
+                                    '&Save as', self)
         self.saveasAction.setShortcut('Ctrl+Shift+S')
         self.saveasAction.setStatusTip('Save as new netlist')
         self.saveasAction.triggered.connect(self.splitter.netlist._saveas)
+
+        # PlotGraph Action
+        self.plotgraphAction = QAction(QIcon('icons/graph.png'),
+                                       '&Plot graph', self)
+        self.plotgraphAction.setShortcut('Ctrl+G')
+        self.plotgraphAction.setStatusTip('Plot the graph')
+        self.plotgraphAction.triggered.connect(self.splitter.netlist._plot_graph)
 
         #############################################################
         #############################################################
@@ -216,9 +130,11 @@ class Editor(QMainWindow):
 
         # TOOLBAR
 
-        self.toolbar = self.addToolBar('Tools')
-        self.toolbar.addAction(self.openAction)
-        self.toolbar.addAction(self.saveAction)
+        self.toolbarNetlist = self.addToolBar('Netlist')
+        self.toolbarNetlist.addAction(self.openAction)
+        self.toolbarNetlist.addAction(self.saveAction)
+        self.toolbarNetlist.addAction(self.saveasAction)
+        self.toolbarNetlist.addAction(self.plotgraphAction)
 
         #############################################################
         #############################################################
@@ -252,6 +168,7 @@ class Editor(QMainWindow):
         netlistMenu.addAction(self.openAction)
         netlistMenu.addAction(self.saveAction)
         netlistMenu.addAction(self.saveasAction)
+        netlistMenu.addAction(self.plotgraphAction)
 
         #############################################################
 

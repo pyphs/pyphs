@@ -88,7 +88,10 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
 
 class PHSCore:
 
-    def __init__(self):
+    def __init__(self, label=None):
+
+        # Init label
+        self.label = label
 
         # Init Flags
         self._built = False

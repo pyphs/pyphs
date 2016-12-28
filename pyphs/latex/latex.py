@@ -4,14 +4,8 @@ Created on Fri Mar  4 00:24:35 2016
 
 @author: Falaize
 """
-from sympy.printing import latex
-import sympy
-from pyphs.config import authors, affiliations, \
-    fold_short_frac, mat_delim, mat_str, mul_symbol
-from pyphs.misc.tools import geteval
-from .tools import obj2tex, cr
-
-special_chars = ['#']
+from pyphs.config import authors, affiliations, special_chars
+from pyphs.latex.tools import obj2tex, cr
 
 
 def symbol_names(core):
@@ -22,6 +16,16 @@ def symbol_names(core):
             lab = string[1:]
             sn.update({symb: var+r'_{\mathrm{'+lab+r'}}'})
     return sn
+
+
+def core2tex(core):
+    string = r""
+    string += coredims2tex(core)
+    string += coresyms2tex(core)
+    string += coreexprs2tex(core)
+    string += corepars2tex(core)
+    string += corestruc2tex(core)
+    return string
 
 
 def coredims2tex(core):
@@ -58,6 +62,8 @@ def coresyms2tex(core):
 
 
 def coreexprs2tex(core):
+    if not core._built:
+        core.exprs_build()
     sm = symbol_names(core)
     str_relations = cr(2)
     str_relations += r"\section{Constitutive relations}"
@@ -286,7 +292,7 @@ def docpreamble(title):
 \usepackage{amssymb}
 %\date{\today}                              % Activate to display a """ + \
         r"""given date or no date
-\title{""" + title + r"""}}
+\title{""" + title + r"""}
 %
 \usepackage{authblk}
 \usepackage{hyperref}
@@ -295,34 +301,24 @@ def docpreamble(title):
     return str_preamble + latex_authors + latex_affiliations
 
 
-def document(label):
+def document(content, title, filename=None):
     """
     return latex code as plain string for global phs description
     """
-    title = r"\title{Structure of the port-Hamiltonian system\\\texttt{" + \
-        label + r"}}"
     str_tex = ""
-    str_tex += self.preamble(title)
+    str_tex += docpreamble(title)
     str_tex += cr(1) + r"\begin{document}" + cr(1)
     str_tex += r"\maketitle"
-    str_tex += netlist()
-    str_tex += dimensions()
-    str_tex += symbols()
-    str_tex += expressions()
-    str_tex += parameters()
-    str_tex += structure()
+    str_tex += content
     str_tex += cr(1)
     str_tex += r"\end{document}"
     for special_char in special_chars:
         latex_char = "\\" + special_char
         str_tex = str_tex.replace(special_char, latex_char)
-    import os
-    filename = self.path + os.sep + self.sys_label + r'.tex'
-    if not os.path.exists(self.path):
-        os.makedirs(self.path)
-    file_ = open(filename, 'w')
-    file_.write(str_tex)
-    file_.close()
+    if filename is not None:
+        file_ = open(filename, 'w')
+        file_.write(str_tex)
+        file_.close()
 
 
 def dic2table(labels, dic):

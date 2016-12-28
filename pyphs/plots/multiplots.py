@@ -200,7 +200,7 @@ subplots.
                       markeredgewidth=opts['markeredgewidth'])
 
         setlims(axs[n], x, miny, maxy, opts['limits'][n])
-        setticks(axs[n], opts)
+        setticks(axs[n], opts, n)
 
         axs[n].legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
         if not opts['unity'][n] is None:

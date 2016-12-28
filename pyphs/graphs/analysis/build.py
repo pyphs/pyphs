@@ -59,46 +59,46 @@ according to the control type of each indeterminate edge
         if ctrl == '?':
             # get edge label index in 'w'
             label = Graph.Analysis.get_edge_data(e, 'label')
-            indw = Graph.Core.w.index(label)
+            indw = Graph.core.w.index(label)
             if e in Graph.Analysis.ec_edges:
-                Graph.Core.z[indw] = Graph.Analysis.get_edge_data(e, 'z')['e_ctrl']
+                Graph.core.z[indw] = Graph.Analysis.get_edge_data(e, 'z')['e_ctrl']
             else:
                 assert e in Graph.Analysis.fc_edges
-                Graph.Core.z[indw] = Graph.Analysis.get_edge_data(e, 'z')['f_ctrl']
+                Graph.core.z[indw] = Graph.Analysis.get_edge_data(e, 'z')['f_ctrl']
 
 
 def _setCore(Graph):
     new_indices_x = []
     for e in Graph.Analysis.stor_edges:
         e_label = Graph.Analysis.get_edge_data(e, 'label')
-        index_e_in_x = Graph.Core.x.index(e_label)
+        index_e_in_x = Graph.core.x.index(e_label)
         new_indices_x.append(index_e_in_x)
-    Graph.Core.x = [Graph.Core.x[el] for el in new_indices_x]
+    Graph.core.x = [Graph.core.x[el] for el in new_indices_x]
 
     new_indices_w = []
     for e in Graph.Analysis.diss_edges:
         e_label = Graph.Analysis.get_edge_data(e, 'label')
-        index_e_in_w = Graph.Core.w.index(e_label)
+        index_e_in_w = Graph.core.w.index(e_label)
         new_indices_w.append(index_e_in_w)
-    Graph.Core.w = [Graph.Core.w[el] for el in new_indices_w]
-    Graph.Core.z = [Graph.Core.z[el] for el in new_indices_w]
+    Graph.core.w = [Graph.core.w[el] for el in new_indices_w]
+    Graph.core.z = [Graph.core.z[el] for el in new_indices_w]
 
     new_indices_y = []
     for e in Graph.Analysis.port_edges:
         e_label = Graph.Analysis.get_edge_data(e, 'label')
-        index_e_in_y = Graph.Core.y.index(e_label)
+        index_e_in_y = Graph.core.y.index(e_label)
         new_indices_y.append(index_e_in_y)
-    Graph.Core.y = [Graph.Core.y[el] for el in new_indices_y]
-    Graph.Core.u = [Graph.Core.u[el] for el in new_indices_y]
+    Graph.core.y = [Graph.core.y[el] for el in new_indices_y]
+    Graph.core.u = [Graph.core.u[el] for el in new_indices_y]
 
     new_indices_connector = []
     for e in Graph.Analysis.conn_edges:
         e_label = Graph.Analysis.get_edge_data(e, 'label')
-        index_e_in_connector = Graph.Core.cy.index(e_label)
+        index_e_in_connector = Graph.core.cy.index(e_label)
         new_indices_connector.append(index_e_in_connector)
-    Graph.Core.cy = [Graph.Core.cy[el] for el in new_indices_connector]
-    Graph.Core.cu = [Graph.Core.cu[el] for el in new_indices_connector]
+    Graph.core.cy = [Graph.core.cy[el] for el in new_indices_connector]
+    Graph.core.cu = [Graph.core.cu[el] for el in new_indices_connector]
 
     _select_relations(Graph)
 
-    Graph.Core.M = Graph.Analysis.J
+    Graph.core.M = Graph.Analysis.J

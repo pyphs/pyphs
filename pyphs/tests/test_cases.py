@@ -35,7 +35,7 @@ class TestPHSGraphBuildFromNetlist(TestCase):
 class TestPHSGraphBuildCore(TestCase):
     def test_graph_build_from_netlist(self):
         graph.buildCore()
-        test_M = np.array(graph.Core.M)-target_M
+        test_M = np.array(graph.core.M)-target_M
         results = (test_M == np.zeros(target_M.shape))
         self.assertTrue(all(list(results.flatten())))
 

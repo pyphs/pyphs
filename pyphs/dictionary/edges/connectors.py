@@ -21,19 +21,19 @@ class PHSConnector(PHSGraph):
         # ... and build the correspondance between symbols and subs (subs)
         dicpars, subs = mappars(self, **kwargs)
         # update dict of subs in phs
-        self.Core.subs.update(subs)
+        self.core.subs.update(subs)
         # replace parameters in alpha by correspondances in 'dicpars'
-        alpha = self.Core.symbols('alpha')
+        alpha = self.core.symbols('alpha')
         alpha = alpha.subs(dicpars)
         # symbols for inputs and outputs:
-        u1, u2 = self.Core.symbols([nicevarlabel('u', label + str(el))
+        u1, u2 = self.core.symbols([nicevarlabel('u', label + str(el))
                                   for el in (1, 2)])
-        y1, y2 = self.Core.symbols([nicevarlabel('y', label + str(el))
+        y1, y2 = self.core.symbols([nicevarlabel('y', label + str(el))
                                   for el in (1, 2)])
         connector = {'u': (str(u1), str(u2)), 'y': (str(y1), str(y2)),
                      'alpha': alpha}
         # add connector component
-        self.Core.add_connectors(connector)
+        self.core.add_connectors(connector)
         # update phs.Graph with edges
         edge1_data = {'type': 'connector',
                       'connector_type': connector_type,

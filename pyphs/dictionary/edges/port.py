@@ -54,7 +54,7 @@ class PHSPort(PHSGraph):
         u, y = symbols((nicevarlabel('u', label),
                         nicevarlabel('y', label)))
         # add port to phs
-        self.Core.add_ports([u], [y])
+        self.core.add_ports([u], [y])
         # check edge control type (dual of input control type in values[0])
         assert parameters['ctrl'] in ('e', 'f', '?')
         # define edge data
@@ -65,5 +65,5 @@ class PHSPort(PHSGraph):
         # add edge to phs.Graph
         self.add_edges_from([(node1, node2, edge_data)])
         # check if constant value is provided
-        if 'const' is not None:
-            self.Core.subs.update({u: parameters['const']})
+        if parameters['const'] is not None:
+            self.core.subs.update({u: parameters['const']})

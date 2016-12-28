@@ -123,9 +123,10 @@ standard_simulations = {'load_options': {'decim': 1, 'imin': 0, 'imax': None},
                         'fs': 48e3,
                         'language': 'python',
                         'timer': False,
-                        'progressbar': False},
+                        'progressbar': False}
 
 standard_numerics = {'numtol': EPS,
+                     'fs': 48e3,
                      'method': 'o1',
                      'solver': 'standard',
                      'presolve': False,

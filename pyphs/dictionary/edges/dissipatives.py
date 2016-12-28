@@ -45,10 +45,10 @@ class PHSDissipativeLinear(PHSGraph):
         else:
             coeff = kwargs['coeff']
         w_label = nicevarlabel("w", label)
-        w = self.Core.symbols(w_label)
+        w = self.core.symbols(w_label)
         z_f_ctrl = coeff.symb*w
         z_e_ctrl = w/coeff.symb
-        self.Core.add_dissipations([w], [z_f_ctrl])
+        self.core.add_dissipations([w], [z_f_ctrl])
         edge_data_dic = {'label': w,
                          'type': 'dissipative',
                          'ctrl': '?',
@@ -56,7 +56,7 @@ class PHSDissipativeLinear(PHSGraph):
                          'link': None}
         edge = (nodes[0], nodes[1], edge_data_dic)
         self.add_edges_from([edge])
-        self.Core.subs.update(coeff.sub)
+        self.core.subs.update(coeff.sub)
 
 
 ###############################################################
@@ -107,7 +107,7 @@ keys of the kwargs arguments.
         # ... and build the correspondance between symbols and subs (subs)
         dicpars, subs = mappars(self, **kwargs)
         # update dict of subs in phs
-        self.Core.subs.update(subs)
+        self.core.subs.update(subs)
         # replace parameters in z by correspondances in 'dicpars'
         for i, zz in enumerate(z):
             z[i] = zz.subs(dicpars)
@@ -117,6 +117,6 @@ keys of the kwargs arguments.
                     edges[e][2]['z'][k] = edge[2]['z'][k].subs(dicpars)
 
         # add dissipative component
-        self.Core.add_dissipations(w, z)
+        self.core.add_dissipations(w, z)
         # update phs.Graph with edges
         self.add_edges_from(edges)

@@ -25,7 +25,7 @@ class Data:
 
         # init config with standard configuration options
         self.config = config
-        self.Core = core
+        self.core = core
 
         def dummy_func(name):
             def get_seq(ind=None, postprocess=None, imin=None, imax=None,
@@ -35,7 +35,7 @@ class Data:
                                            postprocess=postprocess)
             return get_seq
 
-        for name in list(self.Core.args_names) + ['y', 'dxH', 'z', 'dx']:
+        for name in list(self.core.args_names) + ['y', 'dxH', 'z', 'dx']:
             setattr(self, name, dummy_func(name))
 
     def t(self, imin=None, imax=None, decim=None):
@@ -82,11 +82,11 @@ class Data:
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
-        R = self.Core.R()
+        R = self.core.R()
         from pyphs.numerics.tools import lambdify
-        lambda_R = lambdify(self.Core.args(),
+        lambda_R = lambdify(self.core.args(),
                             R,
-                            subs=self.Core.subs)
+                            subs=self.core.subs)
         for w, z, a, b, args in zip(self.w(**options),
                                     self.z(**options),
                                     self.a(**options),
@@ -193,17 +193,17 @@ class Data:
         if seqp is None:
             def generator_p():
                 for _ in range(nt):
-                    if self.Core.dims.p() > 0:
-                        yield [0, ]*self.Core.dims.p()
+                    if self.core.dims.p() > 0:
+                        yield [0, ]*self.core.dims.p()
                     else:
                         yield ""
             seqp = generator_p()
 
         if x0 is None:
-            x0 = [0, ]*self.Core.dims.x()
+            x0 = [0, ]*self.core.dims.x()
         else:
             assert isinstance(x0, list) and \
-                len(x0) == self.Core.dims.x() and \
+                len(x0) == self.core.dims.x() and \
                 isinstance(x0[0], (float, int)), 'x0 not understood, got \
     {0!s}'.format(x0)
         # write input sequence

@@ -79,12 +79,12 @@ def split_monovariate(core):
     core.dims.wns = core.dims.w()-i
 
 
-def split_linear(core, force_nolin=False):
+def split_linear(core, split=True):
     """
     """
     # split storage part
     nxl = 0
-    if not force_nolin:
+    if split:
         for _ in range(core.dims.x()):
             hess = hessian(core.H, core.x)
             hess_line = list(hess[nxl, :].T)
@@ -108,7 +108,7 @@ def split_linear(core, force_nolin=False):
 
     # split dissipative part
     nwl = 0
-    if not force_nolin:
+    if split:
         for _ in range(core.dims.w()):
             jacz = jacobian(core.z, core.w)
             jacz_line = list(jacz[nwl, :].T)
@@ -141,7 +141,7 @@ def split_linear(core, force_nolin=False):
 def reduce_linear_dissipations(core):
     if not hasattr(core, 'nwl'):
         split_linear(core)
-    iDwl = sympy.eye(core.dims.wl())-core.struc.Mwlwl()*core.Zl
+    iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
     Dwl = iDwl.inv()
     Mwlnl = sympy.Matrix.hstack(core.Mwlxl(),
                                 core.Mwlxnl(),
@@ -161,11 +161,11 @@ def reduce_linear_dissipations(core):
         mat.append(sympy.Matrix.hstack(*mati))
     Mnl = sympy.Matrix.vstack(*mat)
 
-    core.w = core.w[core.dims.wl:]
-    core.z = core.z[core.dims.wl:]
-    core.dims.wl = 0
+    core.w = core.w[core.dims.wl():]
+    core.z = core.z[core.dims.wl():]
+    core.dims._wl = 0
     core.M = Mnlwl*core.Zl*Dwl*Mwlnl + Mnl
-    core.build()
+    core.exprs_build()
 
 
 def output_function(core):

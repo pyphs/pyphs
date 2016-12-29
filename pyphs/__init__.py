@@ -8,7 +8,7 @@ from .graphs.graph import PHSGraph
 from .graphs.netlists import PHSNetlist
 from .numerics import (PHSNumericalMethod, PHSNumericalCore, PHSNumericalEval,
                        PHSNumericalOperation, PHSNumericalMethodStandard)
-from .simulations.simulation import PHSSimu
+from .simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
 from .GUI import PHSNetlistGUI
 
@@ -20,7 +20,7 @@ __version__ = '0.2_DEV'
 __author_email__ = 'antoine.falaize@gmail.com'
 
 __all__ = ['__version__', '__copyright__', '__author__', '__licence__',
-           'PHSObject', 'PHSCore', 'PHSNetlist', 'PHSSimu', 'PHSGraph',
+           'PHSObject', 'PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
            'signalgenerator', 'PHSNetlistGUI', 'PHSNumericalMethodStandard',
            'PHSNumericalOperation', 'PHSNumericalMethod', 'PHSNumericalCore',
            'PHSNumericalEval']

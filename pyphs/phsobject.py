@@ -42,7 +42,7 @@ Created on Thu Jun  2 21:33:07 2016
 
 from __future__ import absolute_import, division, print_function
 
-from .simulations.simulation import PHSSimu
+from .simulations.simulation import PHSSimulation
 from .graphs.graph import PHSGraph
 from .config import standard_global
 from .misc.signals.synthesis import signalgenerator

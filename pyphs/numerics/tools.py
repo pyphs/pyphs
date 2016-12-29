@@ -12,6 +12,8 @@ import sympy
 import copy
 
 NumericalOperationParser = {'add': numpy.add,
+                            'addarray': lambda v1, v2: numpy.add(v1.flatten(),
+                                                                 v2.flatten()),
                             'dot': numpy.dot,
                             'inv': numpy.linalg.inv,
                             'norm': lambda x: numpy.sqrt(float(numpy.dot(x,
@@ -28,8 +30,8 @@ def lambdify_NumericalOperation(nums, operation):
             f = copy.copy(arg)
             eval_args.append(lambda: f)
         else:
-            assert isinstance(arg, sympy.Symbol)
-            eval_args.append(getattr(nums, str(arg)))
+            assert isinstance(arg, str)
+            eval_args.append(getattr(nums, arg))
     func = NumericalOperationParser[operation.operation]
 
     def eval_func():
@@ -58,7 +60,7 @@ def eval_generator(nums, name):
     expr = getattr(nums.method, name + '_expr')
     if isinstance(expr, PHSNumericalOperation):
         func = lambdify_NumericalOperation(nums, expr)
-    elif isinstance(expr, sympy.Symbol):
+    elif isinstance(expr, str):
         attr = getattr(nums, str(expr))
         def func():
             return attr()
@@ -113,8 +115,7 @@ def setfunc_generator(nums, name):
     """
 
     def set_func(array):
-        attr = getattr(nums, '_' + name)
-        attr[:] = array
+        setattr(nums, '_' + name, array)
 
     return set_func
 
@@ -131,7 +132,7 @@ class PHSNumericalOperation:
             if isinstance(arg, PHSNumericalOperation):
                 symbs = arg.freesymbols
                 arg = arg.call
-            elif isinstance(arg, sympy.Symbol):
+            elif isinstance(arg, str):
                 symbs = set([arg, ])
             else:
                 assert isinstance(arg, (int, float))
@@ -148,9 +149,6 @@ def lambdify(args, expr, subs=None, simplify=True):
     call to lambdify with chosen options
     """
     vector_expr = hasattr(expr, 'index')
-    if vector_expr:
-        expr = sympy.Matrix(expr)
-
     if subs is not None:
         if vector_expr:
             for i, e in enumerate(expr):
@@ -159,8 +157,8 @@ def lambdify(args, expr, subs=None, simplify=True):
             expr = expr.subs(subs)
     if simplify:
         expr = simp(expr)
-    array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
-    expr_lambda = sympy.lambdify(args, expr, dummify=False, modules=array2mat)
+    # array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
+    expr_lambda = sympy.lambdify(args, expr, dummify=False, modules='numpy')
     return expr_lambda
 
 

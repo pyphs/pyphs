@@ -11,6 +11,7 @@ from pyphs.core.symbs_tools import free_symbols
 from .tools import (lambdify, find, eval_generator,
                     getarg_generator, setarg_generator,
                     getfunc_generator, setfunc_generator)
+from pyphs.config import standard_simulations
 import numpy
 
 
@@ -18,8 +19,17 @@ class PHSNumericalCore:
     """
     Class that serves as a container for all numerical functions
     """
-    def __init__(self, method):
+    def __init__(self, method, config=None):
+
+        # init config with standard configuration options
+        self.config = standard_simulations.copy()
+        # update with provided config
+        if config is None:
+            config = {}
+        self.config.update(config)
+
         self.method = method
+
         self.args_names = {'vl', 'vnl',
                            'x', 'dx',
                            'xl', 'dxl',
@@ -49,12 +59,52 @@ class PHSNumericalCore:
         # link evaluation to internal values
         for name in self.method.exprs_names:
             if name not in self.args_names:
-                setattr(self, name, eval_generator(self, name))
-#                setattr(self, 'eval_' + name, eval_generator(self, name))
-#                setattr(self, name, getfunc_generator(self, name))
-#                setattr(self, 'set_' + name, setfunc_generator(self, name))
-#                setattr(self, '_' + name, getattr(self, 'eval_' + name)())
-                print(name)
+                setattr(self, name + '_eval', eval_generator(self, name))
+                setattr(self, name, getfunc_generator(self, name))
+                setattr(self, 'set_' + name, setfunc_generator(self, name))
+                setattr(self, '_' + name, getattr(self, name + '_eval')())
+
+    def update(self, u=None, p=None):
+
+        if u is None:
+            u = numpy.zeros(self.method.ny)
+
+        if p is None:
+            p = numpy.zeros(self.method.np)
+
+        self.set_u(u)
+        self.set_p(p)
+
+        for action in self.method.update:
+            actiontype = action[0]
+            if actiontype == 'exec':
+                self.execs(action[1])
+            else:
+                self.iterexecs(*action[1])
+
+    def execs(self, commands):
+        for command in commands:
+            if isinstance(command, str):
+                setfunc = getattr(self, 'set_'+command)
+                evalfunc = getattr(self, command + '_eval')
+                setfunc(evalfunc())
+            else:
+                setfunc = getattr(self, 'set_'+command[0])
+                evalfunc = getattr(self, command[1] + '_eval')
+                setfunc(evalfunc())
+
+    def iterexecs(self, commands, res_name, step_name):
+
+        # init it counter
+        it = 0
+        # init step on iteration
+        getattr(self, 'set_' + step_name)(1.)
+        # loop while res > tol, step > tol and it < itmax
+        while getattr(self, res_name)() > self.config['numtol'] \
+                and getattr(self, step_name)() > self.config['numtol']\
+                and it < self.config['maxit']:
+            self.execs(commands)
+            it += 1
 
 
 class PHSNumericalEval:

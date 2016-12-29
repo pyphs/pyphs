@@ -368,11 +368,11 @@ dissipative variables w are no more accessible.
         """
         reduce_linear_dissipations(self)
 
-    def split_linear(self):
+    def split_linear(self, split=True):
         """
         Split the system into linear and nonlinear parts.
         """
-        split_linear(self)
+        split_linear(self, split=split)
 
     def apply_connectors(self):
         """

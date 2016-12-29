@@ -12,166 +12,173 @@ import sympy as sp
 from pyphs.core.calculus import jacobian
 from pyphs.core.symbs_tools import free_symbols
 from pyphs.numerics.tools import find, PHSNumericalOperation
-from pyphs.config import standard_numerics
+from pyphs.config import standard_simulations
 
 
 class PHSNumericalMethod:
     """
     Base class for pyphs numerical methods
     """
-    def __init__(self, core, **config):
+    def __init__(self, core, config=None):
 
-        # init config with standard configuration options
-        self.config = standard_numerics.copy()
-
-        # update with provided config
+        self.config = standard_simulations.copy()
+        if config is None:
+            config = {}
         self.config.update(config)
+
+        self.core = core.__deepcopy__()
+        self.core.split_linear(split=self.config['split'])
+        self.fs = self.core.symbols('_fs')
+        if self.config['fs'] is None:
+            self.core.add_parameters(self.fs)
+        else:
+            self.core.subs.update({self.fs: self.config['fs']})
 
         # list of the method expressions names
         self.exprs_names = []
 
         # symbols for arguments of all functions
-        self.args = core.args()
+        self.args = self.core.args()
 
         # symbols for substitutions in all functions
-        self.subs = core.subs
+        self.subs = self.core.subs
 
         self.update = []
 
-        self.ny = core.dims.y()
-        self.np = core.dims.p()
+        self.ny = self.core.dims.y()
+        self.np = self.core.dims.p()
 
         self.nsubs = len(self.subs)
 
-        self.nx = core.dims.x()
-        self.nxl = core.dims.xl()
-        self.nxnl = core.dims.xnl()
+        self.nx = self.core.dims.x()
+        self.nxl = self.core.dims.xl()
+        self.nxnl = self.core.dims.xnl()
 
-        self.nw = core.dims.w()
-        self.nwl = core.dims.wl()
-        self.nwnl = core.dims.wnl()
+        self.nw = self.core.dims.w()
+        self.nwl = self.core.dims.wl()
+        self.nwnl = self.core.dims.wnl()
 
-        self.nargs = core.dims.args()
+        self.nargs = self.core.dims.args()
         self.nl = self.nxl + self.nwl
         self.nnl = self.nxnl + self.nwnl
 
-        self.setfunc('x', core.x)
-        self.setfunc('xl', core.x[:self.nxl])
-        self.setfunc('xnl', core.x[self.nxl:])
+        self.setfunc('x', self.core.x)
+        self.setfunc('xl', self.core.x[:self.nxl])
+        self.setfunc('xnl', self.core.x[self.nxl:])
 
-        self.setfunc('dx', core.dx())
-        self.setfunc('dxl', core.dx()[:self.nxl])
-        self.setfunc('dxnl', core.dx()[self.nxl:])
+        self.setfunc('dx', self.core.dx())
+        self.setfunc('dxl', self.core.dx()[:self.nxl])
+        self.setfunc('dxnl', self.core.dx()[self.nxl:])
 
-        self.setfunc('w', core.w)
-        self.setfunc('wl', core.w[:self.nwl])
-        self.setfunc('wnl', core.w[self.nwl:])
+        self.setfunc('w', self.core.w)
+        self.setfunc('wl', self.core.w[:self.nwl])
+        self.setfunc('wnl', self.core.w[self.nwl:])
 
-        self.setfunc('dxH', core.dxHd)
-        self.setfunc('z', core.z)
+        self.setfunc('dxH', self.core.dxHd)
+        self.setfunc('z', self.core.z)
 
-        self.setfunc('u', core.u)
-        self.setfunc('y', core.outputd)
+        self.setfunc('u', self.core.u)
+        self.setfunc('y', self.core.outputd)
 
-        self.setfunc('p', core.p)
+        self.setfunc('p', self.core.p)
 
-        self.setfunc('M', core.M)
+        self.setfunc('M', self.core.M)
 
         # Build iDl
-        temp1 = sp.diag(sp.eye(self.nxl)*self.config['fs'],
+        temp1 = sp.diag(sp.eye(self.nxl)*self.fs,
                         sp.eye(self.nwl))
-        temp2_1 = sp.Matrix.hstack(core.Mxlxl(), core.Mxlwl())
-        temp2_2 = sp.Matrix.hstack(core.Mwlxl(), core.Mwlwl())
+        temp2_1 = sp.Matrix.hstack(self.core.Mxlxl(), self.core.Mxlwl())
+        temp2_2 = sp.Matrix.hstack(self.core.Mwlxl(), self.core.Mwlwl())
         temp2 = sp.Matrix.vstack(temp2_1, temp2_2)
-        tempQZl = sp.diag(core.Q/2, core.Zl)
+        tempQZl = sp.diag(self.core.Q/2, self.core.Zl)
         self.setfunc('iDl', temp1 - temp2*tempQZl)
 
         # Build barNlxl
-        temp_1 = sp.Matrix.hstack(core.Mxlxl())
-        temp_2 = sp.Matrix.hstack(core.Mwlxl())
+        temp_1 = sp.Matrix.hstack(self.core.Mxlxl())
+        temp_2 = sp.Matrix.hstack(self.core.Mwlxl())
         temp = sp.Matrix.vstack(temp_1, temp_2)
-        self.setfunc('barNlxl', temp*core.Q)
+        self.setfunc('barNlxl', temp*self.core.Q)
 
         # Build barNlnl
-        temp_1 = sp.Matrix.hstack(core.Mxlxnl(), core.Mxlwnl())
-        temp_2 = sp.Matrix.hstack(core.Mwlxnl(), core.Mwlwnl())
+        temp_1 = sp.Matrix.hstack(self.core.Mxlxnl(), self.core.Mxlwnl())
+        temp_2 = sp.Matrix.hstack(self.core.Mwlxnl(), self.core.Mwlwnl())
         temp = sp.Matrix.vstack(temp_1, temp_2)
         self.setfunc('barNlnl', temp)
 
         # Build barNly
-        temp_1 = sp.Matrix.hstack(core.Mxly())
-        temp_2 = sp.Matrix.hstack(core.Mwly())
+        temp_1 = sp.Matrix.hstack(self.core.Mxly())
+        temp_2 = sp.Matrix.hstack(self.core.Mwly())
         temp = sp.Matrix.vstack(temp_1, temp_2)
         self.setfunc('barNly', temp)
 
         # Build barNnlnl
-        temp_1 = sp.Matrix.hstack(core.Mxnlxnl(), core.Mxnlwnl())
-        temp_2 = sp.Matrix.hstack(core.Mwnlxnl(), core.Mwnlwnl())
+        temp_1 = sp.Matrix.hstack(self.core.Mxnlxnl(), self.core.Mxnlwnl())
+        temp_2 = sp.Matrix.hstack(self.core.Mwnlxnl(), self.core.Mwnlwnl())
         temp = sp.Matrix.vstack(temp_1, temp_2)
         self.setfunc('barNnlnl', temp)
 
         # Build barNnll
-        temp_1 = sp.Matrix.hstack(core.Mxnlxl(), core.Mxnlwl())
-        temp_2 = sp.Matrix.hstack(core.Mwnlxl(), core.Mwnlwl())
+        temp_1 = sp.Matrix.hstack(self.core.Mxnlxl(), self.core.Mxnlwl())
+        temp_2 = sp.Matrix.hstack(self.core.Mwnlxl(), self.core.Mwnlwl())
         temp = sp.Matrix.vstack(temp_1, temp_2)
         self.setfunc('barNnll', temp*tempQZl)
 
         # Build barNnlxl
-        temp_1 = sp.Matrix.hstack(core.Mxnlxl())
-        temp_2 = sp.Matrix.hstack(core.Mwnlxl())
+        temp_1 = sp.Matrix.hstack(self.core.Mxnlxl())
+        temp_2 = sp.Matrix.hstack(self.core.Mwnlxl())
         temp = sp.Matrix.vstack(temp_1, temp_2)
-        self.setfunc('barNnlxl', temp*core.Q)
+        self.setfunc('barNnlxl', temp*self.core.Q)
 
         # Build barNnly
-        temp_1 = sp.Matrix.hstack(core.Mxnly())
-        temp_2 = sp.Matrix.hstack(core.Mwnly())
+        temp_1 = sp.Matrix.hstack(self.core.Mxnly())
+        temp_2 = sp.Matrix.hstack(self.core.Mwnly())
         temp = sp.Matrix.vstack(temp_1, temp_2)
         self.setfunc('barNnly', temp)
 
         # Build Nyl
-        temp = sp.Matrix.hstack(core.Myxl(), core.Mywl())
+        temp = sp.Matrix.hstack(self.core.Myxl(), self.core.Mywl())
         self.setfunc('Nyl', temp)
 
         # Build Nynl
-        temp = sp.Matrix.hstack(core.Myxnl(), core.Mywnl())
+        temp = sp.Matrix.hstack(self.core.Myxnl(), self.core.Mywnl())
         self.setfunc('Nynl', temp)
 
         # Build Nynl
-        self.setfunc('Nyy', core.Myy())
+        self.setfunc('Nyy', self.core.Myy())
 
         # Build vl
-        self.setfunc('vl', core.dx()[:self.nxl] + core.w[:self.nwl])
+        self.setfunc('vl', self.core.dx()[:self.nxl] + self.core.w[:self.nwl])
 
         # Build vnl
-        self.setfunc('vnl', core.dx()[self.nxl:] +
-                     core.w[self.nwl:])
+        self.setfunc('vnl', self.core.dx()[self.nxl:] +
+                     self.core.w[self.nwl:])
 
         # Build fl
-        self.setfunc('fl', core.dxHd[:self.nxl] + core.z[:self.nwl])
+        self.setfunc('fl', self.core.dxHd[:self.nxl] + self.core.z[:self.nwl])
 
         # Build fnl
-        self.setfunc('fnl', core.dxHd[self.nxl:] + core.z[self.nwl:])
+        self.setfunc('fnl', self.core.dxHd[self.nxl:] + self.core.z[self.nwl:])
 
         # Build dxHl
-        self.setfunc('dxHl', core.dxHd[:self.nxl])
+        self.setfunc('dxHl', self.core.dxHd[:self.nxl])
         # Build dxHnl
-        self.setfunc('dxHnl', core.dxHd[:self.nxl])
+        self.setfunc('dxHnl', self.core.dxHd[:self.nxl])
 
         # Build zl
-        self.setfunc('zl', core.z[:self.nwl])
+        self.setfunc('zl', self.core.z[:self.nwl])
         # Build znl
-        self.setfunc('znl', core.z[:self.nwl])
+        self.setfunc('znl', self.core.z[:self.nwl])
 
         # Build fnl
-        self.setfunc('fnl', core.dxHd[self.nxl:] + core.z[self.nwl:])
+        self.setfunc('fnl', self.core.dxHd[self.nxl:] + self.core.z[self.nwl:])
 
         # Build jac_fnl
         jac_fnl = jacobian(self.fnl_expr,
                            self.vnl_args)
         self.setfunc('jac_fnl', jac_fnl)
 
-        nxnl, nwnl = core.dims.xnl(), core.dims.wnl()
-        temp = sp.diag(sp.eye(nxnl)*self.config['fs'], sp.eye(nwnl))
+        nxnl, nwnl = self.core.dims.xnl(), self.core.dims.wnl()
+        temp = sp.diag(sp.eye(nxnl)*self.fs, sp.eye(nwnl))
         self.setfunc('Inl', temp)
 
     def get(self, name):
@@ -188,9 +195,8 @@ class PHSNumericalMethod:
         setattr(self, name+'_expr', expr)
         setattr(self, name+'_symb', sp.symbols(name))
         self.exprs_names.append(name)
-        if isinstance(expr, PHSNumericalOperation):
-            args = expr.freesymbols
-            setattr(self, name+'_args', args)
+        if isinstance(expr, (PHSNumericalOperation, str)):
+            pass
         else:
             symbs = free_symbols(expr)
             args, inds = find(symbs, self.args)
@@ -200,7 +206,7 @@ class PHSNumericalMethod:
             setattr(self, name+'_subs', subs)
 
     def setupdate_exec(self, list_):
-        self.update += [{'exec': list_}]
+        self.update.append(('exec', list_))
 
     def setupdate_iter(self, list_, res_symb, step_symb):
-        self.update += [{'iter': (list_, res_symb, step_symb)}]
+        self.update.append(('iter', (list_, res_symb, step_symb)))

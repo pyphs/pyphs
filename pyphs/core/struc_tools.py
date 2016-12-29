@@ -129,7 +129,6 @@ def split_linear(core, split=True):
 
     # number of linear components
     setattr(core.dims, '_wl', nwl)
-    core.exprs_build()
 
     names = ('xl', 'xnl', 'wl', 'wnl', 'y')
     core.inds._set_inds(names, core)
@@ -137,11 +136,17 @@ def split_linear(core, split=True):
     # get() and set() for structure matrices
     core._struc_getset(dims_names=names)
 
+    # build expressions for the new structure
+    core.build_exprs()
+    
 
 def reduce_linear_dissipations(core):
-    if not hasattr(core, 'nwl'):
-        split_linear(core)
-    iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
+    try:
+        iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
+    except AttributeError:
+        core.split_linear()
+        iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
+        
     Dwl = iDwl.inv()
     Mwlnl = sympy.Matrix.hstack(core.Mwlxl(),
                                 core.Mwlxnl(),
@@ -165,7 +170,7 @@ def reduce_linear_dissipations(core):
     core.z = core.z[core.dims.wl():]
     core.dims._wl = 0
     core.M = Mnlwl*core.Zl*Dwl*Mwlnl + Mnl
-    core.exprs_build()
+    core.build_exprs()
 
 
 def output_function(core):
@@ -184,7 +189,6 @@ components, considering the continuous version of storage function gradient
         - y: list of sympy expressions associated with output vector \
 components, considering the discrete version of storage function gradient
     """
-
     if core.dims.y() > 0:  # Check if system has external ports
 
         # contribution of inputs to the output

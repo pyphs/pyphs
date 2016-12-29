@@ -69,6 +69,7 @@ class PHSSimulation:
         if not self.fs == self.config['fs']:
             Method = dic_of_numerical_methods[self.config['method']]
             self.method = Method(self.core, config=self.config)
+            self.core = self.method.core
             self.fs = self.config['fs']
 
     def init_numericalcore(self):

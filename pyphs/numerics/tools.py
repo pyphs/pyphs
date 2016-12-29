@@ -35,7 +35,7 @@ def lambdify_NumericalOperation(nums, operation):
     func = NumericalOperationParser[operation.operation]
 
     def eval_func():
-        return func(*[arg() for arg in eval_args])
+        return numpy.asarray(func(*[arg() for arg in eval_args]))
     return eval_func
 
 
@@ -51,7 +51,7 @@ def lambdify_SymbolicExpression(nums, name):
         inds = list()
 
     def eval_func():
-        return func(*numpy.array(nums.args[inds]))
+        return numpy.asarray(func(*numpy.array(nums.args[inds])))
     return eval_func
 
 
@@ -61,9 +61,9 @@ def eval_generator(nums, name):
     if isinstance(expr, PHSNumericalOperation):
         func = lambdify_NumericalOperation(nums, expr)
     elif isinstance(expr, str):
-        attr = getattr(nums, str(expr))
+        attr = getattr(nums, expr)
         def func():
-            return attr()
+            return numpy.asarray(attr())
     else:
         func = lambdify_SymbolicExpression(nums, name)
     return func
@@ -158,7 +158,10 @@ def lambdify(args, expr, subs=None, simplify=True):
     if simplify:
         expr = simp(expr)
     # array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
-    expr_lambda = sympy.lambdify(args, expr, dummify=False, modules='numpy')
+    expr_lambda = sympy.lambdify(args,
+                                 expr, 
+                                 dummify=False, 
+                                 modules='numpy')
     return expr_lambda
 
 

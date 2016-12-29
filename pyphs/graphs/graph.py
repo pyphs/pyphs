@@ -41,7 +41,7 @@ port-Hamiltonian systems.
         self.Analysis.perform()
         buildCore(self)
         self.core.apply_connectors()
-        self.core.exprs_build()
+        self.core.build_exprs()
         return self.core.__deepcopy__()
 
     def build_from_netlist(self):

@@ -6,6 +6,8 @@ Created on Sun Mar  6 15:53:51 2016
 """
 from __future__ import absolute_import, division, print_function
 
+import numpy
+
 try:
     import itertools.izip as zip
 except ImportError:
@@ -18,9 +20,11 @@ except ImportError:
 
 import os
 
+numpy_float_resolution = numpy.finfo(float).resolution
+float_resolution = int(numpy.abs(numpy.log10(numpy_float_resolution)))
 
 def list2str(l):
-    return str(str(l).strip('[]')).replace(',', '').replace('array(', '').replace(')', '') + '\n'
+    return ('{:} '*len(l)).format(*l)[:-1]  + '\n'
 
 
 def open_files(path, files_to_open):
@@ -40,10 +44,7 @@ def close_files(files):
 def dump_files(nums, files):
     for key in files:
         _file = files[key]
-        try:
-            obj = getattr(nums, key+'_eval')()
-        except AttributeError:
-            obj = getattr(nums, key)()
+        obj = getattr(nums, key)()
         if not isinstance(obj, list):
             obj = list(obj.flatten())
         _file.write(list2str(obj))

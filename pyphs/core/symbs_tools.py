@@ -99,7 +99,7 @@ def free_symbols(obj):
 
 
 def _assert_expr(obj):
-    assert isinstance(obj, sympy.Expr), "argument should be sympy.Expr, \
+    assert isinstance(obj, (sympy.Expr, sympy.Symbol)), "argument should be sympy.Expr, \
 got %s" % type(obj)
 
 

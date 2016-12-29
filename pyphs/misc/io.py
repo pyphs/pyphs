@@ -20,7 +20,7 @@ import os
 
 
 def list2str(l):
-    return str(str(l).strip('[]')).replace(',', '') + '\n'
+    return str(str(l).strip('[]')).replace(',', '').replace('array(', '').replace(')', '') + '\n'
 
 
 def open_files(path, files_to_open):
@@ -37,12 +37,16 @@ def close_files(files):
             _file.close()
 
 
-def dump_files(simu, files):
+def dump_files(nums, files):
     for key in files:
         _file = files[key]
-        obj = getattr(simu, key)()
-        lis = list(obj.flatten())
-        _file.write(list2str(lis))
+        try:
+            obj = getattr(nums, key+'_eval')()
+        except AttributeError:
+            obj = getattr(nums, key)()
+        if not isinstance(obj, list):
+            obj = list(obj.flatten())
+        _file.write(list2str(obj))
 
 
 def write_data(path, seq, var):

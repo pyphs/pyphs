@@ -64,11 +64,11 @@ Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{IN}}\end{array}\right) ; 
 %
 \section{Constitutive relations}
 %
-Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{K_{K0} x_{\mathrm{K}}}{2} \left(\frac{x_{\mathrm{K}}^{3}}{2} + x_{\mathrm{K}}\right) + \frac{0.5 x_{\mathrm{M}}^{2}}{M} + \frac{0.5 x_{\mathrm{L}}^{2}}{L} ; $ 
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{K_{0} x_{\mathrm{K}}}{2} \left(\frac{x_{\mathrm{K}}^{3}}{2} + x_{\mathrm{K}}\right) + \frac{0.5 x_{\mathrm{M}}^{2}}{M} + \frac{0.5 x_{\mathrm{L}}^{2}}{L} ; $ 
 %
 \\
 %
-Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0 x_{\mathrm{M}}}{M}\\\frac{1.0 x_{\mathrm{L}}}{L}\\\frac{K_{K0} x_{\mathrm{K}}}{2} \left(\frac{3 x_{\mathrm{K}}^{2}}{2} + 1\right) + \frac{K_{K0}}{2} \left(\frac{x_{\mathrm{K}}^{3}}{2} + x_{\mathrm{K}}\right)\end{array}\right) ; $ 
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0 x_{\mathrm{M}}}{M}\\\frac{1.0 x_{\mathrm{L}}}{L}\\\frac{K_{0} x_{\mathrm{K}}}{2} \left(\frac{3 x_{\mathrm{K}}^{2}}{2} + 1\right) + \frac{K_{0}}{2} \left(\frac{x_{\mathrm{K}}^{3}}{2} + x_{\mathrm{K}}\right)\end{array}\right) ; $ 
 %
 \\
 %
@@ -93,15 +93,19 @@ Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(
 \hline
 parameter & value (SI)
 \\ \hline
-A :& 1
+Bl :& 50
 \\
 R :& 1000.0
 \\
-M :& 0.1
+A :& 1
+\\
+K2 :& 1e+20
+\\
+K0 :& 5000.0
 \\
 L :& 0.05
 \\
-uIN :& None
+M :& 0.1
 \\
 \hline
 \end{tabular}
@@ -112,11 +116,11 @@ uIN :& None
 %
 
 %
-$ \mathbf{M} = \left(\begin{array}{cccccc}0 & - 1.0 G_{\alpha} & -1.0 & 0 & -1.0 & 0\\1.0 G_{\alpha} & 0 & 0 & -1.0 & 0 & 1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & -1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M} = \left(\begin{array}{cccccc}0 & - 1.0 Bl & -1.0 & 0 & -1.0 & 0\\1.0 Bl & 0 & 0 & -1.0 & 0 & 1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & -1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{M_{xx}} = \left(\begin{array}{ccc}0 & - 1.0 G_{\alpha} & -1.0\\1.0 G_{\alpha} & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M_{xx}} = \left(\begin{array}{ccc}0 & - 1.0 Bl & -1.0\\1.0 Bl & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -154,11 +158,11 @@ $ \mathbf{M_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $
 %
 
 %
-$ \mathbf{J} = \left(\begin{array}{cccccc}0 & - 1.0 G_{\alpha} & -1.0 & 0 & -1.0 & 0\\1.0 G_{\alpha} & 0 & 0 & -1.0 & 0 & 1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & -1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{J} = \left(\begin{array}{cccccc}0 & - 1.0 Bl & -1.0 & 0 & -1.0 & 0\\1.0 Bl & 0 & 0 & -1.0 & 0 & 1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & -1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{J_{xx}} = \left(\begin{array}{ccc}0 & - 1.0 G_{\alpha} & -1.0\\1.0 G_{\alpha} & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{J_{xx}} = \left(\begin{array}{ccc}0 & - 1.0 Bl & -1.0\\1.0 Bl & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %

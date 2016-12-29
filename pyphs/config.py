@@ -121,18 +121,15 @@ cpp_build_and_run_script = None
 
 standard_simulations = {'load_options': {'decim': 1, 'imin': 0, 'imax': None},
                         'fs': 48e3,
+                        'path': None,
                         'language': 'python',
                         'timer': False,
-                        'progressbar': False}
+                        'progressbar': False,
+                        'files_to_save': ('x', 'dx', 'dxH', 'w', 'z', 'y'),
+                        'numtol': EPS,
+                        'method': 'standard',
+                        'maxit': 100,
+                        'split': False,
+                        'fs': None}
 
-standard_numerics = {'numtol': EPS,
-                     'fs': 48e3,
-                     'method': 'o1',
-                     'solver': 'standard',
-                     'presolve': False,
-                     'presubs': False,
-                     'split': False,
-                     'maxit': 100}
-
-standard_global = {'simu': standard_simulations,
-                   'nums': standard_numerics}
+standard_global = standard_simulations

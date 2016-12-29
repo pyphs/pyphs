@@ -9,14 +9,14 @@ from __future__ import absolute_import, division, print_function
 
 import sympy
 import copy
-from .misc_tools import geteval
-from .discrete_calculus import discrete_gradient
-from .calculus import gradient, jacobian, hessian
-from .dimensions import Dimensions
-from .indices import Indices
-from .symbs_tools import _assert_expr, _assert_vec
-from .struc_tools import reduce_linear_dissipations, split_linear, \
-    output_function
+from pyphs.core.misc_tools import geteval
+from pyphs.core.discrete_calculus import discrete_gradient
+from pyphs.core.calculus import gradient, jacobian, hessian
+from pyphs.core.dimensions import Dimensions
+from pyphs.core.indices import Indices
+from pyphs.core.symbs_tools import _assert_expr, _assert_vec
+from pyphs.core.struc_tools import reduce_linear_dissipations, \
+    split_linear, output_function
 
 ###############################################################################
 
@@ -92,13 +92,13 @@ class PHSCore:
     def __init__(self, label=None):
 
         # Self Attrs to copy
-        self.attrstocopy = {'label', '_built', 'subs'}
+        self.attrstocopy = {'label', '_exprs_built', 'subs'}
 
         # Init label
         self.label = label
 
         # Init Flags
-        self._built = False
+        self._exprs_built = False
 
         # init subs with empty dictionary
         setattr(self, 'subs', dict())
@@ -181,7 +181,7 @@ class PHSCore:
                     set_func(Mij)
 
         # Need build
-        core1._built = False
+        core1._exprs_built = False
 
         return core1
 
@@ -267,7 +267,7 @@ a list of symbols "name" (eg "x", "w" or "y") and add "name" to \
 ###############################################################################
 ###############################################################################
 
-    def exprs_build(self):
+    def build_exprs(self):
         """
         Build the following system functions as sympy expressions and append \
 them as attributes to the exprs module:
@@ -276,8 +276,8 @@ them as attributes to the exprs module:
     - 'hessH' the continuous hessian matrix of storage scalar function exprs.H,
     - 'jacz' the continuous jacobian matrix of dissipative vector function \
 exprs.z,
-    - 'y' the continuous output vector function,
-    - 'yd' the discrete output vector function.
+    - 'output' the continuous output vector function,
+    - 'outputd' the discrete output vector function.
         """
 
         self._setexpr('dxH', gradient(self.H, self.x))
@@ -393,7 +393,7 @@ dissipative variables w are no more accessible.
 
     def labels(self):
         """
-        Return a list of edges labels
+        Return a list of the system's variables labels
         """
         labels = list(self.x) + \
             list(self.w) + \

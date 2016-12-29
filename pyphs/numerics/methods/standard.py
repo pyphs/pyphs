@@ -48,25 +48,6 @@ class PHSNumericalMethodStandard(PHSNumericalMethod):
                          ('Dl', 'barNly'))
                 self.setfunc('Nly', Nly)
 
-            #######################################
-            # ud_vl
-            temp1 = op('dot',
-                       ('Nlxl', 'xl'))
-            if self.nnl > 0:
-                temp2 = op('dot',
-                           ('Nlnl', 'fnl'))
-            else:
-                temp2 = 0.
-            temp3 = op('add', (temp1, temp2))
-            if self.ny > 0:
-                temp4 = op('dot',
-                           ('Nly', 'u'))
-            else:
-                temp4 = 0.
-            ud_vl = op('add',
-                       (temp3, temp4))
-            self.setfunc('ud_vl', ud_vl)
-
         if self.nnl > 0:
 
             #######################################
@@ -120,17 +101,17 @@ class PHSNumericalMethodStandard(PHSNumericalMethod):
             #######################################
             # impfunc
             temp1 = op('dot',
-                       ('Inl', 'vnl'))
+                       ('Inl', 'vnl'))      # Inl*vnl
             temp2 = op('dot',
-                       ('Nnlnl', 'fnl'))
+                       ('Nnlnl', 'fnl'))    # Nnlnl*fnl
             temp3 = op('dot',
-                       (-1., temp2))
+                       (-1., temp2))        # - Nnlnl*fnl
             temp4 = op('add',
-                       (temp1, temp3))
+                       (temp1, temp3))      # Inl*vnl - Nnlnl*fnl
             temp5 = op('dot',
-                       (-1., 'c'))
+                       (-1., 'c'))          # - c
             impfunc = op('add',
-                         (temp4, temp5))
+                         (temp4, temp5))    # Inl*vnl - Nnlnl*fnl - c
             self.setfunc('impfunc', impfunc)
 
             #######################################
@@ -178,41 +159,74 @@ class PHSNumericalMethodStandard(PHSNumericalMethod):
                         ('vnl', temp2))
             self.setfunc('ud_vnl', ud_vnl)
 
+        if self.nl > 0:
+            #######################################
+            # ud_vl
+            temp1 = op('dot',
+                       ('Nlxl', 'xl')) # Nlxl*xl
+            if self.nnl > 0:
+                temp2 = op('dot',
+                           ('Nlnl', 'fnl')) # Nlnl*fnl
+            else:
+                temp2 = 0.
+            temp3 = op('add', (temp1, temp2)) # Nlxl*xl + Nlnl*fnl
+            if self.ny > 0:
+                temp4 = op('dot',
+                           ('Nly', 'u')) # Nly*u
+            else:
+                temp4 = 0.
+            ud_vl = op('add',
+                       (temp3, temp4)) # lxl*xl + Nlnl*fnl + Nly*u
+            self.setfunc('ud_vl', ud_vl)
+
         self.setupdate()
 
     def setupdate(self):
 
         list_ = []
-        list_ += [('x', 'ud_x'), ]
-        self.setupdate_exec(list_)
-
+        list_.append(('x', 'ud_x'))
         if self.nl > 0:
-
-            list_ = []
-            list_ += ['iDl', 'Dl', 'Nlxl']
+            list_.append('iDl')
+            list_.append('Dl')
+            list_.append('Nlxl')
             if self.nnl > 0:
-                list_ += ['Nlnl']
+                list_.append('Nlnl')
             if self.ny > 0:
-                list_ += ['Nly']
-            self.setupdate_exec(list_)
+                list_.append('Nly')
+        if self.nnl > 0:
+            list_.append('Nnlnl')
+            if self.nl > 0:
+                list_.append('Nnlxl')
+            if self.ny > 0:
+                list_.append('Nnly')
+            list_.append('c')
+            list_.append('Inl')
+            list_.append('fnl')
+            list_.append('impfunc')
+            list_.append('res_impfunc')
+
+        self.set_execaction(list_)
 
         if self.nnl > 0:
-            list_ = ['Nnlnl']
-            if self.nl > 0:
-                list_ += ['Nnlxl']
-            if self.ny > 0:
-                list_ += ['Nnly']
-            list_ += ['c', 'Inl', 'fnl', 'impfunc', 'res_impfunc']
-            self.setupdate_exec(list_)
-
             list_ = []
-            list_ += ['save_impfunc', 'jac_fnl', 'jac_impfunc', 'ijac_impfunc']
-            list_ += [('vnl', 'ud_vnl'), ]
-            list_ += ['fnl', 'impfunc', 'res_impfunc', 'step_impfunc']
-            self.setupdate_iter(list_,
+            list_.append('save_impfunc')
+            list_.append('jac_fnl')
+            list_.append('jac_impfunc')
+            list_.append('ijac_impfunc')
+            list_.append(('vnl', 'ud_vnl'))
+            list_.append('fnl')
+            list_.append('impfunc')
+            list_.append('res_impfunc')
+            list_.append('step_impfunc')
+
+            self.set_iteraction(list_,
                                 'res_impfunc',
                                 'step_impfunc')
+        list_ = []
         if self.nl > 0:
-            list_ = []
-            list_ += [('vl', 'ud_vl')]
-            self.setupdate_exec(list_)
+            list_.append(('vl', 'ud_vl'))
+        list_.append('dxH')
+        list_.append('z')
+        list_.append('y')
+
+        self.set_execaction(list_)

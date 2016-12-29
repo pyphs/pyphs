@@ -62,7 +62,7 @@ def coresyms2tex(core):
 
 
 def coreexprs2tex(core):
-    if not core._built:
+    if not core._exprs_built:
         core.exprs_build()
     sm = symbol_names(core)
     str_relations = cr(2)

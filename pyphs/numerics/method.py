@@ -29,6 +29,7 @@ class PHSNumericalMethod:
         self.core = core.__deepcopy__()
         self.core.split_linear(split=self.config['split'])
         self.fs = self.core.symbols('_fs')
+
         if self.config['fs'] is None:
             self.core.add_parameters(self.fs)
         else:
@@ -43,7 +44,7 @@ class PHSNumericalMethod:
         # symbols for substitutions in all functions
         self.subs = self.core.subs
 
-        self.update = []
+        self.update_actions = []
 
         self.ny = self.core.dims.y()
         self.np = self.core.dims.p()
@@ -90,7 +91,7 @@ class PHSNumericalMethod:
         temp2_1 = sp.Matrix.hstack(self.core.Mxlxl(), self.core.Mxlwl())
         temp2_2 = sp.Matrix.hstack(self.core.Mwlxl(), self.core.Mwlwl())
         temp2 = sp.Matrix.vstack(temp2_1, temp2_2)
-        tempQZl = sp.diag(self.core.Q/2, self.core.Zl)
+        tempQZl = sp.diag(self.core.Q/2., self.core.Zl)
         self.setfunc('iDl', temp1 - temp2*tempQZl)
 
         # Build barNlxl
@@ -147,30 +148,34 @@ class PHSNumericalMethod:
         self.setfunc('Nyy', self.core.Myy())
 
         # Build vl
-        self.setfunc('vl', self.core.dx()[:self.nxl] + self.core.w[:self.nwl])
+        self.setfunc('vl', 
+                     self.core.dx()[:self.nxl] + 
+                     self.core.w[:self.nwl])
 
         # Build vnl
-        self.setfunc('vnl', self.core.dx()[self.nxl:] +
+        self.setfunc('vnl', 
+                     self.core.dx()[self.nxl:] +
                      self.core.w[self.nwl:])
-
-        # Build fl
-        self.setfunc('fl', self.core.dxHd[:self.nxl] + self.core.z[:self.nwl])
-
-        # Build fnl
-        self.setfunc('fnl', self.core.dxHd[self.nxl:] + self.core.z[self.nwl:])
 
         # Build dxHl
         self.setfunc('dxHl', self.core.dxHd[:self.nxl])
         # Build dxHnl
-        self.setfunc('dxHnl', self.core.dxHd[:self.nxl])
+        self.setfunc('dxHnl', self.core.dxHd[self.nxl:])
 
         # Build zl
         self.setfunc('zl', self.core.z[:self.nwl])
         # Build znl
-        self.setfunc('znl', self.core.z[:self.nwl])
+        self.setfunc('znl', self.core.z[self.nwl:])
+
+        # Build fl
+        self.setfunc('fl', 
+                     self.core.dxHd[:self.nxl] + 
+                     self.core.z[:self.nwl])
 
         # Build fnl
-        self.setfunc('fnl', self.core.dxHd[self.nxl:] + self.core.z[self.nwl:])
+        self.setfunc('fnl', 
+                     self.core.dxHd[self.nxl:] + 
+                     self.core.z[self.nwl:])
 
         # Build jac_fnl
         jac_fnl = jacobian(self.fnl_expr,
@@ -181,14 +186,14 @@ class PHSNumericalMethod:
         temp = sp.diag(sp.eye(nxnl)*self.fs, sp.eye(nwnl))
         self.setfunc('Inl', temp)
 
+        print(self.exprs_names)
     def get(self, name):
         "Return expression, arguments, indices, substitutions and symbol."
         expr = getattr(self, name + '_expr')
         args = getattr(self, name + '_args')
         inds = getattr(self, name + '_inds')
-        subs = getattr(self, name + '_subs')
         symb = getattr(self, name + '_symb')
-        return expr, args, inds, subs, symb
+        return expr, args, inds, symb
 
     def setfunc(self, name, expr):
         "set sympy expression 'expr' as the attribute 'name'."
@@ -200,13 +205,14 @@ class PHSNumericalMethod:
         else:
             symbs = free_symbols(expr)
             args, inds = find(symbs, self.args)
-            subs = symbs.difference(set(args))
             setattr(self, name+'_args', args)
             setattr(self, name+'_inds', inds)
-            setattr(self, name+'_subs', subs)
 
-    def setupdate_exec(self, list_):
-        self.update.append(('exec', list_))
+    def set_execaction(self, list_):
+        self.update_actions.append(('exec', list_))
 
-    def setupdate_iter(self, list_, res_symb, step_symb):
-        self.update.append(('iter', (list_, res_symb, step_symb)))
+    def set_iteraction(self, list_, res_symb, step_symb):
+        self.update_actions.append(('iter', (list_, res_symb, step_symb)))
+
+    def operation():
+        return PHSNumericalOperation

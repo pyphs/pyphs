@@ -49,6 +49,7 @@ class PHSNumericalCore:
 
         for name in self.args_names:
             inds = getattr(self.method, name + '_inds')
+            setattr(self, name + '_eval', eval_generator(self, name))
             setattr(self, name, getarg_generator(self, inds))
             setattr(self, 'set_' + name, setarg_generator(self, inds))
 
@@ -75,7 +76,7 @@ class PHSNumericalCore:
         self.set_u(u)
         self.set_p(p)
 
-        for action in self.method.update:
+        for action in self.method.update_actions:
             actiontype = action[0]
             if actiontype == 'exec':
                 self.execs(action[1])
@@ -85,16 +86,16 @@ class PHSNumericalCore:
     def execs(self, commands):
         for command in commands:
             if isinstance(command, str):
-                setfunc = getattr(self, 'set_'+command)
-                evalfunc = getattr(self, command + '_eval')
-                setfunc(evalfunc())
+                getname = command
+                evalname = getname
             else:
-                setfunc = getattr(self, 'set_'+command[0])
-                evalfunc = getattr(self, command[1] + '_eval')
-                setfunc(evalfunc())
+                getname = command[0]
+                evalname = command[1]
+            setfunc = getattr(self, 'set_'+getname)
+            evalfunc = getattr(self, evalname + '_eval')
+            setfunc(evalfunc())
 
     def iterexecs(self, commands, res_name, step_name):
-
         # init it counter
         it = 0
         # init step on iteration
@@ -114,7 +115,7 @@ class PHSNumericalEval:
     """
     def __init__(self, core):
         self.core = core.__deepcopy__()
-        if not self.core._built:
+        if not self.core._exprs_built:
             self.core.exprs_build()
         self.build()
 

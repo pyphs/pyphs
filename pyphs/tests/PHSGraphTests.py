@@ -9,7 +9,7 @@ Created on Tue Dec 27 15:14:26 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs import PHSGraph
-from .data import NetlistThieleSmallNL
+from pyphs.tests.data import NetlistThieleSmallNL
 from pyphs.config import datum as config_datum
 import numpy as np
 
@@ -37,7 +37,7 @@ target_edges = [('A', config_datum,
                   'label': graph.core.symbols('xK'),
                   'link': None, 'type': 'storage'}),
                  ('D', config_datum,
-                  {'alpha': graph.core.symbols('G_alpha'),
+                  {'alpha': graph.core.symbols('Bl'),
                   'connector_type': 'gyrator',
                   'ctrl': '?',
                   'label': 'yG2',
@@ -55,16 +55,17 @@ target_edges = [('A', config_datum,
                  'z': {'e_ctrl': graph.core.symbols('wA')/graph.core.symbols('A'),
                        'f_ctrl': graph.core.symbols('A')*graph.core.symbols('wA')}}),
                 ('C', config_datum,
-                 {'alpha': graph.core.symbols('G_alpha'),
+                 {'alpha': graph.core.symbols('Bl'),
                   'connector_type': 'gyrator',
                   'ctrl': '?',
                   'label': 'yG1',
                   'link': 'yG2',
                   'type': 'connector'})]
+target_edges.sort()
 
 target_M = np.array([
-                    [0, -1.0*graph.core.symbols('G_alpha'), -1.0, 0, -1.0, 0],
-                    [1.0*graph.core.symbols('G_alpha'), 0, 0, -1.0, 0, 1.0],
+                    [0, -1.0*graph.core.symbols('Bl'), -1.0, 0, -1.0, 0],
+                    [1.0*graph.core.symbols('Bl'), 0, 0, -1.0, 0, 1.0],
                     [1.0, 0, 0, 0, 0, 0],
                     [0, 1.0, 0, 0, 0, 0],
                     [1.0, 0, 0, 0, 0, 0],

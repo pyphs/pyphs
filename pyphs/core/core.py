@@ -342,7 +342,7 @@ argument 'name', and add 'name' to the set of expressions names \
 
     def _struc_setblock(self, part, name, dims_names):
         "effectively adds get and set attributes"
-        self.struc_names += (name, )
+        self.struc_names = list(set(self.struc_names).union(set([name, ])))
         setattr(self,
                 name, self._struc_build_get_mat(dims_names, part))
         setattr(self,

@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 from pyphs.numerics.methods import dic_of_numerical_methods
 from pyphs.numerics import PHSNumericalCore
 from pyphs.config import standard_simulations
-from .data import Data
+from .data import PHSData
 from pyphs.misc.io import open_files, close_files, dump_files
 import progressbar
 import time
@@ -54,7 +54,7 @@ class PHSSimulation:
             self.config['path'] = os.getcwd()
 
         # store PHSCore
-        setattr(self, 'core', core.__deepcopy__())
+        setattr(self, '_core', core.__deepcopy__())
 
         self.fs = 0
 
@@ -68,8 +68,7 @@ class PHSSimulation:
     def init_numericalmethod(self):
         if not self.fs == self.config['fs']:
             Method = dic_of_numerical_methods[self.config['method']]
-            self.method = Method(self.core, config=self.config)
-            self.core = self.method.core
+            self.method = Method(self._core, config=self.config)
             self.fs = self.config['fs']
 
     def init_numericalcore(self):
@@ -81,7 +80,7 @@ class PHSSimulation:
         if config is None:
             config = {}
         self.config.update(config)
-        setattr(self, 'data', Data(self.core, self.config))
+        setattr(self, 'data', PHSData(self._core, self.config))
         self.data.init_data(sequ, seqp, x0, nt)
         if self.config['language'] == 'python':
             self.init_numericalcore()
@@ -98,7 +97,7 @@ class PHSSimulation:
             'language "{0!s}" unknown'.format(self.config['language'])
 
         if self.config['language'] == 'c++':
-            process_cpp(self)
+            self.process_cpp(self)
 
         elif self.config['language'] == 'python':
             self.process_py()
@@ -120,11 +119,15 @@ class PHSSimulation:
         seq_u = data.u()
         seq_p = data.p()
 
-        files = open_files(self.config['path'], self.config['files_to_save'])
+        files = open_files(self.config['path'],
+                           self.config['files_to_save'])
 
         if self.config['progressbar']:
-            pb_widgets = ['\n', 'Simulation: ', progressbar.Percentage(), ' ',
-                          progressbar.Bar(), ' ', progressbar.ETA()]
+            pb_widgets = ['\n', 'Simulation: ',
+                          progressbar.Percentage(), ' ',
+                          progressbar.Bar(), ' ',
+                          progressbar.ETA()
+                          ]
             pbar = progressbar.ProgressBar(widgets=pb_widgets,
                                            maxval=self.config['nt'])
             pbar.start()
@@ -143,3 +146,29 @@ class PHSSimulation:
             pbar.finish()
         time.sleep(0.5)
         close_files(files)
+
+    def process_cpp(simu):
+
+        simu._phs.cppbuild()
+
+        from pyphs.conf import cpp_build_and_run_script
+        if cpp_build_and_run_script is None:
+            import os
+            print("\no==========================================================\
+            ==o\n")
+            print(" Please, execute:\n" + simu._phs.paths['cpp'] +
+                  os.path.sep + "/main.cpp")
+            print("\no==========================================================\
+            ==o\n")
+            input("Press a key when done.\nWaiting....\n")
+        elif type(cpp_build_and_run_script) is str:
+            import subprocess
+            # Replace generic term 'phobj_path' by actual object path
+            script = cpp_build_and_run_script.replace('phobj_path',
+                                                      simu._phs.path)
+            # exec Build and Run script
+            p = subprocess.Popen(script, shell=True,
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT)
+            for line in iter(p.stdout.readline, ''):
+                print(line),

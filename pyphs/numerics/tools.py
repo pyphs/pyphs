@@ -18,33 +18,35 @@ NumericalOperationParser = {'add': numpy.add,
                             'inv': numpy.linalg.inv,
                             'norm': lambda x: numpy.sqrt(float(numpy.dot(x,
                                                                          x))),
+                            'return': lambda x: x,
                             }
 
 
-def lambdify_NumericalOperation(nums, operation):
-    eval_args = []
-    for arg in operation.args:
+def evalop_generator(nums, op):
+    args = list()
+    for arg in op.args:
         if isinstance(arg, PHSNumericalOperation):
-            eval_args.append(lambdify_NumericalOperation(nums, arg))
-        elif isinstance(arg, (float, int)):
-            f = copy.copy(arg)
-            eval_args.append(lambda: f)
+            args.append(evalop_generator(nums, arg))
+        elif isinstance(arg, str):
+            args.append(getattr(nums, arg))
         else:
-            assert isinstance(arg, str)
-            eval_args.append(getattr(nums, arg))
-    func = NumericalOperationParser[operation.operation]
+            assert isinstance(arg, (int, float))
+            args.append(arg)
+    func = PHSNumericalOperation(op.operation, args)
 
     def eval_func():
-        return numpy.asarray(func(*[arg() for arg in eval_args]))
+        return numpy.asarray(func())
     return eval_func
 
 
-def lambdify_SymbolicExpression(nums, name):
+def evalfunc_generator(nums, name):
+    """
+    Return an evaluator of 'nums'.'name'_expr
+    """
     expr = getattr(nums.method, name + '_expr')
     args = getattr(nums.method, name + '_args')
     inds = getattr(nums.method, name + '_inds')
-    func = lambdify(args, expr,
-                    subs=nums.method.subs)
+    func = lambdify(args, expr, subs=nums.method.core.subs)
     if len(inds) > 0:
         inds = numpy.array(inds)
     else:
@@ -53,20 +55,6 @@ def lambdify_SymbolicExpression(nums, name):
     def eval_func():
         return numpy.asarray(func(*numpy.array(nums.args[inds])))
     return eval_func
-
-
-# generator of evaluation functions
-def eval_generator(nums, name):
-    expr = getattr(nums.method, name + '_expr')
-    if isinstance(expr, PHSNumericalOperation):
-        func = lambdify_NumericalOperation(nums, expr)
-    elif isinstance(expr, str):
-        attr = getattr(nums, expr)
-        def func():
-            return numpy.asarray(attr())
-    else:
-        func = lambdify_SymbolicExpression(nums, name)
-    return func
 
 
 def getarg_generator(nums, inds):
@@ -79,7 +67,7 @@ def getarg_generator(nums, inds):
         inds = list()
 
     def get_func():
-        return nums.args[inds]
+        return nums.args[inds].copy()
 
     return get_func
 
@@ -98,13 +86,14 @@ def setarg_generator(nums, inds):
 
     return set_func
 
+
 def getfunc_generator(nums, name):
     """
     generators of 'get'
     """
 
     def get_func():
-        return getattr(nums, '_' + name)
+        return copy.copy(getattr(nums, '_' + name))
 
     return get_func
 
@@ -123,11 +112,15 @@ def setfunc_generator(nums, name):
 class PHSNumericalOperation:
 
     def __init__(self, operation, args):
+
         self.operation = operation
         self.args = args
-        self.freesymbols = set()
+
         func = NumericalOperationParser[self.operation]
+
         self.call = [func, [None, ]*len(args)]
+        self.freesymbols = set()
+
         for i, arg in enumerate(args):
             if isinstance(arg, PHSNumericalOperation):
                 symbs = arg.freesymbols
@@ -135,13 +128,18 @@ class PHSNumericalOperation:
             elif isinstance(arg, str):
                 symbs = set([arg, ])
             else:
-                assert isinstance(arg, (int, float))
                 symbs = set()
             self.call[1][i] = arg
             self.freesymbols = self.freesymbols.union(symbs)
 
-    def __call__(self, *args):
-        return self.func(*args)
+    def __call__(self):
+        args = list()
+        for el in self.args:
+            if hasattr(el, '__call__'):
+                args.append(el())
+            else:
+                args.append(el)
+        return self.call[0](*args)
 
 
 def lambdify(args, expr, subs=None, simplify=True):
@@ -159,16 +157,16 @@ def lambdify(args, expr, subs=None, simplify=True):
         expr = simp(expr)
     # array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
     expr_lambda = sympy.lambdify(args,
-                                 expr, 
-                                 dummify=False, 
+                                 expr,
+                                 dummify=False,
                                  modules='numpy')
     return expr_lambda
 
 
 def find(symbs, allsymbs):
     """
-    sort elements in symbs according to listargs, and return args and \
-list of positions in listargs
+    sort elements in symbs according to allsymbs, and return args and \
+list of positions in allsymbs
     """
     args = []
     inds = []

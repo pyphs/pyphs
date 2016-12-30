@@ -5,7 +5,10 @@ Created on Sat Jun 11 19:41:09 2016
 @author: Falaize
 """
 
-from pyphs.config import plot_format
+import os
+from matplotlib.pyplot import text
+from pyphs.config import latex_compiler_path, plot_format
+from pyphs.misc.tools import decimate
 
 
 def dec(li, opts):
@@ -14,7 +17,6 @@ def dec(li, opts):
 opts['maxnplot'].
     """
     li = list(li)
-    from pyphs.misc.tools import decimate
     ndecim = max((1, int(len(li)/opts['maxnplot'])))
     return [el for el in decimate(li, ndecim)]
 
@@ -24,9 +26,7 @@ def activate_latex(opts):
     activate latex for plot texts
     """
     # Path for latex compiler
-    import os
-    from pyphs.config import compiler_path
-    os.environ['PATH'] = os.environ['PATH'] + compiler_path
+    os.environ['PATH'] = os.environ['PATH'] + latex_compiler_path
     # Activate use of latex expressions
     from matplotlib.pyplot import rc
     rc('text', usetex=opts['latex'])
@@ -40,7 +40,6 @@ def annotate(x, y, pos, annote, legendfontsize):
     """
     function for plot annotation
     """
-    from matplotlib.pyplot import text
     nbin = int(pos*len(x))
     binx = x[nbin]
     biny = y[nbin]

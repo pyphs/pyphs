@@ -6,6 +6,7 @@ Created on Thu Jun  9 10:22:56 2016
 """
 from __future__ import absolute_import, division, print_function
 
+from pyphs.config import standard_simulations
 from pyphs.misc.io import data_generator, write_data
 from pyphs.misc.signals.waves import wavwrite
 from pyphs.plots.data import plot, plot_powerbal
@@ -17,14 +18,15 @@ try:
 except ImportError:
     pass
 
-class Data:
+class PHSData:
     """
     container for simulation data
     """
     def __init__(self, core, config):
 
         # init config with standard configuration options
-        self.config = config
+        self.config = standard_simulations.copy()
+        self.config.update(config)
         self.core = core
 
         def dummy_func(name):

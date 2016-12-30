@@ -8,7 +8,7 @@ Created on Tue Dec 27 18:24:27 2016
 
 from pyphs.tests.data import NetlistThieleSmallNL
 from pyphs import PHSGraph
-from pyphs.latex.latex import document, core2tex
+from pyphs.latex import document, core2tex
 
 
 def TestCore2Tex():

@@ -7,16 +7,20 @@ Created on Thu Nov  3 22:17:28 2016
 
 from setuptools import setup
 
-def readme():
-    with open('README.rst') as f:
-        return f.read()
-
+from pyphs import __author__
 __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
-__author__ = "Antoine Falaize"
+# __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
 __author_email__ = 'antoine.falaize@gmail.com'
 __version__ = '0.2_DEV'
+
+
+###############################################################################
+
+def readme():
+    with open('README.rst') as f:
+        return f.read()
 
 ###############################################################################
 

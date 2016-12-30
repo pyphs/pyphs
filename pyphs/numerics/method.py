@@ -19,75 +19,112 @@ class PHSNumericalMethod:
     """
     Base class for pyphs numerical methods
     """
-    def __init__(self, core, config=None):
+    def __init__(self, core, config=None, args=None):
 
+        # recover PHSNumericalOperation class
+        self.operation = PHSNumericalOperation
+
+        # set config
         self.config = standard_simulations.copy()
         if config is None:
             config = {}
         self.config.update(config)
 
+        # set core
         self.core = core.__deepcopy__()
         self.core.split_linear(split=self.config['split'])
-        self.fs = self.core.symbols('_fs')
 
+        # set sample rate as a symbol with subs if provided
+        self.fs = self.core.symbols('_fs')
         if self.config['fs'] is None:
             self.core.add_parameters(self.fs)
         else:
             self.core.subs.update({self.fs: self.config['fs']})
 
-        # list of the method expressions names
-        self.exprs_names = []
-
         # symbols for arguments of all functions
-        self.args = self.core.args()
+        if args is None:
+            args = self.core.args()
+        setattr(self, 'args', args)
 
-        # symbols for substitutions in all functions
-        self.subs = self.core.subs
+        # list of the method arguments names
+        setattr(self, 'args_names', list())
 
-        self.update_actions = []
+        # list of the method expressions names
+        setattr(self, 'funcs_names', list())
 
-        self.ny = self.core.dims.y()
-        self.np = self.core.dims.p()
+        # list of the method operations names
+        setattr(self, 'ops_names', list())
 
-        self.nsubs = len(self.subs)
+        # list of the method update actions
+        setattr(self, 'update_actions', list())
 
-        self.nx = self.core.dims.x()
-        self.nxl = self.core.dims.xl()
-        self.nxnl = self.core.dims.xnl()
+        self.init_args()
+        self.init_funcs()
+        self.init_struc()
 
-        self.nw = self.core.dims.w()
-        self.nwl = self.core.dims.wl()
-        self.nwnl = self.core.dims.wnl()
+    def init_args(self):
 
-        self.nargs = self.core.dims.args()
-        self.nl = self.nxl + self.nwl
-        self.nnl = self.nxnl + self.nwnl
+        self.setarg('x', self.core.x)
+        self.setarg('xl', self.core.x[:self.core.dims.xl()])
+        self.setarg('xnl', self.core.x[self.core.dims.xl():])
 
-        self.setfunc('x', self.core.x)
-        self.setfunc('xl', self.core.x[:self.nxl])
-        self.setfunc('xnl', self.core.x[self.nxl:])
+        self.setarg('dx', self.core.dx())
+        self.setarg('dxl', self.core.dx()[:self.core.dims.xl()])
+        self.setarg('dxnl', self.core.dx()[self.core.dims.xl():])
 
-        self.setfunc('dx', self.core.dx())
-        self.setfunc('dxl', self.core.dx()[:self.nxl])
-        self.setfunc('dxnl', self.core.dx()[self.nxl:])
+        self.setarg('w', self.core.w)
+        self.setarg('wl', self.core.w[:self.core.dims.wl()])
+        self.setarg('wnl', self.core.w[self.core.dims.wl():])
 
-        self.setfunc('w', self.core.w)
-        self.setfunc('wl', self.core.w[:self.nwl])
-        self.setfunc('wnl', self.core.w[self.nwl:])
+        self.setarg('u', self.core.u)
+        self.setarg('p', self.core.p)
+
+        self.setarg('vl',
+                    self.core.dx()[:self.core.dims.xl()] +
+                    self.core.w[:self.core.dims.wl()])
+        self.setarg('vnl',
+                    self.core.dx()[self.core.dims.xl():] +
+                    self.core.w[self.core.dims.wl():])
+
+    def init_funcs(self):
 
         self.setfunc('dxH', self.core.dxHd)
-        self.setfunc('z', self.core.z)
+        self.setfunc('Q', self.core.Q)
+        opdot1 = self.operation('dot', ('dxl', 0.5))
+        opadd = self.operation('add', ('xl', opdot1))
+        op = self.operation('dot', ('Q', opadd))
+        self.setoperation('dxHl', op)
+        self.setfunc('dxHnl', self.core.dxHd[self.core.dims.xl():])
 
-        self.setfunc('u', self.core.u)
+        self.setfunc('z', self.core.z)
+        self.setfunc('zl', self.core.z[:self.core.dims.wl()])
+        self.setfunc('znl', self.core.z[self.core.dims.wl():])
+
         self.setfunc('y', self.core.outputd)
 
-        self.setfunc('p', self.core.p)
+        self.setfunc('fl',
+                     self.core.dxHd[:self.core.dims.xl()] +
+                     self.core.z[:self.core.dims.wl()])
+
+        self.setfunc('fnl',
+                     self.core.dxHd[self.core.dims.xl():] +
+                     self.core.z[self.core.dims.wl():])
+
+        jac_fnl = jacobian(self.fnl_expr,
+                           self.vnl_args)
+        self.setfunc('jac_fnl', jac_fnl)
+
+        nxnl, nwnl = self.core.dims.xnl(), self.core.dims.wnl()
+        temp = sp.diag(sp.eye(nxnl)*self.fs, sp.eye(nwnl))
+        self.setfunc('Inl', temp)
+
+    def init_struc(self):
 
         self.setfunc('M', self.core.M)
 
         # Build iDl
-        temp1 = sp.diag(sp.eye(self.nxl)*self.fs,
-                        sp.eye(self.nwl))
+        temp1 = sp.diag(sp.eye(self.core.dims.xl())*self.fs,
+                        sp.eye(self.core.dims.wl()))
         temp2_1 = sp.Matrix.hstack(self.core.Mxlxl(), self.core.Mxlwl())
         temp2_2 = sp.Matrix.hstack(self.core.Mwlxl(), self.core.Mwlwl())
         temp2 = sp.Matrix.vstack(temp2_1, temp2_2)
@@ -147,72 +184,38 @@ class PHSNumericalMethod:
         # Build Nynl
         self.setfunc('Nyy', self.core.Myy())
 
-        # Build vl
-        self.setfunc('vl', 
-                     self.core.dx()[:self.nxl] + 
-                     self.core.w[:self.nwl])
-
-        # Build vnl
-        self.setfunc('vnl', 
-                     self.core.dx()[self.nxl:] +
-                     self.core.w[self.nwl:])
-
-        # Build dxHl
-        self.setfunc('dxHl', self.core.dxHd[:self.nxl])
-        # Build dxHnl
-        self.setfunc('dxHnl', self.core.dxHd[self.nxl:])
-
-        # Build zl
-        self.setfunc('zl', self.core.z[:self.nwl])
-        # Build znl
-        self.setfunc('znl', self.core.z[self.nwl:])
-
-        # Build fl
-        self.setfunc('fl', 
-                     self.core.dxHd[:self.nxl] + 
-                     self.core.z[:self.nwl])
-
-        # Build fnl
-        self.setfunc('fnl', 
-                     self.core.dxHd[self.nxl:] + 
-                     self.core.z[self.nwl:])
-
-        # Build jac_fnl
-        jac_fnl = jacobian(self.fnl_expr,
-                           self.vnl_args)
-        self.setfunc('jac_fnl', jac_fnl)
-
-        nxnl, nwnl = self.core.dims.xnl(), self.core.dims.wnl()
-        temp = sp.diag(sp.eye(nxnl)*self.fs, sp.eye(nwnl))
-        self.setfunc('Inl', temp)
-
-        print(self.exprs_names)
     def get(self, name):
         "Return expression, arguments, indices, substitutions and symbol."
         expr = getattr(self, name + '_expr')
         args = getattr(self, name + '_args')
         inds = getattr(self, name + '_inds')
-        symb = getattr(self, name + '_symb')
-        return expr, args, inds, symb
+        return expr, args, inds
+
+    def setarg(self, name, expr):
+        symbs = free_symbols(expr)
+        args, inds = find(symbs, self.args)
+        setattr(self, name+'_expr', expr)
+        setattr(self, name+'_args', args)
+        setattr(self, name+'_inds', inds)
+        self.args_names.append(name)
 
     def setfunc(self, name, expr):
         "set sympy expression 'expr' as the attribute 'name'."
+        symbs = free_symbols(expr)
+        args, inds = find(symbs, self.args)
         setattr(self, name+'_expr', expr)
-        setattr(self, name+'_symb', sp.symbols(name))
-        self.exprs_names.append(name)
-        if isinstance(expr, (PHSNumericalOperation, str)):
-            pass
-        else:
-            symbs = free_symbols(expr)
-            args, inds = find(symbs, self.args)
-            setattr(self, name+'_args', args)
-            setattr(self, name+'_inds', inds)
+        setattr(self, name+'_args', args)
+        setattr(self, name+'_inds', inds)
+        self.funcs_names.append(name)
+
+    def setoperation(self, name, op):
+        "set PHSNumericalOperation 'op' as the attribute 'name'."
+        setattr(self, name+'_op', op)
+        setattr(self, name+'_deps', op.freesymbols)
+        self.ops_names.append(name)
 
     def set_execaction(self, list_):
         self.update_actions.append(('exec', list_))
 
     def set_iteraction(self, list_, res_symb, step_symb):
         self.update_actions.append(('iter', (list_, res_symb, step_symb)))
-
-    def operation():
-        return PHSNumericalOperation

@@ -11,6 +11,7 @@ from .numerics import (PHSNumericalMethod, PHSNumericalCore, PHSNumericalEval,
 from .simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
 from .GUI import PHSNetlistGUI
+from .latex import core2tex, netlist2tex, graphplot2tex, document
 
 __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
@@ -23,4 +24,5 @@ __all__ = ['__version__', '__copyright__', '__author__', '__licence__',
            'PHSObject', 'PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
            'signalgenerator', 'PHSNetlistGUI', 'PHSNumericalMethodStandard',
            'PHSNumericalOperation', 'PHSNumericalMethod', 'PHSNumericalCore',
-           'PHSNumericalEval']
+           'PHSNumericalEval',
+           'core2tex', 'netlist2tex', 'graphplot2tex', 'document']

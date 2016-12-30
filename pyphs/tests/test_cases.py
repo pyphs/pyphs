@@ -29,11 +29,22 @@ class TestPHSNetlistReadWrite(TestCase):
 
 class TestPHSGraphBuildFromNetlist(TestCase):
     def test_graph_build_from_netlist(self):
-        self.assertTrue(graph.edges(data=True) == target_edges)
+        edges = graph.edges(data=True)
+        edges.sort()
+        res = []
+        for l1, l2 in zip(target_edges, edges):
+            print(' ')
+            for arg1, arg2 in zip(l1, l2):
+                if isinstance(arg1, dict):
+                    for k in arg1.keys():
+                        res.append(arg1 == arg2)
+                else:
+                    res.append(arg1 == arg2)
+        self.assertTrue(all(res))
 
 
 class TestPHSGraphBuildCore(TestCase):
-    def test_graph_build_from_netlist(self):
+    def test_graph_build_core(self):
         graph.buildCore()
         test_M = np.array(graph.core.M)-target_M
         results = (test_M == np.zeros(target_M.shape))

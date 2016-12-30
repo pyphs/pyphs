@@ -63,6 +63,17 @@ class Dimensions:
         """
         return self.w() - self.wl()
 
+    def l(self):
+        """
+        Total number of inear variables
+        """
+        return self.xl() + self.wl()
+
+    def nl(self):
+        """
+        Total number of nonlinear variables
+        """
+        return self.xnl() + self.wnl()
 
 ###############################################################################
 ###############################################################################

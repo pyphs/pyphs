@@ -48,7 +48,7 @@ datum = '#'
 # Below are the options for LATEX RENDERING in generated .tex files and plots
 
 # path to latex compiler
-compiler_path = ':/usr/texbin'
+latex_compiler_path = ':/usr/texbin'
 
 # list of authors for latex exports
 footnote = r'\footnote{\url{https://github.com/afalaize/pyphs}}'
@@ -72,7 +72,7 @@ mat_str = 'array'
 # multiplication symbol: None, “ldot”, “dot”, or “times”
 mul_symbol = None
 
-# Special charcters
+# Special characters
 special_chars = ['#']
 
 ###############################################################################

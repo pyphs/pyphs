@@ -11,29 +11,34 @@ from .symbs_tools import simplify
 from .misc_tools import myrange, geteval
 
 
-def moveJcolnrow(core, indi, indf):
-    new_indices = myrange(core.dims.tot(), indi, indf)
-    core.M = core.M[new_indices, new_indices]
+def movesquarematrixcolnrow(matrix, indi, indf):
+    n = matrix.shape[0]
+    new_indices = myrange(n, indi, indf)
+    return matrix[new_indices, new_indices]
+
+
+def moveMcolnrow(core, indi, indf):
+    core.M = movesquarematrixcolnrow(core.M, indi, indf)
 
 
 def move_stor(core, indi, indf):
     new_indices = myrange(core.dims.x(), indi, indf)
     core.x = [core.x[el] for el in new_indices]
-    moveJcolnrow(core, indi, indf)
+    moveMcolnrow(core, indi, indf)
 
 
 def move_diss(core, indi, indf):
     new_indices = myrange(core.dims.w(), indi, indf)
     core.w = [core.w[el] for el in new_indices]
     core.z = [core.z[el] for el in new_indices]
-    moveJcolnrow(core, core.dims.x()+indi, core.dims.x()+indf)
+    moveMcolnrow(core, core.dims.x()+indi, core.dims.x()+indf)
 
 
 def move_port(core, indi, indf):
     new_indices = myrange(core.dims.y(), indi, indf)
     core.u = [core.u[el] for el in new_indices]
     core.y = [core.y[el] for el in new_indices]
-    moveJcolnrow(core, core.dims.x()+core.dims.w()+indi,
+    moveMcolnrow(core, core.dims.x()+core.dims.w()+indi,
                  core.dims.x()+core.dims.w()+indf)
 
 
@@ -84,9 +89,9 @@ def split_linear(core, split=True):
     """
     # split storage part
     nxl = 0
+    hess = hessian(core.H, core.x)
     if split:
         for _ in range(core.dims.x()):
-            hess = hessian(core.H, core.x)
             hess_line = list(hess[nxl, :].T)
             # init line symbols
             line_symbols = set()
@@ -100,17 +105,16 @@ def split_linear(core, split=True):
             else:
                 # move the element at the end of states vector
                 move_stor(core, nxl, core.dims.x()-1)
-
-    hess = hessian(core.H, core.x)
+                hess = movesquarematrixcolnrow(hess, nxl, core.dims.x()-1)
     core._setexpr('Q', hess[:nxl, :nxl])
     # number of linear components
     setattr(core.dims, '_xl', nxl)
 
     # split dissipative part
     nwl = 0
+    jacz = jacobian(core.z, core.w)
     if split:
         for _ in range(core.dims.w()):
-            jacz = jacobian(core.z, core.w)
             jacz_line = list(jacz[nwl, :].T)
             # init line symbols
             line_symbols = set()
@@ -124,13 +128,13 @@ def split_linear(core, split=True):
             else:
                 # move the element to end of dissipation variables vector
                 move_diss(core, nwl, core.dims.w()-1)
-    jacz = jacobian(core.z, core.w)
+                jacz = movesquarematrixcolnrow(jacz, nwl, core.dims.w()-1)
     core._setexpr('Zl', jacz[:nwl, :nwl])
 
     # number of linear components
     setattr(core.dims, '_wl', nwl)
 
-    names = ('xl', 'xnl', 'wl', 'wnl', 'y')
+    names = ('xl', 'xnl', 'wl', 'wnl', 'y', 'cy')
     core.inds._set_inds(names, core)
 
     # get() and set() for structure matrices
@@ -138,7 +142,7 @@ def split_linear(core, split=True):
 
     # build expressions for the new structure
     core.build_exprs()
-    
+
 
 def reduce_linear_dissipations(core):
     try:
@@ -146,7 +150,7 @@ def reduce_linear_dissipations(core):
     except AttributeError:
         core.split_linear()
         iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
-        
+
     Dwl = iDwl.inv()
     Mwlnl = sympy.Matrix.hstack(core.Mwlxl(),
                                 core.Mwlxnl(),
@@ -165,7 +169,6 @@ def reduce_linear_dissipations(core):
             mati.append(geteval(core, 'M'+namei+namej))
         mat.append(sympy.Matrix.hstack(*mati))
     Mnl = sympy.Matrix.vstack(*mat)
-
     core.w = core.w[core.dims.wl():]
     core.z = core.z[core.dims.wl():]
     core.dims._wl = 0
@@ -180,13 +183,13 @@ expression of the discrete output vector function yd.
 
     Input:
 
-        - core: pyphs.PortHamiltonianObject
+        - core: pyphs.PHSCore
 
     Output:
 
         - y: list of sympy expressions associated with output vector \
 components, considering the continuous version of storage function gradient
-        - y: list of sympy expressions associated with output vector \
+        - yd: list of sympy expressions associated with output vector \
 components, considering the discrete version of storage function gradient
     """
     if core.dims.y() > 0:  # Check if system has external ports

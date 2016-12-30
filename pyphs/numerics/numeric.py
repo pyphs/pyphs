@@ -8,9 +8,9 @@ Created on Fri Jun  3 15:27:55 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs.core.symbs_tools import free_symbols
-from .tools import (lambdify, find, eval_generator,
-                    getarg_generator, setarg_generator,
-                    getfunc_generator, setfunc_generator)
+from .tools import (lambdify, find, getarg_generator, setarg_generator,
+                    getfunc_generator, setfunc_generator, evalfunc_generator,
+                    evalop_generator)
 from pyphs.config import standard_simulations
 import numpy
 
@@ -30,14 +30,9 @@ class PHSNumericalCore:
 
         self.method = method
 
-        self.args_names = {'vl', 'vnl',
-                           'x', 'dx',
-                           'xl', 'dxl',
-                           'xnl', 'dxnl',
-                           'w', 'wl', 'wnl',
-                           'u', 'p'}
         self.build_args()
         self.build_funcs()
+        self.build_ops()
 
     def build_args(self):
         """
@@ -45,11 +40,10 @@ class PHSNumericalCore:
         arguments of expressions.
         """
         # init args values with 0
-        setattr(self, 'args', numpy.array([0., ]*self.method.nargs))
+        setattr(self, 'args', numpy.array([0., ]*self.method.core.dims.args()))
 
-        for name in self.args_names:
+        for name in self.method.args_names:
             inds = getattr(self.method, name + '_inds')
-            setattr(self, name + '_eval', eval_generator(self, name))
             setattr(self, name, getarg_generator(self, inds))
             setattr(self, 'set_' + name, setarg_generator(self, inds))
 
@@ -58,9 +52,21 @@ class PHSNumericalCore:
         link and lambdify all functions for python simulation
         """
         # link evaluation to internal values
-        for name in self.method.exprs_names:
-            if name not in self.args_names:
-                setattr(self, name + '_eval', eval_generator(self, name))
+        for name in self.method.funcs_names:
+                setattr(self, name + '_eval', evalfunc_generator(self, name))
+                setattr(self, name, getfunc_generator(self, name))
+                setattr(self, 'set_' + name, setfunc_generator(self, name))
+                setattr(self, '_' + name, getattr(self, name + '_eval')())
+
+    def build_ops(self):
+        """
+        link and lambdify all functions for python simulation
+        """
+        # link evaluation to internal values
+        for name in self.method.ops_names:
+                setattr(self, name + '_eval',
+                        evalop_generator(self, getattr(self.method,
+                                                       name + '_op')))
                 setattr(self, name, getfunc_generator(self, name))
                 setattr(self, 'set_' + name, setfunc_generator(self, name))
                 setattr(self, '_' + name, getattr(self, name + '_eval')())
@@ -75,7 +81,6 @@ class PHSNumericalCore:
 
         self.set_u(u)
         self.set_p(p)
-
         for action in self.method.update_actions:
             actiontype = action[0]
             if actiontype == 'exec':

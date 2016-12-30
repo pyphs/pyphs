@@ -7,7 +7,8 @@ Created on Tue Jun 28 13:47:58 2016
 from pyphs.misc.date import get_date
 from pyphs import __version__
 
-def str_preamble(phs):
+
+def str_preamble(label):
 
     licence_text = """/*
     Copyright or © or Copr. Project-Team S3 (Sound Signals and \
@@ -63,7 +64,7 @@ liability.
         str(__version__) + """, on """ + get_date() + """.
 
     It contains the code for the simulation of system '""" + \
-        phs.label.upper() + """'.
+        label.upper() + """'.
 
 ===============================================================================
 */

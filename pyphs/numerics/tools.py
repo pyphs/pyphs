@@ -12,13 +12,12 @@ import sympy
 import copy
 
 NumericalOperationParser = {'add': numpy.add,
-                            'addarray': lambda v1, v2: numpy.add(v1.flatten(),
-                                                                 v2.flatten()),
+                            'prod': lambda a1, a2: a1*a2,
                             'dot': numpy.dot,
                             'inv': numpy.linalg.inv,
                             'norm': lambda x: numpy.sqrt(float(numpy.dot(x,
                                                                          x))),
-                            'return': lambda x: x,
+                            'copy': lambda x: x
                             }
 
 

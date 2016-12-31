@@ -148,11 +148,11 @@ def whichplot(which, axe):
         return axe.loglog
 
 
-standard = {'loc': 1,                                   # legend location
+standard = {'loc': 0,                                   # legend location
             'unitx': None,                              # x axis label
             'unity': None,                              # y axis label
             'linestyles': ('-b', '--r', '-.g', ':m'),   # styles (1->4 lines)
-            'axedef': (.15, .15, .75, .75, .1, .3),     # left,bottom,right,top
+            'axedef': None,#(.15, .15, .75, .75, .1, .3),     # left,bottom,right,top
             'fontsize': 20,                             #
             'log': None,                                # logscale: 'x','y','xy'
             'legendfontsize': None,                     #
@@ -160,7 +160,7 @@ standard = {'loc': 1,                                   # legend location
             'figsize': (7., 6.),                        #
             'nbinsx': 5,								# number of x axis ticks
             'nbinsy': 5,								# number of y axis ticks
-            'minor': True,								# Show minor grid
+            'minor': False,								# Show minor grid
             'markersize': 6,							#
             'markeredgewidth': 0.5,						#
             'latex': False,								# Latex rendering

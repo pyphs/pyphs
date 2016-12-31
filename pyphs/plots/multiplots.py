@@ -217,11 +217,17 @@ subplots.
         from matplotlib.pyplot import suptitle
         suptitle(opts['maintitle'])
 
-    # fig.tight_layout() # solve overlaping plots
-    fig.subplots_adjust(left=opts['axedef'][0], bottom=opts['axedef'][1],
-                        right=opts['axedef'][2], top=opts['axedef'][3],
-                        wspace=opts['axedef'][4], hspace=opts['axedef'][5])
-
+    if opts['axedef'] is not None:
+        print(opts['axedef'])
+        left, right = opts['axedef'][0], opts['axedef'][2]
+        bottom, top = opts['axedef'][1], opts['axedef'][3]
+        wspace, hspace = opts['axedef'][4], opts['axedef'][5]
+        fig.subplots_adjust(left=left, right=right, 
+                            bottom=bottom, top=top,
+                            wspace=wspace, hspace=hspace)
+    else:
+        fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=.0)
+    
     if not opts['filelabel'] is None:
         from matplotlib.pyplot import savefig
         savefig(opts['filelabel'] + '.' + opts['format'])

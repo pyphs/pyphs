@@ -5,6 +5,12 @@ Created on Mon Jun 27 16:01:13 2016
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
+
+
+def dereference(method):
+    return method.core.args() + [k for k in method.core.subs]
+
 
 def matrix_type(dim1, dim2):
     return "Matrix<double, " + str(dim1) + ', ' + str(dim2) + '>'
@@ -12,10 +18,6 @@ def matrix_type(dim1, dim2):
 
 def indent(string):
     return "\n".join(['    ' + el for el in string.split('\n')])
-
-
-def cppobj_name(phs):
-    return phs.label.upper()
 
 
 def name2dim(name):
@@ -63,52 +65,6 @@ def str_matblk(mat_name, blck_name, blck_dims, blck_pos):
     string_cpp += blck_name + '(ptr_' + blck_name + ', ' + \
         str_dims[1:-1] + ');'
     return string_h, string_cpp
-
-
-def cppsubs(phs):
-    """
-    build the dictionary of parameters substitution and return the piece of \
-cpp code for the pointers in subs and values in subsvals
-
-    Parameters
-    -----------
-
-    phs : PortHamiltonianObject
-
-    Outputs
-    ---------
-
-    str_subs : string
-
-        cpp code, piece of header (.h) that defines the pointers for \
-all parameters.
-
-    str_subs : string
-
-        cpp code, piece of header (.h) that defines the values for \
-all parameters (table of pointers).
-    """
-    return str_subs(phs), str_subsvals(phs)
-
-
-def str_subs(subs):
-    """
-    return the cpp piece of header that defines the as a string
-    """
-    string = ""
-    for i, symb in enumerate(subs):
-        string += "\nconst double * " + str(symb) + "= & subs[" + str(i) + "];"
-    return string
-
-
-def str_subsvals(subs):
-    """
-    return the cpp piece of header that defines the as a string
-    """
-    string = ""
-    for i, symb in enumerate(subs):
-        string += "\nconst double * " + str(symb) + "= & subs[" + str(i) + "];"
-    return string
 
 
 def str_get_int(class_ref, name):

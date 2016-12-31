@@ -8,65 +8,11 @@ Created on Tue Jun 28 13:47:47 2016
 from __future__ import absolute_import, division, print_function
 
 import os
+from pyphs.core.symbs_tools import simplify
 
 standard_config = {'path': os.getcwd()}
 
 
-def _append_args(phs, files):
-    title = "\n\n// Functions arguments"
-    files['h'] += indent(title)
-    names = ('x', 'vl', 'vnl', 'u', 'p')
-    for name in names:
-        args = getattr(phs.simu.exprs, name + '_args')
-        for i, arg in enumerate(args):
-            files['h'] += indent('\ndouble * ' + str(arg) + ' = & ' +
-                                 str(name) + '(' + str(i) + ', 0);')
-
-
-def _append_subs(phs, files):
-    title = "\n\n// Functions parameters"
-    files['h'] += indent(title)
-    files['h'] += '\n' + indent('const unsigned int subs_ref = 0;') + '\n'
-    for i, sub in enumerate(phs.simu.exprs.subs):
-        files['h'] += indent('\nconst double * ' + str(sub) +
-                             ' = & subs[subs_ref][' + str(i) + '];')
-
-###############################################################################
-
-# FUNCTIONS
-
-###############################################################################
-
-def _append_funcs(phs, files):
-    from sympy.printing import ccode
-    title = "\n\n// Functions updates"
-    files['h'] += indent(title)
-    files['cpp'] += title
-    names = ('fl', 'fnl')
-    for name in names:
-        dim = getattr(phs.simu.exprs, name2dim(name))
-        if dim > 0:
-            expr = getattr(phs.simu.exprs, name+'_expr')
-            if isinstance(expr, list):
-                expr = sympy.Matrix(expr)
-            expr = simplify(expr)
-
-            files['h'] += "\n" + indent("void " + name + '_update();')
-            files['cpp'] += "\nvoid " + cppobj_name(phs) + '::' + \
-                name + '_update(){'
-
-            if isinstance(expr, sympy.Expr):
-                code = ccode(expr)
-                files['cpp'] += "\n" + name + ' = ' + code + ';'
-            elif isinstance(expr, sympy.Matrix):
-                for m in range(expr.shape[0]):
-                    for n in range(expr.shape[1]):
-                        code = ccode(expr[m, n],
-                                     dereference=phs.simu.exprs.args +
-                                     phs.simu.exprs.subs)
-                        files['cpp'] += "\n" + name + \
-                            '(' + str(m) + ', ' + str(n) + ') = ' + code + ';'
-            files['cpp'] += '\n};'
 
 
 ###############################################################################
@@ -157,8 +103,8 @@ def _update(name, operation):
     string_h = ""
     string_cpp = ""
 
-        string_h += '\n' + indent('void vnl_update();')
-        string_cpp += """\n
+    string_h += '\n' + indent('void vnl_update();')
+    string_cpp += """\n
 void """ + cppobj_name(phs) + '::' + """vnl_update(){
     vnl << vnl - jac_Fnl.inverse()*Fnl;
 }"""
@@ -272,63 +218,25 @@ void """ + cppobj_name(phs) + '::' + """process(""" + str_u_cpp + str_coma +\
 
 ###############################################################################
 
-def subs2cpp(subs):
-    """
-    build the dictionary of parameters substitution and return the piece of \
-cpp code for the pointers in subs and values in subsvals
-
-    Parameters
-    -----------
-
-    phs : PortHamiltonianObject
-
-    Outputs
-    ---------
-
-    str_subs : string
-
-        cpp code, piece of header (.h) that defines the pointers for \
-all parameters.
-
-    str_subs : string
-
-        cpp code, piece of header (.h) that defines the values for \
-all parameters (table of pointers).
-    """
-    string = ""
-    for i, symb in enumerate(subs):
-        string += "\nconst double * " + str(symb) + "= & subs[" + str(i) + "];"
-    return string
-
-
-###############################################################################
-
 # SUBS
 
 ###############################################################################
 
-
-def dims(method):
-    string = "\n\n// System dimensions"
-    names = ('x', 'xl', 'xnl', 'w', 'wl', 'wnl', 'y', 'p', 'subs')
-    for name in names:
-        dim = getattr(method.core.exprs, name2dim(name))
-        if dim > 0:
-            string += "\nconst unsigned int " + name2dim(name) + " = " + \
-                str(dim) + ";"
-    return string
-
 def add_arg():
     pass
+
 
 def add_func():
     pass
 
+
 def add_op():
     pass
 
+
 def add_update():
     pass
+
 
 class CppCode:
 
@@ -360,82 +268,7 @@ def generate(self, target='main'):
     if target == 'main':
         self.gen_main()
 
-# -----------------------------------------------------------------------------
 
-def _set_phobj(self):
-    from phobj import phobj
-    self.phobj = phobj(self._phs)
-
-def gen_phobj(self):
-    if not hasattr(self._phs.simu, 'exprs'):
-        self._phs.simu.init_expressions()
-    if not hasattr(self, 'phobj'):
-        self._set_phobj()
-    self._gen('phobj', extension='cpp')
-    self._gen('phobj', extension='h')
-
-# -----------------------------------------------------------------------------
-
-def _set_data(self):
-    from subs import data
-    self.data = data(self._phs)
-
-def gen_data(self):
-    if not hasattr(self, 'data'):
-        self._set_data()
-    self._gen('data', extension='cpp')
-    self._gen('data', extension='h')
-
-# -----------------------------------------------------------------------------
-
-
-def gen_subs(self):
-    self._gen('subs')
-
-def _set_vecs_args(self):
-    string = "\n\n// System vectors"
-    parser_arg2dim = {'x': 'x',
-                      'dx': 'x',
-                      'dxH': 'x',
-                      'w': 'w',
-                      'z': 'w',
-                      'p': 'p',
-                      'u': 'y',
-                      'y': 'y'}
-    names = ('x', 'dx', 'dxH', 'w', 'z')
-    for name in names:
-        dimlab = 'n' + parser_arg2dim[name]
-        dim = getattr(self._phs.simu.exprs, dimlab)
-        if dim > 0:
-            string += "\nMatrix<double, " + dimlab + ", 1> " +\
-                name + ";"
-            n = 0
-            for lnl in ('l', 'nl'):
-                dimlablnl = 'n' + parser_arg2dim[name] + lnl
-                dimlnl = getattr(self._phs.simu.exprs, dimlablnl)
-                if dimlnl > 0:
-                    string += str_matblk(name, name + lnl,
-                                         (dimlablnl, 1), (n, 0))
-                n += dimlnl
-
-    names = ('u', 'y', 'p')
-    for name in names:
-        dimlab = 'n' + parser_arg2dim[name]
-        dim = getattr(self._phs.simu.exprs, dimlab)
-        if dim > 0:
-            string += "\nMatrix<double, " + dimlab + ", 1> " +\
-                name + ";"
-    self.phobj['h'] += string
-
-
-def str_matblk(mat_name, blck_name, blck_dims, blck_pos):
-    string = "\ndouble * ptr_" + blck_name + " = "
-    str_dims = "<" + str(blck_dims[0]) + ', ' + str(blck_dims[1]) + ">"
-    str_pos = "(" + str(blck_pos[0]) + ', ' + str(blck_pos[1]) + ")"
-    string += " & " + mat_name + ".block" + str_dims + str_pos + "(0);"
-    string += "\nMap<Matrix<double, " + str_dims[1:-1] + ">> "
-    string += blck_name + '(ptr_' + blck_name + ', ' + str_dims[1:-1] + ');'
-    return string
 
 
 def str_vecargs(phs):
@@ -522,94 +355,6 @@ def phobj(phs):
     _append_matrices(phs, files)
     files['h'] += "\n};\n\n#endif /* " + cppobj_name(phs) + "_H */\n"
     return files
-
-
-# -----------------------------------------------------------------------------
-
-
-def _append_includes(files):
-    files['cpp'] += '\n#include "phobj.h"'
-    include_vector = """\n
-#include "iostream"
-#include "vector"
-#include "math.h"
-
-# include "data.h"\n
-"""
-    files['h'] += include_vector + include_Eigen()
-
-
-# -----------------------------------------------------------------------------
-
-
-def _append_namespaces(files):
-    files['h'] += '\n'
-    files['h'] += '\nusing namespace std;'
-    files['h'] += '\nusing namespace Eigen;'
-
-
-# -----------------------------------------------------------------------------
-
-
-def _append_dims(phs, files):
-    files['h'] += indent(str_dims(phs))
-
-
-# -----------------------------------------------------------------------------
-
-
-def _append_dims_accessors(phs, files):
-    title = "\n\n// Acessors to system dimensions"
-    files['h'] += indent(title)
-    files['cpp'] += title
-    dims = str_dims(phs).split('\n')
-    while dims[0].find('const') < 0:
-        dims.pop(0)
-    for dim in dims:
-        name = dim.split(' = ')[0].split(' ')[-1]
-        files['cpp'] += """\nconst unsigned int """ + cppobj_name(phs) +\
-            "::get_" + name + """() const { return """ + name + "; }"""
-        files['h'] += indent("\nconst unsigned int get_" + name + "() const;")
-
-
-# -----------------------------------------------------------------------------
-
-
-def _append_blocks_accessors(phs, files):
-    title = "\n\n// Acessors to system variables"
-    files['h'] += indent(title)
-    files['cpp'] += title
-    names = ('x', 'dx', 'dxH', 'w', 'z', 'y')
-    for name in names:
-        dim = getattr(phs.simu.exprs, name2dim(name))
-        if dim > 0:
-            files['h'] += indent('\nvector<double> get_' +
-                                 name + '() const;')
-            files['cpp'] += """
-\nvector<double> """ + cppobj_name(phs) + '::get_' + name + """() const {
-    vector<double> v = vector<double>(""" + str(dim) + """);
-    for (int i=0; i<""" + str(dim) + """; i++) {
-        v[i] = """ + name + """[i];
-    }
-    return v;
-}"""
-
-
-def _append_blocks_mutators(phs, files):
-    title = "\n\n// Mutators for system variables"
-    files['h'] += indent(title)
-    files['cpp'] += title
-    names = ('x', 'u', 'p')
-    for name in names:
-        dim = getattr(phs.simu.exprs, name2dim(name))
-        if dim > 0:
-            files['h'] += indent('\nvoid set_' + name + '(vector<double> &);')
-            files['cpp'] += """\n
-void """ + cppobj_name(phs) + '::set_' + name + """(vector<double> & v) {
-    for (int i=0; i<""" + str(dim) + """; i++) {
-        """ + name + """[i] = v[i];
-    }
-}"""
 
 
 # -----------------------------------------------------------------------------
@@ -713,85 +458,6 @@ def _append_block(phs, files):
 
 # -----------------------------------------------------------------------------
 
-def _str_init_matrices(phs):
-    _, _, _, str_init_datas, str_init_cpps = _pieces_matrices(phs)
-    string = "\n\n// Matrices constants"
-    string += str_init_datas
-    string += "\n\n// Matrices init"
-    string += str_init_cpps
-    return indent(string)
-
-
-def _append_constructor(phs, files):
-    if phs.simu.exprs.nnl > 0:
-        init = """for(int i=0; i<""" + str(phs.simu.exprs.nnl) + """; i++){
-        vnl[i] = 0;
-    }"""
-    else:
-        init = ""
-    string = """\n
-// Default Constructor:
-""" + cppobj_name(phs) + """();"""
-    files['h'] += indent(string)
-    _, init_blocks = _pieces_blocks(phs)
-    string = """\n
-// Default Constructor:
-""" + cppobj_name(phs) + """::""" + cppobj_name(phs) + """() : """ + \
-            init_blocks + """\n{
-
-    """ + init + _str_init_matrices(phs) + """
-};"""
-    files['cpp'] += string
-
-# -----------------------------------------------------------------------------
-
-
-def _append_constructor_init(phs, files):
-    if phs.simu.exprs.nnl > 0:
-        init = """for(int i=0; i<""" + str(phs.simu.exprs.nnl) + """; i++){
-        vnl[i] = 0;
-    }"""
-    else:
-        init = ""
-    string = """\n
-// Constructor with state initalization:
-""" + cppobj_name(phs) + \
-            """(vector<double> &);"""
-    files['h'] += indent(string)
-    _, init_blocks = _pieces_blocks(phs)
-    string = """\n
-// Constructor with state initalization:
-""" + cppobj_name(phs) + """::""" + cppobj_name(phs) + \
-            """(vector<double> & x0) : """ + init_blocks + """\n{
-
-    if (x.size() == x0.size()) {
-        set_x(x0);
-    }
-    else {
-        cerr << "Size of x0 does not match size of x" << endl;
-        exit(1);
-    }
-
-    """ + init + _str_init_matrices(phs) + """
-};"""
-    files['cpp'] += string
-
-
-# -----------------------------------------------------------------------------
-
-
-def _append_destructuor(phs, files):
-        string = """\n
-// Default Destructor:
-~""" + cppobj_name(phs) + """();"""
-        files['h'] += indent(string)
-
-        string = """\n
-// Default Destructor:
-""" + cppobj_name(phs) + """::~""" + cppobj_name(phs) + """() {};"""
-        files['cpp'] += string
-
-# -----------------------------------------------------------------------------
 
 
 def _append_vecs_args(phs, files):

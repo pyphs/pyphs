@@ -8,15 +8,30 @@ Created on Sat Jun 11 19:19:36 2016
 import sympy
 from sympy.printing import latex
 from pyphs.config import fold_short_frac, mat_delim, mat_str, mul_symbol
+from pyphs.misc.tools import geteval
 
-
-def nice_label(var, ind):
-    if var in ('dxHd', 'dxH'):
-        return r'$\overline{\nabla}\mathtt{H}_'+str(ind)+r'$'
+def nice_label(core, tup):
+    var, ind = tup
+    if var in ['x', 'w', 'u', 'y']:
+        label = str(geteval(core, var)[ind])
+        content = label[0] + '_{\mathrm{' + label[1:] + '}}'
+        return r'$' + content + r'$'
+    if var in ['dx']:
+        label = str(geteval(core, 'x')[ind])
+        content = label[0] + '_{\mathrm{' + label[1:] + '}}'
+        return r'$\mathrm{d} ' + content + r'$'
+    elif var == 'dxH':
+        label = str(geteval(core, 'x')[ind])
+        content = label[0] + '_{\mathrm{' + label[1:] + '}}'
+        return r'$\frac{\mathrm{d} \mathtt{H}}{\mathrm{d} ' + content+r'}$'
     elif var == 'dtx':
-        return r'$\mathrm D_t \,{x}_'+str(ind)+'$'
-    else:
-        return r'$'+var+'_'+str(ind)+r'$'
+        label = str(geteval(core, 'x')[ind])
+        content = label[0] + '_{\mathrm{' + label[1:] + '}}'
+        return r'$\frac{\mathrm{d}' + content + r'}{\mathrm{d} t}$'
+    elif var == 'z':
+        label = str(geteval(core, 'w')[ind])
+        content = '_{\mathrm{' + label[1:] + '}}'
+        return r'$z' + content+r'$'
 
 
 def sympy2latex(sp_object, symbol_names):

@@ -70,10 +70,7 @@ class PHSData:
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
 
-        def dxtodtx(dx):
-            return dx*self.config['fs']
-        for dtx, dxh in zip(self.dx(postprocess=dxtodtx, **options),
-                            self.dxH(**options)):
+        for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
             yield scalar_product(dtx, dxh)
 
     def pd(self, imin=None, imax=None, decim=None):
@@ -138,6 +135,14 @@ class PHSData:
                                   self.u(**options),
                                   self.p(**options)):
             yield x + dx + w + u + p
+
+    def dtx(self, ind=None, imin=None, imax=None, decim=None):
+        for dtx in self.dx(postprocess=self.dxtodtx, ind=ind, imin=imin, 
+                           imax=imax, decim=decim):
+            yield dtx
+
+    def dxtodtx(self, dx):
+        return numpy.asfarray(dx)*self.config['fs']
 
     def b(self, imin=None, imax=None, decim=None):
         """

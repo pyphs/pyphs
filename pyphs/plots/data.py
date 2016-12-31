@@ -8,6 +8,7 @@ Created on Mon Jun 27 13:12:43 2016
 from __future__ import absolute_import, division, print_function
 from .multiplots import multiplot
 from pyphs.latex.tools import nice_label
+from pyphs.misc.tools import geteval
 import os
 
 
@@ -21,12 +22,8 @@ multifigure
         os.makedirs(path)
     filelabel = path + os.sep + 'power_balance'
     conf = {'figsize': (6., 4.),
-            'fontsize': 20,
-            'axedef': (0.13, 0.1, 0.95, 0.9, 0.2, 0.3),
             'unitx': r'time $t$ (s)',
             'filelabel': filelabel,
-            'loc': 0,
-            'minor': False,
             'maintitle': r'Power balance'}
     if opts is not None:
         conf.update(opts)
@@ -56,10 +53,7 @@ multifigure
         datay.append([el for el in data.dtE()])
         datay.append([el for el in data.pd()])
         datay.append([el for el in data.ps()])
-        deltaP = map(lambda dte, d, s: float(dte) + float(d) + float(s),
-                     data.dtE(),
-                     data.pd(),
-                     data.ps())
+        deltaP = [sum(el) for el in zip(data.dtE(), data.pd(), data.ps())]
         datay.append(deltaP)
         opts.update({'figsize': (6., 4.),
                      'unity': [r'(W)']*4,
@@ -82,7 +76,7 @@ def plot(data, var_list, imin=0, imax=None):
         generator = getattr(data, tup[0])
         sig = [el for el in generator(ind=tup[1], imin=imin, imax=imax)]
         datay.append(sig)
-        labels.append(nice_label(tup[0], tup[1]))
+        labels.append(nice_label(data.core, tup))
         filelabel += '_'+tup[0]+str(tup[1])
     plotopts = {'unitx': 'time $t$ (s)',
                 'unity': labels,

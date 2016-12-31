@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 from sympy.printing import ccode
 from pyphs.cpp.tools import matrix_type, dereference, indent
 import sympy
-import numpy
+
 
 def _str_mat_func_def(method, name):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
@@ -32,15 +32,16 @@ def _str_mat_func_update(method, name, objlabel):
     update_cpp += '\n};'
     return update_h, update_cpp
 
-    
+
 def _str_mat_func_get(method, name, objlabel):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
     mtype = matrix_type(mat.shape[0], mat.shape[1])
     get_h = '\n%s %s() const;' % (mtype, name)
-    get_cpp = '\n%s %s::%s() const {\n    return _%s;\n}' % (mtype, objlabel, name, name)
+    get_cpp = '\n%s %s::%s() const {\n    return _%s;\n}' % (mtype, objlabel,
+                                                             name, name)
     return get_h, get_cpp
 
-    
+
 def _str_mat_func_get_vector(method, name, objlabel):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
     mtype = 'vector(double)'
@@ -53,7 +54,7 @@ def _str_mat_func_get_vector(method, name, objlabel):
     get_cpp += indent("\nreturn v;")+"\n}"
     return get_h, get_cpp
 
-    
+
 def _str_mat_func_init_data(method, name):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
     init_data = '\ndouble %s_data[] = {' % name
@@ -65,33 +66,33 @@ def _str_mat_func_init_data(method, name):
                 init_data += "0, "
             else:
                 c = ccode(expr, dereference=dereference(method))
-                init_data += '%s, ' % c                                          
+                init_data += '%s, ' % c
     init_data = '%s};' % init_data[:-2]
     return init_data
-    
+
 
 def _str_mat_func_init_cpp(method, name):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
     mtype = matrix_type(mat.shape[0], mat.shape[1])
     return '\n_%s = Map<%s> (%s_data);' % (name, mtype, name)
-    
+
 
 def _append_mat_funcs(method, files, objlabel, names):
-    defs, udhs, udcpps, icpps, datas, ghs, gcpps= ["", ]*7
+    defs, udhs, udcpps, icpps, datas, ghs, gcpps = ["", ]*7
     for name in names:
         def_ = _str_mat_func_def(method, name)
         defs += def_
         update_h, update_cpp = _str_mat_func_update(method, name, objlabel)
         udhs += update_h
         udcpps += update_cpp
-        get_h, get_cpp  = _str_mat_func_get(method, name, objlabel)
+        get_h, get_cpp = _str_mat_func_get(method, name, objlabel)
         ghs += get_h
         gcpps += get_cpp
         init_data = _str_mat_func_init_data(method, name)
         datas += init_data
-    files['h'] += defs + ghs + udhs +  datas
+    files['h'] += defs + ghs + udhs + datas
     files['cpp'] += gcpps + udcpps + icpps
-        
+
 
 def _str_scal_func_def(name):
     return '\ndouble _%s;' % name
@@ -108,7 +109,7 @@ def _str_scal_func_update(method, name, objlabel):
     update_cpp += '\n};'
     return update_h, update_cpp
 
-    
+
 def _str_scal_func_init_data(method, name):
     expr = getattr(method, name + '_expr')
     init_data = '\ndouble %s_data = ' % name
@@ -117,20 +118,21 @@ def _str_scal_func_init_data(method, name):
         init_data += "0.;"
     else:
         c = ccode(expr, dereference=dereference(method))
-        init_data += '%s;' % c                                          
+        init_data += '%s;' % c
     return init_data
-    
+
 
 def _str_scal_func_init_cpp(name):
     return '\n_%s = %s_data;' % (name, name)
-    
+
 
 def _str_scal_func_get(name, objlabel):
     get_h = '\ndouble %s();' % name
-    get_cpp = '\ndouble %s::%s() const {\n    return _%s;\n}' % (objlabel, name, name)
+    get_cpp = '\ndouble %s::%s() const {\n    return _%s;\n}' % (objlabel,
+                                                                 name, name)
     return get_h, get_cpp
 
-    
+
 def _append_scal_funcs(method, files, objlabel, names):
     defs, udhs, udcpps, icpps, datas = ["", ]*5
     for name in names:
@@ -141,12 +143,12 @@ def _append_scal_funcs(method, files, objlabel, names):
         udcpps += update_cpp
         get_h, get_cpp = _str_scal_func_get(name, objlabel)
         udhs += get_h
-        udcpps += get_cpp        
+        udcpps += get_cpp
         init_data = _str_scal_func_init_data(method, name)
         datas += init_data
-    files['h'] += defs + udhs +  datas
+    files['h'] += defs + udhs + datas
     files['cpp'] += udcpps + icpps
-        
+
 
 def append_funcs(nums, files, objlabel):
     scal_funcs_names = []
@@ -159,9 +161,3 @@ def append_funcs(nums, files, objlabel):
             scal_funcs_names.append(name)
     _append_scal_funcs(nums.method, files, objlabel, scal_funcs_names)
     _append_mat_funcs(nums.method, files, objlabel, mat_funcs_names)
-if __name__ == '__main__':
-    files = {'h':'', 'cpp':''}
-    objlabel = 'test'.upper()
-    append_funcs(nums, files, objlabel)
-    print(files['cpp'])
-    

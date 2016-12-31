@@ -109,21 +109,21 @@ class PHSNumericalMethodStandard(PHSNumericalMethod):
         # impfunc
         temp1 = self.operation('dot', ('Inl', 'vnl'))      # Inl*vnl
         temp2 = self.operation('dot', ('Nnlnl', 'fnl'))    # Nnlnl*fnl
-        temp3 = self.operation('dot', (-1., temp2))        # - Nnlnl*fnl
+        temp3 = self.operation('prod', (-1., temp2))        # - Nnlnl*fnl
         temp4 = self.operation('add', (temp1, temp3))      # Inl*vnl-Nnlnl*fnl
-        temp5 = self.operation('dot', (-1., 'c'))          # - c
+        temp5 = self.operation('prod', (-1., 'c'))          # - c
         impfunc = self.operation('add', (temp4, temp5))  # Inl*vnl-Nnlnl*fnl-c
         self.setoperation('impfunc', impfunc)
 
         #######################################
         # save_impfunc
-        save_impfunc = self.operation('return', ('impfunc', ))
+        save_impfunc = self.operation('copy', ('impfunc', ))
         self.setoperation('save_impfunc', save_impfunc)
 
         #######################################
         # jac_impfunc
         temp1 = self.operation('dot', ('Nnlnl', 'jac_fnl'))
-        temp2 = self.operation('dot', (-1., temp1))
+        temp2 = self.operation('prod', (-1., temp1))
         jac_impfunc = self.operation('add', ('Inl', temp2))
         self.setoperation('jac_impfunc', jac_impfunc)
 
@@ -139,7 +139,7 @@ class PHSNumericalMethodStandard(PHSNumericalMethod):
 
         #######################################
         # step_impfunc
-        temp1 = self.operation('dot', (-1., 'save_impfunc'))
+        temp1 = self.operation('prod', (-1., 'save_impfunc'))
         temp2 = self.operation('add', ('impfunc', temp1))
         step_impfunc = self.operation('norm', (temp2, ))
         self.setoperation('step_impfunc', step_impfunc)
@@ -147,7 +147,7 @@ class PHSNumericalMethodStandard(PHSNumericalMethod):
         #######################################
         # ud_vnl
         temp1 = self.operation('dot', ('ijac_impfunc', 'impfunc'))
-        temp2 = self.operation('dot', (-1., temp1))
+        temp2 = self.operation('prod', (-1., temp1))
         ud_vnl = self.operation('add', ('vnl', temp2))
         self.setoperation('ud_vnl', ud_vnl)
 

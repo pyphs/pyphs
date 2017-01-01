@@ -52,16 +52,16 @@ def _pieces_matrix(method, name, objlabel):
 def _pieces_matrices(method, objlabel):
     defs, udcpps, udhs, datas, inits = [str(), ]*5
     for name in method.funcs_names:
-        de, udcpp, udh, data, init = _pieces_matrix(method, 
+        de, udcpp, udh, data, init = _pieces_matrix(method,
                                                      name, objlabel)
         defs += de
-        udcpps += udcpp 
+        udcpps += udcpp
         udhs += udh
         datas += data
         inits += init
     return defs, udcpps, udhs, datas, inits
-        
-        
+
+
 def _append_matrices(method, name, objlabel, files):
     str_definitions, str_update_cpps, str_update_hs, _, _ = \
         _pieces_matrices(phs)
@@ -106,73 +106,6 @@ def _str_init_matrices(method):
     return indent(string)
 
 
-def _append_constructor(phs, files):
-    if phs.simu.exprs.nnl > 0:
-        init = """for(int i=0; i<""" + str(phs.simu.exprs.nnl) + """; i++){
-        vnl[i] = 0;
-    }"""
-    else:
-        init = ""
-    string = """\n
-// Default Constructor:
-""" + cppobj_name(phs) + """();"""
-    files['h'] += indent(string)
-    _, init_blocks = _pieces_blocks(phs)
-    string = """\n
-// Default Constructor:
-""" + cppobj_name(phs) + """::""" + cppobj_name(phs) + """() : """ + \
-            init_blocks + """\n{
-
-    """ + init + _str_init_matrices(phs) + """
-};"""
-    files['cpp'] += string
-
-# -----------------------------------------------------------------------------
-
-
-def _append_constructor_init(phs, files):
-    if phs.simu.exprs.nnl > 0:
-        init = """for(int i=0; i<""" + str(phs.simu.exprs.nnl) + """; i++){
-        vnl[i] = 0;
-    }"""
-    else:
-        init = ""
-    string = """\n
-// Constructor with state initalization:
-""" + cppobj_name(phs) + \
-            """(vector<double> &);"""
-    files['h'] += indent(string)
-    _, init_blocks = _pieces_blocks(phs)
-    string = """\n
-// Constructor with state initalization:
-""" + cppobj_name(phs) + """::""" + cppobj_name(phs) + \
-            """(vector<double> & x0) : """ + init_blocks + """\n{
-
-    if (x.size() == x0.size()) {
-        set_x(x0);
-    }
-    else {
-        cerr << "Size of x0 does not match size of x" << endl;
-        exit(1);
-    }
-
-    """ + init + _str_init_matrices(phs) + """
-};"""
-    files['cpp'] += string
-
-
-def _append_destructuor(phs, files):
-        string = """\n
-// Default Destructor:
-~""" + cppobj_name(phs) + """();"""
-        files['h'] += indent(string)
-
-        string = """\n
-// Default Destructor:
-""" + cppobj_name(phs) + """::~""" + cppobj_name(phs) + """() {};"""
-        files['cpp'] += string
-
-
 
 def _append_includes(files):
     files['cpp'] += '\n#include "core.h"'
@@ -190,16 +123,6 @@ def _append_namespaces(files):
     files['h'] += '\n'
     files['h'] += '\nusing namespace std;'
     files['h'] += '\nusing namespace Eigen;'
-
-
-def _append_subs(method, files):
-    title = "\n\n// Parameters"
-    files['h'] += indent(title)
-    files['h'] += indent(
-        '\nconst unsigned int subs_ref = 0;') + '\n'
-    for i, sub in enumerate(method.core.subs):
-        files['h'] += indent(
-        '\nconst double * %s = & subs[subs_ref][%i];' % (str(sub), i))
 
 
 def _append_args(method, files):
@@ -375,6 +298,6 @@ if __name__ == '__main__':
 #    _append_vecs_args(method, files)
 #    _append_blocks_accessors(method, files, objlabel)
 #    _append_args_mutators_matrix(method, files, objlabel)
-#    _append_args_mutators_vectors(method, files, objlabel)    
+#    _append_args_mutators_vectors(method, files, objlabel)
     print(files['h'])
 

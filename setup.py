@@ -7,16 +7,20 @@ Created on Thu Nov  3 22:17:28 2016
 
 from setuptools import setup
 
-def readme():
-    with open('README.rst') as f:
-        return f.read()
-
+from pyphs import __author__
 __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
-__author__ = "Antoine Falaize"
+# __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
 __author_email__ = 'antoine.falaize@gmail.com'
-__version__ = '0.1.9b5'
+__version__ = '0.2_DEV'
+
+
+###############################################################################
+
+def readme():
+    with open('README.rst') as f:
+        return f.read()
 
 ###############################################################################
 
@@ -31,10 +35,12 @@ setup(name='pyphs',
         'Operating System :: MacOS :: MacOS X',
         'Environment :: MacOS X',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2 :: Only',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: ' + __licence__,
+        'Topic :: Scientific/Engineering'
         'Topic :: Scientific/Engineering :: Physics'
       ],
       keywords='dynamical systems, numerical analysis, \
@@ -43,14 +49,30 @@ setup(name='pyphs',
       author=__author__,
       author_email=__author_email__,
       license=__licence__,
-      packages=['pyphs'],
+      packages=['pyphs',
+                'pyphs.core',
+                'pyphs.simulations',
+                'pyphs.plots',
+                'pyphs.numerics',
+                'pyphs.numerics.methods',
+                'pyphs.misc',
+                'pyphs.misc.signals',
+                'pyphs.graphs',
+                'pyphs.graphs.analysis',
+                'pyphs.latex',
+                'pyphs.cpp',
+                'pyphs.tests',
+                'pyphs.dictionary',
+                'pyphs.dictionary.edges',
+                ],
       zip_safe=False,
       install_requires=[
           'numpy',
           'scipy',
           'sympy',
           'networkx',
-          'progressbar',
+          'progressbar2',
+          'matplotlib',
       ],
       dependency_links=[
           'http://github.com/user/repo/tarball/master#egg=package-1.0'

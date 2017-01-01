@@ -7,22 +7,22 @@ Created on Wed Jun  8 00:58:26 2016
 import sympy
 
 
-def build_phs(analysis, phs):
+def buildCore(Graph):
     vstack = sympy.Matrix.vstack
     hstack = sympy.Matrix.hstack
-    nec = len(analysis.ec_edges)
-    nfc = len(analysis.fc_edges)
+    nec = len(Graph.Analysis.ec_edges)
+    nfc = len(Graph.Analysis.fc_edges)
     # incidence matrix for the effort-controlled edges
-    gamma_ec = sympy.Matrix(analysis.gamma[1:, :len(analysis.ec_edges)])
+    gamma_ec = sympy.Matrix(Graph.Analysis.gamma[1:, :len(Graph.Analysis.ec_edges)])
     # incidence matrix for the flux-controlled edges
-    gamma_fc = sympy.Matrix(analysis.gamma[1:, len(analysis.ec_edges):])
+    gamma_fc = sympy.Matrix(Graph.Analysis.gamma[1:, len(Graph.Analysis.ec_edges):])
     # solve linear relations to get the port-Hamiltonian structure
     gamma = gamma_fc.inv() * gamma_ec
     # build J matrix
-    analysis.J = vstack(hstack(sympy.zeros(nec), gamma.T),
+    Graph.Analysis.J = vstack(hstack(sympy.zeros(nec), gamma.T),
                         hstack(-gamma, sympy.zeros(nfc)))
-    _sort_edges(analysis)
-    _set_phs(analysis, phs)
+    _sort_edges(Graph.Analysis)
+    _setCore(Graph)
 
 
 def _sort_edges(analysis):
@@ -47,58 +47,58 @@ def _sort_edges(analysis):
     analysis.J = analysis.J[all_edges, all_edges]
 
 
-def _select_relations(analysis, phs):
+def _select_relations(Graph):
     """
     select the dissipative relation 'z' and connectors coefficients 'alpha' \
 according to the control type of each indeterminate edge
     """
     # select dissipative relations
-    for e in analysis.diss_edges:
-        ctrl = analysis.get_edge_data(e, 'ctrl')
+    for e in Graph.Analysis.diss_edges:
+        ctrl = Graph.Analysis.get_edge_data(e, 'ctrl')
         # select for indeterminate edges only
         if ctrl == '?':
             # get edge label index in 'w'
-            label = analysis.get_edge_data(e, 'label')
-            indw = phs.symbs.w.index(label)
-            if e in analysis.ec_edges:
-                phs.exprs.z[indw] = analysis.get_edge_data(e, 'z')['e_ctrl']
+            label = Graph.Analysis.get_edge_data(e, 'label')
+            indw = Graph.core.w.index(label)
+            if e in Graph.Analysis.ec_edges:
+                Graph.core.z[indw] = Graph.Analysis.get_edge_data(e, 'z')['e_ctrl']
             else:
-                assert e in analysis.fc_edges
-                phs.exprs.z[indw] = analysis.get_edge_data(e, 'z')['f_ctrl']
+                assert e in Graph.Analysis.fc_edges
+                Graph.core.z[indw] = Graph.Analysis.get_edge_data(e, 'z')['f_ctrl']
 
 
-def _set_phs(analysis, phs):
+def _setCore(Graph):
     new_indices_x = []
-    for e in analysis.stor_edges:
-        e_label = analysis.get_edge_data(e, 'label')
-        index_e_in_x = phs.symbs.x.index(e_label)
+    for e in Graph.Analysis.stor_edges:
+        e_label = Graph.Analysis.get_edge_data(e, 'label')
+        index_e_in_x = Graph.core.x.index(e_label)
         new_indices_x.append(index_e_in_x)
-    phs.symbs.x = [phs.symbs.x[el] for el in new_indices_x]
+    Graph.core.x = [Graph.core.x[el] for el in new_indices_x]
 
     new_indices_w = []
-    for e in analysis.diss_edges:
-        e_label = analysis.get_edge_data(e, 'label')
-        index_e_in_w = phs.symbs.w.index(e_label)
+    for e in Graph.Analysis.diss_edges:
+        e_label = Graph.Analysis.get_edge_data(e, 'label')
+        index_e_in_w = Graph.core.w.index(e_label)
         new_indices_w.append(index_e_in_w)
-    phs.symbs.w = [phs.symbs.w[el] for el in new_indices_w]
-    phs.exprs.z = [phs.exprs.z[el] for el in new_indices_w]
+    Graph.core.w = [Graph.core.w[el] for el in new_indices_w]
+    Graph.core.z = [Graph.core.z[el] for el in new_indices_w]
 
     new_indices_y = []
-    for e in analysis.port_edges:
-        e_label = analysis.get_edge_data(e, 'label')
-        index_e_in_y = phs.symbs.y.index(e_label)
+    for e in Graph.Analysis.port_edges:
+        e_label = Graph.Analysis.get_edge_data(e, 'label')
+        index_e_in_y = Graph.core.y.index(e_label)
         new_indices_y.append(index_e_in_y)
-    phs.symbs.y = [phs.symbs.y[el] for el in new_indices_y]
-    phs.symbs.u = [phs.symbs.u[el] for el in new_indices_y]
+    Graph.core.y = [Graph.core.y[el] for el in new_indices_y]
+    Graph.core.u = [Graph.core.u[el] for el in new_indices_y]
 
     new_indices_connector = []
-    for e in analysis.conn_edges:
-        e_label = analysis.get_edge_data(e, 'label')
-        index_e_in_connector = phs.symbs.cy.index(e_label)
+    for e in Graph.Analysis.conn_edges:
+        e_label = Graph.Analysis.get_edge_data(e, 'label')
+        index_e_in_connector = Graph.core.cy.index(e_label)
         new_indices_connector.append(index_e_in_connector)
-    phs.symbs.cy = [phs.symbs.cy[el] for el in new_indices_connector]
-    phs.symbs.cu = [phs.symbs.cu[el] for el in new_indices_connector]
+    Graph.core.cy = [Graph.core.cy[el] for el in new_indices_connector]
+    Graph.core.cu = [Graph.core.cu[el] for el in new_indices_connector]
 
-    _select_relations(analysis, phs)
+    _select_relations(Graph)
 
-    phs.struc.M = analysis.J
+    Graph.core.M = Graph.Analysis.J

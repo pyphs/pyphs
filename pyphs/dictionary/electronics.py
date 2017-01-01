@@ -4,25 +4,23 @@ Created on Sat May 21 16:24:12 2016
 
 @author: Falaize
 """
-from classes.connectors.port import Port
-from classes.linears.dissipatives import LinearDissipationFreeCtrl
-from classes.linears.storages import LinearStorageFluxCtrl, \
-    LinearStorageEffortCtrl
-from classes.nonlinears.dissipatives import NonLinearDissipative
-
-from pyphs.dictionary.config import nice_var_label
-from tools import symbols
+from __future__ import absolute_import, division, print_function
 
 import sympy
+from .tools import symbols, nicevarlabel
+from pyphs.config import GMIN
+from .edges import (PHSPort,
+                    PHSDissipativeLinear, PHSDissipativeNonLinear,
+                    PHSStorageLinear)
 
-# Minimal conductance for accelerating convergenc of solver (diode and bjt)
-GMIN = 1e-12
+__all__ = ['Source', 'Capacitor', 'Inductor', 'Resistor',
+           'Potentiometer', 'Diode', 'Bjt', 'Triode']
 
 
-class Source(Port):
+class Source(PHSPort):
     """
     Voltage or current source
-    
+
     Usage
     ------
         electronics.source label ('node1', 'node2'): type='type'
@@ -43,10 +41,10 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
     kwargs: dic with following "keys:values"
 
         * 'type' : source type in ('voltage', 'current').
-        
+
     Not implemented:
     ----------------
-        
+
         * 'const': if not None, the input will be replaced by the value (subs).
     """
     def __init__(self, label, nodes, **kwargs):
@@ -58,10 +56,10 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         elif type_ == 'current':
             ctrl = 'e'
         kwargs.update({'ctrl': ctrl})
-        Port.__init__(self, label, nodes, **kwargs)
+        PHSPort.__init__(self, label, nodes, **kwargs)
 
 
-class Capacitor(LinearStorageFluxCtrl):
+class Capacitor(PHSStorageLinear):
     """
     Linear capacitor
 
@@ -83,11 +81,12 @@ class Capacitor(LinearStorageFluxCtrl):
         par_val = kwargs[par_name]
         kwargs = {'name': par_name,
                   'value': par_val,
-                  'inv_coeff': True}
-        LinearStorageFluxCtrl.__init__(self, label, nodes, **kwargs)
+                  'inv_coeff': True,
+                  'ctrl': 'f'}
+        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
 
 
-class Inductor(LinearStorageEffortCtrl):
+class Inductor(PHSStorageLinear):
     """
     Linear inductor
 
@@ -109,11 +108,12 @@ class Inductor(LinearStorageEffortCtrl):
         par_val = kwargs[par_name]
         kwargs = {'name': par_name,
                   'value': par_val,
-                  'inv_coeff': True}
-        LinearStorageEffortCtrl.__init__(self, label, nodes, **kwargs)
+                  'inv_coeff': True,
+                  'ctrl': 'e'}
+        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
 
 
-class Resistor(LinearDissipationFreeCtrl):
+class Resistor(PHSDissipativeLinear):
     """
     Linear resistor (unconstrained control)
 
@@ -132,13 +132,13 @@ class Resistor(LinearDissipationFreeCtrl):
     """
     def __init__(self, label, nodes, **kwargs):
         if kwargs['R'] is None:
-            coeff = 0.
+            coeff = 0
         else:
             coeff = kwargs['R']
-        LinearDissipationFreeCtrl.__init__(self, label, nodes, coeff=coeff)
+        PHSDissipativeLinear.__init__(self, label, nodes, coeff=coeff)
 
 
-class Potentiometer(NonLinearDissipative):
+class Potentiometer(PHSDissipativeNonLinear):
     """
     Electronic nonlinear dissipative component: diode PN
 
@@ -193,12 +193,12 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         edge_2 = (N2, N3, data_2)
 
         # init component
-        NonLinearDissipative.__init__(self, label,
-                                      [edge_1, edge_2],
-                                      w, z, **kwargs)
+        PHSDissipativeNonLinear.__init__(self, label,
+                                         [edge_1, edge_2],
+                                         w, z, **kwargs)
 
 
-class Diodepn(NonLinearDissipative):
+class Diode(PHSDissipativeNonLinear):
     """
     Electronic nonlinear dissipative component: diode PN
 
@@ -221,14 +221,14 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
          * 'R': connectors resistance (Ohms)
     """
     def __init__(self, label, nodes, **kwargs):
-    	kwargs.update({'gmin': ('gmin', GMIN)})
+        kwargs.update({'gmin': ('gmin', GMIN)})
         # parameters
         pars = ['Is', 'v0', 'R', 'mu']
         for par in pars:
             assert par in kwargs.keys()
         Is, v0, R, mu, gmin = symbols(pars+['gmin'])
         # dissipation variable
-        w = symbols(["w"+label, "w"+label+"R", "w"+label+"gmin"])
+        w = symbols(["w"+label, "w"+label+"_R", "w"+label+"_gmin"])
         # dissipation funcion
         zd_ectrl = Is*(sympy.exp(w[0]/(mu*v0))-1) + GMIN*w[0]
         zd_fctrl = mu*v0*sympy.log(w[0]/(Is)+1)
@@ -267,15 +267,20 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
                      'type': 'dissipative',
                      'ctrl': '?',
                      'link': None}
-        # edge 
+        # edge
         edge_gmin = (N1, iN2, data_gmin)
 
         # init component
-        NonLinearDissipative.__init__(self, label, [edge_diode, edge_resistor, edge_gmin],
-                                      w, [zd_fctrl, z_fctrl, zgmin_fctrl], **kwargs)
+        PHSDissipativeNonLinear.__init__(self, label,
+                                         [edge_diode,
+                                          edge_resistor,
+                                          edge_gmin],
+                                         w,
+                                         [zd_fctrl, z_fctrl, zgmin_fctrl],
+                                         **kwargs)
 
 
-class Bjt(NonLinearDissipative):
+class Bjt(PHSDissipativeNonLinear):
     """
     bipolar junction transistor of NPN type according to on Ebers-Moll model.
 
@@ -365,11 +370,11 @@ transistor#Ebers.E2.80.93Moll_model
                  (Nc, iNc, data_rc),
                  (Ne, iNe, data_re)]
         # init component
-        NonLinearDissipative.__init__(self, label, edges, wbjt + wR,
-                                      list(zbjt) + list(zR), **kwargs)
+        PHSDissipativeNonLinear.__init__(self, label, edges, wbjt + wR,
+                                         list(zbjt) + list(zR), **kwargs)
 
 
-class Triode(NonLinearDissipative):
+class Triode(PHSDissipativeNonLinear):
     """
     Usage
     -----
@@ -417,7 +422,7 @@ class Triode(NonLinearDissipative):
         pars = ['mu', 'Ex', 'Kg', 'Kp', 'Kvb', 'Vcp', 'Va', 'Rgk']
         mu, Ex, Kg, Kp, Kvb, Vcp, Va, Rgk = symbols(pars)
         # dissipation variable
-        vpk, vgk = symbols([nice_var_label("w", label+el)
+        vpk, vgk = symbols([nicevarlabel("w", label+el)
                             for el in ['pk', 'gk']])
         w = [vpk, vgk]
 
@@ -462,5 +467,5 @@ class Triode(NonLinearDissipative):
         edges = [edge_pk, edge_gk]
 
         # init component
-        NonLinearDissipative.__init__(self, label, nodes_labels, subs,
-                                      pars, [w], [z], edges)
+        PHSDissipativeNonLinear.__init__(self, label, nodes_labels, subs,
+                                         pars, [w], [z], edges)

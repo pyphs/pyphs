@@ -12,10 +12,110 @@ from pyphs.cpp.tools import matrix_type, dereference, indent
 import sympy
 
 
-def _str_mat_func_def(method, name):
+def append_funcs(nums, files, objlabel):
+    _append_funcs_defs(nums, files)
+    _append_funcs_get(nums, files, objlabel)
+    _append_funcs_get_vector(nums, files, objlabel)
+    _append_funcs_updates(nums, files, objlabel)
+    _append_funcs_data(nums, files, objlabel)
+    _append_funcs_init(nums, files, objlabel)
+
+
+###############################################################################
+# DEFs
+
+def _append_funcs_defs(nums, files):
+    title = "\n\n// Functions Results Definitions\n"
+    files['h']['private'] += title
+    for name in nums.method.funcs_names:
+        attr = getattr(nums, name)()
+        if len(attr.shape) > 0:
+            mat = sympy.Matrix(getattr(nums.method, name + '_expr'))
+            mtype = matrix_type(mat.shape[0], mat.shape[1])
+            files['h']['private'] += '\n%s _%s;' % (mtype, name)
+        else:
+            files['h']['private'] += '\ndouble _%s;' % name
+
+
+###############################################################################
+# GET
+
+def _append_funcs_get(nums, files, objlabel):
+    title = "\n\n// Functions Results Accessors\n"
+    files['h']['public'] += title
+    files['cpp']['public'] += title
+    for name in nums.method.funcs_names:
+        attr = getattr(nums, name)()
+        if len(attr.shape) > 0:
+            h, cpp = _str_mat_func_get(nums.method, name, objlabel)
+#            if len(attr.shape) == 1:
+#                getvec = _str_mat_func_get_vector(nums.method, name, objlabel)
+#                h += getvec[0]
+#                cpp += getvec[1]
+        else:
+            h, cpp = _str_scal_func_get(nums.method, name, objlabel)
+        files['h']['public'] += h
+        files['cpp']['public'] += cpp
+
+
+def _append_funcs_get_vector(nums, files, objlabel):
+    title = "\n\n// Functions Results Accessors\n"
+    files['h']['public'] += title
+    files['cpp']['public'] += title
+    for name in nums.method.funcs_names:
+        attr = getattr(nums, name)()
+        if len(attr.shape) == 1:
+            getvec = _str_mat_func_get_vector(nums.method, name, objlabel)
+            h = getvec[0]
+            cpp = getvec[1]
+            files['h']['public'] += h
+            files['cpp']['public'] += cpp
+
+
+def _str_mat_func_get(method, name, objlabel):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
     mtype = matrix_type(mat.shape[0], mat.shape[1])
-    return '\n%s _%s;' % (mtype, name)
+    get_h = '\n%s %s() const;' % (mtype, name)
+    get_cpp = '\n%s %s::%s() const {\n    return _%s;\n}' % (mtype, objlabel,
+                                                             name, name)
+    return get_h, get_cpp
+
+
+def _str_scal_func_get(name, objlabel):
+    get_h = '\ndouble %s();' % name
+    get_cpp = '\ndouble %s::%s() const {\n    return _%s;\n}' % (objlabel,
+                                                                 name, name)
+    return get_h, get_cpp
+
+
+def _str_mat_func_get_vector(method, name, objlabel):
+    mat = sympy.Matrix(getattr(method, name + '_expr'))
+    mtype = 'vector<double>'
+    get_h = '\n%s %s_vector() const;' % (mtype, name)
+    get_cpp = '\n%s %s::%s_vector() const {' % (mtype, objlabel, name)
+    dim = mat.shape[0]
+    get_cpp += indent("\nvector<double> v = vector<double>(%i);" % dim)
+    for i in range(dim):
+        get_cpp += indent("\nv[%i] = _%s(%i, 0);" % (i, name, i))
+    get_cpp += indent("\nreturn v;")+"\n}"
+    return get_h, get_cpp
+
+
+###############################################################################
+# Updates
+
+def _append_funcs_updates(nums, files, objlabel):
+    title = "\n\n// Functions Results Updates\n"
+    files['h']['private'] += title
+    files['cpp']['private'] += title
+    for name in nums.method.funcs_names:
+        attr = getattr(nums, name)()
+        if len(attr.shape) > 0:
+            h, cpp = _str_mat_func_update(nums.method, name, objlabel)
+        else:
+            h, cpp = _str_scal_func_update(nums.method, name, objlabel)
+        files['h']['private'] += h
+        files['cpp']['private'] += cpp
 
 
 def _str_mat_func_update(method, name, objlabel):
@@ -33,71 +133,6 @@ def _str_mat_func_update(method, name, objlabel):
     return update_h, update_cpp
 
 
-def _str_mat_func_get(method, name, objlabel):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
-    mtype = matrix_type(mat.shape[0], mat.shape[1])
-    get_h = '\n%s %s() const;' % (mtype, name)
-    get_cpp = '\n%s %s::%s() const {\n    return _%s;\n}' % (mtype, objlabel,
-                                                             name, name)
-    return get_h, get_cpp
-
-
-def _str_mat_func_get_vector(method, name, objlabel):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
-    mtype = 'vector(double)'
-    get_h = '\n%s %s();' % (mtype, name)
-    get_cpp = '\n%s %s::%s() const {' % (mtype, objlabel, name)
-    dim = mat.shape[0]
-    get_cpp += indent("\nvector<double> v = vector<double>(%i);" % dim)
-    for i in range(dim):
-        get_cpp += indent("\nv[%i] = %s(%i, 1);" % (name, i))
-    get_cpp += indent("\nreturn v;")+"\n}"
-    return get_h, get_cpp
-
-
-def _str_mat_func_init_data(method, name):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
-    init_data = '\ndouble %s_data[] = {' % name
-    for n in range(mat.shape[1]):
-        for m in range(mat.shape[0]):
-            expr = mat[m, n]
-            symbs = expr.free_symbols
-            if any(symb in method.args for symb in symbs):
-                init_data += "0, "
-            else:
-                c = ccode(expr, dereference=dereference(method))
-                init_data += '%s, ' % c
-    init_data = '%s};' % init_data[:-2]
-    return init_data
-
-
-def _str_mat_func_init_cpp(method, name):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
-    mtype = matrix_type(mat.shape[0], mat.shape[1])
-    return '\n_%s = Map<%s> (%s_data);' % (name, mtype, name)
-
-
-def _append_mat_funcs(method, files, objlabel, names):
-    defs, udhs, udcpps, icpps, datas, ghs, gcpps = ["", ]*7
-    for name in names:
-        def_ = _str_mat_func_def(method, name)
-        defs += def_
-        update_h, update_cpp = _str_mat_func_update(method, name, objlabel)
-        udhs += update_h
-        udcpps += update_cpp
-        get_h, get_cpp = _str_mat_func_get(method, name, objlabel)
-        ghs += get_h
-        gcpps += get_cpp
-        init_data = _str_mat_func_init_data(method, name)
-        datas += init_data
-    files['h'] += defs + ghs + udhs + datas
-    files['cpp'] += gcpps + udcpps + icpps
-
-
-def _str_scal_func_def(name):
-    return '\ndouble _%s;' % name
-
-
 def _str_scal_func_update(method, name, objlabel):
     expr = getattr(method, name + '_expr')
     update_h = '\nvoid %s_update();' % name
@@ -110,9 +145,45 @@ def _str_scal_func_update(method, name, objlabel):
     return update_h, update_cpp
 
 
+###############################################################################
+# DATA
+
+def _append_funcs_data(nums, files, objlabel):
+    title = "\n\n// Functions Results Initialisation Data"
+    files['cpp']['data'] += title
+    for name in nums.method.funcs_names:
+        attr = getattr(nums, name)()
+        if len(attr.shape) > 0:
+            h = _str_mat_func_init_data(nums.method, name)
+        else:
+            h = _str_scal_func_init_data(nums.method, name)
+        files['cpp']['data'] += '\n' + h
+
+
+def _str_mat_func_init_data(method, name):
+    mat = sympy.Matrix(getattr(method, name + '_expr'))
+    init_data = 'double %s_data[] = {' % name
+    crop = False
+    for n in range(mat.shape[1]):
+        for m in range(mat.shape[0]):
+            expr = mat[m, n]
+            symbs = expr.free_symbols
+            if any(symb in method.args for symb in symbs):
+                init_data += "0, "
+                crop = True
+            else:
+                c = ccode(expr, dereference=dereference(method))
+                init_data += '%s, ' % c
+                crop = True
+    if crop:
+        init_data = init_data[:-2]
+    init_data += '};'
+    return init_data
+
+
 def _str_scal_func_init_data(method, name):
     expr = getattr(method, name + '_expr')
-    init_data = '\ndouble %s_data = ' % name
+    init_data = 'double %s_data = ' % name
     symbs = expr.free_symbols
     if any(symb in method.args for symb in symbs):
         init_data += "0.;"
@@ -122,42 +193,26 @@ def _str_scal_func_init_data(method, name):
     return init_data
 
 
-def _str_scal_func_init_cpp(name):
-    return '\n_%s = %s_data;' % (name, name)
+###############################################################################
+# INIT
 
-
-def _str_scal_func_get(name, objlabel):
-    get_h = '\ndouble %s();' % name
-    get_cpp = '\ndouble %s::%s() const {\n    return _%s;\n}' % (objlabel,
-                                                                 name, name)
-    return get_h, get_cpp
-
-
-def _append_scal_funcs(method, files, objlabel, names):
-    defs, udhs, udcpps, icpps, datas = ["", ]*5
-    for name in names:
-        def_ = _str_scal_func_def(name)
-        defs += def_
-        update_h, update_cpp = _str_scal_func_update(method, name, objlabel)
-        udhs += update_h
-        udcpps += update_cpp
-        get_h, get_cpp = _str_scal_func_get(name, objlabel)
-        udhs += get_h
-        udcpps += get_cpp
-        init_data = _str_scal_func_init_data(method, name)
-        datas += init_data
-    files['h'] += defs + udhs + datas
-    files['cpp'] += udcpps + icpps
-
-
-def append_funcs(nums, files, objlabel):
-    scal_funcs_names = []
-    mat_funcs_names = []
+def _append_funcs_init(nums, files, objlabel):
+    title = "\n\n// Functions Results Initialisation\n"
+    files['cpp']['init'] += title
     for name in nums.method.funcs_names:
         attr = getattr(nums, name)()
         if len(attr.shape) > 0:
-            mat_funcs_names.append(name)
+            cpp = _str_mat_func_init_cpp(nums.method, name)
         else:
-            scal_funcs_names.append(name)
-    _append_scal_funcs(nums.method, files, objlabel, scal_funcs_names)
-    _append_mat_funcs(nums.method, files, objlabel, mat_funcs_names)
+            cpp = _str_scal_func_init_cpp(nums.method, name)
+        files['cpp']['init'] += cpp
+
+
+def _str_mat_func_init_cpp(method, name):
+    mat = sympy.Matrix(getattr(method, name + '_expr'))
+    mtype = matrix_type(mat.shape[0], mat.shape[1])
+    return '\n_%s = Map<%s> (%s_data);' % (name, mtype, name)
+
+
+def _str_scal_func_init_cpp(name):
+    return '\n_%s = %s_data;' % (name, name)

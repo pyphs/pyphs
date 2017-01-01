@@ -197,10 +197,7 @@ class PHSNumericalMethodStandard(PHSNumericalMethod):
                                 'step_impfunc')
         list_ = []
         if self.core.dims.l() > 0:
-            list_ = []
             list_.append(('vl', 'ud_vl'))
-            self.set_execaction(list_)
-
         list_.append('dxH')
         list_.append('z')
         list_.append('y')

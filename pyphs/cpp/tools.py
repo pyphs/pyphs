@@ -51,11 +51,6 @@ def name2dim(name):
     return parser[name]
 
 
-def include_Eigen():
-    from pyphs.config import eigen_path
-    return '#include <' + eigen_path + '/Eigen/Dense>'
-
-
 def str_matblk(mat_name, blck_name, blck_dims, blck_pos):
     string_h = "\ndouble * ptr_" + blck_name + " = "
     str_dims = "<" + str(blck_dims[0]) + ', ' + str(blck_dims[1]) + ">"

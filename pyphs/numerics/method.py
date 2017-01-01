@@ -90,7 +90,7 @@ class PHSNumericalMethod:
 
         self.setfunc('dxH', self.core.dxHd)
         self.setfunc('Q', self.core.Q)
-        opdot1 = self.operation('dot', ('dxl', 0.5))
+        opdot1 = self.operation('prod', ('dxl', 0.5))
         opadd = self.operation('add', ('xl', opdot1))
         op = self.operation('dot', ('Q', opadd))
         self.setoperation('dxHl', op)

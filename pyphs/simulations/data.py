@@ -137,7 +137,7 @@ class PHSData:
             yield x + dx + w + u + p
 
     def dtx(self, ind=None, imin=None, imax=None, decim=None):
-        for dtx in self.dx(postprocess=self.dxtodtx, ind=ind, imin=imin, 
+        for dtx in self.dx(postprocess=self.dxtodtx, ind=ind, imin=imin,
                            imax=imax, decim=decim):
             yield dtx
 
@@ -168,7 +168,7 @@ class PHSData:
                    'imax': opts['imax'] if imax is None else imax,
                    'decim': opts['decim'] if decim is None else decim}
 
-        path = self.config['path']
+        path = self.config['path'] + os.sep + 'data'
         filename = path + os.sep + name.lower() + '.txt'
         generator = data_generator(filename, ind=ind, postprocess=postprocess,
                                    **options)
@@ -214,11 +214,11 @@ class PHSData:
                 isinstance(x0[0], (float, int)), 'x0 not understood, got \
     {0!s}'.format(x0)
         # write input sequence
-        write_data(self.config['path'], sequ, 'u')
+        write_data(self.config['path']+os.sep+'data', sequ, 'u')
         # write parameters sequence
-        write_data(self.config['path'], seqp, 'p')
+        write_data(self.config['path']+os.sep+'data', seqp, 'p')
         # write initial state
-        write_data(self.config['path'], [x0, ], 'x0')
+        write_data(self.config['path']+os.sep+'data', [x0, ], 'x0')
 
         self.config['nt'] = nt
 

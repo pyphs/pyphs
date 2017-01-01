@@ -25,4 +25,5 @@ __all__ = ['__version__', '__copyright__', '__author__', '__licence__',
            'signalgenerator', 'PHSNetlistGUI', 'PHSNumericalMethodStandard',
            'PHSNumericalOperation', 'PHSNumericalMethod', 'PHSNumericalCore',
            'PHSNumericalEval',
-           'core2tex', 'netlist2tex', 'graphplot2tex', 'document']
+           'core2tex', 'netlist2tex', 'graphplot2tex', 'document',
+           'numcore2cpp', 'simu2cpp']

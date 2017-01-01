@@ -130,6 +130,8 @@ standard_simulations = {'load_options': {'decim': 1, 'imin': 0, 'imax': None},
                         'method': 'standard',
                         'maxit': 100,
                         'split': False,
-                        'fs': None}
+                        'fs': None,
+                        'eigen_path': eigen_path,
+                        'cpp_build_and_run_script': None}
 
 standard_global = standard_simulations

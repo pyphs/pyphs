@@ -10,20 +10,19 @@ from pyphs.misc.date import get_date
 def str_preamble(label):
 
     licence_text = """/*
-    Copyright or © or Copr. Project-Team S3 (Sound Signals and \
+    Copyright or (c) or Copr. Project-Team S3 (Sound Signals and \
 Systems) and
     Analysis/Synthesis team, Laboratory of Sciences and Technologies of Music \
 and
     Sound (UMR 9912), IRCAM-CNRS-UPMC, 1 place Igor Stravinsky, F-75004 Paris
-    * contributors : Antoine Falaize, Thomas Hélie,
+    * contributors : Antoine Falaize, Thomas Helie,
     * corresponding contributor: antoine.falaize@ircam.fr
     * date: 2016/12/31 12:47:34
 
-    This software (pypHs) is a computer program whose purpose is to generate \
+    This has been geerated by PyPHS which purpose is to generate \
 C++
     code for the simulation of multiphysics system described by graph \
 structures.
-    It is composed of a library (pypHs.py) and a dictionnary (Dictionnary.py)
 
     This software is governed by the CeCILL-B license under French law and
     abiding by the rules of distribution of free software.  You can  use,
@@ -53,7 +52,7 @@ liability.
 
     Created on 2016/12/31 12:47:34
 
-    @author: Antoine Falaize
+    author: Antoine Falaize
 
 
 ===========================================================================

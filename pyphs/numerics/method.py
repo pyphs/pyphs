@@ -66,17 +66,13 @@ class PHSNumericalMethod:
 
         self.setarg('x', self.core.x)
         self.setarg('xl', self.core.x[:self.core.dims.xl()])
-        self.setarg('xnl', self.core.x[self.core.dims.xl():])
 
         self.setarg('dx', self.core.dx())
-        self.setarg('dxl', self.core.dx()[:self.core.dims.xl()])
-        self.setarg('dxnl', self.core.dx()[self.core.dims.xl():])
 
         self.setarg('w', self.core.w)
-        self.setarg('wl', self.core.w[:self.core.dims.wl()])
-        self.setarg('wnl', self.core.w[self.core.dims.wl():])
 
         self.setarg('u', self.core.u)
+
         self.setarg('p', self.core.p)
 
         self.setarg('vl',
@@ -89,22 +85,10 @@ class PHSNumericalMethod:
     def init_funcs(self):
 
         self.setfunc('dxH', self.core.dxHd)
-        self.setfunc('Q', self.core.Q)
-        opdot1 = self.operation('prod', ('dxl', 0.5))
-        opadd = self.operation('add', ('xl', opdot1))
-        op = self.operation('dot', ('Q', opadd))
-        self.setoperation('dxHl', op)
-        self.setfunc('dxHnl', self.core.dxHd[self.core.dims.xl():])
 
         self.setfunc('z', self.core.z)
-        self.setfunc('zl', self.core.z[:self.core.dims.wl()])
-        self.setfunc('znl', self.core.z[self.core.dims.wl():])
 
         self.setfunc('y', self.core.outputd)
-
-        self.setfunc('fl',
-                     self.core.dxHd[:self.core.dims.xl()] +
-                     self.core.z[:self.core.dims.wl()])
 
         self.setfunc('fnl',
                      self.core.dxHd[self.core.dims.xl():] +
@@ -119,8 +103,6 @@ class PHSNumericalMethod:
         self.setfunc('Inl', temp)
 
     def init_struc(self):
-
-        self.setfunc('M', self.core.M)
 
         # Build iDl
         temp1 = sp.diag(sp.eye(self.core.dims.xl())*self.fs,
@@ -172,17 +154,6 @@ class PHSNumericalMethod:
         temp_2 = sp.Matrix.hstack(self.core.Mwnly())
         temp = sp.Matrix.vstack(temp_1, temp_2)
         self.setfunc('barNnly', temp)
-
-        # Build Nyl
-        temp = sp.Matrix.hstack(self.core.Myxl(), self.core.Mywl())
-        self.setfunc('Nyl', temp)
-
-        # Build Nynl
-        temp = sp.Matrix.hstack(self.core.Myxnl(), self.core.Mywnl())
-        self.setfunc('Nynl', temp)
-
-        # Build Nynl
-        self.setfunc('Nyy', self.core.Myy())
 
     def get(self, name):
         "Return expression, arguments, indices, substitutions and symbol."

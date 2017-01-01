@@ -6,8 +6,8 @@ Created on Tue Jun 28 14:31:08 2016
 """
 
 from pyphs.cpp.numcore2cpp import numcore2cpp
-from tools import indent
-from preamble import str_preamble
+from .tools import indent
+from .preamble import str_preamble
 import os
 
 
@@ -21,7 +21,8 @@ def simu2cpp(simu, objlabel=None):
                 eigen_path=simu.config['eigen_path'])
     filename = path + os.sep + 'main.cpp'
     _file = open(filename, 'w')
-    _file.write(main(simu, objlabel))
+    string = main(simu, objlabel)
+    _file.write(string)
     _file.close()
 
 

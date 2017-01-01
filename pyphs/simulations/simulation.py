@@ -118,7 +118,7 @@ class PHSSimulation:
         seq_u = data.u()
         seq_p = data.p()
 
-        files = open_files(self.config['path'],
+        files = open_files(self.config['path'] + os.sep + 'data',
                            self.config['files_to_save'])
 
         if self.config['progressbar']:
@@ -164,8 +164,12 @@ class PHSSimulation:
                 self.config['cpp_build_and_run_script'].replace('pyphs_path',
                                                       self.config['path'])
             # exec Build and Run script
-            p = subprocess.Popen(script, shell=True,
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.STDOUT)
-            for line in iter(p.stdout.readline, ''):
-                print(line),
+            system_call(script)
+
+
+def system_call(cmd):
+    p = subprocess.Popen(cmd, shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    for line in iter(p.stdout.readline, b''):
+        print(line.decode()),

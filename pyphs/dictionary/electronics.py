@@ -58,6 +58,11 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         kwargs.update({'ctrl': ctrl})
         PHSPort.__init__(self, label, nodes, **kwargs)
 
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'type': 'voltage'}}
+
 
 class Capacitor(PHSStorageLinear):
     """
@@ -84,6 +89,10 @@ class Capacitor(PHSStorageLinear):
                   'inv_coeff': True,
                   'ctrl': 'f'}
         PHSStorageLinear.__init__(self, label, nodes, **kwargs)
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'C': ('Csymbol', 1e-9)}}
 
 
 class Inductor(PHSStorageLinear):
@@ -111,6 +120,10 @@ class Inductor(PHSStorageLinear):
                   'inv_coeff': True,
                   'ctrl': 'e'}
         PHSStorageLinear.__init__(self, label, nodes, **kwargs)
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'L': ('Lsymbol', 1e-3)}}
 
 
 class Resistor(PHSDissipativeLinear):
@@ -136,6 +149,10 @@ class Resistor(PHSDissipativeLinear):
         else:
             coeff = kwargs['R']
         PHSDissipativeLinear.__init__(self, label, nodes, coeff=coeff)
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'R': ('Rsymbol', 1e3)}}
 
 
 class Potentiometer(PHSDissipativeNonLinear):
@@ -196,6 +213,12 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         PHSDissipativeNonLinear.__init__(self, label,
                                          [edge_1, edge_2],
                                          w, z, **kwargs)
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2', 'N3'),
+                'arguments': {'R': ('R', 1e-9),
+                              'alpha': 'alpha',
+                              'expo': ('expo', 1)}}
 
 
 class Diode(PHSDissipativeNonLinear):
@@ -219,6 +242,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
          * 'Is': saturation current (A)
          * 'v0': quality factor (V)
          * 'R': connectors resistance (Ohms)
+         * 'mu': quality factor (d.u.)
     """
     def __init__(self, label, nodes, **kwargs):
         kwargs.update({'gmin': ('gmin', GMIN)})
@@ -278,6 +302,14 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
                                          w,
                                          [zd_fctrl, z_fctrl, zgmin_fctrl],
                                          **kwargs)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'Is': ('Is', 2e-09),
+                              'R': ('Rd', 0.5),
+                              'v0': ('v0', 26e-3),
+                              'mu': ('mu', 1.7)}}
 
 
 class Bjt(PHSDissipativeNonLinear):
@@ -373,6 +405,17 @@ transistor#Ebers.E2.80.93Moll_model
         PHSDissipativeNonLinear.__init__(self, label, edges, wbjt + wR,
                                          list(zbjt) + list(zR), **kwargs)
 
+    @staticmethod
+    def metadata():
+        return {'nodes': ('Nb', 'Nc', 'Ne'),
+                'arguments': {'Is': ('Is', 2.39e-14),
+                              'betaR': ('betaR', 7.946),
+                              'betaF': ('betaF', 294.3),
+                              'mu': ('mu', 1.006),
+                              'Vt': ('Vt', 26e-3),
+                              'Rb': ('Rb', 1.),
+                              'Rc': ('Rc', 0.85),
+                              'Re': ('Re', 0.4683)}}
 
 class Triode(PHSDissipativeNonLinear):
     """
@@ -469,3 +512,15 @@ class Triode(PHSDissipativeNonLinear):
         # init component
         PHSDissipativeNonLinear.__init__(self, label, nodes_labels, subs,
                                          pars, [w], [z], edges)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('Nk', 'Np', 'Ng'),
+                'arguments': {'mu': ('mu', 88.),
+                              'Ex': ('Ex', 1.4),
+                              'Kg': ('Kg', 1060.),
+                              'Kp': ('Kp', 600.),
+                              'Kvb': ('Kvb', 300.),
+                              'Vcp': ('Vcp', 0.5),
+                              'Va': ('Va', 0.33),
+                              'Rgk': ('Rgk', 3000.)}}

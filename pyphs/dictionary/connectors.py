@@ -8,6 +8,8 @@ from __future__ import absolute_import, division, print_function
 
 from .edges.connectors import PHSConnector
 
+__all__ = ['Gyrator', 'Transformer']
+
 
 class Gyrator(PHSConnector):
     """
@@ -17,6 +19,11 @@ class Gyrator(PHSConnector):
         kwargs.update({'connector_type': 'gyrator'})
         PHSConnector.__init__(self, label, nodes, **kwargs)
 
+    @staticmethod
+    def metadata():
+        return {'nodes': ('A1', 'A2', 'B1', 'B2'),
+                'arguments': {'alpha': ('alpha', 2.)}}
+
 
 class Transformer(PHSConnector):
     """
@@ -25,3 +32,8 @@ class Transformer(PHSConnector):
     def __init__(self, label, nodes, **kwargs):
         kwargs.update({'connector_type': 'transformer'})
         PHSConnector.__init__(self, label, nodes, **kwargs)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('A1', 'A2', 'B1', 'B2'),
+                'arguments': {'alpha': ('alpha', 2.)}}

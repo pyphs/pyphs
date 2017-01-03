@@ -43,7 +43,7 @@ class PHSConnector(PHSGraph):
                       'link': str(y2)}
         edge2_data = {'type': 'connector',
                       'connector_type': connector_type,
-                      'alpha': alpha,
+                      'alpha': None,
                       'ctrl': '?',
                       'label': str(y2),
                       'link': str(y1)}

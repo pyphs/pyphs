@@ -6,8 +6,9 @@ from .core.core import PHSCore
 from .phsobject import PHSObject
 from .graphs.graph import PHSGraph
 from .graphs.netlists import PHSNetlist
-from .numerics import (PHSNumericalMethod, PHSNumericalCore, PHSNumericalEval,
-                       PHSNumericalOperation, PHSNumericalMethodStandard)
+from .numerics import (PHSNumericalMethod, PHSNumericalCore,
+                            PHSNumericalEval, PHSNumericalOperation,
+                            PHSNumericalMethodStandard)
 from .simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
 from .GUI import PHSNetlistGUI

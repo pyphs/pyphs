@@ -54,14 +54,16 @@ class GraphAnalysis:
                 self.set_edge_ec(e)
             # check if flux-controlled
             elif e_data['ctrl'] is 'f':
-                # move edge at the end of edge list
-                self.set_edge_fc(e)
                 if self.lambd[:, e].sum() == 1:
                     # edge 'e' imposes the potential on that node
                     # get node index
                     n = list(numpy.array(self.lambd)[:, e]).index(1)
                     # set node 'n' as determinate
                     self.set_node_dc((n, e))
+                else:
+                    # move edge at the end of edge list
+                    self.set_edge_fc(e)
+
             else:
                 i += 1
 
@@ -97,10 +99,6 @@ class GraphAnalysis:
             if self.lambd[:, e].sum() == 0:
                 # moves edge at the begining of edge list, sets Lambda to 0
                 self.set_edge_ec(e)
-                # test for connector
-                if self.get_edge_data(e, 'type') is 'connector':
-                    # link realizability of the other edge of the connector
-                    self.link_connector(e, 'e')
             else:
                 i += 1
 
@@ -124,10 +122,6 @@ class GraphAnalysis:
 edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
                 # move to 'determinate nodes' and set edge as flux-controlled
                 self.set_node_dc((n, e))
-                # test for connector
-                if self.get_edge_data(e, 'type') is 'connector':
-                    # link realizability of the other edge of the connector
-                    self.link_connector(e, 'f')
 
     def perform(self):
         # init memory of lambda to: check for change or stop while loop
@@ -137,16 +131,41 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
             # loop while Lambda is changed
             while ((not isequal(lambd_temp, self.lambd)) &
                    (len(self.ic_edges) + len(self.ic_nodes) > 0)):
+                if self._verbose:
+                    print('###################################\nLoop Start\n')
+                    print('edges', self.get_edges_data('label'))
+                    print('nodes', self.nodes)
+                    print(self.lambd)
+                    pause()
                 # save Lambda for comparison in while condition
                 lambd_temp = numpy.matrix(self.lambd, copy=True)
-                # iterate on flux-controlled edges
-                self.iterate_fc()
-                # iterate on indeterminate edges
-                self.iterate_ic()
                 # iterate on indeterminate nodes
                 self.iterate_nodes()
+                if self._verbose:
+                    print('#################################\niterate_nodes\n')
+                    print('edges', self.get_edges_data('label'))
+                    print('nodes', self.nodes)
+                    print(self.lambd)
+                    pause()
+                # iterate on flux-controlled edges
+                self.iterate_fc()
+                if self._verbose:
+                    print('###################################\niterate_fc\n')
+                    print('edges', self.get_edges_data('label'))
+                    print('nodes', self.nodes)
+                    print(self.lambd)
+                    pause()
+                # iterate on indeterminate edges
+                self.iterate_ic()
+                if self._verbose:
+                    print('###################################\niterate_ic\n')
+                    print('edges', self.get_edges_data('label'))
+                    print('nodes', self.nodes)
+                    print(self.lambd)
+                    pause()
                 # if locked, perform unlock
-                if isequal(lambd_temp, self.lambd):
+                if isequal(lambd_temp, self.lambd) & \
+                        (len(self.ic_edges) + len(self.ic_nodes) > 0):
                     self.unlock()
         print('\n*** Realizability analysis succeed ***\n')
 
@@ -225,6 +244,8 @@ effort-controlled (0 in lambda).
         """
         move an edge from indeterminate to e_ctrl, and set self.lambd to 0
         """
+        # get edge label
+        e_label = self.get_edge_data(e, 'label')
         if self._verbose:
             print('set_edge_ec', self.get_edge_data(e, 'label'))
         # move new effort-controlled edges at the top of edges list
@@ -243,6 +264,11 @@ effort-controlled (0 in lambda).
             self.fc_edges = []
         # set corresponding Lambda elements to 0
         self.lambd[:, 0] = 0
+        # test for connector
+        new_e = self.get_edges_data('label').index(e_label)
+        if self.get_edge_data(new_e, 'type') is 'connector':
+            # link realizability of the other edge of the connector
+            self.link_connector(new_e, 'e')
         if self._verbose:
             print('edges', self.get_edges_data('label'))
             print('nodes', self.nodes)
@@ -256,6 +282,8 @@ controlled node from node list
         """
         if self._verbose:
             print('set_edge_fc', self.get_edge_data(e, 'label'))
+        # get edge label
+        e_label = self.get_edge_data(e, 'label')
         # move new flux-controlled edges at the end of edges list
         self.move_edge(e, self.ne-1)
         # initial length of edges lists with ne = nec + nfc + len(phs.ic_edges)
@@ -266,6 +294,11 @@ controlled node from node list
         self.ec_edges = indices[:nec]
         self.ic_edges = indices[nec:-(nfc+1)]
         self.fc_edges = indices[-(nfc+1):]
+        # test for connector
+        new_e = self.get_edges_data('label').index(e_label)
+        if self.get_edge_data(new_e, 'type') is 'connector':
+            # link realizability of the other edge of the connector
+            self.link_connector(new_e, 'f')
         if self._verbose:
             print('edges', self.get_edges_data('label'))
             print('nodes', self.nodes)
@@ -321,13 +354,14 @@ and the realizability of linked edge is chosen based on the connector type \
         link_e = self.get_edges_data('link').index(e_label)
         # get linked edge index
         link_e_label = self.get_edge_data(link_e, 'label')
+        if self._verbose:
+            print('link', e_label, self.get_edge_data(e, 'connector_type'),
+                  ctrl, link_e_label)
         # get connector
         if ctrl is 'e':
-            # inverse connector coefficient
-            self.edges[e][2]['alpha'] = self.edges[e][2]['alpha']**-1
-            self.edges[link_e][2]['alpha'] = self.edges[link_e][2]['alpha']**-1
             # gyrator case
             if self.get_edge_data(e, 'connector_type') == 'gyrator':
+                self.inverse_alpha(e)
                 # assert linked edge is not flux controlled
                 assert link_e not in self.fc_edges,\
                     'connector edges {0!s} and {1!s} are not \
@@ -338,6 +372,7 @@ compatible'.format(e_label, link_e_label)
                     self.set_edge_ec(link_e)
             # transformer case
             elif self.get_edge_data(e, 'connector_type') == 'transformer':
+                self.inverse_alpha(e)
                 # assert linked edge is not effort controlled
                 assert link_e not in self.ec_edges,\
                     'connector edges {0!s} and {1!s} are not \
@@ -368,3 +403,14 @@ compatible'.format(e_label, link_e_label)
                 if link_e in self.ic_edges:
                     # move edge at top of edge list and set Lambda to 0
                     self.set_edge_ec(link_e)
+        if self._verbose:
+            print('link', e_label, ctrl, link_e_label)
+            print('edges', self.get_edges_data('label'))
+            print('nodes', self.nodes)
+            print(self.lambd)
+            pause()
+
+    def inverse_alpha(self, e):
+        alpha = self.edges[e][2]['alpha']
+        if alpha is not None:
+            self.edges[e][2]['alpha'] = alpha**-1

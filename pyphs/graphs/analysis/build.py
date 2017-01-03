@@ -13,14 +13,16 @@ def buildCore(Graph):
     nec = len(Graph.Analysis.ec_edges)
     nfc = len(Graph.Analysis.fc_edges)
     # incidence matrix for the effort-controlled edges
-    gamma_ec = sympy.Matrix(Graph.Analysis.gamma[1:, :len(Graph.Analysis.ec_edges)])
+    gamma_ec = \
+        sympy.Matrix(Graph.Analysis.gamma[1:, :len(Graph.Analysis.ec_edges)])
     # incidence matrix for the flux-controlled edges
-    gamma_fc = sympy.Matrix(Graph.Analysis.gamma[1:, len(Graph.Analysis.ec_edges):])
+    gamma_fc = \
+        sympy.Matrix(Graph.Analysis.gamma[1:, len(Graph.Analysis.ec_edges):])
     # solve linear relations to get the port-Hamiltonian structure
     gamma = gamma_fc.inv() * gamma_ec
     # build J matrix
     Graph.Analysis.J = vstack(hstack(sympy.zeros(nec), gamma.T),
-                        hstack(-gamma, sympy.zeros(nfc)))
+                              hstack(-gamma, sympy.zeros(nfc)))
     _sort_edges(Graph.Analysis)
     _setCore(Graph)
 
@@ -61,10 +63,12 @@ according to the control type of each indeterminate edge
             label = Graph.Analysis.get_edge_data(e, 'label')
             indw = Graph.core.w.index(label)
             if e in Graph.Analysis.ec_edges:
-                Graph.core.z[indw] = Graph.Analysis.get_edge_data(e, 'z')['e_ctrl']
+                Graph.core.z[indw] = \
+                    Graph.Analysis.get_edge_data(e, 'z')['e_ctrl']
             else:
                 assert e in Graph.Analysis.fc_edges
-                Graph.core.z[indw] = Graph.Analysis.get_edge_data(e, 'z')['f_ctrl']
+                Graph.core.z[indw] = \
+                    Graph.Analysis.get_edge_data(e, 'z')['f_ctrl']
 
 
 def _setCore(Graph):
@@ -95,10 +99,12 @@ def _setCore(Graph):
     for e in Graph.Analysis.conn_edges:
         e_label = Graph.Analysis.get_edge_data(e, 'label')
         index_e_in_connector = Graph.core.cy.index(e_label)
+        alpha = Graph.Analysis.get_edge_data(e, 'alpha')
+        if alpha is not None:
+            Graph.core.connectors[index_e_in_connector]['alpha'] = alpha
         new_indices_connector.append(index_e_in_connector)
     Graph.core.cy = [Graph.core.cy[el] for el in new_indices_connector]
     Graph.core.cu = [Graph.core.cu[el] for el in new_indices_connector]
 
     _select_relations(Graph)
-
     Graph.core.M = Graph.Analysis.J

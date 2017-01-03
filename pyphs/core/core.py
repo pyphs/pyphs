@@ -92,7 +92,7 @@ class PHSCore:
     def __init__(self, label=None):
 
         # Self Attrs to copy
-        self.attrstocopy = {'label', '_exprs_built', 'subs'}
+        self.attrstocopy = {'label', '_exprs_built', 'subs', 'connectors'}
 
         # Init label
         self.label = label
@@ -381,9 +381,12 @@ dissipative variables w are no more accessible.
         nxwy = self.dims.x() + self.dims.w() + self.dims.y()
         switch_list = [connector['alpha'] * sympy.Matrix([[0, 1], [-1, 0]])
                        for connector in self.connectors]
+        print(switch_list)
         Mswitch = sympy.diag(*switch_list)
+        print(Mswitch)
         M = self.M
         G_connectors = sympy.Matrix(M[:nxwy, nxwy:])
+        print(G_connectors)
         J_connectors = G_connectors * Mswitch * G_connectors.T
         M = M[:nxwy, :nxwy] + J_connectors
         self.cy = []

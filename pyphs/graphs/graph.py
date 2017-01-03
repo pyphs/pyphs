@@ -40,9 +40,10 @@ port-Hamiltonian systems.
         self.Analysis = GraphAnalysis(self)
         self.Analysis.perform()
         buildCore(self)
-        self.core.apply_connectors()
-        self.core.build_exprs()
-        return self.core.__deepcopy__()
+        core = self.core.__deepcopy__()
+        core.apply_connectors()
+        core.build_exprs()
+        return core
 
     def build_from_netlist(self):
         """

@@ -8,7 +8,7 @@ Created on Sun Jun  5 08:50:42 2016
 from __future__ import absolute_import, division, print_function
 
 import os
-
+import ast
 from pyphs.config import datum
 
 
@@ -135,9 +135,36 @@ components).
         """
         return print_netlist_line(self[n])
 
-    def close(self):
-        print('Close netlist file: '+self.path)
-        self.file.close()
+    def setline(self, n, line):
+        """
+        set the netlist line 'n' whith provided dictionary
+        """
+        value = line['dictionary']
+        try:
+            value = ast.literal_eval(value)
+        except ValueError:
+            pass
+        self.dictionaries[n] = value
+
+        value = line['component']
+        try:
+            value = ast.literal_eval(value)
+        except ValueError:
+            pass
+        self.components[n] = value
+
+        value = line['label']
+        try:
+            value = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            pass
+        self.labels[n] = value
+
+        value = line['nodes']
+        self.nodes[n] = value
+
+        value = line['arguments']
+        self.arguments[n] = value
 
 
 def print_netlist_line(dic):

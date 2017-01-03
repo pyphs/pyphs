@@ -5,11 +5,13 @@ Created on Tue Dec 27 15:11:30 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
+
 from unittest import TestCase
 from pyphs import PHSNetlist
-from PHSNetlistTests import NetlistThieleSmallNL, target_netlist
-from PHSGraphTests import graph, target_edges, target_M
-from PHSLatexTest import TestCore2Tex
+from .PHSNetlistTests import NetlistThieleSmallNL, target_netlist
+from .PHSGraphTests import graph, target_edges, target_M
+from .PHSLatexTest import TestCore2Tex
 import numpy as np
 
 class TestPHSNetlistInit(TestCase):

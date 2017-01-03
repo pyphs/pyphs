@@ -17,7 +17,7 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.2_DEV'
+__version__ = '0.2.pre0'
 __author_email__ = 'antoine.falaize@gmail.com'
 
 __all__ = ['__version__', '__copyright__', '__author__', '__licence__',

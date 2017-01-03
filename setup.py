@@ -13,7 +13,7 @@ __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
 __author_email__ = 'antoine.falaize@gmail.com'
-__version__ = '0.2_DEV'
+__version__ = '0.2.pre0'
 
 
 ###############################################################################
@@ -40,7 +40,7 @@ setup(name='pyphs',
         'Programming Language :: Python :: 3.5',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: ' + __licence__,
-        'Topic :: Scientific/Engineering'
+        'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Physics'
       ],
       keywords='dynamical systems, numerical analysis, \

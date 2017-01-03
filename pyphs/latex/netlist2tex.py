@@ -31,12 +31,13 @@ parameters " + r"\\ \hline" + cr(1)
             latex_nodes = str(comp['nodes'])
             latex_args = r'$\left\{ ' + dic2array(comp['arguments']) +\
                 r'\right.$'
-            str_table = r'{} & {} & {}.{} & {} & {}'.format(latex_line,
-                                                            latex_label,
-                                                            latex_dic,
-                                                            latex_comp,
-                                                            latex_nodes,
-                                                            latex_args)
+            str_table = \
+                r'{0} & {1} & {2}.{3} & {4} & {5}'.format(latex_line,
+                                                          latex_label,
+                                                          latex_dic,
+                                                          latex_comp,
+                                                          latex_nodes,
+                                                          latex_args)
             str_netlist += str_table + cr(0) + r" \\" + cr(0)
         str_netlist += r"\hline" + cr(0)
         str_netlist += r"\end{tabular}" + cr(1)

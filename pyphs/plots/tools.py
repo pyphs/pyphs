@@ -178,3 +178,4 @@ standard = {'loc': 0,                                   # legend location
             'cmap': 'BuPu',  #  'inferno',  #'gnuplot2', # 'CMRmap',  # 'PuBu',
             'dpi': 100,									#
             }
+            

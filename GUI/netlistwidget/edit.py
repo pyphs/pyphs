@@ -22,7 +22,7 @@ import ast
 ###############################################################################
 
 
-class labelWidget(QLineEdit):
+class LabelWidget(QLineEdit):
     def __init__(self, label=None):
         QLineEdit.__init__(self)
         if label is None:
@@ -56,7 +56,7 @@ class EditDialog(QDialog):
                        'nodes': None}
         self.netline = netline
 
-        self.label = labelWidget(self.netline['label'])
+        self.label = LabelWidget(self.netline['label'])
 
         self.netlistQlabel = QLabel('', self)
 
@@ -231,7 +231,7 @@ class EditDialog(QDialog):
         self.update_grid()
 
     def widget_generator(self, label):
-        class mywidget(QWidget):
+        class MyWidget(QWidget):
             def __init__(self):
                 QWidget.__init__(self)
                 hbox = QHBoxLayout()
@@ -239,7 +239,7 @@ class EditDialog(QDialog):
                 self.qle = QLineEdit(self)
                 hbox.addWidget(self.qle)
                 self.setLayout(hbox)
-        return mywidget
+        return MyWidget
 
     def onchange_generator(self, target, index):
 

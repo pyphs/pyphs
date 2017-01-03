@@ -208,8 +208,11 @@ or tuple (str, float).
         Formated string that corresponds to a single line in the netlist \
         (includes end cariage return).
     """
-    component = '{}.{} {} {}:'.format(dic['dictionary'], dic['component'],
-                                      dic['label'], dic['nodes'])
+    
+    component = '{0}.{1} {2} {3}:'.format(dic['dictionary'], 
+                                          dic['component'],
+                                          dic['label'], 
+                                          dic['nodes'])
     pars = ""
     if dic['arguments'] is not None:
         for par in dic['arguments'].keys():

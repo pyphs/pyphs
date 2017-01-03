@@ -130,7 +130,8 @@ def decimate(it, nd=10):
         One in 'nd' values from 'it'.
 
     """
-    assert (isinstance(nd, int) and nd > 0), "'nd' is not an integer: {0!r}".format(nd)
+    assert isinstance(nd, int), "'nd' is not an integer: {0!r}".format(nd)
+    assert nd > 0, "'nd' is not a positive integer: {0!r}".format(nd)
     l = list()
     n = 0
     for el in it:

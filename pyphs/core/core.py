@@ -149,7 +149,7 @@ class PHSCore:
                 Mij1 = getattr(core1, 'M'+vari+varj)()
                 Mij2 = getattr(core2, 'M'+vari+varj)()
                 Mij = sympy.diag(Mij1, Mij2)
-                if all([dim > 0 for dim in Mij.shape]):
+                if all(dim > 0 for dim in Mij.shape):
                     set_func = getattr(core, 'set_M'+vari+varj)
                     set_func(Mij)
 
@@ -174,7 +174,7 @@ class PHSCore:
         for vari in core.dims.names:
             for varj in core.dims.names:
                 Mij = getattr(core, 'M'+vari+varj)()
-                if all([dim > 0 for dim in Mij.shape]):
+                if all(dim > 0 for dim in Mij.shape):
                     set_func = getattr(core1, 'set_M'+vari+varj)
                     set_func(Mij)
 
@@ -431,9 +431,9 @@ dissipative variables w are no more accessible.
         for name in self.symbs_names:
             attr = getattr(self, name)
             attr = list(attr)
-            for i in range(len(attr)):
+            for i, a in enumerate(attr):
                 try:
-                    attr[i] = attr[i].subs(subs)
+                    attr[i] = a.subs(subs)
                 except AttributeError:
                     pass
             setattr(self, name, attr)

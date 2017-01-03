@@ -34,7 +34,7 @@ def draw_nodes(graph, ax=None, pos=None, layout=None):
         if layout == 'spring':
             pos = nx.spring_layout(graph, iterations=200)
         elif layout == 'circular':
-            pos = nx.circular_layout(graph, iterations=200)
+            pos = nx.circular_layout(graph)
 
     nx.draw_networkx_nodes(graph, pos, ax=ax,
                            node_size=800, node_color='w', lw=2)

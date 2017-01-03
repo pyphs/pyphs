@@ -209,10 +209,11 @@ class PHSData:
         if x0 is None:
             x0 = [0, ]*self.core.dims.x()
         else:
-            assert isinstance(x0, list) and \
-                len(x0) == self.core.dims.x() and \
-                isinstance(x0[0], (float, int)), 'x0 not understood, got \
-    {0!s}'.format(x0)
+            assert isinstance(x0, list), \
+                'x0 not a list, got {0!s}'.format(x0)
+            assert len(x0) == self.core.dims.x(), 'len(x0) is len(x)'
+            assert isinstance(x0[0], (float, int)), \
+                'x0[0] not a number, got {0!s}'.format(type(x0[0]))
         # write input sequence
         write_data(self.config['path']+os.sep+'data', sequ, 'u')
         # write parameters sequence

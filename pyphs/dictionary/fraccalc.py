@@ -15,8 +15,9 @@ from pyphs.config import EPS
 from .edges import PHSDissipativeLinear, PHSStorageLinear
 from pyphs.dictionary.connectors import Transformer
 
-__all__ = ['Int_e']
-class Der_e(PHSGraph):
+__all__ = ['Fracinte']
+
+class Fracdere(PHSGraph):
     """ Fractional Effort Controlled springpot element
     usgae: FracDerEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles]
 
@@ -61,7 +62,7 @@ class Der_e(PHSGraph):
                                 alpha=diagRmu[n]**-1)
 
 
-class Der_f(PHSGraph):
+class Fracderf(PHSGraph):
     """ Fractional Flux Controlled storage element
     usgae: FracIntEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles, \
 (fmin, fmax)]
@@ -106,7 +107,7 @@ class Der_f(PHSGraph):
                                 alpha=diagRmu[n]**-1)
 
 
-def Int_e(PHSGraph):
+def Fracinte(PHSGraph):
     """
 Effort-controlled fractional integrator:
     f(s) = p * s^(-beta) * e(s)
@@ -166,7 +167,7 @@ DoPlot=False;)
                               'FreqsMinMax': (1, 48e3)}}
 
 
-class Int_f(PHSGraph):
+class Fracintf(PHSGraph):
     """ Fractional Flux Controlled storage element
     usgae: FracIntFluxCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles]
 

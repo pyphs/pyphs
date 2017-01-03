@@ -111,8 +111,7 @@ dimension, got dim(obj)=%s" % obj.shape
         assert hasattr(obj, '__len__'), "argument should be one dimensional, \
 got type(obj)=%s" % type(obj)
     obj = list(obj)
-    for i in range(len(obj)):
-        el = obj[i]
+    for i, el in enumerate(obj):
         if isinstance(el, (float, int)):
             el = sympy.sympify(el)
         _assert_expr(el)

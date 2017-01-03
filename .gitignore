@@ -1,4 +1,7 @@
 # For mac only.
+.nojekyll
+
+# For mac only.
 .DS_Store
 
 # Compiled python modules.
@@ -12,6 +15,7 @@
 
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
+/.eggs/
 
 # Spyder project settings
 .spyderproject

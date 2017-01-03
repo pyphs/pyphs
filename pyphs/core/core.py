@@ -436,7 +436,7 @@ dissipative variables w are no more accessible.
             for i in range(len(attr)):
                 try:
                     attr[i] = attr[i].subs(subs)
-                except:
+                except AttributeError:
                     pass
             setattr(self, name, attr)
         for name in self.exprs_names:
@@ -446,7 +446,7 @@ dissipative variables w are no more accessible.
                 for i, at in enumerate(attr):
                     try:
                         attr[i] = at.subs(subs)
-                    except:
+                    except AttributeError:
                         pass
             else:
                 attr = attr.subs(subs)

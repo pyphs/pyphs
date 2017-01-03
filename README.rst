@@ -1,6 +1,9 @@
 pyphs
 ======
-
+.. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/afalaize/pyphs/master
+   :alt: Code Health
+   
 `PyPHS <https://github.com/afalaize/pyphs/>`__, is a python software dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
 
 
@@ -33,9 +36,3 @@ Documentation
 -------------
 
 * See the `website <https://afalaize.github.io/pyphs/>`__. 
-
-Code Analysis
--------------
-.. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/afalaize/pyphs/master
-   :alt: Code Health

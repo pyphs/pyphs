@@ -12,9 +12,11 @@
 
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
+/.eggs
+
 
 # Spyder project settings
-.spyderproject
+/.spyderproject/
 # spyder project infos.
-.spyproject
+/.spyproject/
 

@@ -10,6 +10,10 @@ from .edges import (PHSPort,
                     PHSDissipativeLinear,
                     PHSStorageLinear, PHSStorageNonLinear)
 from pyphs.dictionary.tools import symbols
+from pyphs.graphs.netlists import datum
+
+
+__all__ = ['Source', 'Stiffness', 'Mass', 'Damper', 'Springcubic']
 
 
 class Source(PHSPort):
@@ -36,11 +40,16 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         type_ = type_.lower()
         assert type_ in ('force', 'velocity')
         if type_ == 'force':
-            ctrl = 'f'
-        elif type_ == 'velocity':
             ctrl = 'e'
+        elif type_ == 'velocity':
+            ctrl = 'f'
         kwargs.update({'ctrl': ctrl})
         PHSPort.__init__(self, label, nodes, **kwargs)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'type': 'force'}}
 
 
 class Stiffness(PHSStorageLinear):
@@ -66,8 +75,13 @@ class Stiffness(PHSStorageLinear):
         kwargs = {'name': par_name,
                   'value': par_val,
                   'inv_coeff': False,
-                  'ctrl': 'f'}
+                  'ctrl': 'e'}
         PHSStorageLinear.__init__(self, label, nodes, **kwargs)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'K': ('K', 1e3)}}
 
 
 class Mass(PHSStorageLinear):
@@ -93,8 +107,13 @@ class Mass(PHSStorageLinear):
         kwargs = {'name': par_name,
                   'value': par_val,
                   'inv_coeff': True,
-                  'ctrl': 'e'}
-        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
+                  'ctrl': 'f'}
+        PHSStorageLinear.__init__(self, label, (datum, nodes[0]), **kwargs)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('M'),
+                'arguments': {'M': ('M', 1e-2)}}
 
 
 class Damper(PHSDissipativeLinear):
@@ -120,7 +139,13 @@ class Damper(PHSDissipativeLinear):
             coeff = 0.
         else:
             coeff = kwargs['A']
-        PHSDissipativeLinear.__init__(self, label, nodes, coeff=coeff)
+        PHSDissipativeLinear.__init__(self, label, nodes, coeff=coeff,
+                                      inv_coeff=True)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'A': ('A', 1.)}}
 
 
 class Springcubic(PHSStorageNonLinear):
@@ -159,7 +184,7 @@ class Springcubic(PHSStorageNonLinear):
         # edge data
         data = {'label': x,
                 'type': 'storage',
-                'ctrl': 'f',
+                'ctrl': 'e',
                 'link': None}
 
         # edge
@@ -168,3 +193,9 @@ class Springcubic(PHSStorageNonLinear):
         # init component
         PHSStorageNonLinear.__init__(self, label, [edge],
                                      x, H, **kwargs)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {'K0': ('K0', 1e3),
+                              'K2': ('K2', 1e3)}}

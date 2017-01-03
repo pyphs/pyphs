@@ -254,7 +254,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         # dissipation variable
         w = symbols(["w"+label, "w"+label+"_R", "w"+label+"_gmin"])
         # dissipation funcion
-        zd_ectrl = Is*(sympy.exp(w[0]/(mu*v0))-1) + GMIN*w[0]
+        zd_ectrl = Is*(sympy.exp(w[0]/(mu*v0))-1)
         zd_fctrl = mu*v0*sympy.log(w[0]/(Is)+1)
         # dissipation funcion
         z_ectrl = w[1]/R
@@ -271,7 +271,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         data_diode = {'label': w[0],
                       'z': {'e_ctrl': zd_ectrl, 'f_ctrl': zd_fctrl},
                       'type': 'dissipative',
-                      'ctrl': '?',
+                      'ctrl': 'e',
                       'link': None}
         # edge
         edge_diode = (N1, iN2, data_diode)

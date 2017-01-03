@@ -19,6 +19,7 @@ def buildCore(Graph):
     gamma_fc = \
         sympy.Matrix(Graph.Analysis.gamma[1:, len(Graph.Analysis.ec_edges):])
     # solve linear relations to get the port-Hamiltonian structure
+    print(gamma_fc)
     gamma = gamma_fc.inv() * gamma_ec
     # build J matrix
     Graph.Analysis.J = vstack(hstack(sympy.zeros(nec), gamma.T),

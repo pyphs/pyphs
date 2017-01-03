@@ -36,8 +36,8 @@ port-Hamiltonian systems.
         graph1.add_edges_from(graph2.edges(data=True))
         return graph1
 
-    def buildCore(self):
-        self.Analysis = GraphAnalysis(self)
+    def buildCore(self, verbose=False):
+        self.Analysis = GraphAnalysis(self, verbose=verbose)
         self.Analysis.perform()
         buildCore(self)
         core = self.core.__deepcopy__()

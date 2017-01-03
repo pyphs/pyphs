@@ -148,34 +148,33 @@ def whichplot(which, axe):
         return axe.loglog
 
 
-standard = {'loc': 0,                                   # legend location
-            'unitx': None,                              # x axis label
-            'unity': None,                              # y axis label
-            'linestyles': ('-b', '--r', '-.g', ':m'),   # styles (1->4 lines)
-            'axedef': None,#(.15, .15, .75, .75, .1, .3),     # left,bottom,right,top
+standard = {'loc': 0,  # legend location
+            'unitx': None,  # x axis label
+            'unity': None,  # y axis label
+            'linestyles': ('-b', '--r', '-.g', ':m'),  # styles (1->4 lines)
+            #
+            'axedef': None,  # left,bot,right,top (.15, .15, .75, .75, .1, .3)
             'fontsize': 20,                             #
-            'log': None,                                # logscale: 'x','y','xy'
+            'log': None,  # logscale: 'x','y','xy'
             'legendfontsize': None,                     #
             'linewidth': 2.5,                           #
             'figsize': (7., 6.),                        #
-            'nbinsx': 5,								# number of x axis ticks
-            'nbinsy': 5,								# number of y axis ticks
-            'minor': False,								# Show minor grid
-            'markersize': 6,							#
-            'markeredgewidth': 0.5,						#
-            'latex': False,								# Latex rendering
-            'maxnplot': int(1e5),						# max number of line bins
-            											# before decimation
-            'ylims': 'extend',							#
-            'format': plot_format,						#
-            'limits': None,								#
-            'labels': None,								#
-            'maintitle': None,							#
-            'filelabel': None,							#
-            'nfft': 2**12,								#
-            'colormap': 'BuPu',							#
-            'xpos_ylabel': -0.08,						#
-            'cmap': 'BuPu',  #  'inferno',  #'gnuplot2', # 'CMRmap',  # 'PuBu',
-            'dpi': 100,									#
+            'nbinsx': 5,  # number of x axis ticks
+            'nbinsy': 5,  # number of y axis ticks
+            'minor': False,  # Show minor grid
+            'markersize': 6,                            #
+            'markeredgewidth': 0.5,  #
+            'latex': False,  # Latex rendering
+            'maxnplot': int(1e5),  # max number of line bins  before decimation
+            'ylims': 'extend',
+            'format': plot_format,
+            'limits': None,
+            'labels': None,
+            'maintitle': None,
+            'filelabel': None,
+            'nfft': 2**12,
+            'colormap': 'BuPu',
+            'xpos_ylabel': -0.08,
+            'cmap': 'BuPu',  # 'inferno', 'gnuplot2', 'CMRmap', 'PuBu',
+            'dpi': 100,
             }
-            

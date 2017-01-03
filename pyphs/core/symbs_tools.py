@@ -6,28 +6,31 @@ Created on Fri Jun  3 11:26:23 2016
 """
 from __future__ import absolute_import, division, print_function
 
+import stopit
 import sympy
-from pyphs.misc.timer import timeout
 
-###############################################################################
+
+def timeout_simplify(expr):
+    @stopit.threading_timeoutable(default='not finished')
+    def func():
+        return sympy.simplify(expr)
+    result = func(timeout=3.)
+    if result == 'not finished':
+        return expr
+    else:
+        return result
 
 
 def _simplify_expr(expr):
     assert isinstance(expr, sympy.Expr),\
         "{0!s}\nexpr should be sp.Expr, got {1!s}".format(expr, type(expr))
-
-    def func(expr):
-        #    return sympy.simplify(expr, ratio=1)
-        #    return sympy.nsimplify(expr)
-        return expr
-    expr, _ = timeout(func, expr, dur=10)
-    return expr
+    return timeout_simplify(expr)
 
 
 def _simplify_list(lis):
     assert hasattr(lis, '__len__'), "{0!s}\ntype({1!s}) not a valid argument for\
 'utils.calculus.simplify_list' ".format(lis, type(lis))
-    return sympy.simplify(lis)
+    return timeout_simplify(lis)
 
 
 def _simplify_mat(mat):

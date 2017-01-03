@@ -7,8 +7,8 @@ Created on Tue Jan  3 14:52:19 2017
 """
 from __future__ import absolute_import
 
-
-from editor_mainwindow import NetlistEditor, QApplication
+from PyQt5.QtWidgets import QApplication
+from editor_mainwindow import NetlistEditor
 import sys
 
 if __name__ == '__main__':

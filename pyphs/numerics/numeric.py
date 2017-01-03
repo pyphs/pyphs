@@ -139,8 +139,9 @@ class PHSNumericalEval:
             setattr(self, name, func)
             setattr(self, name+'_args', args)
             setattr(self, name+'_inds', inds)
-
-    def _expr_to_numerics(self, expr, allargs):
+    
+    @staticmethod
+    def _expr_to_numerics(expr, allargs):
         """
         get symbols in expr, and return lambdified evaluation, \
 arguments symbols and arguments position in list of all arguments

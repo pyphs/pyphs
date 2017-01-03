@@ -14,8 +14,7 @@ last edited: January 2015
 
 from __future__ import absolute_import, division, print_function
 
-import sys
-from PyQt5.QtWidgets import (QApplication, QAction, qApp, QMainWindow)
+from PyQt5.QtWidgets import (QAction, qApp, QMainWindow)
 from PyQt5.QtGui import QIcon
 
 from netlistwidget import NetlistWidget
@@ -51,15 +50,10 @@ class NetlistEditor(QMainWindow):
         #############################################################
         #############################################################
 
-
-
-        #############################################################
-        #############################################################
-        #############################################################
-
         # TOOLBAR
 
         self.toolbarNetlist = self.addToolBar('Netlist')
+        self.toolbarNetlist.addAction(self.netlist.newAction)
         self.toolbarNetlist.addAction(self.netlist.openAction)
         self.toolbarNetlist.addAction(self.netlist.saveAction)
         self.toolbarNetlist.addAction(self.netlist.saveasAction)
@@ -90,6 +84,7 @@ class NetlistEditor(QMainWindow):
 
         # PyPHS menu
         fileMenu = menubar.addMenu('&Netlist')
+        fileMenu.addAction(self.netlist.newAction)
         fileMenu.addAction(self.netlist.openAction)
         fileMenu.addAction(self.netlist.saveAction)
         fileMenu.addAction(self.netlist.saveasAction)

@@ -21,6 +21,7 @@ from .edit import EditDialog
 
 iconspath = '.' + os.sep + 'icons' + os.sep
 
+
 class NetlistWidget(QWidget):
 
     def __init__(self):
@@ -52,39 +53,39 @@ class NetlistWidget(QWidget):
 
         # Netlist Actions
 
+        # New Action
+        self.newAction = QAction(QIcon(iconspath + 'new.png'),
+                                 '&New Netlist', self)
+        self.newAction.setShortcut('Ctrl+N')
+        self.newAction.setStatusTip('Create a new netlist')
+        self.newAction.triggered.connect(self._new)
+
         # Open Action
         self.openAction = QAction(QIcon(iconspath + 'open.png'),
-                                  '&Open', self)
+                                  '&Open Netlist', self)
         self.openAction.setShortcut('Ctrl+O')
-        self.openAction.setStatusTip('Open netlist')
+        self.openAction.setStatusTip('Open an existing netlist')
         self.openAction.triggered.connect(self._open)
 
         # Save Action
-        self.saveAction = QAction(QIcon(iconspath + 'icons/save.png'),
-                                  '&Save', self)
-        self.saveAction.setShortcut('Ctrl+S')
-        self.saveAction.setStatusTip('Save netlist')
-        self.saveAction.triggered.connect(self._save)
-
-        # Save Action
         self.saveAction = QAction(QIcon(iconspath + 'save.png'),
-                                  '&Save', self)
+                                  '&Save Netlist', self)
         self.saveAction.setShortcut('Ctrl+S')
-        self.saveAction.setStatusTip('Save netlist')
+        self.saveAction.setStatusTip('Save the netlist')
         self.saveAction.triggered.connect(self._save)
 
         # Saveas Action
         self.saveasAction = QAction(QIcon(iconspath + 'saveas.png'),
-                                    '&Save as', self)
+                                    '&Save Netlist as', self)
         self.saveasAction.setShortcut('Ctrl+Shift+S')
-        self.saveasAction.setStatusTip('Save as new netlist')
+        self.saveasAction.setStatusTip('Save as a new netlist')
         self.saveasAction.triggered.connect(self._saveas)
 
         # Edit Action
         self.editAction = QAction(QIcon(iconspath + 'edit.png'),
-                                  '&Edit', self)
+                                  '&Edit line', self)
         self.editAction.setShortcut('Ctrl+E')
-        self.editAction.setStatusTip('Edit netlist line')
+        self.editAction.setStatusTip('Edit an existing line of the netlist')
         self.editAction.triggered.connect(self._edit_line)
 
         # PlotGraph Action
@@ -96,7 +97,7 @@ class NetlistWidget(QWidget):
 
         # addline Action
         self.addlineAction = QAction(QIcon(iconspath + 'add.png'),
-                                     '&Add a new line', self)
+                                     '&New line', self)
         self.addlineAction.setShortcut('Ctrl+L')
         self.addlineAction.setStatusTip('Add a new line to the netlist')
         self.addlineAction.triggered.connect(self._new_line)

@@ -4,9 +4,11 @@ Created on Sat Jun 11 20:06:50 2016
 
 @author: Falaize
 """
-from pyphs.plots.config import plotopts
-from tools import activate_latex, annotate, whichplot, setlims, setticks, dec
-from fonts import globalfonts
+from __future__ import absolute_import, division, print_function
+
+from .tools import activate_latex, annotate, whichplot, setlims, \
+    setticks, dec, standard
+from .fonts import globalfonts
 
 
 def multiplot(datax, datay, **kwargs):
@@ -128,9 +130,9 @@ subplots.
         You probably want it to be negative.
 
     """
-    opts = plotopts('multi')
+    opts = standard.copy()
     opts.update(kwargs)
-    nplots = int(datay.__len__())
+    nplots = len(datay)
 
     if opts['fontsize'] is None:
         opts['fontsize'] = int(6*opts['figsize'][0])
@@ -146,7 +148,6 @@ subplots.
         opts['labels'] = [None, ] * nplots
     if opts['log'] is None:
         opts['log'] = ['', ] * nplots
-
     from matplotlib.pyplot import subplots, close
     close('all')
     fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'])
@@ -158,7 +159,6 @@ subplots.
     rc('font', size=opts['fontsize'], **globalfonts())
 
     x = dec(datax, opts)
-
     for n in range(nplots):
 
         miny = float('Inf')
@@ -200,7 +200,7 @@ subplots.
                       markeredgewidth=opts['markeredgewidth'])
 
         setlims(axs[n], x, miny, maxy, opts['limits'][n])
-        setticks(axs[n], opts)
+        setticks(axs[n], opts, n)
 
         axs[n].legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
         if not opts['unity'][n] is None:
@@ -217,14 +217,20 @@ subplots.
         from matplotlib.pyplot import suptitle
         suptitle(opts['maintitle'])
 
-    # fig.tight_layout() # solve overlaping plots
-    fig.subplots_adjust(left=opts['axedef'][0], bottom=opts['axedef'][1],
-                        right=opts['axedef'][2], top=opts['axedef'][3],
-                        wspace=opts['axedef'][4], hspace=opts['axedef'][5])
-
+    if opts['axedef'] is not None:
+        print(opts['axedef'])
+        left, right = opts['axedef'][0], opts['axedef'][2]
+        bottom, top = opts['axedef'][1], opts['axedef'][3]
+        wspace, hspace = opts['axedef'][4], opts['axedef'][5]
+        fig.subplots_adjust(left=left, right=right, 
+                            bottom=bottom, top=top,
+                            wspace=wspace, hspace=hspace)
+    else:
+        fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=.0)
+    
     if not opts['filelabel'] is None:
         from matplotlib.pyplot import savefig
-        savefig(opts['filelabel'] + opts['format'])
+        savefig(opts['filelabel'] + '.' + opts['format'])
 
     from matplotlib.pyplot import show
     show()

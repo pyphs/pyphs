@@ -60,9 +60,9 @@ def move_row(mat, indi, indf):
 
 if __name__ is '__main__':
     M = np.matrix(np.eye(4))
-    print M
-    print get_ind_nonzeros_col(M, 2)
-    print get_ind_nonzeros_row(M, 2)
+    print(M)
+    print(get_ind_nonzeros_col(M, 2))
+    print(get_ind_nonzeros_row(M, 2))
 
     lis = range(10)
     mat = np.eye(4, dtype=int)

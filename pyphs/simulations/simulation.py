@@ -5,16 +5,25 @@ Created on Tue May 24 11:20:26 2016
 @author: Falaize
 """
 
-from processes import process_py, process_cpp
-import config
+from __future__ import absolute_import, division, print_function
+from pyphs.numerics.methods import dic_of_numerical_methods
+from pyphs.numerics import PHSNumericalCore
+from pyphs.config import standard_simulations
+from pyphs.cpp.simu2cpp import simu2cpp
+from .data import PHSData
+from pyphs.misc.io import open_files, close_files, dump_files
+import subprocess
+import progressbar
 import time
+import os
+import numpy as np
 
 
-class Simulation:
+class PHSSimulation:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
-    def __init__(self, phs, opts=None):
+    def __init__(self, core, config=None):
         """
         Parameters
         -----------
@@ -36,42 +45,44 @@ class Simulation:
         """
 
         # init config with standard configuration options
-        self.config = config.standard
+        self.config = standard_simulations.copy()
+
         # update with provided opts
-        if opts is None:
-            opts = {}
-        self.config.update(opts)
-        # store phs
-        self._phs = phs
+        if config is None:
+            config = {}
+        self.config.update(config)
+
+        if self.config['path'] is None:
+            self.config['path'] = os.getcwd()
+
+        # store PHSCore
+        setattr(self, '_core', core.__deepcopy__())
+
+        self.fs = 0
+
+        self.init_numericalcore()
+        assert self.config['language'] in ['c++', 'python']
 
 ###############################################################################
 
-    def init_expressions(self):
-        """
-        Init the phs.simu.exprs module that contains all expressions for \
-simulation.
-        """
+    def init_numericalmethod(self):
+        if not self.fs == self.config['fs']:
+            Method = dic_of_numerical_methods[self.config['method']]
+            self.method = Method(self._core, config=self.config)
+            self.fs = self.config['fs']
 
-        if self.config['presubs']:
-            self._phs.apply_subs()
+    def init_numericalcore(self):
+        self.init_numericalmethod()
+        setattr(self, 'nums', PHSNumericalCore(self.method,
+                                               config=self.config))
 
-        # split system into linear and nonlinear parts
-        force_nolin = not self.config['split']
-
-        from pyphs.symbolics.structures.tools import split_linear
-        split_linear(self._phs, force_nolin=force_nolin)
-
-        from expressions import SimulationExpressions
-        self.exprs = SimulationExpressions(self._phs)
-
-###############################################################################
-
-    def init(self, sequ=None, seqp=None, x0=None, nt=None, opts=None):
-        if opts is not None:
-            self.config.update(opts)
-
-        self.init_expressions()
-        self._phs.data.init_data(sequ, seqp, x0, nt)
+    def init(self, sequ=None, seqp=None, x0=None, nt=None, config=None):
+        if config is None:
+            config = {}
+        self.config.update(config)
+        setattr(self, 'data', PHSData(self._core, self.config))
+        self.data.init_data(sequ, seqp, x0, nt)
+        self.init_numericalcore()
 
     def process(self):
         """
@@ -85,17 +96,80 @@ simulation.
             'language "{0!s}" unknown'.format(self.config['language'])
 
         if self.config['language'] == 'c++':
-            process_cpp(self)
+            self.process_cpp()
 
         elif self.config['language'] == 'python':
-            process_py(self)
+            self.process_py()
 
         if self.config['timer']:
             tstop = time.time()
 
         if self.config['timer']:
-            time_it = ((tstop-tstart)/float(self.config['nt']))
-            print 'time per iteration: {0!s} s'.format(format(time_it, 'f'))
+            time_it = ((tstop-tstart)/float(self.data.config['nt']))
+            print('time per iteration: {0!s} s'.format(format(time_it, 'f')))
             time_ratio = time_it*self.config['fs']
-            print 'ratio compared to real-time: {0!s}'.format(format(
-                time_ratio, 'f'))
+            print('ratio compared to real-time: {0!s}'.format(format(
+                time_ratio, 'f')))
+
+    def process_py(self):
+
+        # get generators of u and p
+        data = self.data
+        seq_u = data.u()
+        seq_p = data.p()
+
+        files = open_files(self.config['path'] + os.sep + 'data',
+                           self.config['files_to_save'])
+
+        if self.config['progressbar']:
+            pb_widgets = ['\n', 'Simulation: ',
+                          progressbar.Percentage(), ' ',
+                          progressbar.Bar(), ' ',
+                          progressbar.ETA()
+                          ]
+            pbar = progressbar.ProgressBar(widgets=pb_widgets,
+                                           maxval=self.data.config['nt'])
+            pbar.start()
+        else:
+            print("\n*** Simulation... ***\n")
+
+        # init time step
+        n = 0
+        for (u, p) in zip(seq_u, seq_p):
+            self.nums.update(u=np.array(u), p=np.array(p))
+            dump_files(self.nums, files)
+            n += 1
+            if self.config['progressbar']:
+                pbar.update(n)
+        if self.config['progressbar']:
+            pbar.finish()
+        time.sleep(0.5)
+        close_files(files)
+
+    def process_cpp(self):
+
+        simu2cpp(self)
+
+        if self.config['cpp_build_and_run_script'] is None:
+            print("\no==========================================================\
+            ==o\n")
+            print("Please, execute:\n" + self.config['path'] + os.sep + 'cpp' +
+                  os.path.sep + "/main.cpp")
+            print("\no==========================================================\
+            ==o\n")
+            input("Press a key when done.\nWaiting....\n")
+        else:
+            # Replace generic term 'phobj_path' by actual object path
+            script = \
+                self.config['cpp_build_and_run_script'].replace('pyphs_path',
+                                                      self.config['path'])
+            # exec Build and Run script
+            system_call(script)
+
+
+def system_call(cmd):
+    p = subprocess.Popen(cmd, shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    for line in iter(p.stdout.readline, b''):
+        print(line.decode()),

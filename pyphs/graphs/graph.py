@@ -5,51 +5,65 @@ Created on Wed Mar  9 04:32:46 2016
 @author: Falaize
 """
 
-import sympy as sp
+from __future__ import absolute_import, division, print_function
+
 import networkx as nx
+from .analysis.analysis import GraphAnalysis
+from .analysis.build import buildCore
+from pyphs.core.core import PHSCore
+from pyphs.plots.graphs import plot
 
 
-class Graph(nx.MultiDiGraph):
+class PHSGraph(nx.MultiDiGraph):
     """
     Class that stores and manipulates graph representation of \
 port-Hamiltonian systems.
     """
-    def __init__(self):
-        nx.MultiDiGraph.__init__(self)
+    def __init__(self, label=None, netlist=None):
 
-        from netlists import Netlist
-        self.netlist = Netlist()
+        nx.MultiDiGraph.__init__(self)
+        self.core = PHSCore()
+        if label is not None:
+            self.label = label
+        if netlist is not None:
+            self.Netlist = netlist
+            self.build_from_netlist()
 
     def __add__(graph1, graph2):
-        graph = graph1
-        net2 = getattr(graph2, 'netlist')
-        graph.netlist += net2
-        graph.add_edges_from(graph2.edges(data=True))
-        return graph
+        if hasattr(graph1, 'Netlist') and hasattr(graph2, 'Netlist'):
+            graph1.Netlist += graph2.Netlist
+        graph1.core += graph2.core
+        graph1.add_edges_from(graph2.edges(data=True))
+        return graph1
 
-    def _build_analysis(self):
-        from analysis.analysis import Analysis
-        self.analysis = Analysis(self)
+    def buildCore(self):
+        self.Analysis = GraphAnalysis(self)
+        self.Analysis.perform()
+        buildCore(self)
+        core = self.core.__deepcopy__()
+        core.apply_connectors()
+        core.build_exprs()
+        return core
 
-    def _perform_analysis(self):
-        if not hasattr(self, 'analysis'):
-            self._build_analysis()
-        self.analysis.perform()
-
-    def build_from_netlist(self, phs):
+    def build_from_netlist(self):
         """
         build the graph of the system from the netlist structure (see \
     'netlists' module).
         """
         from importlib import import_module
-        for l in range(self.netlist.nlines()):
-            line = self.netlist[l]
+        for line in self.Netlist:
             dic_name = 'pyphs.dictionary.' + line['dictionary']
             dic = import_module(dic_name)
             name = line['component'].lower()
             klass = name[0].upper() + name[1:]
             component = getattr(dic, klass)
-            component_phs = component(line['label'],
-                                      line['nodes'],
-                                      **line['arguments'])
-            phs += component_phs
+            component_graph = component(line['label'],
+                                        line['nodes'],
+                                        **line['arguments'])
+            self += component_graph
+
+    def plot(self, filename=None, ax=None):
+        """
+        Plot the graph (networkx.plot method).
+        """
+        plot(self, filename=filename, ax=ax)

@@ -6,9 +6,8 @@ Created on Mon Jun 13 16:59:49 2016
 """
 
 
-from pyphs.configs.plots import plotopts
-from tools import activate_latex, annotate, setticks, dec
-from fonts import globalfonts
+from .tools import activate_latex, annotate, setticks, dec, standard
+from .fonts import globalfonts
 import numpy as np
 
 
@@ -110,7 +109,7 @@ None).
         Width of line around markers (the default is 0.5).
 
     """
-    opts = plotopts('single')
+    opts = standard
     opts.update(kwargs)
     if opts['axedef'] is None:
         opts['axedef'] = [.15, .15, .75, .75]

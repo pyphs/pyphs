@@ -4,9 +4,9 @@ Created on Sat Jun 11 19:28:12 2016
 
 @author: Falaize
 """
-from config import plotopts
-from tools import activate_latex, annotate, whichplot, setlims, setticks, dec
-from fonts import globalfonts
+from pyphs.plots.tools import (activate_latex, annotate, whichplot, 
+                               setlims, setticks, dec, standard)
+from .fonts import globalfonts
 
 
 def singleplot(datax, datay, **kwargs):
@@ -108,7 +108,7 @@ None).
         Width of line around markers (the default is 0.5).
 
     """
-    opts = plotopts('single')
+    opts = standard.copy()
     opts.update(kwargs)
     if opts['axedef'] is None:
         opts['axedef'] = [.15, .15, .75, .75]
@@ -133,14 +133,18 @@ None).
     close('all')
 
     from matplotlib.pyplot import figure
-    figure(1, figsize=opts['figsize'])
+    fig = figure(1, figsize=opts['figsize'])
     nplots = datay.__len__()
 
     if isinstance(datax[0], (float, int)):
         datax = [datax, ]*nplots
 
     from matplotlib.pyplot import axes
-    ax = axes(opts['axedef'][:4])
+    if opts['axedef'] is not None:
+        geometry = opts['axedef'][:4]
+    else:
+        geometry = None
+    ax = axes(geometry)
 
     miny = float('Inf')
     maxy = -float('Inf')
@@ -180,8 +184,11 @@ None).
 
     if not opts['maintitle'] is None:
         from matplotlib.pyplot import title
-        title(opts['maintitle'])
-
+        title(opts['maintitle'])    
+        
+    if opts['axedef'] is None:
+        fig.tight_layout()
+        
     if not opts['filelabel'] is None:
         from matplotlib.pyplot import savefig
         savefig(opts['filelabel'] + '.' + opts['format'])

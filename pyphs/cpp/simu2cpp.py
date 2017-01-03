@@ -224,8 +224,6 @@ def _str_instanciate(simu, objlabel):
 
 
 def _str_process(simu, objlabel):
-    dimu = getattr(simu.method.core.dims, 'y')()
-    dimp = getattr(simu.method.core.dims, 'p')()
     string = """\n
     // Process
     t.start();\n"""
@@ -288,10 +286,5 @@ def _close(simu):
     string = ''
     names = simu.config['files_to_save']
     for name in names:
-        dim = getattr(simu.nums, name)().shape[0]
         string += "\n%sFile.close();" % name
     return string
-
-
-if __name__ == '__main__':
-    simu2cpp(simu, objlabel)

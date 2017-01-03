@@ -101,17 +101,17 @@ class PHSCore:
         self._exprs_built = False
 
         # init subs with empty dictionary
-        setattr(self, 'subs', dict())
+        self.subs = dict()
 
         # init symbols with empty lists
-        setattr(self, 'symbs_names', set())
+        self.symbs_names = set()
         for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
             self._setsymb(name, list())
 
         # Ordered list of names of variables considered as arguments
         self.args_names = ('x', 'dx', 'w', 'u', 'p')
 
-        setattr(self, 'exprs_names', set())
+        self.exprs_names = set()
         self._setexpr('H', sympy.sympify(0))
 
         # init with empty lists
@@ -119,20 +119,18 @@ class PHSCore:
         self._setexpr('g', list())
 
         # Get tools
-        setattr(self, 'symbols', symbols)
-        setattr(self, 'dims', Dimensions(self))
-        setattr(self, 'inds', Indices(self))
+        self.symbols = symbols
+        self.dims = Dimensions(self)
+        self.inds = Indices(self)
 
         # Structure
         self.struc_names = list()
         self.connectors = list()
         self.M = sympy.zeros(0)
-        setattr(self,
-                '_struc_build_get_mat',
-                lambda mat, name: _build_get_mat(self, mat, name))
-        setattr(self,
-                '_struc_build_set_mat',
-                lambda mat, name: _build_set_mat(self, mat, name))
+        self._struc_build_get_mat = \
+            lambda mat, name: _build_get_mat(self, mat, name)
+        self._struc_build_set_mat = \
+            lambda mat, name: _build_set_mat(self, mat, name)
         self._struc_getset()
 
 ###############################################################################
@@ -436,7 +434,7 @@ dissipative variables w are no more accessible.
             for i in range(len(attr)):
                 try:
                     attr[i] = attr[i].subs(subs)
-                except:
+                except AttributeError:
                     pass
             setattr(self, name, attr)
         for name in self.exprs_names:
@@ -446,7 +444,7 @@ dissipative variables w are no more accessible.
                 for i, at in enumerate(attr):
                     try:
                         attr[i] = at.subs(subs)
-                    except:
+                    except AttributeError:
                         pass
             else:
                 attr = attr.subs(subs)

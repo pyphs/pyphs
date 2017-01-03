@@ -460,7 +460,6 @@ class Triode(PHSDissipativeNonLinear):
 
     """
     def __init__(self, label, nodes_labels, subs):
-        import sympy
         # parameters
         pars = ['mu', 'Ex', 'Kg', 'Kp', 'Kvb', 'Vcp', 'Va', 'Rgk']
         mu, Ex, Kg, Kp, Kvb, Vcp, Va, Rgk = symbols(pars)

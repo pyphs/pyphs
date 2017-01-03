@@ -11,7 +11,6 @@ from .numerics import (PHSNumericalMethod, PHSNumericalCore,
                             PHSNumericalMethodStandard)
 from .simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
-from .GUI import PHSNetlistGUI
 from .latex import core2tex, netlist2tex, graphplot2tex, document
 
 __licence__ = "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"

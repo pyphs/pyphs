@@ -71,7 +71,6 @@ def inverse(Mat, dosimplify=False):
 
 
 def matvecprod(mat, vec):
-    import sympy
     nvec = vec.shape[0]
     nmat, mmat = mat.shape
     if nvec == 0:
@@ -84,7 +83,6 @@ def matvecprod(mat, vec):
 
 
 def free_symbols(obj):
-    import sympy
     if hasattr(obj, '__len__'):
         symbs = set()
         for el in obj:

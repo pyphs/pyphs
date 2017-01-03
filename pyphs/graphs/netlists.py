@@ -212,7 +212,8 @@ or tuple (str, float).
     component = '{}.{} {} {}:'.format(dic['dictionary'], dic['component'],
                                       dic['label'], dic['nodes'])
     pars = ""
-    for par in dic['arguments'].keys():
-        pars += ' {}={};'.format(par, str(dic['arguments'][par]))
+    if dic['arguments'] is not None:
+        for par in dic['arguments'].keys():
+            pars += ' {}={};'.format(par, str(dic['arguments'][par]))
     line = component + pars + '\n'
     return line

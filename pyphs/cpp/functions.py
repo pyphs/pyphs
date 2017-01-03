@@ -48,12 +48,8 @@ def _append_funcs_get(nums, files, objlabel):
         attr = getattr(nums, name)()
         if len(attr.shape) > 0:
             h, cpp = _str_mat_func_get(nums.method, name, objlabel)
-#            if len(attr.shape) == 1:
-#                getvec = _str_mat_func_get_vector(nums.method, name, objlabel)
-#                h += getvec[0]
-#                cpp += getvec[1]
         else:
-            h, cpp = _str_scal_func_get(nums.method, name, objlabel)
+            h, cpp = _str_scal_func_get(name, objlabel)
         files['h']['public'] += h
         files['cpp']['public'] += cpp
 
@@ -204,7 +200,7 @@ def _append_funcs_init(nums, files, objlabel):
         if len(attr.shape) > 0:
             cpp = _str_mat_func_init_cpp(nums.method, name)
         else:
-            cpp = _str_scal_func_init_cpp(nums.method, name)
+            cpp = _str_scal_func_init_cpp(name)
         files['cpp']['init'] += cpp
 
 

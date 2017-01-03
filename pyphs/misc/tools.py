@@ -5,8 +5,16 @@ Created on Sat Mar  5 13:53:43 2016
 @author: Falaize
 """
 import numpy
+from datetime import datetime
 
 
+def get_date():
+    " Return current date and time "
+    now = datetime.now()
+    dt_format = '%Y/%m/%d %H:%M:%S'
+    return now.strftime(dt_format)
+
+    
 def pause():
     try:
         raw_input()

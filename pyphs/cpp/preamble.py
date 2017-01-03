@@ -4,7 +4,7 @@ Created on Tue Jun 28 13:47:58 2016
 
 @author: Falaize
 """
-from pyphs.misc.date import get_date
+from pyphs.misc.tools import get_date
 
 
 def str_preamble(label):

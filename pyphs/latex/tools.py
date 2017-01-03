@@ -63,8 +63,7 @@ def obj2tex(obj, label, description, symbol_names, toMatrix=True):
     """
 
     if toMatrix:
-        import sympy as sp
-        obj = sp.Matrix(obj)
+        obj = sympy.Matrix(obj)
 
     str_out = cr(1)
     description = description + " " if len(description) > 0 \

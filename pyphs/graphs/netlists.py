@@ -82,7 +82,6 @@ components).
         """
         read and store data from netlist 'filename.net'
         """
-        import ast
         file_ = open(self.filename, "r")
         with file_ as openfileobject:
             for line in openfileobject:

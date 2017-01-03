@@ -34,5 +34,8 @@ Documentation
 
 * See the `website <https://afalaize.github.io/pyphs/>`__. 
 
-
-
+Code Analysis
+-------------
+.. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/afalaize/pyphs/master
+   :alt: Code Health

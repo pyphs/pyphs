@@ -12,34 +12,43 @@ import numpy as np
 import networkx as nx
 
 import matplotlib.pyplot as plt
-import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 
 from pyphs.config import plot_format
 
+from pyphs.graphs.netlists import datum
+from pyphs.graphs.tools import multi2single, getedges
 # pos = spring_layout(graph, iterations=200)
 
 
-template_layout = 'spring'
+LAYOUT = 'spring'
+ITERATIONS = 500
 
 
-def draw_nodes(graph, ax=None, pos=None, layout=None):
+def node_color(node):
+    if node == datum:
+        return 'lightsalmon'
+    else:
+        return 'gainsboro'
+
+
+def draw_nodes(graph, ax=None, layout=None, colors=None):
     if ax is None:
         ax = plt.axes(frameon=False)
-    if pos is None:
+    if colors is None:
+        colors = [node_color(node) for node in graph.nodes()]
+    if not hasattr(graph, 'positions'):
         if layout is None:
-            layout = template_layout
+            layout = LAYOUT
         else:
             assert layout in ('circular', 'spring')
         if layout == 'spring':
-            pos = nx.spring_layout(graph, iterations=200)
+            graph.positions = nx.spring_layout(graph, iterations=ITERATIONS)
         elif layout == 'circular':
-            pos = nx.circular_layout(graph)
-
-    nx.draw_networkx_nodes(graph, pos, ax=ax,
-                           node_size=800, node_color='w', lw=2)
-    nx.draw_networkx_labels(graph, pos, ax=ax)
-    return pos
+            graph.positions = nx.circular_layout(graph)
+    nx.draw_networkx_nodes(graph, graph.positions, ax=ax,
+                           node_size=800, node_color=colors, lw=2)
+    nx.draw_networkx_labels(graph, graph.positions, ax=ax)
 
 
 def midle(nodes):
@@ -68,97 +77,81 @@ def orthogonal(v):
     return np.dot(mat, v)
 
 
-def multi2single(graph):
-    g = nx.Graph()
-    for u, v in graph.edges_iter():
-        g.add_edge(u, v)
-    return g
-
-
-def getedges(graph, nodes):
-    s = set(nodes)
-    edges = list()
-    for e in graph.edges_iter(data=True):
-        if s.issuperset(set(e[:2])):
-            edges.append(e)
-    return edges
-
-
-def forwardbackward(edges, nodes):
-    f_edges = list()
-    b_edges = list()
-    for e in edges:
-        if e[0] == nodes[0]:
-            f_edges.append(e)
-        else:
-            b_edges.append(e)
-    return f_edges, b_edges
-
-
 def angle(d):
     return np.degrees((np.arctan(d[1]/d[0]) + np.pi/2 % np.pi) - np.pi/2)
 
 
-def draw_edge(edge, pos, ax, move=0., forward=True):
+def type_colors(type_):
+    if type_ == 'storage':
+        colors = ('blue', 'lightskyblue')
+    elif type_ == 'dissipative':
+        colors = ('green', 'lightsage')
+    elif type_ == 'port':
+        colors = ('red', 'lightsalmon')
+    else:
+        colors = ('k', 'gainsboro')
+    return colors
+
+
+def draw_edge(edge, pos, ax, move=0., forward=True, colors_type=None,
+              draw=True):
     nodes = [pos[n] for n in edge[:2]]
+    if colors_type is None:
+        colors = type_colors(edge[-1]['type'])
+    else:
+        colors = type_colors(colors_type)
+    if draw:
+        conectionstyle = 'arc3, rad={0}'.format(move)
+        patch = mpatches.FancyArrowPatch(*nodes,
+                                         connectionstyle=conectionstyle,
+                                         arrowstyle='wedge',
+                                         mutation_scale=20.0,
+                                         lw=2,
+                                         edgecolor=colors[0],
+                                         facecolor=colors[1])
+        ax.add_patch(patch)
+
+    bbox_props = dict(boxstyle="round, pad=0.3", fc=colors[1], ec=colors[0],
+                      lw=2, alpha=1)
     v = vector(nodes)
     m = midle(nodes)
     d = direction(v)
     d_o = orthogonal(d)
-    Path = mpath.Path
-    path_data = [
-        (Path.MOVETO, list(nodes[0])),
-        (Path.CURVE3, list(m + move*d_o)),
-        (Path.CURVE3, list(nodes[1])),
-        ]
-    codes, verts = zip(*path_data)
-    path = mpath.Path(verts, codes)
-    if edge[-1]['type'] == 'storage':
-        color = ('blue', 'lightskyblue')
-    elif edge[-1]['type'] == 'dissipative':
-        color = ('green', 'lightsage')
-    elif edge[-1]['type'] == 'port':
-        color = ('red', 'lightsalmon')
-    else:
-        color = ('k', 'gainsboro')
-    patch = mpatches.PathPatch(path, facecolor='none',
-                               edgecolor=color[0], lw='3')
-    ax.add_patch(patch)
 
-    bbox_props = dict(boxstyle="round,pad=0.3", fc=color[1], ec=color[0],
-                      lw=2, alpha=1)
-    text_pos = m + (move)*d_o
-    t = ax.text(list(text_pos)[0],
-                list(text_pos)[1],
-                edge[-1]['label'],
-                ha="center", va="center",
-                rotation=angle(d),
-                size=12,
-                bbox=bbox_props)
+    P0, P2 = nodes
+    P1 = m + move*length(v)*d_o
 
-
-def unitdistance(v, n=2.):
-    l = length(v)
-    return l/2./n
+    m1 = midle([P0, P1])
+    m2 = midle([P1, P2])
+    text_pos = midle([m1, m2])
+    ax.text(list(text_pos)[0],
+            list(text_pos)[1],
+            edge[-1]['label'],
+            ha="center", va="center",
+            rotation=angle(d),
+            size=12,
+            bbox=bbox_props)
 
 
 def moves(nodes, nedges, pos):
-    v = vector([pos[n] for n in nodes])
+    MAX_ANGLE = np.pi/2
     m = list()
     if bool(nedges % 2):
         m.append(0.)
         nedges -= 1
-    [m.append((i+1)*unitdistance(v)) for i in range(nedges//2)]
-    [m.append(-(i+1)*unitdistance(v)) for i in range(nedges//2)]
+    [m.append(((i+1)/(nedges+1))*MAX_ANGLE) for i in range(nedges//2)]
+    [m.append(-((i+1)/(nedges+1))*MAX_ANGLE) for i in range(nedges//2)]
     return m
 
 
-def draw_edges(graph, pos, ax):
+def draw_edges(graph, ax):
     for nodes in multi2single(graph).edges_iter():
         edges = getedges(graph, nodes)
         nedges = len(edges)
-        for edge, move in zip(edges, moves(nodes, nedges, pos)):
-            draw_edge(edge, pos, ax, move=move)
+        for edge, move in zip(edges, moves(nodes, nedges, graph.positions)):
+            if not edge[0] == nodes[0]:
+                move = -move
+            draw_edge(edge, graph.positions, ax, move=move)
 
 
 def plot(graph, filename=None, ax=None, layout=None):
@@ -168,9 +161,8 @@ def plot(graph, filename=None, ax=None, layout=None):
     if ax is None:
         fig = plt.figure()
         ax = plt.axes(frameon=False)
-    pos = nx.spring_layout(graph, iterations=200)
-    draw_nodes(graph, ax=ax, pos=pos)
-    draw_edges(graph, pos, ax)
+    draw_nodes(graph, ax=ax)
+    draw_edges(graph, ax)
     plt.tight_layout()
     ax.axes.get_xaxis().set_visible(False)
     ax.axes.get_yaxis().set_visible(False)
@@ -180,3 +172,73 @@ def plot(graph, filename=None, ax=None, layout=None):
         if not filename[-4:] == '.' + plot_format:
             filename += '.' + plot_format
         fig.savefig(filename)
+
+
+def plot_analysis(graph, analysis):
+
+    nodes_colors = list()
+    ic_nodes_labels = [analysis.nodes[i] for i in analysis.ic_nodes]
+    for node in graph.nodes():
+        if node in ic_nodes_labels:
+            nodes_colors.append('lightsalmon')
+        else:
+            nodes_colors.append('lightsage')
+    plt.figure()
+    ax = plt.axes(frameon=False)
+    draw_nodes(graph, ax=ax, colors=nodes_colors)
+
+    ic_edges_labels = \
+        [analysis.get_edges_data('label')[i]
+         for i in analysis.ic_edges]
+
+    fc_edges_labels = \
+        [analysis.get_edges_data('label')[i]
+         for i in analysis.fc_edges]
+
+    ec_edges_labels = \
+        [analysis.get_edges_data('label')[i]
+         for i in analysis.ec_edges]
+
+    for nodes in multi2single(graph).edges_iter():
+        edges_colors = list()
+        edges_copy = list()
+        edges_draw = list()
+        edges = getedges(graph, nodes)
+        for edge in edges:
+            if edge[-1]['label'] in ic_edges_labels:
+                edges_copy.append(edge)
+                edges_colors.append('port')
+                edges_draw.append(True)
+            elif edge[-1]['label'] in fc_edges_labels:
+                    i = analysis.fc_edges[fc_edges_labels.index(
+                            edge[-1]['label'])]
+                    col = analysis.lambd[:, i]
+                    if sum(col) > 1:
+                        edges_copy.append(edge)
+                        edges_colors.append('storage')
+                    elif sum(col) == 1:
+                        inode2 = graph.nodes()[list(col).index(1)]
+                        inode1 = edge[0] if edge[1] == inode2 else edge[1]
+                        edges_copy.append((inode1, inode2, edge[-1]))
+                        edges_colors.append('dissipative')
+                    edges_draw.append(True)
+            elif edge[-1]['label'] in ec_edges_labels:
+                i = analysis.ec_edges[ec_edges_labels.index(edge[-1]['label'])]
+                edges_copy.append(edge)
+                edges_colors.append('dissipative')
+                edges_draw.append(False)
+        nedges = len(edges_copy)
+        moves_ = moves(nodes, nedges, graph.positions)
+        for e in range(nedges):
+            edge = edges_copy[e]
+            move = moves_[e]
+            color = edges_colors[e]
+            draw = edges_draw[e]
+            if not edge[0] == nodes[0]:
+                move = -move
+            draw_edge(edge, graph.positions, ax, move=move,
+                      colors_type=color, draw=draw)
+    plt.tight_layout()
+    ax.axes.get_xaxis().set_visible(False)
+    ax.axes.get_yaxis().set_visible(False)
+    plt.show()

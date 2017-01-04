@@ -12,12 +12,15 @@ from pyphs.misc.tools import myrange, pause
 from pyphs.config import datum
 from pyphs.misc.matrices import get_ind_nonzeros_col, get_ind_nonzeros_row, \
     isequal
+from pyphs.plots.graphs import plot_analysis
 
 
 class GraphAnalysis:
 
-    def __init__(self, graph, verbose=False):
+    def __init__(self, graph, verbose=False, plot=False):
+        self._plot = plot
         self._verbose = verbose
+        self.ndatum = 0
         self.nodes = graph.nodes()
         self.edges = graph.edges(data=True)
         # Compute incidence Matrix
@@ -29,6 +32,10 @@ class GraphAnalysis:
         # get number of nodes and edges
         self.nn = len(self.nodes)
         self.ne = len(self.edges)
+
+        def plot_analysis_self():
+            plot_analysis(graph, self)
+        self.plot = plot_analysis_self
         # init list of nodes for analysis
         self.ic_nodes = list(range(0, self.nn))
         # Put datum node at the top of the node list
@@ -38,11 +45,13 @@ class GraphAnalysis:
             # force realizability for datum (no edge imposes the potential)
             self.lambd[0, :] = 0
             # exclude datum from analysis
-            self.ic_nodes.remove(self.nodes.index(datum))
+            self.ic_nodes = self.ic_nodes[1:]
         # Init lists of edges for analysis
         self.ec_edges = []
         self.fc_edges = []
         self.ic_edges = list(range(self.ne))
+        if self._plot:
+            self.plot()
         # test for determinate edge (iter over ic_edges which length change)
         i = 0  # element in ic_edges to check
         while i < len(self.ic_edges):
@@ -59,7 +68,8 @@ class GraphAnalysis:
                     # get node index
                     n = list(numpy.array(self.lambd)[:, e]).index(1)
                     # set node 'n' as determinate
-                    self.set_node_dc((n, e))
+                    if n in self.ic_nodes:
+                        self.set_node_dc((n, e))
                 else:
                     # move edge at the end of edge list
                     self.set_edge_fc(e)
@@ -83,7 +93,8 @@ class GraphAnalysis:
                 # get node index
                 n = list(numpy.array(self.lambd)[:, e]).index(1)
                 # set node 'n' as determinate
-                self.set_node_dc((n, e))
+                if n in self.ic_nodes:
+                    self.set_node_dc((n, e))
 
     def iterate_ic(self):
         """
@@ -121,7 +132,8 @@ class GraphAnalysis:
                     "potential on node {0!s} is imposed by effort-controlled \
 edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
                 # move to 'determinate nodes' and set edge as flux-controlled
-                self.set_node_dc((n, e))
+                if n in self.ic_nodes:
+                    self.set_node_dc((n, e))
 
     def perform(self):
         # init memory of lambda to: check for change or stop while loop
@@ -133,41 +145,42 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
                    (len(self.ic_edges) + len(self.ic_nodes) > 0)):
                 if self._verbose:
                     print('###################################\nLoop Start\n')
-                    print('edges', self.get_edges_data('label'))
-                    print('nodes', self.nodes)
-                    print(self.lambd)
-                    pause()
-                # save Lambda for comparison in while condition
+
+                    # save Lambda for comparison in while condition
                 lambd_temp = numpy.matrix(self.lambd, copy=True)
                 # iterate on indeterminate nodes
                 self.iterate_nodes()
                 if self._verbose:
                     print('#################################\niterate_nodes\n')
-                    print('edges', self.get_edges_data('label'))
-                    print('nodes', self.nodes)
-                    print(self.lambd)
-                    pause()
                 # iterate on flux-controlled edges
                 self.iterate_fc()
                 if self._verbose:
                     print('###################################\niterate_fc\n')
-                    print('edges', self.get_edges_data('label'))
-                    print('nodes', self.nodes)
-                    print(self.lambd)
-                    pause()
-                # iterate on indeterminate edges
+
+                    # iterate on indeterminate edges
                 self.iterate_ic()
                 if self._verbose:
                     print('###################################\niterate_ic\n')
-                    print('edges', self.get_edges_data('label'))
-                    print('nodes', self.nodes)
-                    print(self.lambd)
-                    pause()
+                    self.verbose('')
             # if locked, perform unlock
             if isequal(lambd_temp, self.lambd) & \
                     (len(self.ic_edges) + len(self.ic_nodes) > 0):
                 self.unlock()
-        print('\n*** Realizability analysis succeed ***\n')
+        if self._plot:
+            self.plot()
+        try:
+            self.gamma_ec = self.gamma[1:, :len(self.ec_edges)]
+            self.gamma_fc = self.gamma[1:, len(self.ec_edges):]
+            self.igamma_fc = numpy.linalg.inv(self.gamma_fc)
+        except numpy.linalg.LinAlgError:
+            raise ValueError("""
+!!! Realizability analysis did not succeed !!!\n
+
+The elements have been divided in effort-controlled and flux-controlled, but \
+the incidence matrix associated with the flux-controlled part is not \
+invertible:
+gamma_fc=\n{0}
+""".format(self.gamma_fc))
 
     def unlock(self):
         """
@@ -325,7 +338,22 @@ controlled node from node list
             # remove edge from list of indeterminate edges
             self.set_edge_fc(e)
         self.verbose('set_node_dc')
+        if self._plot:
+            self.plot()
 
+    def verbose(self, label):
+        if self._verbose:
+            print('------------------------\n')
+            print(label + '\n')
+            print('sum(lambda)')
+            print(numpy.sum(self.lambd, axis=1).T)
+            edges = self.get_edges_data('label')
+            print('ic_nodes\n', [self.nodes[i] for i in self.ic_nodes])
+            print('ic_edges\n', [edges[i] for i in self.ic_edges])
+            print('ec_edges\n', [edges[i] for i in self.ec_edges])
+            print('fc_edges\n', [edges[i] for i in self.fc_edges])
+            print(self.lambd)
+            pause()
 
     def rowindexGamma(self, c):
         """
@@ -408,20 +436,3 @@ compatible'.format(e_label, link_e_label)
         alpha = self.edges[e][2]['alpha']
         if alpha is not None:
             self.edges[e][2]['alpha'] = alpha**-1
-
-    def verbose(self, label):
-        if self._verbose:
-            print('------------------------\n')
-            print('label')
-            print('sum(lambda)')
-            print(numpy.sum(self.lambd, axis=1))
-            edges = self.get_edges_data('label')
-            print('edges\n', edges)
-            print('nodes\n', self.nodes)
-            print('ic_nodes\n', [self.nodes[i] for i in self.ic_nodes])
-            print('ic_edges\n', [edges[i] for i in self.ic_edges])
-            print('ec_edges\n', [edges[i] for i in self.ec_edges])
-            print('fc_edges\n', [edges[i] for i in self.fc_edges])
-            print('lambda')
-            print(self.lambd)
-            pause()

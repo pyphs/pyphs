@@ -6,8 +6,8 @@ from .core.core import PHSCore
 from .graphs.graph import PHSGraph
 from .graphs.netlists import PHSNetlist
 from .numerics import (PHSNumericalMethod, PHSNumericalCore,
-                            PHSNumericalEval, PHSNumericalOperation,
-                            PHSNumericalMethodStandard)
+                       PHSNumericalEval, PHSNumericalOperation,
+                       PHSNumericalMethodStandard)
 from .simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
 from .latex import core2tex, netlist2tex, graphplot2tex, document

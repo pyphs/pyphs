@@ -203,9 +203,9 @@ subplots.
         setticks(axs[n], opts, n)
 
         axs[n].legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
-        if not opts['unity'][n] is None:
+        if opts['unity'][n] is not None:
             axs[n].set_ylabel(opts['unity'][n], fontsize=opts['fontsize'])
-            if not opts['xpos_ylabel'] is None:
+            if opts['xpos_ylabel'] is not None:
                 axs[n].yaxis.set_label_coords(opts['xpos_ylabel'], 0.5)
         if n == nplots-1:
             axs[n].set_xlabel(opts['unitx'], fontsize=opts['fontsize'])
@@ -228,7 +228,7 @@ subplots.
     else:
         fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=.0)
     
-    if not opts['filelabel'] is None:
+    if opts['filelabel'] is not None:
         from matplotlib.pyplot import savefig
         savefig(opts['filelabel'] + '.' + opts['format'])
 

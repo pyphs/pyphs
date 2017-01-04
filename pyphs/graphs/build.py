@@ -13,14 +13,11 @@ def buildCore(Graph):
     nec = len(Graph.Analysis.ec_edges)
     nfc = len(Graph.Analysis.fc_edges)
     # incidence matrix for the effort-controlled edges
-    gamma_ec = \
-        sympy.Matrix(Graph.Analysis.gamma[1:, :len(Graph.Analysis.ec_edges)])
+    gamma_ec = sympy.Matrix(Graph.Analysis.gamma_ec)
     # incidence matrix for the flux-controlled edges
-    gamma_fc = \
-        sympy.Matrix(Graph.Analysis.gamma[1:, len(Graph.Analysis.ec_edges):])
+    igamma_fc = sympy.Matrix(Graph.Analysis.igamma_fc)
     # solve linear relations to get the port-Hamiltonian structure
-    print(gamma_fc)
-    gamma = gamma_fc.inv() * gamma_ec
+    gamma = igamma_fc * gamma_ec
     # build J matrix
     Graph.Analysis.J = vstack(hstack(sympy.zeros(nec), gamma.T),
                               hstack(-gamma, sympy.zeros(nfc)))

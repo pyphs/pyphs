@@ -14,6 +14,8 @@ from pyphs.core.core import PHSCore
 from pyphs.plots.graphs import plot
 from .tools import serial_edges, parallel_edges
 from .exceptions import PHSUndefinedPotential
+from pyphs.config import datum
+
 
 class PHSGraph(nx.MultiDiGraph):
     """
@@ -80,6 +82,12 @@ port-Hamiltonian systems.
             for e in edges[0]:
                 self.remove_edges_from([(e[0], e[1], None) for e in edges[0]])
             sg = PHSGraph()
+
+            for n in edges[1:3]:
+                if not n == datum:
+                    sg.add_edge(datum, n, attr_dict={'type': 'port',
+                                                     'ctrl': '?',
+                                                     'label': n})
             sg.add_edges_from(edges[0])
             sg.set_analysis()
             self._idser += 1
@@ -88,6 +96,10 @@ port-Hamiltonian systems.
                                      'ctrl': '?',
                                      'label': 'serial{0}'.format(self._idser),
                                      'graph': sg})
+            for degree in self.degree_iter():
+                if degree[1] == 0:
+                    self.remove_node(degree[0])
+        return bool(len(se))
 
     def split_parallel(self):
         pe = parallel_edges(self)
@@ -100,19 +112,34 @@ port-Hamiltonian systems.
                 pass
             pg = PHSGraph()
             pg.add_edges_from(edges)
+
             pg.set_analysis()
             self._idpar += 1
+            for n in (n1, n2):
+                if not n == datum:
+                    pg.add_edge(datum, n, attr_dict={'type': 'port',
+                                                     'ctrl': '?',
+                                                     'label': n})
             self.add_edge(n1, n2,
                           attr_dict={'type': 'graph',
                                      'ctrl': '?',
                                      'label':
                                          'parallel{0}'.format(self._idpar),
                                      'graph': pg})
+        return bool(len(pe))
+
+    def split_sp(self):
+        flag = True
+        while flag:
+            change_s = self.split_serial()
+            change_p = self.split_parallel()
+            print(any((change_s, change_p)))
+            flag = any((change_s, change_p))
 
     @staticmethod
     def iter_analysis(graph):
         graph.Analysis.iteration()
-        for e in graph.edges(dat=True):
+        for e in graph.edges(data=True):
             if e[-1]['type'] == 'graph':
                 try:
                     PHSGraph.iter_analysis(e[-1]['graph'])

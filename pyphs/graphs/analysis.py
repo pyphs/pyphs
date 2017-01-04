@@ -124,7 +124,7 @@ class GraphAnalysis:
         for n in self.ic_nodes:
             # assert the potential on node n can be defined
             if self.lambd[n, :].sum() == 0:
-                raise PHSUndefinedPotential
+                raise PHSUndefinedPotential(self.nodes[n])
 
             # test for definite node
             if self.lambd[n, :].sum() == 1:

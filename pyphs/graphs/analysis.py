@@ -13,6 +13,8 @@ from pyphs.config import datum
 from pyphs.misc.matrices import get_ind_nonzeros_col, get_ind_nonzeros_row, \
     isequal
 from pyphs.plots.graphs import plot_analysis
+from .exceptions import PHSEffortCtrlIsFluxCtrl, PHSFluxCtrlIsEffortCtrl, \
+                        PHSUndefinedPotential
 
 
 class GraphAnalysis:
@@ -121,8 +123,9 @@ class GraphAnalysis:
         # iterate over indeterminate nodes
         for n in self.ic_nodes:
             # assert the potential on node n can be defined
-            assert self.lambd[n, :].sum() != 0, \
-                "potential on node {0!s} is not defined".format(self.nodes[n])
+            if self.lambd[n, :].sum() == 0:
+                raise PHSUndefinedPotential
+
             # test for definite node
             if self.lambd[n, :].sum() == 1:
                 # get index of the edge that imposes the potential on node n
@@ -135,35 +138,28 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
                 if n in self.ic_nodes:
                     self.set_node_dc((n, e))
 
-    def perform(self):
+    def iteration(self):
         # init memory of lambda to: check for change or stop while loop
-        lambd_temp = numpy.zeros(self.lambd.shape)
+        self.lambd_temp = numpy.ones(self.lambd.shape)
+        # loop while Lambda is changed
+        while not isequal(self.lambd_temp, self.lambd):
+            if self._verbose:
+                print('###################################\nLoop Start\n')
+                # save Lambda for comparison in while condition
+            self.lambd_temp = numpy.matrix(self.lambd, copy=True)
+            # iterate on indeterminate nodes
+            self.iterate_nodes()
+            # iterate on flux-controlled edges
+            self.iterate_fc()
+            # iterate on indeterminate edges
+            self.iterate_ic()
+
+    def perform(self):
         # realizability analysis on the ic_edges
         while (len(self.ic_edges) + len(self.ic_nodes) > 0):
-            # loop while Lambda is changed
-            while ((not isequal(lambd_temp, self.lambd)) &
-                   (len(self.ic_edges) + len(self.ic_nodes) > 0)):
-                if self._verbose:
-                    print('###################################\nLoop Start\n')
-
-                    # save Lambda for comparison in while condition
-                lambd_temp = numpy.matrix(self.lambd, copy=True)
-                # iterate on indeterminate nodes
-                self.iterate_nodes()
-                if self._verbose:
-                    print('#################################\niterate_nodes\n')
-                # iterate on flux-controlled edges
-                self.iterate_fc()
-                if self._verbose:
-                    print('###################################\niterate_fc\n')
-
-                    # iterate on indeterminate edges
-                self.iterate_ic()
-                if self._verbose:
-                    print('###################################\niterate_ic\n')
-                    self.verbose('')
+            self.iteration()
             # if locked, perform unlock
-            if isequal(lambd_temp, self.lambd) & \
+            if isequal(self.lambd_temp, self.lambd) & \
                     (len(self.ic_edges) + len(self.ic_nodes) > 0):
                 self.unlock()
         if self._plot:

@@ -70,10 +70,6 @@ def length(v):
 def orthogonal(v):
     mat = np.array([[0., 1.],
                     [-1., 0.]])
-#    def func(v_ortho):
-#        return np.array([np.dot(v_ortho, v),
-#                        np.dot(v_ortho, v_ortho)-1])
-#    return root(func, v + np.random.randn(2)).x
     return np.dot(mat, v)
 
 

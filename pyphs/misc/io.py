@@ -67,7 +67,7 @@ def data_generator(filename, ind=None, decim=1,
     f = open(filename, "r")
     i = 0
     for line in f:
-        if i >= imin and i < imax and not bool(i % decim):
+        if imin <= i < imax and not bool(i % decim):
             if ind is None:
                 out = [float(x) for x in line.split()]
                 if postprocess is None:

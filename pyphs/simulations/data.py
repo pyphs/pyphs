@@ -56,7 +56,7 @@ class PHSData:
                 yield n/self.config['fs']
         i = 0
         for el in generator():
-            if i >= imin and i < imax and not bool(i % decim):
+            if imin <= i < imax and not bool(i % decim):
                 yield el
             i += 1
 

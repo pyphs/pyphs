@@ -39,7 +39,7 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
 
     def get_mat():
         """
-        return bloc (""" + namei + ', ' + namej + """) of structure matrix M.
+        return bloc (namei, namej) of structure matrix M.
         """
         debi, endi = getattr(core.inds, namei)()
         debj, endj = getattr(core.inds, namej)()
@@ -56,8 +56,7 @@ and 'x' and 'y' the variables that corresponds to block of struct.name
 
     def set_mat(val):
         """
-        set bloc (""" + vari + ', ' + varj + """) of structure matrix """ + \
-            name + """ to val
+        set bloc (vari, varj) of structure matrix name to val
         """
         if core.M.shape[0] != core.dims.tot():
             core.M = sympy.zeros(core.dims.tot())
@@ -106,17 +105,17 @@ class PHSCore:
         # init symbols with empty lists
         self.symbs_names = set()
         for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
-            self._setsymb(name, list())
+            self.setsymb(name, list())
 
         # Ordered list of names of variables considered as arguments
         self.args_names = ('x', 'dx', 'w', 'u', 'p')
 
         self.exprs_names = set()
-        self._setexpr('H', sympy.sympify(0))
+        self.setexpr('H', sympy.sympify(0))
 
         # init with empty lists
-        self._setexpr('z', list())
-        self._setexpr('g', list())
+        self.setexpr('z', list())
+        self.setexpr('g', list())
 
         # Get tools
         self.symbols = symbols
@@ -142,7 +141,7 @@ class PHSCore:
         for name in core1.symbs_names:
             attr1 = getattr(core1, name)
             attr2 = getattr(core2, name)
-            core._setsymb(name, attr1 + attr2)
+            core.setsymb(name, attr1 + attr2)
 
         for vari in core.dims.names:
             for varj in core.dims.names:
@@ -157,17 +156,17 @@ class PHSCore:
         for name in core1.symbs_names:
             attr1 = getattr(core1, name)
             attr2 = getattr(core2, name)
-            core1._setsymb(name, attr1 + attr2)
+            core1.setsymb(name, attr1 + attr2)
 
         # Update subs disctionary
         core1.subs.update(core2.subs)
 
         # Set Hamiltonian expression
-        core1._setexpr('H', core1.H + core2.H)
+        core1.setexpr('H', core1.H + core2.H)
 
         # Concatenate lists of expressions
-        core1._setexpr('z', list(core1.z)+list(core2.z))
-        core1._setexpr('g', list(core1.g)+list(core2.g))
+        core1.setexpr('z', list(core1.z)+list(core2.z))
+        core1.setexpr('g', list(core1.g)+list(core2.g))
 
         core1.connectors += core2.connectors
 
@@ -233,7 +232,7 @@ state with symbol "xi" for each "xi" in state vector 'CorePHS.x'.
             args += symbs
         return args
 
-    def _setsymb(self, name, list_symbs):
+    def setsymb(self, name, list_symbs):
         """
         Creates an attribute to the class: \
 a list of symbols "name" (eg "x", "w" or "y") and add "name" to \
@@ -278,19 +277,19 @@ exprs.z,
     - 'outputd' the discrete output vector function.
         """
 
-        self._setexpr('dxH', gradient(self.H, self.x))
-        self._setexpr('dxHd', discrete_gradient(self.H, self.x, self.dx()))
-        self._setexpr('hessH', hessian(self.H, self.x))
+        self.setexpr('dxH', gradient(self.H, self.x))
+        self.setexpr('dxHd', discrete_gradient(self.H, self.x, self.dx()))
+        self.setexpr('hessH', hessian(self.H, self.x))
 
-        self._setexpr('jacz', jacobian(self.z, self.w))
+        self.setexpr('jacz', jacobian(self.z, self.w))
 
         y, yd = output_function(self)
-        self._setexpr('output', y)
-        self._setexpr('outputd', yd)
+        self.setexpr('output', y)
+        self.setexpr('outputd', yd)
 
         self._exprs_built = True
 
-    def _setexpr(self, name, expr):
+    def setexpr(self, name, expr):
         """
         Add the sympy expression 'expr' to the 'CorePHS' module, with \
 argument 'name', and add 'name' to the set of expressions names \

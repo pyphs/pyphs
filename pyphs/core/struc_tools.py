@@ -106,7 +106,7 @@ def split_linear(core, split=True):
                 # move the element at the end of states vector
                 move_stor(core, nxl, core.dims.x()-1)
                 hess = movesquarematrixcolnrow(hess, nxl, core.dims.x()-1)
-    core._setexpr('Q', hess[:nxl, :nxl])
+    core.setexpr('Q', hess[:nxl, :nxl])
     # number of linear components
     setattr(core.dims, '_xl', nxl)
 
@@ -129,7 +129,7 @@ def split_linear(core, split=True):
                 # move the element to end of dissipation variables vector
                 move_diss(core, nwl, core.dims.w()-1)
                 jacz = movesquarematrixcolnrow(jacz, nwl, core.dims.w()-1)
-    core._setexpr('Zl', jacz[:nwl, :nwl])
+    core.setexpr('Zl', jacz[:nwl, :nwl])
 
     # number of linear components
     setattr(core.dims, '_wl', nwl)

@@ -37,14 +37,14 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
                              'starting': str_preamble(objlabel),
                              'closing': ''}})
     files['h']['starting'] += '\n'
-    files['h']['starting'] += "\n#ifndef %s_H" % objlabel
-    files['h']['starting'] += "\n#define %s_H" % objlabel
+    files['h']['starting'] += "\n#ifndef {0}_H".format(objlabel)
+    files['h']['starting'] += "\n#define {0}_H".format(objlabel)
     h, cpp = _str_includes(eigen_path)
     files['h']['starting'] += h
     files['cpp']['starting'] += cpp
     files['h']['starting'] += _str_namespaces()
-    files['h']['starting'] += "\n\nclass %s {" % objlabel
-    files['h']['closing'] += "\n};\n\n#endif /* %s_H */\n" % objlabel
+    files['h']['starting'] += "\n\nclass {0} ".format(objlabel) + "{"
+    files['h']['closing'] += "\n}"+";\n\n#endif /* {0}_H */\n".format(objlabel)
     files['h']['private'] += '\nprivate:'
     files['h']['public'] += '\npublic:'
     append_parameters(nums.method, files)
@@ -64,14 +64,14 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
         string += '\n\n\n// PRIVATE'
         string += indent(files[e]['private'])
         string += files[e]['closing']
-        filename = path + os.sep + 'core.%s' % e
+        filename = path + os.sep + 'core.{0}'.format(e)
         _file = open(filename, 'w')
         _file.write(string)
         _file.close()
     data_files = data(nums.method.core.subs, objlabel)
     for e in exts:
         string = data_files[e]
-        filename = path + os.sep + 'data.%s' % e
+        filename = path + os.sep + 'data.{0}'.format(e)
         _file = open(filename, 'w')
         _file.write(string)
         _file.close()
@@ -86,7 +86,7 @@ def append_parameters(method, files):
     files['h']['private'] += '\nconst unsigned int subs_ref = 0;' + '\n'
     for i, sub in enumerate(method.core.subs):
         files['h']['private'] += \
-            '\nconst double * %s = & subs[subs_ref][%i];' % (str(sub), i)
+            '\nconst double * {0} = & subs[subs_ref][{1}];'.format(str(sub), i)
 
 
 def data(subs, objlabel):
@@ -122,14 +122,15 @@ const double subs[1][""" + str(dim) + """] = {
         files['cpp'] = files['cpp'][:-2] + """},
 };"""
 
+
 ###############################################################################
 # Constructors
 
 def append_init(objlabel, files):
     title = "\n\n// Initialization\n\n"
-    files['h']['private'] += "%svoid %s();" % (title, 'init')
+    files['h']['private'] += "{0}void {1}();".format(title, 'init')
     files['cpp']['private'] += title
-    string = 'void %s::%s(){\n' % (objlabel, 'init')
+    string = 'void {0}::{1}()'.format(objlabel, 'init') + '{\n'
     string += indent(files['cpp']['data'])
     string += indent(files['cpp']['init'])
     string += '\n};'
@@ -138,18 +139,19 @@ def append_init(objlabel, files):
 
 def append_constructor(objlabel, files):
     title = "\n\n// Default Constructor\n\n"
-    files['h']['public'] += "%s%s();" % (title, objlabel)
+    files['h']['public'] += "{0}{1}();".format(title, objlabel)
     files['cpp']['public'] += title
-    string = '%s::%s(){\n    init();\n};' % (objlabel, objlabel)
+    string = '{0}::{0}()'.format(objlabel)
+    string += '{\n' + indent('init();') + '\n};'
     files['cpp']['public'] += string
 
 
 def append_constructor_init_matrix(method, objlabel, files):
     title = "\n\n// Constructor with matrix state initalization\n\n"
     mtype = matrix_type(method.core.dims.x(), 1)
-    files['h']['public'] += "%s%s(%s &);" % (title, objlabel, mtype)
+    files['h']['public'] += "{0}{1}({2} &);".format(title, objlabel, mtype)
     files['cpp']['public'] += title
-    string = '%s::%s(%s & x0){\n' % (objlabel, objlabel, mtype)
+    string = '{0}::{0}({1} & x0)'.format(objlabel, mtype) + '{\n'
     string += "set_x(x0);"
     string += '\n' + indent('init();') + '\n};'
     files['cpp']['public'] += string
@@ -157,9 +159,9 @@ def append_constructor_init_matrix(method, objlabel, files):
 
 def append_constructor_init_vector(objlabel, files):
     title = "\n\n// Constructor with vector state initalization\n\n"
-    files['h']['public'] += "%s%s(vector<double> &);" % (title, objlabel)
+    files['h']['public'] += "{0}{1}(vector<double> &);".format(title, objlabel)
     files['cpp']['public'] += title
-    string = '%s::%s(vector<double> & x0){\n' % (objlabel, objlabel)
+    string = '{0}::{0}(vector<double> & x0)'.format(objlabel) + '{\n'
     string += """
     if (x().size() == x0.size()) {
         set_x(x0);
@@ -174,15 +176,15 @@ def append_constructor_init_vector(objlabel, files):
 
 def append_destructuor(objlabel, files):
     title = "\n\n// Default Destructor\n\n"
-    files['h']['public'] += "%s~%s();" % (title, objlabel)
+    files['h']['public'] += "{0}~{1}();".format(title, objlabel)
     files['cpp']['public'] += title
-    string = '%s::~%s(){\n};' % (objlabel, objlabel)
+    string = '{0}::~{0}()'.format(objlabel) + '{\n};'
     files['cpp']['public'] += string
 
 
 ###############################################################################
 def include_Eigen(eigen_path):
-    return '#include <' + eigen_path + '/Eigen/Dense>'
+    return r'#include <{0}{1}Eigen{1}Dense>'.format(eigen_path, os.sep)
 
 
 def _str_includes(eigen_path):
@@ -211,27 +213,24 @@ def execs(actions):
     string = ''
     for action in actions:
         if isinstance(action, str):
-            string += '\n%s_update();' % action
+            string += '\n{0}_update();'.format(action)
         else:
-            string += '\n%s_update();' % action[1]
-            string += '\nset_%s(_%s);' % action
+            string += '\n{0}_update();'.format(action[1])
+            string += '\nset_{0}(_{1});'.format(*action)
     return string
 
 
 def iterate(method, actions, res_label, step_label):
     string = ''
-    string += """
-unsigned int n%s = 0;
-_%s = 1;
-while (n%s<%i & %s()>%s & %s()>%s){%s\n}""" % (res_label, step_label,
-                                               res_label,
-                                               method.config['maxit'],
-                                               res_label,
-                                               str(method.config['numtol']),
-                                               step_label,
-                                               str(method.config['numtol']),
-                                               indent(execs(actions) +
-                                                      'n%s += 1;' % res_label))
+    string += "\nunsigned int iter_{0} = 0;".format(res_label)
+    string += "\n_{0} = 1;".format(step_label)
+    it = "(iter_{0}<{1})".format(res_label, method.config['maxit'])
+    res = "({0}()>{1})".format(res_label, method.config['numtol'])
+    step = "({0}()>{1})".format(step_label, method.config['numtol'])
+    string += \
+        "\nwhile ({0} & {1} & {2})".format(it, res, step) + '{'
+    string += \
+        indent(execs(actions) + 'iter_{0} += 1;'.format(res_label)) + '\n}'
     return string
 
 

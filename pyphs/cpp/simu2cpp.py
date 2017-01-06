@@ -117,16 +117,16 @@ CLOCKS_PER_SEC;
 
 
 def _str_initvecs(simu):
-    string = "\nconst unsigned int nt = %i;\n" % simu.data.config['nt']
+    string = "\nconst unsigned int nt = {0};\n".format(simu.data.config['nt'])
     names = ('x0', 'u', 'p')
     for name in names:
         dim = getattr(simu.nums, name[0])().shape[0]
-        string += "\nvector<double> %sVector(%i);" % (name, dim)
+        string += "\nvector<double> {0}Vector({1});".format(name, dim)
     string += "\n"
     names = simu.config['files_to_save']
     for name in names:
         dim = getattr(simu.nums, name)().shape[0]
-        string += "\nvector<double> %sVector(%i);" % (name, dim)
+        string += "\nvector<double> {0}Vector({1});".format(name, dim)
     return indent(string)
 
 
@@ -139,14 +139,13 @@ def _str_open_files(simu):
     names = ('x0', 'u', 'p')
     for name in names:
         string += """
-    ifstream %sFile;
-    %sFile.open("%s%sdata%s%s.txt");
+    ifstream {0}File;
+    {0}File.open("{1}{2}data{2}{0}.txt");
 
-    if (%sFile.fail()) {
-        cerr << "Failed opening %s file" << endl;
-        exit(1);
-    }
-""" % (name, name, simu.config['path'], os.sep, os.sep, name, name, name)
+    if ({0}File.fail()) """.format(name, simu.config['path'], os.sep)
+        string += "{" + """
+        cerr << "Failed opening {0} file" << endl;
+        exit(1);""".format(name) + "}"
     return string
 
 
@@ -167,15 +166,16 @@ def _str_readdata(simu):
         if dimu > 0:
             string += """\n
         // Get input data
-        for (unsigned int i=0; i<%i; i++) {
+        for (unsigned int i=0; i<{0}; i++) """.format(dimu)
+            string += """{
             uFile >> uVector[i];
-        }""" % dimu
+        }"""
         if dimp > 0:
             string += """\n
         // Get parameters data
-        for (unsigned int i=0; i<%i; i++) {
+        for (unsigned int i=0; i<{0}; i++)""".format(dimp) + """ {
             pFile >> pVector[i];
-        }""" % dimp
+        }"""
     return string
 
 
@@ -210,13 +210,14 @@ def _init_files(phs):
 def _str_instanciate(simu, objlabel):
     string = """\n
     // Get init data
-    for (unsigned int i=0; i<%i; i++) {
+    for (unsigned int i=0; i<{0}; i++) """.format(simu.nums.x().shape[0]) + '{'
+    string = """
         x0File >> x0Vector[i];
-    }
+    }"""
+    string = """
 
     // Instance of PyPHS numerical core
-    %s %s(x0Vector);""" % (simu.nums.x().shape[0],
-                           objlabel.upper(), objlabel.lower())
+    {0} {1}(x0Vector);""".format(objlabel.upper(), objlabel.lower())
     return string
 
 
@@ -242,7 +243,7 @@ def _str_process(simu, objlabel):
             ETA = (float(nt)/float(n+1)-1.)*(t.elapsedTime());
             ETAm = int(floor(ETA))/60;
             ETAs = floor(ETA%60);
-            std::cout << "] " << int(progress * 100.0) << " % done, ETA: " \
+            std::cout << "] " << int(progress * 100.0) << "% done, ETA: " \
 << ETAm << "m" << ETAs << "s\\r" << endl ;
             std::cout.flush();
         }"""
@@ -257,13 +258,14 @@ def _str_process(simu, objlabel):
     string += "\n    }"
     string += '\n    uFile.close();'
     string += '\n    pFile.close();'
-    string += indent(_close(simu)) + """\n
+    string += indent(_close(simu))
+    string += """
     cout << endl;
     cout << "Data written at" << endl;
     cout << endl;
-    cout << """ + '"' + simu.config['path'] + os.sep + '"' + """<< endl;
+    cout << "{0}{1}data{1}"<< endl;
     cout << endl;
-"""
+""".format(simu.config['path'], os.sep)
     return string
 
 
@@ -272,13 +274,12 @@ def _gets(simu, objlabel):
     names = simu.config['files_to_save']
     for name in names:
         dim = getattr(simu.nums, name)().shape[0]
-        string += ("\n\n%sVector = " % name) + \
-            objlabel.lower() + (".%s_vector();" % name)
+        string += ("\n\n{0}Vector = ".format(name)) + \
+            objlabel.lower() + (".{0}_vector();".format(name))
         string += """
-for (unsigned int i = 0; i<%i; i++) {
-    %sFile << %sVector[i] << " ";
-}""" % (dim, name, name)
-        string += "\n%sFile << endl;\n" % name
+for (unsigned int i = 0; i<{0}; i++)""".format(dim) + "{" + """
+    {0}File << {0}Vector[i] << " ";""".format(name) + "\n}"
+        string += "\n{0}File << endl;\n".format(name)
     return string
 
 
@@ -286,5 +287,5 @@ def _close(simu):
     string = ''
     names = simu.config['files_to_save']
     for name in names:
-        string += "\n%sFile.close();" % name
+        string += "\n{0}File.close();".format(name)
     return string

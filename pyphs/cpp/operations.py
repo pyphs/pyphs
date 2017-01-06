@@ -25,17 +25,17 @@ def append_ops(nums, files, objlabel):
 # DEF
 
 def op2cpp(op):
-    parser = {'add': lambda s1, s2: '(%s) + (%s)' % (s1, s2),
-              'prod': lambda s1, s2: '(%s)*(%s)' % (s1, s2),
-              'dot': lambda s1, s2: '(%s)*(%s)' % (s1, s2), #lambda s1, s2: '(%s).dot(%s)' % (s1, s2),
-              'inv': lambda s: '(%s).inverse()' % s,
-              'norm': lambda s: 'sqrt((%s).dot(%s))' % (s, s),
-              'copy': lambda s: '%s' % s
+    parser = {'add': lambda s1, s2: '({0}) + ({1})'.format(s1, s2),
+              'prod': lambda s1, s2: '({0})*({1})'.format(s1, s2),
+              'dot': lambda s1, s2: '({0})*({1})'.format(s1, s2),
+              'inv': lambda s: '({0}).inverse()'.format(s),
+              'norm': lambda s: 'sqrt(({0}).dot({1}))'.format(s, s),
+              'copy': lambda s: '{0}'.format(s)
               }
     args = []
     for arg in op.args:
         if isinstance(arg, str):
-            args.append('%s()' % arg)
+            args.append('{0}()'.format(arg))
         elif isinstance(arg, (float, int)):
             args.append(str(arg))
         else:
@@ -63,11 +63,11 @@ def _str_mat_op_def(nums, name):
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
     mtype = matrix_type(mat.shape[0], mat.shape[1])
-    return '\n%s _%s;' % (mtype, name)
+    return '\n{0} _{1};'.format(mtype, name)
 
 
 def _str_scal_op_def(name):
-    return '\ndouble _%s;' % name
+    return '\ndouble _{0};'.format(name)
 
 
 ###############################################################################
@@ -85,9 +85,9 @@ def _append_ops_updates(nums, files, objlabel):
 
 def _str_op_update(nums, name, objlabel):
     op = getattr(nums.method, name + '_op')
-    update_h = '\nvoid %s_update();' % name
-    update_cpp = '\nvoid %s::%s_update(){' % (objlabel, name)
-    update_cpp += '\n'+indent('_%s = %s;' % (name, op2cpp(op)))
+    update_h = '\nvoid {0}_update();'.format(name)
+    update_cpp = '\nvoid {0}::{1}_update()'.format(objlabel, name) + '{'
+    update_cpp += '\n'+indent('_{0} = {1};'.format(name, op2cpp(op)))
     update_cpp += '\n};'
     return update_h, update_cpp
 
@@ -128,9 +128,10 @@ def _str_mat_op_get(nums, name, objlabel):
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
     mtype = matrix_type(mat.shape[0], mat.shape[1])
-    get_h = '\n%s %s() const;' % (mtype, name)
-    get_cpp = '\n%s %s::%s() const {\n    return _%s;\n}' % (mtype, objlabel,
-                                                             name, name)
+    get_h = '\n{0} {1}() const;'.format(mtype, name)
+    get_cpp = \
+        '\n{0} {1}::{2}() const'.format(mtype, objlabel, name)
+    get_cpp += ' {\n' + indent('return _{0};'.format(name)) + '\n}'
     return get_h, get_cpp
 
 
@@ -139,20 +140,22 @@ def _str_mat_op_get_vector(nums, name, objlabel):
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
     mtype = 'vector<double>'
-    get_h = '\n%s %s_vector() const;' % (mtype, name)
-    get_cpp = '\n%s %s::%s_vector() const {' % (mtype, objlabel, name)
+    get_h = '\n{0} {1}_vector() const;'.format(mtype, name)
+    get_cpp = \
+        '\n{0} {1}::{2}_vector() const'.format(mtype, objlabel, name) + ' {'
     dim = mat.shape[0]
-    get_cpp += indent("\nvector<double> v = vector<double>(%i);" % dim)
+    get_cpp += indent("\nvector<double> v = vector<double>({0});".format(dim))
     for i in range(dim):
-        get_cpp += indent("\nv[%i] = _%s(%i, 0);" % (i, name, i))
+        get_cpp += indent("\nv[{0}] = _{1}({0}, 0);".format(i, name))
     get_cpp += indent("\nreturn v;")+"\n}"
     return get_h, get_cpp
 
 
 def _str_scal_op_get(name, objlabel):
-    get_h = '\ndouble %s() const;' % name
-    get_cpp = '\ndouble %s::%s() const {\n    return _%s;\n}' % (objlabel,
-                                                                 name, name)
+    get_h = '\ndouble {0}() const;'.format(name)
+    get_cpp = \
+        '\ndouble {0}::{1}() const'.format(objlabel, name)
+    get_cpp += ' {\n' + indent('return _{0};'.format(name)) + '\n}'
     return get_h, get_cpp
 
 
@@ -175,16 +178,16 @@ def _str_mat_op_init_data(nums, name):
     mat = getattr(nums, name)()
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
-    init_data = 'double %s_data[] = {' % name
+    init_data = 'double {0}_data[] = '.format(name) + '{'
     for n in range(mat.shape[1]):
         for m in range(mat.shape[0]):
-            init_data += '%f, ' % mat[m, n]
-    init_data = '%s};' % init_data[:-2]
+            init_data += '{0}, '.format(mat[m, n])
+    init_data = '{0}'.format(init_data[:-2]) + '};'
     return init_data
 
 
 def _str_scal_op_init_data(nums, name):
-    init_data = 'double %s_data = 0.;' % name
+    init_data = 'double {0}_data = 0.;'.format(name)
     return init_data
 
 
@@ -208,8 +211,8 @@ def _str_mat_op_init_cpp(nums, name):
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
     mtype = matrix_type(mat.shape[0], mat.shape[1])
-    return '_%s = Map<%s> (%s_data);' % (name, mtype, name)
+    return '_{0} = Map<{1}> ({0}_data);'.format(name, mtype)
 
 
 def _str_scal_op_init_cpp(name):
-    return '_%s = %s_data;' % (name, name)
+    return '_{0} = {0}_data;'.format(name)

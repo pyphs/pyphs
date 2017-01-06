@@ -32,9 +32,9 @@ def _append_funcs_defs(nums, files):
         if len(attr.shape) > 0:
             mat = sympy.Matrix(getattr(nums.method, name + '_expr'))
             mtype = matrix_type(mat.shape[0], mat.shape[1])
-            files['h']['private'] += '\n%s _%s;' % (mtype, name)
+            files['h']['private'] += '\n{0} _{1};'.format(mtype, name)
         else:
-            files['h']['private'] += '\ndouble _%s;' % name
+            files['h']['private'] += '\ndouble _{0};'.format(name)
 
 
 ###############################################################################
@@ -71,28 +71,32 @@ def _append_funcs_get_vector(nums, files, objlabel):
 def _str_mat_func_get(method, name, objlabel):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
     mtype = matrix_type(mat.shape[0], mat.shape[1])
-    get_h = '\n%s %s() const;' % (mtype, name)
-    get_cpp = '\n%s %s::%s() const {\n    return _%s;\n}' % (mtype, objlabel,
-                                                             name, name)
+    get_h = '\n{0} {1}() const;'.format(mtype, name)
+    get_cpp = '\n{0} {1}::{2}() const'.format(mtype, objlabel, name)
+    get_cpp += ' {\n'
+    get_cpp += indent("return _{0};".format(name))
+    get_cpp += '\n}'
     return get_h, get_cpp
 
 
 def _str_scal_func_get(name, objlabel):
-    get_h = '\ndouble %s();' % name
-    get_cpp = '\ndouble %s::%s() const {\n    return _%s;\n}' % (objlabel,
-                                                                 name, name)
+    get_h = '\ndouble {0}();'.format(name)
+    get_cpp = \
+        '\ndouble {0}::{1}() const {\n    return _{1};\n}'.format(objlabel,
+                                                                  name)
     return get_h, get_cpp
 
 
 def _str_mat_func_get_vector(method, name, objlabel):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
     mtype = 'vector<double>'
-    get_h = '\n%s %s_vector() const;' % (mtype, name)
-    get_cpp = '\n%s %s::%s_vector() const {' % (mtype, objlabel, name)
+    get_h = '\n{0} {1}_vector() const;'.format(mtype, name)
+    get_cpp = '\n{0} {1}::{2}_vector() const'.format(mtype, objlabel, name) + \
+        ' {'
     dim = mat.shape[0]
-    get_cpp += indent("\nvector<double> v = vector<double>(%i);" % dim)
+    get_cpp += indent("\nvector<double> v = vector<double>({0});".format(dim))
     for i in range(dim):
-        get_cpp += indent("\nv[%i] = _%s(%i, 0);" % (i, name, i))
+        get_cpp += indent("\nv[{0}] = _{1}({0}, 0);".format(i, name, i))
     get_cpp += indent("\nreturn v;")+"\n}"
     return get_h, get_cpp
 
@@ -116,27 +120,27 @@ def _append_funcs_updates(nums, files, objlabel):
 
 def _str_mat_func_update(method, name, objlabel):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
-    update_h = '\nvoid %s_update();' % name
-    update_cpp = '\nvoid %s::%s_update(){' % (objlabel, name)
+    update_h = '\nvoid {0}_update();'.format(name)
+    update_cpp = '\nvoid {0}::{1}_update()'.format(objlabel, name) + '{'
     for n in range(mat.shape[1]):
         for m in range(mat.shape[0]):
             expr = mat[m, n]
             symbs = expr.free_symbols
             if any(symb in method.args for symb in symbs):
                 c = ccode(expr, dereference=dereference(method))
-                update_cpp += '\n_%s(%i, %i) = %s;' % (name, m, n, c)
+                update_cpp += '\n_{0}({1}, {2}) = {3};'.format(name, m, n, c)
     update_cpp += '\n};'
     return update_h, update_cpp
 
 
 def _str_scal_func_update(method, name, objlabel):
     expr = getattr(method, name + '_expr')
-    update_h = '\nvoid %s_update();' % name
-    update_cpp = '\nvoid %s::%s_update(){' % (objlabel, name)
+    update_h = '\nvoid {0}_update();'.format(name)
+    update_cpp = '\nvoid {0}::{1}_update(){'.format(objlabel, name)
     symbs = expr.free_symbols
     if any(symb in method.args for symb in symbs):
         c = ccode(expr, dereference=dereference(method))
-        update_cpp += '\n_%s = %s;' % (name, c)
+        update_cpp += '\n_{0} = {1};'.format(name, c)
     update_cpp += '\n};'
     return update_h, update_cpp
 
@@ -158,7 +162,7 @@ def _append_funcs_data(nums, files, objlabel):
 
 def _str_mat_func_init_data(method, name):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
-    init_data = 'double %s_data[] = {' % name
+    init_data = 'double {0}_data[] ='.format(name) + ' {'
     crop = False
     for n in range(mat.shape[1]):
         for m in range(mat.shape[0]):
@@ -169,7 +173,7 @@ def _str_mat_func_init_data(method, name):
                 crop = True
             else:
                 c = ccode(expr, dereference=dereference(method))
-                init_data += '%s, ' % c
+                init_data += '{0}, '.format(c)
                 crop = True
     if crop:
         init_data = init_data[:-2]
@@ -179,13 +183,13 @@ def _str_mat_func_init_data(method, name):
 
 def _str_scal_func_init_data(method, name):
     expr = getattr(method, name + '_expr')
-    init_data = 'double %s_data = ' % name
+    init_data = 'double {0}_data = '.format(name)
     symbs = expr.free_symbols
     if any(symb in method.args for symb in symbs):
         init_data += "0.;"
     else:
         c = ccode(expr, dereference=dereference(method))
-        init_data += '%s;' % c
+        init_data += '{0};'.format(c)
     return init_data
 
 
@@ -207,8 +211,8 @@ def _append_funcs_init(nums, files, objlabel):
 def _str_mat_func_init_cpp(method, name):
     mat = sympy.Matrix(getattr(method, name + '_expr'))
     mtype = matrix_type(mat.shape[0], mat.shape[1])
-    return '\n_%s = Map<%s> (%s_data);' % (name, mtype, name)
+    return '\n_{0} = Map<{1}> ({0}_data);'.format(name, mtype, name)
 
 
 def _str_scal_func_init_cpp(name):
-    return '\n_%s = %s_data;' % (name, name)
+    return '\n_{0} = {0}_data;'.format(name)

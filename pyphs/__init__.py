@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import sys
 
 from .core.core import PHSCore
 from .graphs.graph import PHSGraph
@@ -28,13 +29,13 @@ __all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
            'PHSNumericalOperation', 'PHSNumericalMethod', 'PHSNumericalCore',
            'PHSNumericalEval',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'document',
-           'numcore2cpp', 'simu2cpp', 'GUI']
+           'numcore2cpp', 'simu2cpp']
 
 
 def __licence_text__():
-	"PRINT OF THE LICENCE"
-	os.chdir(os.path.dirname(sys.argv[0]))
-	file_ = open(r'./LICENCE.rst', "r")
-	with file_ as openfileobject:
-		for line in openfileobject:
-			print(line)
+    "PRINT OF THE LICENCE"
+    os.chdir(os.path.dirname(sys.argv[0]))
+    file_ = open(r'./LICENCE.rst', "r")
+    with file_ as openfileobject:
+        for line in openfileobject:
+            print(line)

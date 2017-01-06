@@ -2,6 +2,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
+
 from .core.core import PHSCore
 from .graphs.graph import PHSGraph
 from .graphs.netlists import PHSNetlist
@@ -18,13 +20,21 @@ __licence__ = \
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.2.pre0'
+__version__ = '0.2.pre1'
 __author_email__ = 'antoine.falaize@gmail.com'
 
-__all__ = ['__version__', '__copyright__', '__author__', '__licence__',
-           'PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
+__all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
            'signalgenerator', 'PHSNumericalMethodStandard',
            'PHSNumericalOperation', 'PHSNumericalMethod', 'PHSNumericalCore',
            'PHSNumericalEval',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'document',
-           'numcore2cpp', 'simu2cpp']
+           'numcore2cpp', 'simu2cpp', 'GUI']
+
+
+def __licence_text__():
+	"PRINT OF THE LICENCE"
+	os.chdir(os.path.dirname(sys.argv[0]))
+	file_ = open(r'./LICENCE.rst', "r")
+	with file_ as openfileobject:
+		for line in openfileobject:
+			print(line)

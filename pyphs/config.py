@@ -80,8 +80,13 @@ special_chars = ['#']
 # Below are the options for C++ files rendering and execution inside python.
 
 # We use the Eigen C++ library for matrix algebra in the generated c++ code.
-# Inform below the path to your local eigen library
-eigen_path = '/Users/.../eigen'
+# Inform below the path to your local eigen library, e.g. if you provide
+# eigen_path = r'/roor/path/subpath/eigen', PyPHS will include the following in
+# the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
+# !!! This should be a raw string (especially for Windows user, for which the
+# path separator '\' will be escape) !!!!
+eigen_path = r'This Should be your local path to the eigen library (it can be \
+configured in the script "config.py" from your local pyphs installation).'
 
 # You can automatize the compilation and execution of the c++ files by giving a
 # shell script in "cpp_build_and_run_script" below. It is executed when the

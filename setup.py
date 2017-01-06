@@ -66,8 +66,12 @@ setup(name='pyphs',
       classifiers=[
         'Natural Language :: English',
         'Development Status :: 3 - Alpha',
+        'Operating System :: Unix',
+		'Operating System :: MacOS',
         'Operating System :: MacOS :: MacOS X',
-        'Environment :: MacOS X',
+        'Operating System :: Microsoft'
+        'Operating System :: Microsoft :: Windows'
+        'Environment :: Console',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',

@@ -101,18 +101,18 @@ def free_symbols(obj):
 
 def _assert_expr(obj):
     assert isinstance(obj, (sympy.Expr, sympy.Symbol)), "argument should be sympy.Expr, \
-got %s" % type(obj)
+got {0}".format(type(obj))
 
 
 def _assert_vec(obj):
     # if matrix then transpose to column vector
     if hasattr(obj, 'shape'):
         assert 1 in obj.shape, "Matrix argument should have a single \
-dimension, got dim(obj)=%s" % obj.shape
+dimension, got dim(obj)={0}".format(obj.shape)
         obj = obj.T if obj.shape[0] < obj.shape[1] else obj
     else:
         assert hasattr(obj, '__len__'), "argument should be one dimensional, \
-got type(obj)=%s" % type(obj)
+got type(obj)={0}".format(type(obj))
     obj = list(obj)
     for i, el in enumerate(obj):
         if isinstance(el, (float, int)):
@@ -124,7 +124,7 @@ got type(obj)=%s" % type(obj)
 
 def _assert_mat(obj):
     assert hasattr(obj, 'shape'), "argument should be a matrix structure, \
-got %s" % type(obj)
+got {0}".format(type(obj))
     obj = sympy.Matrix(obj)
     nrows = obj.shape[0]
     for n in range(nrows):

@@ -178,11 +178,11 @@ None).
         from matplotlib.pyplot import ylabel
         ylabel(opts['unity'])
 
-    if not opts['maintitle'] is None:
+    if opts['maintitle'] is not None:
         from matplotlib.pyplot import title
         title(opts['maintitle'])
 
-    if not opts['filelabel'] is None:
+    if opts['filelabel'] is not None:
         from matplotlib.pyplot import savefig
         savefig(opts['filelabel'] + '.' + opts['format'])
 

@@ -67,20 +67,19 @@ def data_generator(filename, ind=None, decim=1,
     f = open(filename, "r")
     i = 0
     for line in f:
-        if i >= imin and i < imax:
-            if not bool(i % decim):
-                if ind is None:
-                    out = [float(x) for x in line.split()]
-                    if postprocess is None:
-                        y = out
-                    else:
-                        y = list(map(postprocess, out))
-                    yield y
+        if imin <= i < imax and not bool(i % decim):
+            if ind is None:
+                out = [float(x) for x in line.split()]
+                if postprocess is None:
+                    y = out
                 else:
-                    assert isinstance(ind, int), 'Index should be an \
-integer. Got {0!s}'.format(type(ind))
-                    out = float(line.split()[ind])
-                    yield out if postprocess is None else postprocess(out)
+                    y = list(map(postprocess, out))
+                yield y
+            else:
+                assert isinstance(ind, int), 'Index should be an \
+    integer. Got {0!s}'.format(type(ind))
+                out = float(line.split()[ind])
+                yield out if postprocess is None else postprocess(out)
         i += 1
 
 

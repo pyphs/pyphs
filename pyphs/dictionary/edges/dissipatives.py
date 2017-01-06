@@ -48,9 +48,8 @@ class PHSDissipativeLinear(PHSGraph):
         w = self.core.symbols(w_label)
         z_f_ctrl = coeff.symb*w
         z_e_ctrl = w/coeff.symb
-        if 'inv_coeff' in kwargs:
-            if kwargs['inv_coeff']:
-                z_f_ctrl, z_e_ctrl = z_e_ctrl, z_f_ctrl
+        if 'inv_coeff' in kwargs and kwargs['inv_coeff']:
+            z_f_ctrl, z_e_ctrl = z_e_ctrl, z_f_ctrl
         self.core.add_dissipations([w], [z_f_ctrl])
         edge_data_dic = {'label': w,
                          'type': 'dissipative',

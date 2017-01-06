@@ -108,11 +108,11 @@ def corestruc2tex(core, which='all'):
     """
     str_structure = cr(1)
     str_structure += r"\section{System structure}"
-    if which == 'all' or which == 'M':
+    if which in ['all', 'M']:
         str_structure += corestrucM2tex(core)
-    if which == 'all' or which == 'J':
+    if which in ['all', 'J']:
         str_structure += corestrucJ2tex(core)
-    if which == 'all' or which == 'R':
+    if which in ['all', 'R']:
         str_structure += corestrucR2tex(core)
     return str_structure
 

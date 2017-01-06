@@ -4,7 +4,7 @@ Created on Sat Jun 11 19:28:12 2016
 
 @author: Falaize
 """
-from pyphs.plots.tools import (activate_latex, annotate, whichplot, 
+from pyphs.plots.tools import (activate_latex, annotate, whichplot,
                                setlims, setticks, dec, standard)
 from .fonts import globalfonts
 
@@ -184,11 +184,11 @@ None).
 
     if opts['maintitle'] is not None:
         from matplotlib.pyplot import title
-        title(opts['maintitle'])    
-        
+        title(opts['maintitle'])
+
     if opts['axedef'] is None:
         fig.tight_layout()
-        
+
     if opts['filelabel'] is not None:
         from matplotlib.pyplot import savefig
         savefig(opts['filelabel'] + '.' + opts['format'])

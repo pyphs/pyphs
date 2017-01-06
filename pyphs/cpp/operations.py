@@ -24,13 +24,13 @@ def append_ops(nums, files, objlabel):
 ###############################################################################
 # DEF
 
-def op2cpp(op):
-    parser = {'add': lambda s1, s2: '({0}) + ({1})'.format(s1, s2),
-              'prod': lambda s1, s2: '({0})*({1})'.format(s1, s2),
-              'dot': lambda s1, s2: '({0})*({1})'.format(s1, s2),
-              'inv': lambda s: '({0}).inverse()'.format(s),
+def op2cpp(op):  # used in place of lambda s: '({0}) + ({1})'.format
+    parser = {'add': '({0}) + ({1})'.format,
+              'prod': '({0})*({1})'.format,
+              'dot': '({0})*({1})'.format,
+              'inv': '({0}).inverse()'.format,
               'norm': lambda s: 'sqrt(({0}).dot({1}))'.format(s, s),
-              'copy': lambda s: '{0}'.format(s)
+              'copy': '{0}'.format
               }
     args = []
     for arg in op.args:

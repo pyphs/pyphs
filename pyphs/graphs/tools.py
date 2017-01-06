@@ -33,9 +33,8 @@ def serial_edges(graph):
                 datum_end = True
             s1.reverse()
             s2 = serial_next(g, node, n2)
-            if s2[-1] == datum:
-                if datum_end:
-                    s2 = s2[:-1]
+            if s2[-1] == datum and datum_end:
+                s2 = s2[:-1]
             s = s1[:-1] + s2
             serial_nodes += s
             edges = list()

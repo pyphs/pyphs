@@ -222,12 +222,12 @@ subplots.
         left, right = opts['axedef'][0], opts['axedef'][2]
         bottom, top = opts['axedef'][1], opts['axedef'][3]
         wspace, hspace = opts['axedef'][4], opts['axedef'][5]
-        fig.subplots_adjust(left=left, right=right, 
+        fig.subplots_adjust(left=left, right=right,
                             bottom=bottom, top=top,
                             wspace=wspace, hspace=hspace)
     else:
         fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=.0)
-    
+
     if opts['filelabel'] is not None:
         from matplotlib.pyplot import savefig
         savefig(opts['filelabel'] + '.' + opts['format'])

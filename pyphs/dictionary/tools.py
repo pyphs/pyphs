@@ -38,15 +38,18 @@ def form(name, obj):
         string = obj[0]
         symb = symbols(string)
         sub = {symb: obj[1]}
+        par = None
     elif isinstance(obj, (float, int)):
         string = name
         symb = symbols(string)
         sub = {symb: obj}
+        par = None
     elif isinstance(obj, str):
         string = obj
         symb = symbols(string)
         sub = {}
-    return symb, sub
+        par = symb
+    return symb, sub, par
 
 
 def mappars(graph, **kwargs):
@@ -58,9 +61,10 @@ for parameters in component expression 'dicpars' and for parameters in phs \
     dicpars = {}
     subs = {}
     for key in kwargs.keys():
-        symb, sub = form(graph.label + '_' + str(key), kwargs[key])
+        symb, sub, par = form(graph.label + '_' + str(key), kwargs[key])
         dicpars.update({symbols(key): symb})
-        subs.update(sub)
+        if par is not None:
+            graph.core.add_parameters(par)
     return dicpars, subs
 
 

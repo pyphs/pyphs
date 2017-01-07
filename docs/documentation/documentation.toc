@@ -1,0 +1,30 @@
+\select@language {french}
+\contentsline {section}{\numberline {1}Introduction}{1}
+\contentsline {subsection}{\numberline {1.1}Installation}{1}
+\contentsline {subsection}{\numberline {1.2}The PHS formalism}{1}
+\contentsline {section}{\numberline {2}Structure of the \texttt {pyphs.PortHamiltonianObject}}{4}
+\contentsline {subsection}{\numberline {2.1}The \texttt {symbs} module}{4}
+\contentsline {subsection}{\numberline {2.2}The \texttt {exprs} module}{4}
+\contentsline {subsection}{\numberline {2.3}The \texttt {dims} module}{5}
+\contentsline {section}{\numberline {3}Algorithms}{6}
+\contentsline {subsection}{\numberline {3.1}Graph analysis}{6}
+\contentsline {subsection}{\numberline {3.2}Simulation methods}{6}
+\contentsline {subsubsection}{\numberline {3.2.1}Split of the linear part from the nonlinear part}{6}
+\contentsline {subsubsection}{\numberline {3.2.2}Presolve numerical nonlinear subsystem}{7}
+\contentsline {subsubsection}{\numberline {3.2.3}Algorithm}{7}
+\contentsline {paragraph}{Inputs}{7}
+\contentsline {paragraph}{Process}{7}
+\contentsline {subsection}{\numberline {3.3}Realizability solver}{8}
+\contentsline {paragraph}{Serial}{8}
+\contentsline {paragraph}{parallel}{8}
+\contentsline {paragraph}{Realizable}{8}
+\contentsline {paragraph}{Non-Realizable}{8}
+\contentsline {paragraph}{Realizable}{8}
+\contentsline {paragraph}{Non-Realizable}{8}
+\contentsline {section}{\numberline {4}Connectors: Gyrators and Transformers}{8}
+\contentsline {subsection}{\numberline {4.1}Gyrator}{9}
+\contentsline {subsection}{\numberline {4.2}Transformer}{9}
+\contentsline {section}{\numberline {5}Fractional calculus}{9}
+\contentsline {subsection}{\numberline {5.1}Fractional integrator}{9}
+\contentsline {subsection}{\numberline {5.2}Fractional differentiator}{10}
+\contentsline {subsection}{\numberline {5.3}Finite order approximation}{10}

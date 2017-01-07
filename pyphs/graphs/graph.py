@@ -49,8 +49,8 @@ port-Hamiltonian systems.
         self.Analysis.perform()
         buildCore(self)
         core = self.core.__deepcopy__()
-        core.apply_connectors()
-        core.build_exprs()
+        #core.apply_connectors()
+        #core.build_exprs()
         return core
 
     def build_from_netlist(self):
@@ -133,7 +133,6 @@ port-Hamiltonian systems.
         while flag:
             change_s = self.split_serial()
             change_p = self.split_parallel()
-            print(any((change_s, change_p)))
             flag = any((change_s, change_p))
 
     @staticmethod

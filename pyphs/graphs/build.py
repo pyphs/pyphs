@@ -103,6 +103,5 @@ def _setCore(Graph):
         new_indices_connector.append(index_e_in_connector)
     Graph.core.cy = [Graph.core.cy[el] for el in new_indices_connector]
     Graph.core.cu = [Graph.core.cu[el] for el in new_indices_connector]
-
     _select_relations(Graph)
     Graph.core.M = Graph.Analysis.J

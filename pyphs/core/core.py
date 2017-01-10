@@ -383,10 +383,10 @@ dissipative variables w are no more accessible.
         G_connectors = sympy.Matrix(M[:nxwy, nxwy:])
         J_connectors = G_connectors * Mswitch * G_connectors.T
         M = M[:nxwy, :nxwy] + J_connectors
+        self.M = M
         self.cy = []
         self.cu = []
         self.connectors = []
-        self.M = M
 
     def labels(self):
         """
@@ -530,17 +530,53 @@ dissipation function z.
         self.u += list(u)
         self.y += list(y)
 
-    def add_connectors(self, connectors):
+    def add_connector(self, connector):
         """
-        add a connector (gyrator or transformer)
+        Add a connector which describes the connection of two ports from a \
+unique PHScore.
+
+        Usage
+        ------
+        core.add_connector(connectors)
+
+        Parameter
+        ---------
+        connector: dict,
+            The key and values are:
+
+            * 'u': list of sympy.symbols for inputs,
+            * 'y': list of sympy.symbols for outputs,
+            * 'alpha': sympy.Expr for gain.
+
+        Description
+        -----------
+        The resulting connexion reads:
+            connector[u][1] = connector[alpha] * connector[y][2]
+            connector[u][2] = -connector[alpha] * connector[y][1]
         """
-        self.connectors += [connectors, ]
-        self.cu = list(connectors['u'])
-        self.cy = list(connectors['y'])
+        self.connectors += [connector, ]
+        self.cu += list(connector['u'])
+        self.cy += list(connector['y'])
+        for u in connector['u']:
+            if u in self.u:
+                self.u.remove(self.u.index(u))
+        for y in connector['y']:
+            if y in self.y:
+                self.y.remove(self.y.index(y))
 
     def add_parameters(self, p):
         """
-        add a continuously varying parameter
+        Add a continuously varying parameter.
+
+        Usage
+        -----
+        core.add_parameters(p)
+
+        Parameter
+        ----------
+        p: sympy.Symbol or list of sympy.Symbol
+            Single symbol or list of symbol associated with continuously \
+varying parameter(s).
         """
         try:
             hasattr(p, '__len__')

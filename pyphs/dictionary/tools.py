@@ -33,7 +33,7 @@ def form(name, obj):
         assert isinstance(obj[0], str), 'for tupple parameter, \
         first element should be a str, got {0!s}'.format(type(obj[0]))
         assert isinstance(obj[1], (float, int)), 'for tupple parameter, \
-        second element should be numeric (foat or int), got\
+        second element should be numeric, got\
 {0!s}'.format(type(obj[1]))
         string = obj[0]
         symb = symbols(string)
@@ -63,6 +63,7 @@ for parameters in component expression 'dicpars' and for parameters in phs \
     for key in kwargs.keys():
         symb, sub, par = form(graph.label + '_' + str(key), kwargs[key])
         dicpars.update({symbols(key): symb})
+        subs.update(sub)
         if par is not None:
             graph.core.add_parameters(par)
     return dicpars, subs

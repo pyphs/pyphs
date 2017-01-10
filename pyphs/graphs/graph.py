@@ -49,8 +49,8 @@ port-Hamiltonian systems.
         self.Analysis.perform()
         buildCore(self)
         core = self.core.__deepcopy__()
-        #core.apply_connectors()
-        #core.build_exprs()
+        core.apply_connectors()
+        core.build_exprs()
         return core
 
     def build_from_netlist(self):
@@ -68,6 +68,7 @@ port-Hamiltonian systems.
             component_graph = component(line['label'],
                                         line['nodes'],
                                         **line['arguments'])
+            print(component_graph.core.subs, component_graph.core.connectors)
             self += component_graph
 
     def plot(self, filename=None, ax=None):

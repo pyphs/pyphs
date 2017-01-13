@@ -5,6 +5,8 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}  % backref linktocpage pagebackref
 \author{Antoine Falaize}
 \newcommand{\version}{0.1.9b2}
 \title{\textsc{PyPHS Documentation}\\ Version \version}
@@ -586,41 +588,73 @@ y =z(w)&= &\sum_{i=1}^N z_i(x_i)
 $$\left\{ \begin{array}{rcl}
 \phi = u =z(w) &=& z_1(w_1) =\cdots = z_N(w_N) ,\\
 y = w &=& \sum_{i=1}^Nw_i\end{array}\right.$$
-alors $ w =\sum_{i=1}^N w_i=\left(\sum_{i=1}^N z^{-1}_i\right)(\phi) $ et $z^{-1}(\phi) = w\Rightarrow z(w) =  \left(\sum_{i=1}^N z_i\right)^{-1}(w)$ 
+alors $ w =\sum_{i=1}^N w_i=\left(\sum_{i=1}^N z^{-1}_i\right)(\phi) $ et $z^{-1}(\phi) = w\Rightarrow z(w) =  \left(\sum_{i=1}^N z_i\right)^{-1}(w)$
 
 
 \section{Connectors: Gyrators and Transformers}
 A connector is set of two edges ($e_1$, $e_2$), the efforts and flux of which are coupled depending on the connector's type.
 \subsection{Gyrator}
+%
+\begin{figure}
+\centering
+\includegraphics[width=0.3\linewidth]{figures/gyrator_scematic.pdf} 
+\caption{Scematic and conventions for the gyrator.}
+\end{figure}
+%
+\paragraph{Constitutive relations}
 $$
-\begin{array}{rcl}
-\e_2 &=& \alpha \, \f_1\\ 
-\e_1 &=& -\alpha \, \f_1
+\left(
+\begin{array}{c}
+\e_1\\
+\e_2
 \end{array}
-$$
-or equivalently:
-$$
-\begin{array}{rcl}
-\f_2 &=& -\alpha^{-1}\, \e_1\\ 
-\f_1 &=& \alpha \, \e_2
+\right)
+=
+\left(
+\begin{array}{rr}
+0 & -\alpha \\
++ \alpha  & 0
 \end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\f_1\\
+\f_2
+\end{array}
+\right)
 $$
 \subsection{Transformer}
+\begin{figure}
+\centering
+\includegraphics[width=0.3\linewidth]{figures/transformater_scematic.pdf} 
+\caption{Scematic and conventions for the transformer.}
+\end{figure}
+%
+\paragraph{Constitutive relations}
 $$
-\begin{array}{rcl}
-\f_2 &=& \alpha \, \f_1\\ 
-\e_1 &=& -\alpha \, \e_2
+\left(
+\begin{array}{c}
+\e_1\\
+\f_2
 \end{array}
-$$
-or equivalently:
-$$
-\begin{array}{rcl}
-\f_2 &=& -\alpha^{-1}\, \e_1\\ 
-\f_1 &=& \alpha \, \e_2
+\right)
+=
+\left(
+\begin{array}{rr}
+0 & -\alpha \\
++ \alpha  & 0
 \end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\f_1\\
+\e_2
+\end{array}
+\right)
 $$
-
-
+%
 \section{Fractional calculus}
 \label{sec:fractional_calculus}
 %

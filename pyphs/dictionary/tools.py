@@ -12,7 +12,7 @@ from pyphs.core.core import symbols
 class PHSArgument:
 
     def __init__(self, name, obj):
-        self.symb, self.sub = form(name, obj)
+        self.symb, self.sub, self.par = form(name, obj)
 
 
 def form(name, obj):

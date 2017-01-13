@@ -42,15 +42,16 @@ port-Hamiltonian systems.
         return graph1
 
     def set_analysis(self, verbose=False, plot=False):
-        self.Analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
+        self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
-    def buildCore(self, verbose=False, plot=False):
+    def buildCore(self, verbose=False, plot=False, build_exprs=True):
         self.set_analysis(verbose=verbose, plot=plot)
-        self.Analysis.perform()
+        self.analysis.perform()
         buildCore(self)
         core = self.core.__deepcopy__()
-        core.apply_connectors()
-        core.build_exprs()
+        if build_exprs:
+            core.apply_connectors()
+            core.build_exprs()
         return core
 
     def build_from_netlist(self):
@@ -138,7 +139,7 @@ port-Hamiltonian systems.
 
     @staticmethod
     def iter_analysis(graph):
-        graph.Analysis.iteration()
+        graph.analysis.iteration()
         for e in graph.edges(data=True):
             if e[-1]['type'] == 'graph':
                 try:

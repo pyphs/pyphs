@@ -16,7 +16,8 @@ from pyphs.core.dimensions import Dimensions
 from pyphs.core.indices import Indices
 from pyphs.core.symbs_tools import _assert_expr, _assert_vec
 from pyphs.core.struc_tools import reduce_linear_dissipations, \
-    split_linear, output_function
+    split_linear, output_function, move_stor, move_diss, move_port, \
+    move_connector
 
 ###############################################################################
 
@@ -371,23 +372,6 @@ dissipative variables w are no more accessible.
         """
         split_linear(self, split=split)
 
-    def apply_connectors(self):
-        """
-        Effectively connect inputs and outputs defined in phs.connectors.
-        """
-        nxwy = self.dims.x() + self.dims.w() + self.dims.y()
-        switch_list = [connector['alpha'] * sympy.Matrix([[0, 1], [-1, 0]])
-                       for connector in self.connectors]
-        Mswitch = sympy.diag(*switch_list)
-        M = self.M
-        G_connectors = sympy.Matrix(M[:nxwy, nxwy:])
-        J_connectors = G_connectors * Mswitch * G_connectors.T
-        M = M[:nxwy, :nxwy] + J_connectors
-        self.M = M
-        self.cy = []
-        self.cu = []
-        self.connectors = []
-
     def labels(self):
         """
         Return a list of the system's variables labels
@@ -454,6 +438,84 @@ dissipative variables w are no more accessible.
 ###############################################################################
 ###############################################################################
 ###############################################################################
+
+# Connectors
+
+    def add_connector(self, connector):
+        """
+        Add a connector which describes the connection of two ports from a \
+unique PHScore.
+
+        Usage
+        ------
+        core.add_connector(connectors)
+
+        Parameter
+        ---------
+        connector: dict,
+            The key and values are:
+
+            * 'u': list of sympy.symbols for inputs,
+            * 'y': list of sympy.symbols for outputs,
+            * 'alpha': sympy.Expr for gain.
+
+        Description
+        -----------
+        The resulting connexion reads:
+            connector[u][1] = -connector[alpha] * connector[y][2]
+            connector[u][2] = connector[alpha] * connector[y][1]
+        """
+        self.connectors += [connector, ]
+        self.cu += list(connector['u'])
+        self.cy += list(connector['y'])
+        for u in connector['u']:
+            if u in self.u:
+                self.u.remove(self.u.index(u))
+        for y in connector['y']:
+            if y in self.y:
+                self.y.remove(self.y.index(y))
+
+    def apply_connectors(self):
+        """
+        Effectively connect inputs and outputs defined in core.connectors.
+        """
+
+        all_alpha = list()
+        # recover connectors
+        for i, c in enumerate(self.connectors):
+            all_alpha.append(c['alpha'])
+            if not self.cy[2*i] == c['y'][0]:
+                new_index = self.cy.index(c['y'][0])
+                self.move_connector(2*i, new_index)
+            if not self.cy[2*i+1] == c['y'][1]:
+                new_index = self.cy.index(c['y'][1])
+                self.move_connector(2*i+1, new_index)
+
+        nxwy = self.dims.x() + self.dims.w() + self.dims.y()
+
+        switch_list = [alpha * sympy.Matrix([[0, -1], [1, 0]])
+                       for alpha in all_alpha]
+        Mswitch = sympy.diag(*switch_list)
+
+        M = self.M.copy()
+        # Gain matrix
+        G_connectors = sympy.Matrix(M[:nxwy, nxwy:])
+        # Observation matrix
+        O_connectors = sympy.Matrix(M[nxwy:, :nxwy])
+        # Interconnection Matrix due to the connectors
+        M_connectors = G_connectors * Mswitch * O_connectors
+        # Store new structure
+        self.M = M[:nxwy, :nxwy] + M_connectors
+
+        # clean
+        self.cy = []
+        self.cu = []
+        self.connectors = []
+
+###############################################################################
+###############################################################################
+###############################################################################
+
 
 # ADD COMPONENTS
 
@@ -530,40 +592,6 @@ dissipation function z.
         self.u += list(u)
         self.y += list(y)
 
-    def add_connector(self, connector):
-        """
-        Add a connector which describes the connection of two ports from a \
-unique PHScore.
-
-        Usage
-        ------
-        core.add_connector(connectors)
-
-        Parameter
-        ---------
-        connector: dict,
-            The key and values are:
-
-            * 'u': list of sympy.symbols for inputs,
-            * 'y': list of sympy.symbols for outputs,
-            * 'alpha': sympy.Expr for gain.
-
-        Description
-        -----------
-        The resulting connexion reads:
-            connector[u][1] = connector[alpha] * connector[y][2]
-            connector[u][2] = -connector[alpha] * connector[y][1]
-        """
-        self.connectors += [connector, ]
-        self.cu += list(connector['u'])
-        self.cy += list(connector['y'])
-        for u in connector['u']:
-            if u in self.u:
-                self.u.remove(self.u.index(u))
-        for y in connector['y']:
-            if y in self.y:
-                self.y.remove(self.y.index(y))
-
     def add_parameters(self, p):
         """
         Add a continuously varying parameter.
@@ -585,6 +613,23 @@ varying parameter(s).
             _assert_expr(p)
             p = (p, )
         self.p += list(p)
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+    def move_storage(self, indi, indf):
+        move_stor(self, indi, indf)
+
+    def move_dissipative(self, indi, indf):
+        move_diss(self, indi, indf)
+
+    def move_port(self, indi, indf):
+        move_port(self, indi, indf)
+
+    def move_connector(self, indi, indf):
+        move_connector(self, indi, indf)
+
 
 ###############################################################################
 ###############################################################################

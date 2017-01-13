@@ -42,6 +42,14 @@ def move_port(core, indi, indf):
                  core.dims.x()+core.dims.w()+indf)
 
 
+def move_connector(core, indi, indf):
+    new_indices = myrange(core.dims.cy(), indi, indf)
+    core.cu = [core.cu[el] for el in new_indices]
+    core.cy = [core.cy[el] for el in new_indices]
+    moveMcolnrow(core, core.dims.x()+core.dims.w()+core.dims.y()+indi,
+                 core.dims.x()+core.dims.w()+core.dims.y()+indf)
+
+
 def split_monovariate(core):
     """
     """

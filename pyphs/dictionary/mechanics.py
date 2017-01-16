@@ -178,7 +178,7 @@ class Springcubic(PHSStorageNonLinear):
         # state  variable
         x = symbols("x"+label)
         # storage funcion
-        H = K0*x*(x + x**3/2)/2
+        H = K0*x*(x + K2*x**3/2)/2
         N1, N2 = nodes
 
         # edge data

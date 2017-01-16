@@ -10,7 +10,6 @@ from .edges import (PHSPort,
                     PHSDissipativeLinear,
                     PHSStorageLinear, PHSStorageNonLinear)
 from pyphs.dictionary.tools import symbols
-from pyphs.graphs.netlists import datum
 
 
 __all__ = ['Source', 'Stiffness', 'Mass', 'Damper', 'Springcubic']
@@ -178,7 +177,7 @@ class Springcubic(PHSStorageNonLinear):
         # state  variable
         x = symbols("x"+label)
         # storage funcion
-        H = K0*x*(x + x**3/2)/2
+        H = K0*x*(x + K2*x**3/2)/2
         N1, N2 = nodes
 
         # edge data

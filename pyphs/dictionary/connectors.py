@@ -16,7 +16,6 @@ class Gyrator(PHSConnector):
     gyrator
     """
     def __init__(self, label, nodes, **kwargs):
-        print('kwargs connectors.py', kwargs)
         kwargs.update({'connector_type': 'gyrator'})
         PHSConnector.__init__(self, label, nodes, **kwargs)
 
@@ -31,7 +30,6 @@ class Transformer(PHSConnector):
     transformer
     """
     def __init__(self, label, nodes, **kwargs):
-        print('kwargs connectors.py', kwargs)
         kwargs.update({'connector_type': 'transformer'})
         PHSConnector.__init__(self, label, nodes, **kwargs)
 

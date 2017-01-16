@@ -129,11 +129,10 @@ TRANSLATIONS_PATTERN = "{path}.{lang}.{ext}"
 
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
-        ("/posts/tuto0", "0 - Getting started"),
-        ("/posts/tuto1", "1 - Graph analysis"),
+        ("/posts/tuto0", "Getting started"),
         ("/docs/documentation.pdf", "Documentation"),
-		('/sphinx/py-modindex.html', 'Package index'),
-        ("/categories/", "Categories"),
+        ("/docs/documentation.pdf", "Tutorial"),
+        ("/categories/", "Topics"),
     ),
 }
 

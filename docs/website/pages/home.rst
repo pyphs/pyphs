@@ -101,14 +101,14 @@ with the following physical parameters:
 1. Define the Netlist
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Put the following content in a text file with **.net** extension, (here *dlc_netlist.net*):
+Put the following content in a text file with **.net** extension, (here *dlc.net*):
 
 .. line-block::
 
-	electronics.source in ('ref', 'n1'): type='voltage';
+	electronics.source in ('#', 'n1'): type='voltage';
 	electronics.diodepn D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);
 	electronics.inductor L ('n2', 'n3'): L=('L', 0.05);
-	electronics.capacitor C ('n3', 'ref'): C=('C', 2e-06);
+	electronics.capacitor C ('n3', '#'): C=('C', 2e-06);
 
 2. Perform graph analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -118,8 +118,9 @@ Run the following python code from the netlist file directory:
 .. code:: python
 
   import pyphs
-  dlc = pyphs.PortHamiltonianObject(label='dlc', path='label')
-  dlc.build_from_netlist('dlc_netlist.net')
+  netlist = pyphs.PHSNetlist('dlc.net')
+  graph = pyphs.PHSGraph(netlist=netlist)
+  core = graph.buildCore()
 
 3. Export **LaTeX**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

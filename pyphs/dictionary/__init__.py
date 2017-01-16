@@ -11,5 +11,6 @@ from __future__ import absolute_import, division, print_function
 from . import electronics
 from . import mechanics
 from . import connectors
+from . import mechanics_dual
 
-__all__ = ['electronics', 'connectors', 'mechanics']
+__all__ = ['electronics', 'connectors', 'mechanics', 'mechanics_dual']

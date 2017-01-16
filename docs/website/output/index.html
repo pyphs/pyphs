@@ -56,19 +56,16 @@ This software is dedicated t">
         <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
-<a href="posts/tuto0">0 - Getting started</a>
-                </li>
-<li>
-<a href="posts/tuto1">1 - Graph analysis</a>
+<a href="posts/tuto0">Getting started</a>
                 </li>
 <li>
 <a href="docs/documentation.pdf">Documentation</a>
                 </li>
 <li>
-<a href="sphinx/py-modindex.html">Package index</a>
+<a href="docs/documentation.pdf">Tutorial</a>
                 </li>
 <li>
-<a href="categories/">Categories</a>
+<a href="categories/">Topics</a>
 
                 
             </li>
@@ -107,10 +104,10 @@ This software is dedicated t">
 <h2>Installation</h2>
 <dl class="docutils">
 <dt>Using <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a> (recommended):</dt>
-<dd><div class="first last"><pre class="code text"><a name="rest_code_1801239792a5477aa74ea31ef9b936ab-1"></a>pip install pyphs
+<dd><div class="first last"><pre class="code text"><a name="rest_code_7413e13b995040bcb5a444f0f7f53d66-1"></a>pip install pyphs
 </pre></div></dd>
 <dt>For <a class="reference external" href="https://www.continuum.io/">Anaconda</a> (<strong>on Mac OSX only</strong>):</dt>
-<dd><div class="first last"><pre class="code text"><a name="rest_code_339f0ecd3abb4381a884f55f1173d22c-1"></a>conda install -c afalaize pyphs
+<dd><div class="first last"><pre class="code text"><a name="rest_code_ea9602f9a7cd4335b82abdf9fb4eb8d9-1"></a>conda install -c afalaize pyphs
 </pre></div></dd>
 </dl>
 <p>See also the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>.</p>
@@ -191,26 +188,27 @@ This software is dedicated t">
 </table>
 <div class="section" id="define-the-netlist">
 <h3>1. Define the Netlist</h3>
-<p>Put the following content in a text file with <strong>.net</strong> extension, (here <em>dlc_netlist.net</em>):</p>
+<p>Put the following content in a text file with <strong>.net</strong> extension, (here <em>dlc.net</em>):</p>
 <div class="line-block">
-<div class="line">electronics.source in ('ref', 'n1'): type='voltage';</div>
+<div class="line">electronics.source in ('#', 'n1'): type='voltage';</div>
 <div class="line">electronics.diodepn D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);</div>
 <div class="line">electronics.inductor L ('n2', 'n3'): L=('L', 0.05);</div>
-<div class="line">electronics.capacitor C ('n3', 'ref'): C=('C', 2e-06);</div>
+<div class="line">electronics.capacitor C ('n3', '#'): C=('C', 2e-06);</div>
 </div>
 </div>
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_78e26c8c4b424a7b80b9dbdd64fecfa8-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_78e26c8c4b424a7b80b9dbdd64fecfa8-2"></a><span class="n">dlc</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'dlc'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'label'</span><span class="p">)</span>
-<a name="rest_code_78e26c8c4b424a7b80b9dbdd64fecfa8-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">build_from_netlist</span><span class="p">(</span><span class="s1">'dlc_netlist.net'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_1ea630278f294dd292af2132621428bf-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_1ea630278f294dd292af2132621428bf-2"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNetlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
+<a name="rest_code_1ea630278f294dd292af2132621428bf-3"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSGraph</span><span class="p">(</span><span class="n">netlist</span><span class="o">=</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_1ea630278f294dd292af2132621428bf-4"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">buildCore</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export <strong>LaTeX</strong>
 </h3>
-<pre class="code python"><a name="rest_code_6ed13e590d05486bb2c8e6a6e05f9922-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_a39ca77d0bd94e389f474dd7ea3c4fa7-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
 </pre>
 <p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
@@ -224,9 +222,9 @@ This software is dedicated t">
 <div class="section" id="export-c">
 <h3>4. Export <strong>C++</strong>
 </h3>
-<pre class="code python"><a name="rest_code_376454ca102a46a48f63dbbef86b5acd-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<a name="rest_code_376454ca102a46a48f63dbbef86b5acd-2"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
-<a name="rest_code_376454ca102a46a48f63dbbef86b5acd-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_41627a4699e64cdca8cf46083212d38a-1"></a><span class="n">dlc</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a name="rest_code_41627a4699e64cdca8cf46083212d38a-2"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppbuild</span><span class="p">()</span>
+<a name="rest_code_41627a4699e64cdca8cf46083212d38a-3"></a><span class="n">dlc</span><span class="o">.</span><span class="n">cppwrite</span><span class="p">()</span>
 </pre>
 <p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">

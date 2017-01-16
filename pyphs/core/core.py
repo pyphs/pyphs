@@ -18,6 +18,8 @@ from pyphs.core.symbs_tools import _assert_expr, _assert_vec
 from pyphs.core.struc_tools import reduce_linear_dissipations, \
     split_linear, output_function, move_stor, move_diss, move_port, \
     move_connector
+from pyphs.latex import document, core2tex
+
 
 ###############################################################################
 
@@ -630,6 +632,18 @@ varying parameter(s).
     def move_connector(self, indi, indf):
         move_connector(self, indi, indf)
 
+
+###############################################################################
+###############################################################################
+###############################################################################
+# Latex
+
+    def texwrite(self, filename=None, title=None):
+        if filename is None:
+            filename = 'core.tex'
+        if title is None:
+            title = r'PyPHS Core'
+        document(core2tex(self), title, filename=filename)
 
 ###############################################################################
 ###############################################################################

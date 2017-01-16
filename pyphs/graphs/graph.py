@@ -69,7 +69,6 @@ port-Hamiltonian systems.
             component_graph = component(line['label'],
                                         line['nodes'],
                                         **line['arguments'])
-            print(component_graph.core.subs, component_graph.core.connectors)
             self += component_graph
 
     def plot(self, filename=None, ax=None):

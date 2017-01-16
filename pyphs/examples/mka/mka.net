@@ -1,0 +1,4 @@
+mechanics.source F ('#', 'n1'): type=force;
+mechanics.mass M ('n1',): M=('M', 0.01);
+mechanics.stiffness K ('#', 'n1'): K=('K', 1000.0);
+mechanics.damper A ('#', 'n1'): A=('A', 1.0);

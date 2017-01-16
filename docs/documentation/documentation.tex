@@ -8,8 +8,8 @@
 \usepackage{graphicx}
 \usepackage{hyperref}  % backref linktocpage pagebackref
 \author{Antoine Falaize}
-\newcommand{\version}{0.1.9b2}
-\title{\textsc{PyPHS Documentation}\\ Version \version}
+\newcommand{\version}{0.2}
+\title{\textsc{PyPHS Version \version} \\ Documentation}
 \include{python}
 \include{commands}
 \begin{document}
@@ -38,9 +38,7 @@ This guarantees a \emph{power balance} is fulfilled, including for numerical \em
 \end{enumerate}
 \subsection{Installation}
 %
-\begin{center}
-\textbf{Notice only python 2.7 is supported.}
-\end{center}
+\subsubsection{{Using \texttt{pip}}}
 %
 It is recommanded to install \pythoninline{pyphs} using \textsc{PyPI} (the \textsc{Python Package Index}). In terminal:
 %
@@ -48,7 +46,25 @@ It is recommanded to install \pythoninline{pyphs} using \textsc{PyPI} (the \text
 pip install pyphs
 \end{verbatim}
 %
-\textbf{Mac OSX only:} An installation for \emph{Anaconda} users is also available. In terminal:
+\subsubsection{{Using \texttt{setuptools}}}
+%
+\begin{enumerate}
+\item Download the sources from the package repository\\ \url{https://github.com/afalaize/pyphs}
+\item In a terminal, navigate to the folder that contains the \pythoninline{setup.py} script
+\item Install with: 
+\begin{verbatim}
+python setup.py install
+\end{verbatim}
+\item To run tests:
+\begin{verbatim}
+python setup.py test
+\end{verbatim}
+\end{enumerate}
+%
+%
+\subsubsection{{Using \texttt{Anaconda} (Mac OSX only)}}
+%
+In terminal:
 %
 \begin{verbatim}
 conda install -c afalaize pyphs
@@ -58,7 +74,7 @@ conda install -c afalaize pyphs
 %
 Below is a recall of the Port-Hamiltonian Systems (PHS) formalism.
 %
-For details, the reader is referred to the \textit{e.g.} the acaemic reference \cite{falaize2016apassive}.
+For details, the reader is referred to the \textit{e.g.} the academic reference \cite{falaize2016apassive}.
 %
 %
 We consider systems that can be described by the following time-continuous non-linear state-space representation:
@@ -178,9 +194,9 @@ Accordingly, the structure matrices are split as
 %
 \tableofcontents
 %
-\section{Structure of the \texttt{pyphs.PortHamiltonianObject}}
+\section{Overview}
 %
-Below is a list of each module of practical use in the object  \pythoninline{pyphs.PortHamiltonianObject}, along with a short description. We consider the following instantiation:
+Below is a list of each module of practical use available in the module \pythoninline{pyphs}, along with a short description. We consider the following instantiation:
 %
 \begin{python}
 # import of (pre-installed) pyphs package:
@@ -300,6 +316,24 @@ To split the system into its linear and nonlinear part, use \pythoninline{phs.sp
 %
 %
 %
+
+\section{Recall on Port-Hamiltonian Systems}
+\subsection{\textsc{PHSCore}}
+\subsubsection{Attributes}
+\begin{description}
+\item[•]
+\end{description}
+\subsubsection{Methods}
+
+
+\section{Finite dimensionnal dynamical network}
+\subsection{\textsc{PHSNetlist}}
+\subsection{\textsc{PHSGraph}}
+
+\section{Numerical Methods}
+\subsection{PHSNumericalMethod}
+\subsection{PHSNumericalMethodStandard}
+\appendix
 \section{Algorithms}
 %
 This section details the algorithms actually implemented for 

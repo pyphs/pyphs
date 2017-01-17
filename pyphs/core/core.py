@@ -510,9 +510,9 @@ unique PHScore.
         self.M = M[:nxwy, :nxwy] + M_connectors
 
         # clean
-        self.cy = []
-        self.cu = []
-        self.connectors = []
+        self.cy = list()
+        self.cu = list()
+        self.connectors = list()
 
 ###############################################################################
 ###############################################################################
@@ -561,8 +561,7 @@ dissipation function z.
             hasattr(w, 'index')
             w = _assert_vec(w)
             z = _assert_vec(z)
-            assert len(w) == len(z), 'w and z should be have same\
- dimension.'
+            assert len(w) == len(z), 'w and z should have same dimension.'
         except:
             _assert_expr(w)
             _assert_expr(w)
@@ -584,8 +583,7 @@ dissipation function z.
         if hasattr(u, '__len__'):
             u = _assert_vec(u)
             y = _assert_vec(y)
-            assert len(u) == len(y), 'u and y should be have same\
- dimension.'
+            assert len(u) == len(y), 'u and y should have same dimension.'
         else:
             _assert_expr(u)
             _assert_expr(y)

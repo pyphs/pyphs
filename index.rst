@@ -113,7 +113,7 @@ Run the following python code from the netlist file directory:
 	import pyphs
 	
 	# Read the 'dlc_netlist.net'
-	netlist = pyphs.PHSNetlist('dlc_netlist.net')
+	netlist = pyphs.PHSNetlist('dlc.net')
 	
 	# Construct the graph associated with 'netlist'
 	graph = pyphs.PHSGraph(netlist)
@@ -121,7 +121,7 @@ Run the following python code from the netlist file directory:
 	# Construct the core Port-Hamiltonian System from 'graph'
 	core = graph.buildCore()
 	
-3. Export **LaTeX**
+3. Export $LaTeX$
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
@@ -139,7 +139,7 @@ which is compiled to produce the following **pdf** file:
 * `dlc.pdf </pyphs_outputs/dlc/tex/dlc.pdf>`__
 
 
-4. Export **C++**
+4. Export $\mathtt{C_{++}}$
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python

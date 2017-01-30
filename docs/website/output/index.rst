@@ -113,7 +113,7 @@ Run the following python code from the netlist file directory:
 	import pyphs
 	
 	# Read the 'dlc_netlist.net'
-	netlist = pyphs.PHSNetlist('dlc_netlist.net')
+	netlist = pyphs.PHSNetlist('dlc.net')
 	
 	# Construct the graph associated with 'netlist'
 	graph = pyphs.PHSGraph(netlist)

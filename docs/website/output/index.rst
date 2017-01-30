@@ -32,7 +32,7 @@ See also the `GitHub repository <https://github.com/afalaize/pyphs/>`__.
 
 Introduction
 --------------
-PyPHS implements a set of numerical method for the treatment of dynamical systems
+PyPHS implements a set of numerical methods for the treatment of dynamical systems
 in the *Port-Hamiltonian Systems* (PHS) formalism. This structures physical systems into
 
 * energy conserving parts,

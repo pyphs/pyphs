@@ -7,28 +7,11 @@
 .. description: 
 .. type: text
 
-.. image:: /figures/examples.jpg
-	:width: 500
-	:align: center
-
 This is a companion site for the python package `PyPHS <https://github.com/afalaize/pyphs/>`__, dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
 
+------------------------
+
 This software is developped by `Antoine Falaize <https://afalaize.github.io/>`__ in association with the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
-
-.. image:: /galleries/intro/intro2.jpg
-	:width: 650
-	:align: center
-
-Installation
---------------
-
-With `pip <https://pypi.python.org/pypi/pip/>`__: 
-	.. code:: 
-		
-		pip install pyphs	
-	
-See also the `GitHub repository <https://github.com/afalaize/pyphs/>`__. 
-
 
 Introduction
 --------------
@@ -39,15 +22,11 @@ in the *Port-Hamiltonian Systems* (PHS) formalism. This structures physical syst
 * power dissipating parts and
 * source parts.
 
-.. image:: /galleries/intro/intro1.jpg
-	:width: 650
-	:align: center
-
 Now, this guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method. 
 
-------------------------
-
-In Pyphs:
+.. image:: /figures/home2.png
+	:width: 650
+	:align: center
 
 1. Systems are described by directed multi-graphs: 
 
@@ -61,6 +40,21 @@ In Pyphs:
 4. **LaTeX** description code and **C++** simulation code are automatically generated:
 	
 * Use of `Sympy <http://www.sympy.org/>`__ `Latex <http://docs.sympy.org/latest/modules/printing.html#module-sympy.printing.ccode>`__ and `CCode <http://docs.sympy.org/latest/modules/printing.html#module-sympy.printing.ccode>`__ printers.
+
+.. image:: /figures/home1.png
+	:width: 500
+	:align: center
+
+Installation
+--------------
+
+With `pip <https://pypi.python.org/pypi/pip/>`__: 
+	.. code:: 
+		
+		pip install pyphs	
+	
+See also the `GitHub repository <https://github.com/afalaize/pyphs/>`__. 
+
 
 Example
 --------------

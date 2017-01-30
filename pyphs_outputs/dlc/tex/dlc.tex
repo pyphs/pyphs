@@ -5,17 +5,17 @@
 %\geometry{landscape}                       % Activate for for rotated page geometry
 \usepackage[parfill]{parskip}               % Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}                       % Use pdf, png, jpg, or eps with pdflatex; use eps in DVI mode
-                                            % TeX will automatically convert eps --> pdf in pdflatex
+                                        % TeX will automatically convert eps --> pdf in pdflatex
 \usepackage{amssymb}
 %\date{\today}                              % Activate to display a given date or no date
-\title{Structure of the port-Hamiltonian system\\\texttt{dlc}}
+\title{DLC}
 %
 \usepackage{authblk}
 \usepackage{hyperref}
 %\renewcommand\Authands{ and }
 %
 %
-\author[1]{The \textsc{PyPHS}\footnote{\url{https://github.com/A-Falaize/pyphs}} development team}
+\author[1]{The \textsc{PyPHS}\footnote{\url{https://github.com/afalaize/pyphs}} development team}
 %
 \affil[1]{Project-team S3\footnote{\url{http://s3.ircam.fr}}\\STMS, IRCAM-CNRS-UPMC (UMR 9912)\\1 Place Igor-Stravinsky, 75004 Paris, France}
 %
@@ -32,9 +32,9 @@
 \texttt{
 \begin{tabular}{llllll}
 \hline
-line & label & dictionary.component & nodes &     parameters \\ \hline
+line & label & dictionary.component & nodes & parameters \\ \hline
 %
-$\ell_1$ & in & electronics.source & ('ref', 'n1') & $\left\{ 
+$\ell_1$ & in & electronics.source & ('\#', 'n1') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -42,7 +42,7 @@ type & voltage
 \\
 \end{tabular}\right.$
  \\
-$\ell_2$ & D & electronics.diodepn & ('n1', 'n2') & $\left\{ 
+$\ell_2$ & D & electronics.diode & ('n1', 'n2') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -64,7 +64,7 @@ L & ('L', 0.05)
 \\
 \end{tabular}\right.$
  \\
-$\ell_4$ & C & electronics.capacitor & ('n3', 'ref') & $\left\{ 
+$\ell_4$ & C & electronics.capacitor & ('n3', '\#') & $\left\{ 
 %
 \begin{tabular}{ll}
 %
@@ -79,21 +79,16 @@ C & ('C', 2e-06)
 %
 \end{center}
 %
-    %
-    \begin{figure}[!h]
-    \begin{center}
-    \includegraphics[width=\linewidth]{/Users/Falaize/Documents/DEV/python/pyphs/docs/dlc/figures/dlc_graph.pdf}
-    %
-    \caption{\label{fig:graph_dlc} Graph of system \texttt{dlc}. }
-    \end{center}
-    \end{figure}
-    %\section{System dimensions}
+
+%
+%
+\section{System dimensions}
 %
 $\dim(\mathbf{x})=$ $ n_\mathbf{x} = 2 ; $ 
 %
 \\
 %
-$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 2 ; $ 
+$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 3 ; $ 
 %
 \\
 %
@@ -112,7 +107,7 @@ State variable $ \mathbf{x} = \left(\begin{array}{c}x_{\mathrm{L}}\\x_{\mathrm{C
 %
 \\
 %
-Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{DR}}\\w_{\mathrm{D}}\end{array}\right) ; $ 
+Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{D}}\\w_{\mathrm{D_R}}\\w_{\mathrm{D_gmin}}\end{array}\right) ; $ 
 %
 \\
 %
@@ -127,19 +122,19 @@ Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{in}}\end{array}\right) ; 
 %
 \section{Constitutive relations}
 %
-Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{0.5}{\mathrm{L}} \cdot x_{\mathrm{L}}^{2} + \frac{0.5}{\mathrm{C}} \cdot x_{\mathrm{C}}^{2} ; $ 
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{0.5 x_{\mathrm{L}}^{2}}{L} + \frac{0.5 x_{\mathrm{C}}^{2}}{C} ; $ 
 %
 \\
 %
-Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0}{\mathrm{L}} \cdot x_{\mathrm{L}}\\\frac{1.0}{\mathrm{C}} \cdot x_{\mathrm{C}}\end{array}\right) ; $ 
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0 x_{\mathrm{L}}}{L}\\\frac{1.0 x_{\mathrm{C}}}{C}\end{array}\right) ; $ 
 %
 \\
 %
-Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\mathrm{Rd} \cdot w_{\mathrm{DR}}\\\mathrm{mu} \cdot \mathrm{v0} \cdot \log{\left (1 + \frac{w_{\mathrm{D}}}{\mathrm{Is}} \right )}\end{array}\right) ; $ 
+Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\mu v_{0} \log{\left (1 + \frac{w_{\mathrm{D}}}{Is} \right )}\\Rd w_{\mathrm{D_R}}\\\frac{w_{\mathrm{D_gmin}}}{gmin}\end{array}\right) ; $ 
 %
 \\
 %
-Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{cc}\mathrm{Rd} & 0\\0 & \frac{\mathrm{mu} \cdot \mathrm{v0}}{\mathrm{Is} \cdot \left(1 + \frac{w_{\mathrm{D}}}{\mathrm{Is}}\right)}\end{array}\right) ; $ 
+Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{ccc}\frac{\mu v_{0}}{Is \left(1 + \frac{w_{\mathrm{D}}}{Is}\right)} & 0 & 0\\0 & Rd & 0\\0 & 0 & \frac{1}{gmin}\end{array}\right) ; $ 
 %
 \\
 %
@@ -156,13 +151,15 @@ Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(
 \hline
 parameter & value (SI)
 \\ \hline
-mu :& 1.7
-\\
 C :& 2e-06
+\\
+v0 :& 0.026
 \\
 L :& 0.05
 \\
-v0 :& 0.026
+mu :& 1.7
+\\
+gmin :& 1e-12
 \\
 Is :& 2e-09
 \\
@@ -177,7 +174,7 @@ Rd :& 0.5
 %
 
 %
-$ \mathbf{M} = \left(\begin{array}{ccccc}0 & -1.0 & -1.0 & -1.0 & -1.0\\1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M} = \left(\begin{array}{cccccc}0 & -1.0 & 0 & -1.0 & -1.0 & -1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 1.0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\1.0 & 0 & -1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -185,7 +182,7 @@ $ \mathbf{M_{xx}} = \left(\begin{array}{cc}0 & -1.0\\1.0 & 0\end{array}\right) ;
 %
 \\
 %
-$ \mathbf{M_{xw}} = \left(\begin{array}{cc}-1.0 & -1.0\\0 & 0\end{array}\right) ; $ 
+$ \mathbf{M_{xw}} = \left(\begin{array}{ccc}0 & -1.0 & -1.0\\0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -193,15 +190,15 @@ $ \mathbf{M_{xy}} = \left(\begin{array}{c}-1.0\\0\end{array}\right) ; $
 %
 \\
 %
-$ \mathbf{M_{wx}} = \left(\begin{array}{cc}1.0 & 0\\1.0 & 0\end{array}\right) ; $ 
+$ \mathbf{M_{wx}} = \left(\begin{array}{cc}0 & 0\\1.0 & 0\\1.0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{M_{ww}} = \left(\begin{array}{cc}0 & 0\\0 & 0\end{array}\right) ; $ 
+$ \mathbf{M_{ww}} = \left(\begin{array}{ccc}0 & 0 & 1.0\\0 & 0 & 0\\-1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{M_{wy}} = \left(\begin{array}{c}0\\0\end{array}\right) ; $ 
+$ \mathbf{M_{wy}} = \left(\begin{array}{c}0\\0\\0\end{array}\right) ; $ 
 %
 \\
 %
@@ -209,7 +206,7 @@ $ \mathbf{M_{yx}} = \left(\begin{array}{cc}1.0 & 0\end{array}\right) ; $
 %
 \\
 %
-$ \mathbf{M_{yw}} = \left(\begin{array}{cc}0 & 0\end{array}\right) ; $ 
+$ \mathbf{M_{yw}} = \left(\begin{array}{ccc}0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -217,7 +214,9 @@ $ \mathbf{M_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $
 %
 \\
 %
-$ \mathbf{J} = \left(\begin{array}{ccccc}0 & -1.0 & -1.0 & -1.0 & -1.0\\1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
+
+%
+$ \mathbf{J} = \left(\begin{array}{cccccc}0 & -1.0 & 0 & -1.0 & -1.0 & -1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 1.0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\1.0 & 0 & -1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -225,7 +224,7 @@ $ \mathbf{J_{xx}} = \left(\begin{array}{cc}0 & -1.0\\1.0 & 0\end{array}\right) ;
 %
 \\
 %
-$ \mathbf{J_{xw}} = \left(\begin{array}{cc}-1.0 & -1.0\\0 & 0\end{array}\right) ; $ 
+$ \mathbf{J_{xw}} = \left(\begin{array}{ccc}0 & -1.0 & -1.0\\0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -233,11 +232,11 @@ $ \mathbf{J_{xy}} = \left(\begin{array}{c}-1.0\\0\end{array}\right) ; $
 %
 \\
 %
-$ \mathbf{J_{ww}} = \left(\begin{array}{cc}0 & 0\\0 & 0\end{array}\right) ; $ 
+$ \mathbf{J_{ww}} = \left(\begin{array}{ccc}0 & 0 & 1.0\\0 & 0 & 0\\-1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{J_{wy}} = \left(\begin{array}{c}0\\0\end{array}\right) ; $ 
+$ \mathbf{J_{wy}} = \left(\begin{array}{c}0\\0\\0\end{array}\right) ; $ 
 %
 \\
 %
@@ -245,7 +244,9 @@ $ \mathbf{J_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $
 %
 \\
 %
-$ \mathbf{R} = \left(\begin{array}{ccccc}0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
+
+%
+$ \mathbf{R} = \left(\begin{array}{cccccc}0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0 & 0\\0 & 0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -253,7 +254,7 @@ $ \mathbf{R_{xx}} = \left(\begin{array}{cc}0 & 0\\0 & 0\end{array}\right) ; $
 %
 \\
 %
-$ \mathbf{R_{xw}} = \left(\begin{array}{cc}0 & 0\\0 & 0\end{array}\right) ; $ 
+$ \mathbf{R_{xw}} = \left(\begin{array}{ccc}0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -261,11 +262,11 @@ $ \mathbf{R_{xy}} = \left(\begin{array}{c}0\\0\end{array}\right) ; $
 %
 \\
 %
-$ \mathbf{R_{ww}} = \left(\begin{array}{cc}0 & 0\\0 & 0\end{array}\right) ; $ 
+$ \mathbf{R_{ww}} = \left(\begin{array}{ccc}0 & 0 & 0\\0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{R_{wy}} = \left(\begin{array}{c}0\\0\end{array}\right) ; $ 
+$ \mathbf{R_{wy}} = \left(\begin{array}{c}0\\0\\0\end{array}\right) ; $ 
 %
 \\
 %

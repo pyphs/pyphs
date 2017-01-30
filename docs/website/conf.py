@@ -129,6 +129,7 @@ TRANSLATIONS_PATTERN = "{path}.{lang}.{ext}"
 
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
+        ("/docs/documentation.pdf", "Documentation"),
         (
         	(
         		("/posts/phscore/", "1. Declaration"), 
@@ -137,8 +138,14 @@ NAVIGATION_LINKS = {
         	), 
         	"Tutorials"
         ),
-        ("/docs/documentation.pdf", "Documentation"),
-        ("/categories/", "Tags"),
+        (
+        	(
+        		("/posts/electronics/", "Electronic"), 
+        		("/posts/mechanics/", "Mechanic"), 
+        		("/posts/magnetic/", "Magnetic"), 
+        	), 
+        	"Dictionary"
+        ),
     ),
 }
 

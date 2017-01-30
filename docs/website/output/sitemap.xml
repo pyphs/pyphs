@@ -7,15 +7,19 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://afalaize.github.io/pyphs/</loc>
-  <lastmod>2017-01-30T20:19:00Z</lastmod>
+  <lastmod>2017-01-30T20:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/2016/</loc>
   <lastmod>2016-11-16T15:46:00Z</lastmod>
  </url>
  <url>
+  <loc>https://afalaize.github.io/pyphs/2017/</loc>
+  <lastmod>2017-01-30T20:43:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://afalaize.github.io/pyphs/archive.html</loc>
-  <lastmod>2017-01-30T20:19:00Z</lastmod>
+  <lastmod>2017-01-30T20:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/blog/</loc>
@@ -78,8 +82,16 @@
   <lastmod>2016-11-16T17:36:00Z</lastmod>
  </url>
  <url>
+  <loc>https://afalaize.github.io/pyphs/posts/dictionary/</loc>
+  <lastmod>2017-01-30T20:43:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://afalaize.github.io/pyphs/posts/diode/</loc>
   <lastmod>2016-11-16T19:57:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/posts/electronics/</loc>
+  <lastmod>2017-01-30T20:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/posts/inductor/</loc>

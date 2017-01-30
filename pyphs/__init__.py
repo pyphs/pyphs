@@ -14,7 +14,8 @@ from .numerics import (PHSNumericalMethod, PHSNumericalCore,
 from .simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
 from .latex import core2tex, netlist2tex, graphplot2tex, document
-from .cpp import numcore2cpp, simu2cpp
+from .cpp.numcore2cpp import numcore2cpp
+from .cpp.simu2cpp import simu2cpp
 
 __licence__ = \
     "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"

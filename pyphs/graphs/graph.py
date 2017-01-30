@@ -22,7 +22,7 @@ class PHSGraph(nx.MultiDiGraph):
     Class that stores and manipulates graph representation of \
 port-Hamiltonian systems.
     """
-    def __init__(self, label=None, netlist=None):
+    def __init__(self, netlist=None, label=None):
 
         nx.MultiDiGraph.__init__(self)
         self.core = PHSCore()

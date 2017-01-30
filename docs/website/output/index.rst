@@ -1,4 +1,4 @@
-.. title: Passive modeling and simulation in python
+.. title: PyPHS: Passive modeling and simulation in python
 .. slug: index
 .. date: 2016-11-13 20:05:17 UTC+01:00
 .. tags: mathjax
@@ -11,40 +11,29 @@
 	:width: 500
 	:align: center
 
-This is a companion site for the python package `PyPHS <https://github.com/afalaize/pyphs/>`__, developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
+This is a companion site for the python package `PyPHS <https://github.com/afalaize/pyphs/>`__, dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
 
-This software is dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
+This software is developped by `Antoine Falaize <https://afalaize.github.io/>`__ in association with the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
 
 .. image:: /galleries/intro/intro2.jpg
 	:width: 650
 	:align: center
 
-It was initially developed between 2012 and 2016 as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__,  through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__.
-
-Licence
---------------
-`PyPHS <https://github.com/afalaize/pyphs/>`__ is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`__ licence.
-
 Installation
 --------------
 
-Using `pip <https://pypi.python.org/pypi/pip/>`__ (recommended): 
+With `pip <https://pypi.python.org/pypi/pip/>`__: 
 	.. code:: 
 		
 		pip install pyphs	
 	
-For `Anaconda <https://www.continuum.io/>`__ (**on Mac OSX only**):
-	.. code:: 
-		
-		conda install -c afalaize pyphs
-
 See also the `GitHub repository <https://github.com/afalaize/pyphs/>`__. 
 
 
 Introduction
 --------------
-
-The Port-Hamiltonian Systems (PHS) formalism structures physical systems into
+PyPHS implements a set of numerical method for the treatment of dynamical systems
+in the *Port-Hamiltonian Systems* (PHS) formalism. This structures physical systems into
 
 * energy conserving parts,
 * power dissipating parts and
@@ -54,7 +43,11 @@ The Port-Hamiltonian Systems (PHS) formalism structures physical systems into
 	:width: 650
 	:align: center
 
-This guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method.
+Now, this guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method. 
+
+------------------------
+
+In Pyphs:
 
 1. Systems are described by directed multi-graphs: 
 
@@ -106,7 +99,7 @@ Put the following content in a text file with **.net** extension, (here *dlc.net
 .. line-block::
 
 	electronics.source in ('#', 'n1'): type='voltage';
-	electronics.diodepn D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);
+	electronics.diode D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);
 	electronics.inductor L ('n2', 'n3'): L=('L', 0.05);
 	electronics.capacitor C ('n3', '#'): C=('C', 2e-06);
 
@@ -117,17 +110,25 @@ Run the following python code from the netlist file directory:
 
 .. code:: python
 
-  import pyphs
-  netlist = pyphs.PHSNetlist('dlc.net')
-  graph = pyphs.PHSGraph(netlist=netlist)
-  core = graph.buildCore()
-
+	import pyphs
+	
+	# Read the 'dlc_netlist.net'
+	netlist = pyphs.PHSNetlist('dlc_netlist.net')
+	
+	# Construct the graph associated with 'netlist'
+	graph = pyphs.PHSGraph(netlist)
+	
+	# Construct the core Port-Hamiltonian System from 'graph'
+	core = graph.buildCore()
+	
 3. Export **LaTeX**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-	dlc.texwrite()
+	content = pyphs.netlist2tex(netlist)
+	content += pyphs.core2tex(core)
+	pyphs.document(content, title='DLC', filename='dlc.tex')
 
 This yields the following **tex** file:
 	
@@ -143,9 +144,15 @@ which is compiled to produce the following **pdf** file:
 
 .. code:: python
 
-	dlc.simu.init(nt=10)
-	dlc.cppbuild()
-	dlc.cppwrite()
+	
+	# Numerical method for time discretization of 'core'
+	method = pyphs.PHSNumericalMethodStandard(core)
+	
+	# Numerical evaluation of 'method'
+	numcore = pyphs.PHSNumericalCore(method)
+	
+	# Export the set of C++ file for simulation
+	pyphs.numcore2cpp(numcore)
 	
 This yields the following **cpp** files:
 
@@ -153,9 +160,16 @@ This yields the following **cpp** files:
 * `phobj.h </pyphs_outputs/dlc/cpp/phobj.h>`__
 * `data.cpp </pyphs_outputs/dlc/cpp/data.cpp>`__
 * `data.h </pyphs_outputs/dlc/cpp/data.h>`__
-* `main.cpp </pyphs_outputs/dlc/cpp/main.cpp>`__
 
-The compilation and execution of **main.cpp** run the passive simulation (but, first, you must specify a sequence of input values).
+The `phobj.h` defines a class of `DLC` systems with passive update method for simulations.
+
+Licence
+--------------
+`PyPHS <https://github.com/afalaize/pyphs/>`__ is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`__ licence.
+
+Acknowledgement
+-----------------
+It was initialized as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__,  through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__ between 2012 and 2016.
 
 References
 -----------

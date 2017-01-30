@@ -129,10 +129,16 @@ TRANSLATIONS_PATTERN = "{path}.{lang}.{ext}"
 
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
-        ("/posts/tuto0", "Getting started"),
+        (
+        	(
+        		("/posts/phscore/", "1. Declaration"), 
+        		("/posts/phssimu/", "2. Simulation"), 
+        		("/posts/phsgraph/", "3. Graph analysis"), 
+        	), 
+        	"Tutorials"
+        ),
         ("/docs/documentation.pdf", "Documentation"),
-        ("/docs/documentation.pdf", "Tutorial"),
-        ("/categories/", "Topics"),
+        ("/categories/", "Tags"),
     ),
 }
 

@@ -176,7 +176,17 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><div id="toc-static"></div></p>
+<p><div id="toc-static"></div>
+Here, we define the port-Hamiltonian structure associated with the standard serial resistor-coil-capacitor (RLC) circuit.
+<!-- TEASER_END --></p>
+<p>Steps are:</p>
+<ol>
+<li>prepare the <em>governing equations</em>,</li>
+<li>instantiate a <code>pyphs.PHSCore</code> <em>object</em>,</li>
+<li>add the <em>components</em> (storage, dissipative and source),</li>
+<li>define the <em>PHS structure</em> matrices (serial connection),</li>
+<li>set the <em>physical parameters</em>.</li>
+</ol>
 
 </div>
 </div>
@@ -186,19 +196,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The basic use of the <em>pyphs.PortHamiltonianObject</em> is illustrated here with the modeling and time-domain simulation of the standard resistor-coil-capacitor (RLC) circuit.
-<!-- TEASER_END -->
-Details on the PHS modeling of the RLC circuit can be found in the academic reference <a href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1, §2.2]</a>.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="System-declaration">System declaration<a class="anchor-link" href="#System-declaration">&#182;</a></h1><h2 id="Governing-equations">Governing equations<a class="anchor-link" href="#Governing-equations">&#182;</a></h2><p>Following the reference <a href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1, §2.2]</a>, the RLC circuit is described as follows:</p>
+<h1 id="1.-Governing-equations">1. Governing equations<a class="anchor-link" href="#1.-Governing-equations">&#182;</a></h1><p>Following the reference <a href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1, §2.2]</a>, the RLC circuit is described as follows:</p>
 <ul>
 <li>$x_L$ is the coil flux so that $v_L = \frac{\mathrm d x_L}{\mathrm d  t}$ is the coil voltage, </li>
 <li>$x_C$ is the electric charge associated with the capacitor so that $i_C = \frac{\mathrm d x_C}{\mathrm d  t}$ is the capacitor current, </li>
@@ -222,14 +220,12 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 1 & 0 & 0 & 0 \\ \hline
 1 & 0 & 0 & 0 \\  \hline
 1 & 0 & 0 & 0
-\end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right) $$<p>The physical parameters are</p>
-<ul>
+\end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right) $$<h3 id="Physical-parameters">Physical parameters<a class="anchor-link" href="#Physical-parameters">&#182;</a></h3><ul>
 <li>$C=2\times 10^{-9}$F, </li>
 <li>$L=50\times 10^{-3}$H, </li>
 <li>$R = 10^3\Omega$.</li>
 </ul>
-<h2 id="PyPHS-declaration">PyPHS declaration<a class="anchor-link" href="#PyPHS-declaration">&#182;</a></h2><h3 id="Import-pyphs">Import pyphs<a class="anchor-link" href="#Import-pyphs">&#182;</a></h3><p>As any python module, we need to timport <code>pyphs</code> before using it:</p>
-
+<h1 id="2.-Object-instantiation">2. Object instantiation<a class="anchor-link" href="#2.-Object-instantiation">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -238,7 +234,14 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">pyphs</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Support for Python 2.x and Python 3.x</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="c1"># load the pyphs.PHSCore class in the current namespace</span>
+<span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">PHSCore</span>
+
+<span class="c1"># instantiate a pyphs.PHSCore object</span>
+<span class="n">core</span> <span class="o">=</span> <span class="n">PHSCore</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -251,10 +254,7 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Instantiation-of-a-port-Hamiltonian-system">Instantiation of a port-Hamiltonian system<a class="anchor-link" href="#Instantiation-of-a-port-Hamiltonian-system">&#182;</a></h3><p>The entry point to the pyphs package is the <code>pyphs.PortHamiltonianObject</code>. Help can be obtained with</p>
-<div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">)</span>
-</pre></div>
-<p>It is recommanded to pass the label argument at the instantation:</p>
+<p>Now, <code>core</code> is an instance of <code>pyphs.PHSCore</code>:</p>
 
 </div>
 </div>
@@ -264,30 +264,11 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PortHamiltonianObject</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;RLC&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;MyFolder&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, <code>phs</code> is an instance of <code>pyphs.PortHamiltonianObject</code>:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;isinstance(core, PHSCore) = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">core</span><span class="p">,</span> <span class="n">PHSCore</span><span class="p">)))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.x = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.dims.w() = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">w</span><span class="p">()))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.J() = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">J</span><span class="p">()))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.Jxy() = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Jxy</span><span class="p">()))</span>
 </pre></div>
 
 </div>
@@ -298,13 +279,15 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[3]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;pyphs.pyphs.PortHamiltonianObject instance at 0x104c574d0&gt;</pre>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>isinstance(core, PHSCore) = True
+core.x = []
+core.dims.w() = 0
+core.J() = Matrix(0, 0, [])
+core.Jxy() = Matrix(0, 0, [])
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -316,7 +299,7 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Adding-the-components">Adding the components<a class="anchor-link" href="#Adding-the-components">&#182;</a></h3><h4 id="Defining-symbols">Defining symbols<a class="anchor-link" href="#Defining-symbols">&#182;</a></h4><p>The <code>pyphs</code> package is based on the <code>sympy</code> package to provide the symbolic manipulation of PHS structures. To declare symbols, we use the <code>phs.symbols</code> method. As an example, we declare below the symbols associated with the coil:</p>
+<h1 id="3.-Adding-the-components">3. Adding the components<a class="anchor-link" href="#3.-Adding-the-components">&#182;</a></h1><h2 id="Defining-symbols">Defining symbols<a class="anchor-link" href="#Defining-symbols">&#182;</a></h2><p>The <code>pyphs</code> package is based on the <code>sympy</code> package to provide the symbolic manipulation of PHS structures. To declare symbols, we use the <code>phs.symbols</code> method. As an example, we declare below the symbols associated with the coil:</p>
 <ul>
 <li>the state $x_L$ (magnetic flux of the coil), and </li>
 <li>the parameter $L$ (coil inductance).</li>
@@ -327,10 +310,10 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">xL</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xL&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">])</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">xL</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xL&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -343,14 +326,14 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Defining-expressions">Defining expressions<a class="anchor-link" href="#Defining-expressions">&#182;</a></h4><p>Now, the variables <code>xL</code> and <code>L</code> are instances of the <code>sympy.Symbol</code> object, with the assumption that quantities are real-valued only. Then, expressions can be defined with the standard <code>sympy</code> syntax. As an example, we define below the storage function associated with the coil $H_L(x_L)=\frac{x_L^2}{2L}$:</p>
+<h2 id="Defining-expressions">Defining expressions<a class="anchor-link" href="#Defining-expressions">&#182;</a></h2><p>Now, the variables <code>xL</code> and <code>L</code> are instances of the <code>sympy.Symbol</code> object, with the assumption that quantities are real-valued only. Then, expressions can be defined with the standard <code>sympy</code> syntax. As an example, we define below the storage function associated with the coil $H_L(x_L)=\frac{x_L^2}{2L}$:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">HL</span> <span class="o">=</span> <span class="n">xL</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">L</span><span class="p">)</span>
@@ -366,17 +349,17 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="the-phs.add_storages-method">the <code>phs.add_storages</code> method<a class="anchor-link" href="#the-phs.add_storages-method">&#182;</a></h4><p>To include a storage component to a <code>PortHamiltonianObject</code>, we make use of the <code>phs.add_storages</code> method:</p>
+<h2 id="the-core.add_storages-method">the <code>core.add_storages</code> method<a class="anchor-link" href="#the-core.add_storages-method">&#182;</a></h2><p>To include a storage component to a <code>PHSCore</code>, we make use of the <code>core.add_storages</code> method:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">phs</span><span class="o">.</span><span class="n">add_storages</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -389,9 +372,9 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Help on method add_storages in module pyphs.pyphs:
+<pre>Help on method add_storages in module pyphs.core.core:
 
-add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
+add_storages(self, x, H) method of pyphs.core.core.PHSCore instance
     Add a storage component with state x and energy H.
     * State x is append to the current list of states symbols,
     * Expression H is added to the current expression of Hamiltonian.
@@ -415,17 +398,17 @@ add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As an example, the coil is added to the <code>phs</code> object as follows:</p>
+<p>As an example, the coil is added to the <code>core</code> object as follows:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xL</span><span class="p">,</span> <span class="n">HL</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xL</span><span class="p">,</span> <span class="n">HL</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -444,7 +427,32 @@ add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
 <li>the parameter is $C$ (electric capacitance), and </li>
 <li>the storage function is $H_C(x_C)=\frac{x_C^2}{2C}$.</li>
 </ul>
-<p>This component is added to the <code>phs</code> object as follows:</p>
+<p>This component is added to the <code>core</code> object as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">xC</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xC&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">])</span>
+<span class="n">HC</span> <span class="o">=</span> <span class="n">xC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">C</span><span class="p">)</span>
+<span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xC</span><span class="p">,</span> <span class="n">HC</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, the state of the <code>core</code> object includes both <code>xL</code> and <code>xC</code>, and the storage function is given by the sum of <code>HL</code> and <code>HC</code>:</p>
 
 </div>
 </div>
@@ -454,32 +462,8 @@ add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">xC</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xC&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">])</span>
-<span class="n">HC</span> <span class="o">=</span> <span class="n">xC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">C</span><span class="p">)</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xC</span><span class="p">,</span> <span class="n">HC</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, the state of the <code>phs</code> object includes both <code>xL</code> and <code>xC</code>:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">x</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.x = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.H = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">H</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -490,52 +474,12 @@ add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[9]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[xL, xC]</pre>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>core.x = [xL, xC]
+core.H = xL**2/(2*L) + xC**2/(2*C)
+</pre>
 </div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>and the storage function is given by the sum of <code>HL</code> and <code>HC</code>:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">H</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[10]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>xL**2/(2*L) + xC**2/(2*C)</pre>
-</div>
-
 </div>
 
 </div>
@@ -555,7 +499,7 @@ add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
 <li>defining a total storage function:<div class="highlight"><pre><span></span><span class="n">H</span> <span class="o">=</span> <span class="n">HL</span> <span class="o">+</span> <span class="n">HC</span>
 </pre></div>
 </li>
-<li>calling:<div class="highlight"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+<li>calling:<div class="highlight"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
 </pre></div>
 </li>
 </ol>
@@ -568,17 +512,17 @@ add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="the-phs.add_dissipations-method">the <code>phs.add_dissipations</code> method<a class="anchor-link" href="#the-phs.add_dissipations-method">&#182;</a></h4><p>To include a dissipative component to a <code>PortHamiltonianObject</code>, we make use of the <code>phs.add_dissipations</code> method:</p>
+<h2 id="the-core.add_dissipations-method">the <code>core.add_dissipations</code> method<a class="anchor-link" href="#the-core.add_dissipations-method">&#182;</a></h2><p>To include a dissipative component to a <code>PHSCore</code>, we make use of the <code>core.add_dissipations</code> method:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">phs</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -591,9 +535,9 @@ add_storages(self, x, H) method of pyphs.pyphs.PortHamiltonianObject instance
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Help on method add_dissipations in module pyphs.pyphs:
+<pre>Help on method add_dissipations in module pyphs.core.core:
 
-add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instance
+add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
     Add a dissipative component with dissipation variable w and dissipation function z.
     
     Parameters
@@ -621,19 +565,19 @@ add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instanc
 <li>the parameter $R$ (electric resistance), and </li>
 <li>the dissipation function $z_R(w_R)=R\,w_R$.</li>
 </ul>
-<p>This component is added to the <code>phs</code> object as follows:</p>
+<p>This component is added to the <code>core</code> object as follows:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">wR</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;wR&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">])</span>    <span class="c1"># define sympy symbols</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">wR</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;wR&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">])</span>    <span class="c1"># define sympy symbols</span>
 <span class="n">zR</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">wR</span>                           <span class="c1"># define sympy expression</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">(</span><span class="n">wR</span><span class="p">,</span> <span class="n">zR</span><span class="p">)</span>        <span class="c1"># add dissipation to the `phs` object</span>
+<span class="n">core</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">(</span><span class="n">wR</span><span class="p">,</span> <span class="n">zR</span><span class="p">)</span>        <span class="c1"># add dissipation to the `core` object</span>
 </pre></div>
 
 </div>
@@ -646,17 +590,17 @@ add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instanc
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, the dissipative variable of the <code>rlc</code> object includes <code>wR</code> only:</p>
+<p>Now, the dissipative variable of the <code>core</code> object includes <code>wR</code> only:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">w</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">w</span>
 </pre></div>
 
 </div>
@@ -667,7 +611,7 @@ add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instanc
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[13]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[11]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -692,10 +636,10 @@ add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instanc
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">exprs</span><span class="o">.</span><span class="n">z</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">z</span>
 </pre></div>
 
 </div>
@@ -706,7 +650,7 @@ add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instanc
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[14]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[12]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -724,17 +668,17 @@ add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instanc
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="the-phs.add_ports-method">the <code>phs.add_ports</code> method<a class="anchor-link" href="#the-phs.add_ports-method">&#182;</a></h4><p>To include an external port to a <code>PortHamiltonianObject</code>, we make use of the <code>phs.add_ports</code> method:</p>
+<h2 id="the-core.add_ports-method">the <code>core.add_ports</code> method<a class="anchor-link" href="#the-core.add_ports-method">&#182;</a></h2><p>To include an external port to a <code>PHSCore</code> object, we make use of the <code>core.add_ports</code> method:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">phs</span><span class="o">.</span><span class="n">add_ports</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">add_ports</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -747,9 +691,9 @@ add_dissipations(self, w, z) method of pyphs.pyphs.PortHamiltonianObject instanc
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Help on method add_ports in module pyphs.pyphs:
+<pre>Help on method add_ports in module pyphs.core.core:
 
-add_ports(self, u, y) method of pyphs.pyphs.PortHamiltonianObject instance
+add_ports(self, u, y) method of pyphs.core.core.PHSCore instance
     Add one or several ports with input u and output y.
     
     Parameters
@@ -778,11 +722,11 @@ add_ports(self, u, y) method of pyphs.pyphs.PortHamiltonianObject instance
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">u</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;vout&#39;</span><span class="p">,</span> <span class="s1">&#39;iout&#39;</span><span class="p">])</span> <span class="c1"># define sympy symbols</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">add_ports</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>                  <span class="c1"># add the port to the `phs` object</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">u</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;vout&#39;</span><span class="p">,</span> <span class="s1">&#39;iout&#39;</span><span class="p">])</span> <span class="c1"># define sympy symbols</span>
+<span class="n">core</span><span class="o">.</span><span class="n">add_ports</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>                  <span class="c1"># add the port to the `core` object</span>
 </pre></div>
 
 </div>
@@ -795,7 +739,7 @@ add_ports(self, u, y) method of pyphs.pyphs.PortHamiltonianObject instance
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Defining-the-interconnection-structure">Defining the interconnection structure<a class="anchor-link" href="#Defining-the-interconnection-structure">&#182;</a></h3><p>The interconnection structure of a PHS is defined by the matrix $\mathbf M$ structured as $$\mathbf M = \mathbf J- \mathbf R,$$ where</p>
+<h1 id="4.-Defining-the-interconnection-structure">4. Defining the interconnection structure<a class="anchor-link" href="#4.-Defining-the-interconnection-structure">&#182;</a></h1><p>The interconnection structure of a PHS is defined by the matrix $\mathbf M$ structured as $$\mathbf M = \mathbf J- \mathbf R,$$ where</p>
 <ul>
 <li>the skew-symmetric matrix $\mathbf J = \frac{1}{2}\left(\mathbf M- \mathbf M^\intercal\right) $ encodes the <em>conservative interconnection</em>, and </li>
 <li>the symmetric positive definite matrix $\mathbf R = \frac{-1}{2}\left(\mathbf M + \mathbf M^\intercal\right)$ encodes the <em>dissipative interconnection</em>.</li>
@@ -833,22 +777,22 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
 
 <span class="n">Jxx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
                    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Jxx</span><span class="p">(</span><span class="n">Jxx</span><span class="p">)</span>
+<span class="n">core</span><span class="o">.</span><span class="n">set_Jxx</span><span class="p">(</span><span class="n">Jxx</span><span class="p">)</span>
 
 <span class="n">Jxw</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
                    <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Jxw</span><span class="p">(</span><span class="n">Jxw</span><span class="p">)</span>
+<span class="n">core</span><span class="o">.</span><span class="n">set_Jxw</span><span class="p">(</span><span class="n">Jxw</span><span class="p">)</span>
 
 <span class="n">Jxy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
                    <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">set_Jxy</span><span class="p">(</span><span class="n">Jxy</span><span class="p">)</span>
+<span class="n">core</span><span class="o">.</span><span class="n">set_Jxy</span><span class="p">(</span><span class="n">Jxy</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -868,11 +812,11 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;M=&#39;</span><span class="p">)</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">M</span>
+<span class="n">core</span><span class="o">.</span><span class="n">M</span>
 </pre></div>
 
 </div>
@@ -890,7 +834,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[18]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[16]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -909,11 +853,11 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;J=&#39;</span><span class="p">)</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
+<span class="n">core</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -931,7 +875,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[19]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[17]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -950,11 +894,11 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;Jxx=&#39;</span><span class="p">)</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
+<span class="n">core</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -972,7 +916,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[20]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[18]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -989,11 +933,11 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;Jxw + Jwx.T =&#39;</span><span class="p">)</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span> <span class="o">+</span> <span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">Jwx</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+<span class="n">core</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">Jwx</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 
 </div>
@@ -1011,7 +955,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[21]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[19]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -1028,11 +972,11 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;R=&#39;</span><span class="p">)</span>
-<span class="n">phs</span><span class="o">.</span><span class="n">struc</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
+<span class="n">core</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -1050,7 +994,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[22]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[20]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -1072,19 +1016,20 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Setting-parameters-values">Setting parameters values<a class="anchor-link" href="#Setting-parameters-values">&#182;</a></h3><p>The correspondence between the parameters symbols (here <code>L</code>, <code>C</code> and <code>R</code>) and their actual value is stored in the python dictionary <code>phs.symbs.subs</code>, with parameters symbols as the dictionary's keys and numerical values as the dictionary's values. Here, the physical parameters are</p>
+<h1 id="5.-Setting-the-physical-parameters-values">5. Setting the physical parameters values<a class="anchor-link" href="#5.-Setting-the-physical-parameters-values">&#182;</a></h1><p>The correspondence between the parameters symbols defined above (here <code>L</code>, <code>C</code> and <code>R</code>) and their actual value is stored in the python dictionary <code>core.subs</code>, with parameters symbols as the dictionary's keys and numerical values as the dictionary's values. Here, the physical parameters are</p>
 <ul>
 <li>$L=50\times 10^{-3}$H, </li>
 <li>$C=2\times 10^{-9}$F, </li>
-<li>$R = 10^3\Omega$:</li>
+<li>$R = 10^3\Omega$.</li>
 </ul>
+<p>This is stored as follows:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">L_value</span> <span class="o">=</span> <span class="mf">50e-3</span>
@@ -1095,7 +1040,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
         <span class="n">C</span><span class="p">:</span> <span class="n">C_value</span><span class="p">,</span>
         <span class="n">R</span><span class="p">:</span> <span class="n">R_value</span><span class="p">}</span>
 
-<span class="n">phs</span><span class="o">.</span><span class="n">symbs</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span>
+<span class="n">core</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -1108,17 +1053,17 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Generate-the-$\LaTeX$-description">Generate the $\LaTeX$ description<a class="anchor-link" href="#Generate-the-$\LaTeX$-description">&#182;</a></h2><p>A <code>.tex</code> file containing a description of the system can now be generated with the <code>phs.texwrite</code> command as follows:</p>
+<h1 id="Bonus:-Generate-the-$\LaTeX$-description">Bonus: Generate the $\LaTeX$ description<a class="anchor-link" href="#Bonus:-Generate-the-$\LaTeX$-description">&#182;</a></h1><p>A <code>.tex</code> file containing a description of the system can now be generated with the <code>core.texwrite</code> command as follows:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">texwrite</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">texwrite</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -1131,992 +1076,10 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>.tex</code> file is generated in the folder returned by</p>
-<div class="highlight"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">paths</span><span class="p">[</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span>
-</pre></div>
-<p>which, on Mac OSX, returns something like:</p>
-
-<pre><code>/Users/bla/bla/bla/RLC/tex</code></pre>
-<p>In that folder, a <a href="/pyphs_outputs/RLC/RLC.tex">RLC.tex</a> file is now accessible. Compiling this file yields the following <a href="/pyphs_outputs/RLC/RLC.pdf">RLC.pdf</a></p>
+<p>A <a href="/pyphs_outputs/RLC/core.tex">core.tex</a> has been generated, the compilation of which yields the following <a href="/pyphs_outputs/RLC/core.pdf">core.pdf</a></p>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="System-simulation">System simulation<a class="anchor-link" href="#System-simulation">&#182;</a></h1><p>The methods for the simulations are parts of the <code>phs.simu</code> module. In the sequel, simulations perform at the following sampling frequency:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">fs</span> <span class="o">=</span> <span class="mf">48e3</span>  <span class="c1"># Samplerate (Hz)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Input-sequence:-generators">Input sequence: generators<a class="anchor-link" href="#Input-sequence:-generators">&#182;</a></h2><p>The input to the simulations methods in the <code>phs.simu</code> module are python <code>generators</code>. In short, the elements of these structures are not loaded into memory before being accessed. In turn, the data can be accessed only once.</p>
-<p>The <code>phs.signalgenerator</code> function returns generators for a variety of signals. As an example, we choose to define the input voltage signal as follows:
-$$u(t) = v_{\mathrm{out}}(t) = A(t)\,\sin(2\pi\,f_0/,t) $$
-with linearly increasing amplitude $A$. The associated call to <code>phs.signalgenerator</code> reads</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="mf">100.</span>                           <span class="c1"># signal amplitude</span>
-<span class="n">f0</span> <span class="o">=</span> <span class="mf">100.</span>                          <span class="c1"># signal fondamental frequency</span>
-<span class="n">nsin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">fs</span><span class="o">/</span><span class="n">f0</span><span class="p">)</span>                <span class="c1"># number of time-steps</span>
-
-<span class="c1"># signal generator</span>
-<span class="n">vout</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">signalgenerator</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;sin&quot;</span><span class="p">,</span>
-                          <span class="n">n</span><span class="o">=</span><span class="n">nsin</span><span class="p">,</span>
-                          <span class="n">ramp_on</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                          <span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span>
-                          <span class="n">f0</span><span class="o">=</span><span class="n">f0</span><span class="p">,</span>
-                          <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>See <code>help(phs.signalgenerator)</code> for details. Notice <code>vout</code> is a <code>function</code> that yields a python <code>generator</code>:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">vout</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">vout</span><span class="p">()))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;type &apos;function&apos;&gt;
-&lt;type &apos;generator&apos;&gt;
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, we need to define the <strong>input sequence generator</strong>, which should yield a list of <em>np</em> floats for each time-step, with <em>np</em> the number of inputs. Here, <em>np</em>=1 which corresponds to the following input sequence generator:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">genu</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Input sequence generator</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">vout</span><span class="p">():</span>
-        <span class="k">yield</span> <span class="p">[</span><span class="n">el</span><span class="p">,</span> <span class="p">]</span>  <span class="c1"># each call to the generator...</span>
-                      <span class="c1"># ... yields a list with a single element.</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Initialization">Initialization<a class="anchor-link" href="#Initialization">&#182;</a></h2><p>The <code>phs.simu</code> module must be initilized before running the simulations. This is done with the <code>phs.simu.init</code> command. First, we define a <strong>minimal</strong> dictionary of user-specified pre-processing, processing, and post-processing options:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">opts</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fs&#39;</span><span class="p">:</span> <span class="n">fs</span><span class="p">}</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Secondly, the <code>phs.simu</code> module is initilized with</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">sequ</span><span class="o">=</span><span class="n">genu</span><span class="p">(),</span> <span class="n">nt</span><span class="o">=</span><span class="n">nsin</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="n">opts</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>*** Resolution of linear subsystem succeed ***
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Processing">Processing<a class="anchor-link" href="#Processing">&#182;</a></h2><p>The simulation can now proceed:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">simu</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-*** Simulation ***
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Plots">Plots<a class="anchor-link" href="#Plots">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Shows the plots in the notebook</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>pyphs</code> package includes several ploting possibilities to analyse the simulation results. As an example, the power balance can be shown with</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">phs</span><span class="o">.</span><span class="n">plot_powerbal</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAewAAAFZCAYAAABaLRymAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
-AAALEgAACxIB0t1+/AAAIABJREFUeJzsnXd4VUXawH+TAqEkIZACoXcQFBBBAUsQRURXxS7r2v1Q
-1951XQl2Xcta1rXruvYVRGyAAqFL70gnARKSACmQXu58f8y599xcbq8JzO95znPnnCnnzXtP7ntm
-3pl3hJQSjUaj0Wg0jZuoSAug0Wg0Go3GM9pgazQajUbTBNAGW6PRaDSaJoA22BqNRqPRNAG0wdZo
-NBqNpgmgDbZGo9FoNE0AbbA1xx1CiE+EEBYPR4kQYrEQ4l4hRPNIy9xYEUL800FvH4fpvlkO950c
-jvtqNJFEG2zN8cjjwEDgCeNcGufW4wxgCtAXeBVYLoRIjoCcTYHnUTr7t3EersAO1wMnAt+H+b4a
-TcSIibQAGk24kVLmAXlCiOF21zY7FFsshJgBbEQZhk+AC8MmZBNBSlkAFAghDoT5vjkAQojScN5X
-o4kkuoet0bhASrkT+NI4HS+E6B5JeTQazfGNNtgajXvse96DIyaFRqM57tEGW6NxT41dOto+QwiR
-IYSYJoTIE0JUCyH2G+ejHRsRQmQ7mdg216HMrcb1exyuZzrUq3fS/slCiC+EEPsMWQ4IIX4TQlwv
-hIhyKPuEQ3vzhBAxQohHhRAbhRAVdnldfFWYECJBCPGKEGKHEKLS0Mt/hBBdXZTvKIR4SAjxqxCi
-QAhRI4Q4ZMh1na/3t2u3rRDir0KIH+30UiKEWCqEuFsIcZRL0IVuYo3vYLsQokoIsdeYbNfSw/0v
-EUL8bPc3HRBCLBBCPCmE6OGiTgchxGtCiG2G7kqFECsNuRL81YXm2EAbbI3GPb2NTwlssV4UQjwP
-zAV6APcApwF3GedzhBAvOrRzLvCokd6Lmqh1o0OZS43PSxyu/wvlR98JvGWkbQgh7gBWAKcCfwNO
-B24H4oCPgR+EELF2Vd6h4aS7KNTkrU7AJGAcsNRREV7SGsgC6oBrgbOB/xnpNUKIIU7qvA68iNLx
-zShd3gpYgE+EEJ/6KcvjwJtAKnAfMMKQYx/wT2CWE6PtqBsBTDPS1wCXo76/u4EvnN1UCBFtyDwN
-SDD+ltOA24y/MRPYLoRId6g3EjVn4hbgA2CMcc/1wFPAKlcvPZrjBCmlPtwcQAdgJmCJtCz6CPp3
-ewPKKNS7yE8CiowyK+yu32Jc2w0kONRJBLKN/Fsd8pKBeuPo5aRetVGvFmjnkN/VyBvqcP0c43oB
-kOSQFwUsM/KfcfP31wIvOeSNMOTs4qUuM4226oB7neQ/b+RvA5o55P0PWA5EOan3m1HvUhf3/cTI
-f9JJ3stADtDKSd5HRr37PTwbtcBDDnkJQLmR39dJ3aeNvJVArENeNLDEyO9id709UGjo/EwXf4sF
-WBTp/xt9RO7QPWw3CCEuRf1z9SACy0aEED2FEC8bQ2IrhRBbjSG18eGW5XjCGNIdDcwD2gAHgL8Y
-ec1QP8gAr0spD9vXlVKWonpvAE8b5a15B4HFqF7bBIfbXggUA7tQP+oXOeRPAPZKKVc5XH/BTpZi
-B1ksqGVpAHcK1+vJpV07VpYD3YFcF3VccRg1CuDIixgvKsBVDnnfAA8a8jryifF5jY9yAMwC7pJS
-ljvJ+8jLdusxl6wBYHzn1u9hhH2eECIVeBCl02ellLUOdeuBNzj69+Qh1AvdHCnlAidy/MN6PyHE
-CCf5muMAbbDd8zCqB7ME9SMbbs5H/bhdKaU8BegHLAJmCCHOjIA8xypCCFFrPYASYA7QBfgQGCyl
-tA6HjwTSUD+4c522pnqFACmo4Wl7phufjsPeE1DD0t/ZndtzCTDDQehuwMmGLItcyLLN+Ewwyjpj
-u5SyyP6ClLJeSrnHMDC+sFxKWed4UUpZAqwxTi9wyPufCyMFavgaoI+PciCl/FVKOcNFtrftbpdS
-ljm5nmd8pjlcvwCwvhjNcdHmDNT/dqHdtcuMT6ffo1TL546gfocy3IusOVbRBts9I6Va2hMp9gGT
-pZS7AKSUEtVTieLoHpjGfyQwyO4YAHSWUraVUt4qpdxvV9bef7zbRXs5xqdA+UPtsRrs4UZvDCFE
-C+A8I8+aP0YI0crITwZG2eU5yiJQfvNaxwPVU7b+jZ1cyHvQxXV/KHSTt8f47Gd/USiuNiZo5RqT
-razyW19+WvsjjBBinBBiqlCT/srt2t3uZbtFLq5XGZ+OoxbW77vEcfTFipSyQko5W0pZZcgYj3o5
-BHjS2fdoyByP++9Rc4yjA6e4wcUQ3VEYvd3nUG/bVh/Vg1LK/ADv7/gDDcrXCWqYVhMk5NGBU1xh
-P1O30kWZCrt0on2GlHKXEGIj6of9YuB9lLG2oIxTPeq7TUH1wr4F/oTqXWW5kEUabWV7kN3V8Lav
-vWh3HNW7tsOqr3jrBSGEAL5GTebKRk2uWocaWgcYjhq+9nmESwjxD+ABlD5fRE3MO2Rkd0QNmXvC
-V91YvxNXz4a7OqDcLf/zUL7YQ77mGEUb7AARQoxC/dA+LqV82Zh1+jWqxzNESlnjvgWf7tURNWN4
-lfGpCT/2kbVaYhoWHK47K29lOspgX4Iy2JcCv1j9nUKI71ET2yagDPYlwI9Ohqft28734aUjlLj7
-TWlhfB6xu3YpyljXAGOllDvsK1hHIXxFCDEUZawlcIXjkLsQosJpxcCxfict3JZqiP0zdKSRfI+a
-RogeEg+cF4FcKeXLAIb/7nGgP/5NlDkKY/LZDtRyEgFMcOFX04SeDXZpV5HPuhmf0qG8FWv869FC
-iCTUhLPv7PKt6fFCiDaoeRTORlusbQtU3HOnCCFGCCFuCdM6XncGtpvx+YfdtQzjc5ujsQ4Qa7tl
-bvzjocD6nbQRQiQ6K2C4AFpbl9pJKY9gulHcfY/djO/RZRnNsY022AFgBE4YAfzukLUNNTSYYVf2
-M+F5hyiLcBIoQkq5U0rZCzW8uh1YZ/TsNeFnCbAfZSTPcVHGer0AJ5OIjJne+1DrpF8CWgE/2xWZ
-g+qFJhr5ArW00LGdHNTSIQB3KwfeAZ4FwvGSN9zJ2maMF5NBxulP9lkOn474HLjF8dYhatcVP6GG
-wwVqDbozbkH1qu0n31mHwc8z3ATOuA94D2jmIl9zjKMNdmC0Rf1jjhFCrLEewGrU5Bv7f6wHUZNt
-PB3OelKAehOXUt6HMgRvB//P0XjCGLb+u3F6j9EDtmH0qu5F9a6fdFzWY4e1l30TaimPbZjYcKP8
-YpzeDPwmpXQ1hPsoyv99lbOgJMYL4InAK97OyQiQNsBfnVx/BDW/YzvKZWTF+kLTTwgxyL6CUBHa
-/s9PORYbn62FEM42bbnNz3bdYizde8k4fdwhYI31Jf8e1AvbD3ZZL6N+M7oAdzq2K4Q4AfUszJRS
-Ohu10RwPRHoheFM4MIIzOLneEtWT/iBE941zcf0b1GSY2FDc91g/UBOOBqKiglmMY4BxrZuXbTxn
-1NsAXIFaMnU5asJUPfCih/pj7O79f07yr7bLv8lDW7eiAnwUAfejJmqNAV5DBWOZjl1QElTP3f7v
-X27397f0UZftjXpvG23NQbluXkCNPo1ErTuuN+Qb4lA/CjWZzoIaubgDFRXsT6hlc6VG3j5Dxj5G
-ve7Gfacb+f8yzlPs2v7MyCtFvTCMQkVx+8auXdt370E36UZ+ihf3jUJFmLMAC1ArOk5BLdFchRo9
-GepEl8NRRrsWFf3tTEN/96Nm8m8DOkT6/0cfkTsiLkBTOFAG21U0rAXASifXH0Ctnw7kvlnAaU6u
-LweKIq2XpnpgRseyYEYes57P9aGds4CphqGpBvJR4ShHe1E32jBgdUCak/x41NKhWiDZi/ZOBP6D
-WjpVjVpLvgAnxh4zipfj3+80ypaH+/7Toa2PgHTU+vU9xt+w39B5VxdtNEeNWmwyypejwnE+iRo2
-ttjJuMuok+VwX2v6Sbt2Baq3uho1c78SFV72ZWCYQ916F7qxpj8y8jNdPDfOIq1dhHJ1HEBNqssF
-/gv0c6PPFNS8mM2GzOWol8BMoHWk/3f0EdlDSKn3ffeEEOIT4Dop5VEuBCHEaagfj3uklO8a1zJQ
-cYZHSimzA7jvPNQ/+jVSyiLDt3UX6kfyKSllpr9tazQajaZpoQ22G4QQL6E2beiC8s2tR/kmT5V2
-vkkjVOBzqGG6gygf89+klGsDvP9I1ASVYaieWJzR/ttSyi/d1dVoNBrNsYU22BqNRqPRNAH0LHGN
-RqPRaJoA2mBrNBqNRtME0KFJ3SCE0P4CjUaj0YQcKaXHePm6h+2BSE/jPxaOyZMnR1yGY+HQetR6
-bGyH1mVwDm/RBtsDmZmZkRahSZOZmUlWVpbWY4BoPQYHrcfgoXUZfrTB1mg0Go2mCaCXdblBCCG1
-fgInKyuLjIyMSIvR5NF6DA5aj8FD6zI4CCGQXviwtcF2gzbYGo1Gowk13hpsPUvcA5mZmdpHEwD2
-utN69B+tx+Cg9Rg8tC7Dj/ZhazQajUbTBNBD4m7wNCTuep95jcYz+n9Po9GAHhIPG/pHV+MP+mVP
-o9H4ijbYHtA+bE1jQPsLg4PWY/A4lnS55pW5lM6YT/pdl9Hn8pMiLY5LtMHWaDQazXHL4js+Z9S/
-rwWgcsFLbP1qKX2vGhxhqZyjfdhu8MaHrfWn8Qf97Gg0kae+pp79LXvSqT7Hdu33DpdwWt53YZXD
-Wx+2niWu0Wg0muOS1Z+sJ7k+v8G1oft/pGj7oQhJ5B49JO4B7cPWNAaOJX9hJNF6DB7Hgi6n5wzh
-TIoZwVLmMob9tGceo0n67Qjn924XafGOQhtsjUaj0RyXzJ0LVbRgHmczvFcRK3a0AQR3bobzIy2c
-E5qcD1sI0Q3YCGx3kp0hpSx1UzcWeBK4HKgDDgMPSykXuyh/3PuwZ8+ezZQpU2jVqhWXXXYZtbW1
-rFmzhpycHH777bdIi9dkOR6eHY2mMVNbC61aqU+Azz6Da9XcM0aMgCVLwifLsb4Oe4WUcrQf9d4E
-MoBRUspDQoibgdlCiJFSynVBlbCJM3HiRLKzs1myZAlLly4lNjaWSZMm2fInT54cQek0Go0mMLZt
-M411ly5w9tlm3vr1YLFAVCOb5dVUDbbPCCH6ArcCN0spDwFIKT8UQtwHPAtc6Kze8erD/uKLLxgy
-ZAiA003W+/fvHwmxjluOBX9hY0DrMXg0dV1u2GCmBw6E9u0hJQUOHIDycti1C3r1ipx8zmhk7w8h
-ZQIggHkO1+cBY4UQLcMvUuPCYrFw9913k5GRwfjx423RuOyjcn399deUlpYyYsSISImp0Wg0AZOz
-JJdWlAFw4okgBAwaZObbG/TGQlPtYacJIf4L9AHaACuB56WUG93UOQmoB/Y4XN+N0sMJRjsNaIpv
-jv7y2WefERMTQ1ZWFmvXruXGG28EVA97xYoVvPnmm7z++uucf/75dO3aNcLSHl8cT89hKNF6DB5N
-XZcZ/7uDR5jBLrqzM/ojIIOh3YuoYhM92Unlr71gwumRFrMBTdFg16MmjL0qpVwjhIhH+aaXCSHO
-klIeZXQNkoEKJ7PIDhufjW8Of5hZvnw5V111FQCDB5uRfoQQDB8+nLvuuou0tDSklNTW1pKXl6cN
-t0ajaZKkFG0FoAe7qRmYCMD5Bz7lBe4DYP782wBtsANCSrkX1Vu2nh8RQtwGjAeeA8YG837Hkw/7
-5JNPZvbs2ZxxxhnMmTPHdt3eh33llVcC8NNPPzFw4MCIyHk80tT9hY0Frcfg0ZR1aamzkF6TbTvv
-MKoHAC0G9oTp6lrr/J0RkMw9Tc5gO0NKWSWE2Aic5qbYQaCVOHqtVoLx6TS0TVZWli1tfSib2sPp
-Lddffz233XYbo0ePJjExkdzcXEaOHElMTAzx8fF8+OGHWCwW9u7dyzfffMOWLVsiLXKTxvF58vRp
-/yz6U19/ZpKVlUVGRkbE5TgWPq3PY1PUZ+H6fN6hGoC7RVvadkkkMzOToh2FDEfx3+IV/GDXYQv1
-pzc0OYMthEgAKqWUtQ5Z9bifRLcOuBroTEM/dnegFtjsqqJVodnZ2XTr1s0PmX2u4heBLuuNjo7m
-/fff96rsU089FdjNND6RaffDofGfjIwMv34oNUfjaKibEoXLdtvS+S2609ZIx3dJsl1PkKVY6iwh
-uX9WVpbthccX/TXFWeJvAJfZXxBCNANOBFbbXUsTDTcd/g6QgOP67dHAbCllhbObWf/BMzMz/TLW
-Go1Go2lcHNh9hCO0BqA0qbvtemyLWPZHpQMQheTIPpdxuAIiIyPDdvhisJtipLOPUT7sC6SU+UKI
-aOBV4A5gnJRyjhBiFLAAeFdKeYdd3X+jDLQ1cMqNwFvACCnleif3kpMnT3apUG+jVTWVHrYmfPga
-6cz+GWyKPZrGgtZj8GjKunz6aXjySYijkofvKGfKv5JteTPa/x+1BYfIpSPDvn6IEVd2Drk8x3Kk
-s1eAScBMowOdjBrOPkdKOd8ocwQoBvIc6t4FTAYWCyFqUTPExzoz1sGkqRjSKD/D+gghqK+vD7I0
-Go1GExqys9VnFS1IG9CiQd7nZ73HN9+o9Ge10JgiTjS5HnY40bHENaFCPzsaTeQ47zyYPVulf/gB
-LrSLc3n//fDaayr94ovw8MOhl0fvh60JCtdccw0jR44EoK6ujosuuijCEmk0Gk1g5NmNvXbs2DDP
-/nzfvvDI4y1NcUg8rBzvs3O//PJLW0zxZcuW0auxBdc9TmjK/sLGhNZj8GjKurQ32OnpDfPsDXZu
-bnjk8Rbdw9YchWNMcYBZs2YxZcoUoqKimDfPMRy7RqPRNA0qj9SRWvQH8RwmOkqSktIwvzEbbO3D
-dsPx6sP+9NNPWbt2La+++qotpviaNWsYO3Ys3377LQkJCZ4b0bjlWH12NJrGzp6sXXQZ3ROAHTF9
-6VXbMADU7q013NnvVzqSS5fEUp4oeSjkMh3Ls8Q1IcZZTPHa2lrKy8u1sdZoND5xYGMBGzZFMWx8
-CvHxkZYGSjbn0cVIVzVvc1R+egfJT8Zuy3Wl0dTX3E90s+gwSugaPSTugabmmwkG1pjigC2m+KpV
-qzjllFOoqKjg119/jaR4xyXWuRTH4/MYTLQeg4c3ulz90m/En9iVV69eRp8+sLMRhOcu32aOc5cl
-pB+V3zyhOYeE2gsqhnqKth0Mm2ye0AZbcxTXX389+fn5jB49mjfffJO8vDzeeOMNpJRMmzaN0aMd
-g8VpNBpNQ6oPV5P2+E3EUU0zasjPh3vvjbRUUJ1tzjirTj7aYAOUxKba0sVbC0Muk7doH7Ybjlcf
-tib06GdHc6yz9IFvGfHqFQC8wV3cx2tYiGbnTujRI3JyZQ17iIyVLwMwb+xzjJ712FFl1rbJYHCp
-isO1+qXfOPmhMSGVSa/D1mg0Gk3k+PprW7KYJCwoP/D330dKIEVJZXP20JlK4ojt4ryHXRlv9rCr
-9jSeHraedOYB7e/SNAaa8prXxoTWY/Bwp0tLnYU+eebyz+YTL4cvVPrnn+G++8IgoAveav8MczY9
-A0h+meB8lGtPz9Fs29eCQlLp2KwPI8Mrokt0D1uj0Wg0QWX71PW0k4cAOCBSuPqZgba8ZcsgklsP
-HDhgTQlS2zs3gdvG3M4N/IeH+Qcbmw8Nm2ye0D5sN2gftiZU6GdHcyzz2XN72Pi3LxjMWlr3TueC
-ra9ybbtfGFw8l9P4nQ7fv0uvi06IiGwdOkB+vkrv2QOdnWzG9d57MGmSSt98M3zwQWhl0uuwNRqN
-RhMRFu3pwrs8CsCLt8CFAu6Ke4/TmA7AwmlLI2KwpYSDdqu0HKOcWUk1XdgUNh4XtjbYntA+bE1j
-QPteg4PWY/Bwp8u1a820EXuJqgGnwH5lsC3rN4ZYOueUlEBdnUrHx0NcnPNy9ga7oCD0cnmL9mFr
-NBqNJmjU18P69eb5oEHqM+5ks0fdas/mMEulOJBdzkmsowN5pCfXuCzXWHvY2oftBu3D1oQK/exo
-jlW2boV+/VS6QwdzZ6xdv2ylx3iVkRfdifS6vWGXbf3bizjpr2cAsKH1aZx4ZKnTckdKLUxq8xWp
-FNIh5iCP1DwNwqOL2W+0D1uj0Wg0YWfrVjM9YICZ7jK6JzXE0oxa0uv3cXjfYRI6hXdvgoqcA2a6
-lQsHNtA6XvAhN9OCKqiDsoJHad2+dThEdIs22B7QPmxNY0D7XoOD1mPwcKnLqVP5F3PYQS/atT0H
-OAmAmLgY/pH2PBsKUtjMCfwrpyWndgqryNTkmga7JsG1wRZRguLoZFrU7wOgZMdBbbA1Go1Gc2zR
-ZuVvXMQ7AGRVv4rVYAMsO/0Bpk5V6e274dRR4ZXNkm86pOvapbopCUdi24FhsI/kFMHp3UIpmldo
-g+0B/RbuHXV1dTz//PPcf//9tGrVKtLihJUpU6Zw7733kpiYGLJ76OcwOGg9Bg9Xumy9f7st3eKk
-3g3y7GOI794dCqncIw6aPWyR6rqHDVDeoh1UqXTF3kOhFMtr9CxxTcDU19dz6aWXUlRUdNwZa4Cu
-XbsyatQoioqKIi2KRhNxUg+bBjvltF4N8rp3N9ORMNgH6tvyB/04SDti0tPclq1u2dZM5zUOg617
-2B7QPmzPvPDCC+Tk5DBjxgwAZs6cyaeffsrXX39Nnz59uOCCCwAoLS1lz5493HjjjVx99dVhky/U
-8txwww0sWLCAm266ienTpwdL7AZo32tw0HoMHs50WVVSRXq9mv1dTxQdT+/eoE6kDfY7aZOZs3Ey
-ADMvcV92e69xrM5N5RDt6NOqf6OIJ64NtiYgamtreeWVV3j11Vdt18aNG8e4ceNYunQpEyZM4Lnn
-nrPl7dixg4EDB7J3714eeuihsMgYDnkeeughBgwYwKZNmxhgPzVWozmO2LdgF71QyxXzYrrQOaF5
-g/xID4mbccRdRzmzsnXUzTw3/2YAnmoZQqF8QUqpDxeHUo9rPOUfD8ycOVMKIeTu3buPyuvWrZt8
-7LHHjro+ZMgQmZycHDQZSkpK5IwZMzyWC7U8HTp0kE8++aRXZfWzozkWmf3VIXkNn8uHeUG+2fv1
-o/KrKi3ybW6XMxkrN9NP1pTXhFW+9u2lVAFKpdyzx33ZV14xy95zT2jlMn4PPNok7cPWBMS8efOI
-iYmhW7duXtepr68nPj4+aDKUlJSwevVqv+sHS56+ffsyZ86cgNvRaJoqu0ra8iUTeYlHWDXq7qPy
-m8cJLomawXnMpj9b2L88fMFTvI0jbqWt6cLmUONwYeshcU9oH7Z78vPzaWv/ZDsgHaJ5LVy4kO3b
-t/O13eb24SSU8iQnJwf04uAO7XsNDseSHmtq4J//hOXL4fzz4aabQhqM6yic6XKvnf11tgsWwMGW
-XehQlgtA8YZ9dMno4bxgkCktNeOIt27tOo64lXbtzLQ22McbmZkwZcrR1ydPVnmBlo8QhYWFxLl4
-8qWULF68mBdffBGA8vJyLBYLGzdupEeP8PyThlOeuLg4ChrTTgGaY5qbb4bPPlPpqVOhKqeAvz7l
-fuZzqPHGYJcldoQyI71lX+iFMijdX8EwNlJMEi0S2gLt3Ja3N9iNZQGINtgeaOpv4b7y8ccfM3v2
-bLdlYmNj+fDDD4mNjSU6OtplTGwhBIMHD+aRRx4Jhag2XN0/3PJIKYmNjQ1J28fbcxgqjhU9Ll1q
-Guto6niCZ7j+6Zc5cNUuUga4DwgSLJzp0huDXZPSEVQHm9rs3OAL5oLKtVtZzqkAbCs6EVjvtnxy
-XBmT+Ix2HKLtdgE8HnohPaANtqYBN954IzfeeKPX5dPS0qioqAjonu+++y7R0dHExsZSVFREjx49
-uPjii52Wraqq4q677qLOOrYFlJWVsWPHDrKzsxuUveGGGzjrrLN8kmX27NlMmTKF+Ph4JkyYQHV1
-NRs3buSBBx6gb9++butWVFSQlhbZHo7m+OD11830O9zGLXwIwMr7PyRj1mMRkso7g03HjmBsvyly
-w9fDrswrtqUrmid5LN+uZSXvcDsAxcVJaIPdBAiaDzsz07ehbF/LR4hOnTpRXFxMfX090dHRPtdf
-tGgRR44c4cEHHwTgq6++amCMHYmLi+P9999vcC0nJ4dPPvmEyZMn+3x/R8aOHcvSpUuJjY1l0qRJ
-gHohGDduHNOmTSM11XXvJT8/n84uf6UC41jyvUaSY0GPlZVghDwAoNX5Z8EvymCnLpoKhMdgO+pS
-WiRv7rqAXDqwl850Tv87cPRvwpGzL2bCT73IpSMDOvfAt1dq/6kuKDHTLTwb7MRuZplEWUJ9TT3R
-zXz/jQsmepa4JiDGjx+PxWJh27ZtR+VJc3mcS4qLi1m1apWt3CWXXBKyXqo38tiXtdK6dWuuuOIK
-XnrpJbflt2zZYgvKotGEinX/XsLfKv/GSBYzoG8d49+5iBqUK+aEilXkLQv/tpUAB/84wDjLL9zM
-R9zHP0lIcm7cEof1YToTWMFwthxMDpt8tYVmD7umlWeDHRMXQ4loA0AUkpLdxR5qhAFv1n4drwd6
-HbZHLBaL7Nq1q3zllVds13755Rc5ceJEGR0dLVNTU+WkSZPkzp07ndavqamRp512muzUqZO87rrr
-5Pz5832WITs7W2ZmZrrM90UeKaXMzMyUzzzzTINrP/zwgxw0aJDLOgsXLpTR0dFy3759Xsmsnx2N
-v2SddJdtgfCcUx6WUkq5KmmM7dqi2/4bEbk2/3elTYZtzQe6LLdzp7m+uVOn8Mk378KXbTfOGnKv
-V3WyY3ra6uyauTVksqHXYWvCgRCC5557jtdee42qKhUpf9y4cXz++efU1dVRUFDAO++843IWdmxs
-LIsXL+aTTz6hY8eOXH755cyfPz+oMvoijyuio6PdDtU/88wz3HnnnXTs2DFQcTUat7TftsCWTrx0
-DACHh5gDy7ULloZdJoDDm8yefUmCa9dQerqZ3r8f6utDKZVJkUxiNUPYTTdqktM9VwDKmptLVsty
-Ir+2S/uwPaDXYXtm4sSJbNq0iUsvvZQff/yRqCjv3wNnzZrF6NGjGTNmDGPGjGHUqFFMnTrVp8li
-rVq1onujGdZUAAAgAElEQVT37p4LBsDu3bs544wznOY98sgjNGvWjJdffjlk9z8WfK+Ngaaux4qD
-FfSs2giABUHvv5wGQKs/X8I9cxNYxOnUykEe5j8HB0ddVu0wJ5BVtnNtsOPiIDlZBTGpr4fCQujQ
-IZSSKuZ2u4l/cRMAr18I53pRZ0Hna/lxy2hKaMO5sd4Z+VCiDbYmKDz77LP8/PPP1NTUuFyX7Yz8
-/Hx++uknJkyYACh/sa/GNzk5meuuu86nOu6QDn7uiooKvvjiC7766iun5YcPH25b263RhJId/1vD
-Sagu6e5m/ejZKQGAAVefyFu3nojFAlFboaICWoY5/rXM229L16e5N24dO5pRx3Jzw2Owi+1c0Eme
-XdgALBh8N19tUemBzYIvk69og+2BpvgWHinGjx/vc53Y2Fh2797NW2+9RVRUFAcOHODvf/97CKTz
-jjlz5jB37lxat27Nhx9+SFVVFevXr+fdd9+lU6dOTutcdtllIZdLP4fBoanrsXj2Clt6f6dh9DTS
-LVtCnz6wZQtYLLBxIwwfHlpZHHU5q8MNvMnJtCefMSPc3/ze8mfoxUzSKKBo5ttwijf93cAoMSeJ
-06aNd3XsDbt9/UihDbYmokycODHSIjTAOjSv0TRGfqw5lx95iWGsoM3pYxvkDRqkDDbA2rWhN9iO
-rK/szc/0BmDsae7L9rJs53QWA7BwZ3hmtfvTw7Y37MWNYJK4Ntge0D5sTWOgqfteGwtNXY+/5Axg
-E2r71iW3NcwbNAisIfHXrQu9LI66zM8389q3d1+3rl0a7FLp+rzwhPO1N7je9rDty+ketkaj0Wi8
-oq4O7MMdnHBCw/xBg8z0pnV1hPvnfb/pwvbsk7aLtSAKw2OwexcupjmtKCaJpMTOeBOGpLEZbOE4
-waaxI4QYDPwVGAXUoULp/AY8LaU86KFuNuBsYOMBKeVcJ+WlO/0IIbwOxKHR2KOfHY2vbN0K/fqp
-dHq6mqxlz571JWwedDV92EbLqCra1+eFTbb6emje3FyiVVWlzl2x+PbPGPXOXwBY0vkqRu5xPqEz
-mFSJOOKoBqDiQDktkz3PyvvpX7uZd+dU2lBCu5O7cfuqW0Iim/F74HGvtabYw/4K2AAMlVJWCiHS
-gTnAOCHEIClllZu6Uko5JCxSajQaTRD54w8z7di7BujYL55UspRRskBpTgmJXb0c+w2QQ4dMY52U
-5N5YA8R1NXvYLY6EvoddVVJlM9Y1xNKibQuv6rU/soOXeQiAVbvHAKEx2N7SFA22BXhESlkJIKXM
-E0L8A/gAGA9MC+bNtA9b0xho6r7XxkJT1qO9we7f/+j86GbR7Grei97VmwDIzdpO4vXDQiaPvf6u
-GXI1c7mdfNqTFzsEeNht3bjTT2EMv1FAGvEpHQh1qJfS7GKsi01LRRIpUd5tHN6ig/nC07Iq8rPO
-mqLBPklK6Rhyyuo9Cc/rpEaj0YSZXt88ywfs4g/6Myj1CqDrUWUOte1D7/3KYBcv2wYhNNj2HNmY
-w2iyAFhdW4gng53cO4m5qNUYbcMQQKxsXwnWPn1ZTBtSvKzXMt3OYNdG3ond5Ay2E2MN0AeQwAIn
-eQ0QQrwInA4kA9nAW1LKH1yVb2pv4ZpjE/0cBgdv9VhZVMmyq1+j+ebVbL/uGSY+1Y+YCP9aDtg2
-nRNYCcDa1qfgzGBXdelj677Ubjp6Q55gYq/LRbd8YktXJniYIo6KdBYVpdaMFxVBbS2EaCt5ACpy
-zd5xeTMv13QB8V3Msgn1ke9hN/lY4kKIaOBm4AMp5Q4PxQuBVVLKUcAA4HvgeyHEX0MspkajaSLU
-VdXxR68/kfHr30jOXcdNz/fixhvVDhCRQloknSq22s47nuNkTByIPsHcs71+336nZUJBXa65pqs2
-2XPYsuhoSLHr5hYWhkIqk9LKZixiFBsZQEFib6/rJXRONNOyFEudJRTieU2T62E74e9ANXCvp4JS
-ylPt0nXA20KI8cBzQogPpJTVjnU8+bCF8M4XotEEQlP2vTYmvNHjkps+4MziOaoMmdQTw2efwdVX
-Q6R2Tz209SDJHAHgMPEkn+B8X/ZmEy5g6Mcr2U5v+iQlGP3x0GCvv9H5dsPFnhZhG6SlQYEx36yg
-QIUrDRU5KadwLYsAuPpM8DY0UmzLWP4Z+yDFta0poQ1PH7aQ0DZy/dwmbbCFEDcClwMZ1klofrAc
-NVntBGCNY2ZWVpYtbX1ArZ+TJ092el1/mp9ZWVlkZGRgT2OQqyl+2j+LjUGepvhp/zw6y7fUWZj0
-zSfqHNjKF8CfAbj99kxuuikychf8vpu3UFwT152EKOG03OHDsBp1vnlzJpmZoX8eMzIyiD2Ub9wV
-zu3c3qv6ZWXWGiroSij1p4KmqPOkJN/qf5D6D2MJXSZRTz/Da6+FRk5viPG6ZCNDCPEX4H7gbE/r
-r43ycUC0lLLcIcu6uZvz3dYxFZqdnU23bt38Efe4JSMjw68HU9OQzMxMrb8g4Ol5zF+yi471KlRm
-OS0Zdftg1r2vgpbs3QsHDoRRWDtK1+yypYuTXG8NGx+vfMG1tVBZCTU1oZPJ/sXnzz9vZ9neGFpz
-hHNGjvKq/uCKxZzDBibzHju+exFC2MP2J464laQkc817pb/dQgeysrJsLzy+/F83SR+2EOJa1DTE
-MVLKQuPahUKIW+3KpImG49VXA684aW4oUAVsdnYv6z94ZmamNtYazTFO3ZoNtvSBDieRlBrLxReb
-+fZLq8LJylZn8TVXMptz2TL0WpflhIAuXczz0tIwCAesOtybnfRiHUNIOtm73fbiKaMDBaSzH0te
-vucKAeBPHHEr9ga+yl2UDx/IyMiwHb4YbJ8jnQkhBgL9gHSgFSraWCkqMuxqKWWRTw36iBDiz6g1
-108A9ivuzwDypJRThBCjUDPG35VS3mHUuwF4HWXkVxrXrgK+QEVJy3RyLzl58mTdswkAe91pPfqP
-1mNwcKfHujoYlLSH8WVfM5EviPv0ffr/5RS+/BImToSWlHN9v+W8/cfo8AoN3HorfPCBSr/5Jtx5
-p+uy55wDc5QLnp9+Aj820fMKe/3985+ZtpeDAwfULHBPZI19joxf/6bSwx8mY1notqi9+Wb46COV
-fu89pU9v+dOf4McfVXr6dBq8wAWLoEY6E0J0Bu5DOXPcLWGzCCGWA/+WUv7XK0l95w2gGfAPh+sS
-mGKky1AhSO1j8/0MdEJNNItFrdkuAiZJKT8IkawajaaJsGIFbC7rwmYe4uvOD5FjdGTPO9fCD1zM
-OfxKsy01HNiUT8oA55O+QsXu3Wa6h+sRcQC6Gqu9mlFN3pZqGJ8QOsFQLzpWYx0dDW3belcvOs20
-6tHFHr2aAZG0axUjqKaYJJJbdgW83yy8UcUTl1K6PYBJKANoAXYCM4B3gBeBp4BngVeBT4FFwGGj
-7HKgi6f2G/Oh1KPRaI4Hnn5aSrV4S8obbmiYty5+lC1zyYPfhl227t1N2TZvdl/2+0s+lLl0kBLk
-vOEPh1y23FxTttRU7+v9/vBUW8Xf218UOgGllKvbZNjuterFX32q+/qlWfLvTJGvcJ+cetvskMhn
-2BqPNsltD1sI8QDwDPA+8IqUMsfTC4AQIgY4H5gMLBFCDJdShi8KvUaj0fiBdRgZ4OyzG+YVDTwT
-lqr9m2vmLAIuC5tcdXWwZ4957mkqTduUGNKN6CnN9nv8yQ4Y+4l4Kd6GEAPiOpk97Bbloe1h24cV
-bZHumxP7pANzyOBpALL+SADODaZoPuHSYAshTgEeBUZJKVd726BU65t/EEL8CLwFfAac7b5W40XP
-zg0M7XsNDlqPwcGVHmtqYKldQGtHg91q7CisAa+Tty0OnYBO2LvX3FijQwdo4WHfivgTu9nSCUXZ
-IZPLqr/cZXtZwmYOkEJe5RlgbJbhibgRQxjOMg6STJu0FLw2Mn7Qyi6saKuOfkwTNxClkR0Td9fD
-rkIZa7/i20kppRDiTtQuWi2k/+ukNRqNJqRs2ADVRtik7t2PDuLR+/qRthkyfctXU3GwwqvtGYPB
-oR+XsIBH2EUPcltlADe6Ld/uZDNkaUpl6HvYlqJSRvA7AEtq4jyUNmnbNZ4VDFfpkE5Vhni7sKL2
-4Ua9IbqdaeCjj0TYie1uvJwm7oMO9ED7sDWa44J5f35frmeg/JAb5dNnOvdT7mzWVxaQImcyVq7+
-YV/YZFt488c2/+uirhM9lq+trJV1RNnqVJVWhVS+rMvesN1r/oDbva5XWyulEKqqEOo8FNRV15lO
-dlDnPrD04Wm2ukvbXxwSGfHSh+1pHfZuD/kajUbT5Ila8TsnspGb+JjT49c5LfP0hctJo4BxzGJF
-XgijfDhQl73Plq5N6+SxfExcDIVRKtrYAZIp/CO022HJA6b/ub6t907smBhztFnKhmulg8nhwipm
-MZblDGN91GCim7mMkeWU5mlmD7t5ZeMdEgcQQojngNnAIul8p6xjGu3DDgztew0OWo/BwZUe0/as
-sKXbnHOK07p9hyXANJVec1QQ49ARtT/XlhadvHtRuOnElcxd15YamrOoDjqHQC6r/nL++JkM41pU
-qhcLsO1ITla7dQEcPOjbpDVvKa5pxThmAdC1s9qi0Rdi+/XkWR6nhDbUt+nJkKBL6D3erMOOA/4F
-dBFCZKGM92wp5Va3tTQajcYFuUv3kPvLetLHDqTT6d0iKkvFwQp6Vqk9pC0Iel451Gm5IXa/1GvX
-hkMyRfNDpsFu1sM7gx3XvQM1xkBBbq77soESVVVhS8d08M3ipqTANmOW1MEQTRQPJMoZQMt+XXiC
-ZwG1oemrwRHLP9yNlwMWu3Q6cAPwOZAP5ADvoTbfaOPN+HtTO9A+bI0m6Mw773lZS7SUIOsRct5Z
-kyMqz4b3l9p8lDua9XNZLj/fdIW2bCllnW+uUL/Z3OJk2403vL/Uqzp//asp62uvhVa+q07dLc8k
-S17Kt3LBF3t9qju118NyK73lIZLkkoe/C4l8v/1m6iIjw/f6Bw6Y9ZOSgi+flMHzYdti6kgp86SU
-n0gp/wx0AC4BdgC3AfuEEEuFEFOEEKOEEE0yRrlGowkti/7vUzJmPUaMbc8d+Hl+Sz78IHKbTRct
-NgOEF6QNclkuLU0dABUVDaOPhZLbWn7KBfzI//EubU7t67kCkJ5upkPdw95Y1o0FnMU0LiPhBM8+
-dntSog7Rh+20pZja3NBsih1oDzvBLlDc4cOR3Rfd7ZC4lDLbxXWJ2opyDfCSECIFtXfZY6j9qQ+j
-Qn82ebQPOzC07zU4HAt6LNldTP8P7redl5LAn/mcn7iQpIdhwqXeh7X0F2d6/C7xBq5lDAPYxBXn
-tWGkm/qD+1ayv2Ab/fmDvb8NoVcv7wyov9TWwsKiAUgGIAT8q5939eyXpYXKYJu7GIJ160pvYojb
-U59kVrAUhmZMPJCdugCaNYO4OLXxR309lJdD69bBk88X/OoJC8VwIcQThl97L3A75gtAmPaI0Wg0
-TYVFd35FO6lmLO+L7kptdh5bel4IqF7QW2+5qx06Nm0W7KULMzmfpPEj3JZ9/NADrGMwX3EN4ocZ
-IZdt/36zR5eWprbO9AarwW7NEWp37nFfOACkVKMNVnw12A0qHAqRE3vbNsbwGyezik5x/t0jMdFM
-Hz4cJLn8wZtxc9WhpitwC/ANcBAVL9x6lALTgb8Cfbxts7EfaB+2RhMUqqulTEuTchjL5CdcJxfe
-/Y2UUsrPPzf9gx07hm4trjs6dDBl2LrVfVn7NccLet8UctmWLDFlGzrU+3rbZ+6Qh2ktJcjdsb1C
-Jl9RkSlffLzv9e3XmC/s8ZegyyellPNGPm67x9yzn/arjSdS35Uv8LB8m9vktrm++em9gSDFEv8T
-MNY4ettl1QOLgV+B34BlUsr6o1vQaDQamDEDCgqggOE8nj6c7JfV9csvh/vug8JCNXQ7axZccEH4
-5CoqUr1YgObNoWdP9+Vbn9IPpqp0m/2h3xzbfjjbMfqaO1JOSCGeMgBSa3ORFomI8rh7o8/4G0fc
-SrN0s4cdd/iAm5L+E1VqOrGj2vrnqb2m7H1OYCUAG3fdAKN989UHC0/Lur63S29BGedfgflSykgO
-DIQN7cMOjGPB99oYaOp6/OYbM33zzebQbrNmcN118LJhwL+bauGCC0I3Z9VRj5s2mXn9+6vtId2R
-Pqa/Ld2pfEvIDKEVe4PdyQcbkdApgSO0Jp4yWlJJSU4Jbbr7MePKDZmZmeSvzuM2vudyBpJTNRKM
-TTK8RZx1JgOe3shBkunRtS1LPVfxGftwojEp/umgqnkiGEP/1YWR8/h6+s94EVgN1AL7jSPveDHW
-Go0mcCoq4KefzPOrrmqYf9nFdVzKVD5nIk/8pxd1VeGLz7R1VRkCCwADBngu335oR46gZhwlyWIO
-bg7NzGYrvae9wFJO41su4/SK2V7XEwIOxppTxQ+sDc3Ms7riw6RRyBjmMrDO98XpbbslsJkBFJJG
-QZGXDnofaVZh9rCbpfrXw66JM6eK1xyMoPnzZtwcaAdcidpmczfKh/01yqfdzZs2muKB9mFrNAEz
-zQzFLPv1k9JiaZhfX1sv86LSbYXWvb0obLJlnXinLKeFXMnJ8pvrfvCqzoLEC+WvjJFvcKdc8m1u
-SOVb1HWi6eO95ROf6q5uM9pWd+Vzs0Ii34Lr3jd9+r1u8Ll+cXFgPnBv2NDqVNtN1r+z2K82FvS6
-wfw7r/8gyBJ678P2auxJSnlISvmNlPJWKWV3YCSwALgQWCuE2CGEeFsIMUEIkei+NY1Gczyx9dNl
-dCAPgEsvVb0/e6JiotjRc5ztvOh/cwgX8fs205JKhrKaLp29W2D7zgU/cC6/cTdvsrkk3XOFAGhV
-YsYRb9nbt/jl5UkdqSWGHLpQnF8dbNEAqC+wiyOe5LsTOzHRdEMcOaKWsQWbtbHDyOIs1jKIFl38
-i31qaWX2sOuLI9fD9iY06VFIteXmNuBfQogY4FTUDPFvAYsQYpWU8rTgiRk5tA87MJq677Wx0JT1
-eM2Pf+ZRdrKRAZQPnIFdPCYbUeeOge0fAdBm9RzgyZDI4qjH9ofN3YNTz/BuTbX9xLSdO4MlmXOS
-ys2h7MQTfDPYMy95lzNf+w+SKJ5OgXOCLFtmZibZ62eRhbEK2+c1XerlLSnJDEtaXAypqcGTEeCB
-Zm9idVzkDfavjewBFzBrXRqHSWBAhzNssdPDjadZ4l2klE4X8QkhklDPwDnAuUA3IysaGBZEGTUa
-TRNl74LddK1TVq07u4m5wLnR6T3pbHhbpU8oXUp5YTmtUluFVLaKgxWk16sebB3RdDqju1f1eti9
-b4TSYEuLJLXONNgpg30z2CldW2IdM8jPD6JgdkRVmouwo9v713tt29Y02EWHJKmpwZvEJx12AfMn
-cArAwZPH8vwXYwG4t0UQBPMXd+PlQL1dOgY4E3gGWIaaiGa/FjsX+AS4Bkj2Zjy+sR9oH7amiVFX
-J+X06VL+/e9Svvuu8hFGkvnXvmfz/a1IHue27LbmA0yf6+uh92Nv/d862/18Wau8YIHpd/VlbbSv
-FO04ZLvRYVr7XP+rr0w5L7ssBAJKKSeevV8OZYU8j1/k7I/8W5/8S/Kf5T7SZQVxcv2/g/u9l5eb
-Omje3P923jMfY3lTCJbfE4x12KigZncC5xnGOt4urxqYB8xC7d61IQjvDxqNxk8O/nGAb8Z9xF/3
-PGK79uST8N13MMJ9AK+QEZP1my1dNvJct2Vnn/Ucd8+OZTnDuf9IO5zvmRU8CtYX0IkWtKSSA216
-24YIPWE/JL5rVygkU+w7ksipbKUjufRPP2wdgPCa9u3NdKh62NsOt2cV6kaTvQyb6kg7UUxHY45D
-ZV5RsEQDAo8jbsU+0llpBON4euPDfsMuvRm1veYs1FrsqpBI1YjQPuzAaMq+18aEJz1WFlWSP+xP
-3FG+jGW051OuB1SwkvHjYdky6NMnTMLa0W3/Elu6/dWj3ZZtdc1FzDRWLv3+e2jksddd8xaZnEUZ
-6eQx6fwqr/14HTrAqOYr6Vq9lZ7FOynOuZekrgmeK/pIbn402+nDdvoQ5YcxtG5UAqEx2JmZmWzf
-bjvzey/r6tZtwYiZUpMfXIMdaBxxK/YbgDR2g/0NZi86xPu+aDQaf1h2wVNklC8D4E3uosVVFzN1
-ThsOHlQ/WrfcAllZEBXGffTy99Twa/3ZDGMFXdhDrwknui1vPwrw++9qANJxRnkw2b4dJFHk0om2
-w72vJwR8zA30RkVd2Tx/PEnXnRJ0+fyNcmalfXuIop5kDpKcmw+43onMXwKKI25Qn2Du+FJXGFyD
-XbazgD+xjGKSaN8iHfAQys4FTSKWOHb7YR+PB9qHrWkC7Phhs6whxuZky7pEbYC8YoWUMTFSxlAj
-H+F5ufDeb8Mq14wZpt8v49QKj+Xr69V+w9Y627aFVr7TTzfvNcvHZcq/t7/IVnnx3V+FRL4pU0z5
-Hn3U9/qWeosso6WtkSP7jwRVvooKU77Y2KPX13vLvIxMW0PzTn8iqDIu+7v5EC5POd/vdrYsPiif
-5m/yde6S77Z9JIgSKgjSOuyzQ/3CoNFoAiP/zmeIRUUHW5dwOmf8724ATjkFnr1hO2sYwgs8Rtq/
-M7HUWcIm14oVZnrQaZ6n1kZFwWl2i0FDNSxuZZu5oovevV2Xc0ZlutlTq/kjNFPFA+1hiyhBcbQ5
-Tn1oU3DHxQ/abXyVnOz/aIhoZ/awRUmxm5K+U1NojonXtPTfiZ0QW8kTPMvdvMlFJZ8GQzS/cDkk
-LoToCKwP9AZCiL7AbillTaBtRQLtww4M7cMODq70uHtZIcNzzEDdsW+8SlSM+R5+66PtiP0gG4De
-1RtZ8cwvDMsMz+4a9gZ7mJcO4mHD4JdfIJYadi46BH/pEFSZrLqrrobCQpVu1gy6dPGtHdGzpwra
-DERnN06DDVAS155O5TkAlG4rgDG9giCZ4oX7b+cuvqaCloyuuZSG0528p/C8a+k69SKKaMuFA1pz
-VtAkhPoD5gtAXbz/TuzWHc0x8XhL44wl3h9YJYTo6m/jQoiHgK+bqrHWaBo7r/w3lRPZwCdcz7Lk
-8ZxwfUPLmNSzLSuHTrKd17/3QVjkktI/g31W/GrWMJgyWnPRN9eGRjigaH81XchBYKFnT8+bfjjS
-6iSzhx1fGBqD/ff5Y1jHSfzM+fSIyvarjfJ4c+ZZ+a7g9rBri8poSzGdyKW/ZZPnCi6I75zEHrpS
-RjxFxcGdtCCLzR62TPS/h90qtRUWlGytqAhrvPsGuBsvB14DCoB7gebejLEb9Qaiop6VAgO8rdfY
-DrQPW9OIqaiQMjHR9CP+NrveabmdP2+xFaohRhZuLAi5bLt2mXIlJir/tDfsXbjbVrFIJElLvZ+O
-UQ8suvNLKUFW0lz+0P1On+vvnLNbTuci+Tp3yYfaBj+2tJRSFooUmy72r/IvZvn8fv9na2P+lW8F
-Vb5Fd5ibmS/ufJXf7SxbZj4rp5wSRAGllFlD7jXndlz4j4DaKsH8ZyvacShIEioI0jrs+4Eq4GXg
-aSHEEtTSrjygBKhBRTaLA1KA7qgoZ/2BvcBoKaX/r14ajcYl06aZS0x69oSzz3E+YNbj/L5saD2C
-E8uWEksdm/72ORnT7wupbLs+X8r9LGEFw0gYfDJRUa29qtdxZFdKRBvayBKSZDH7lu6h0yi/B/lc
-UrtJObDjqKZ1uzif66eP7EZPY/fh6FJ4rg5i/Ar07Jzqw9WkSLXWqY5oUgameajhnPqU9pRsSSSf
-9hRVNA+egEDdfnP/6to2fk4RR0U6s1IU3EniZMf1o5zzaUMJdZ29i2TnirLoBBLr1T9cWd5hknq2
-9VAj+Lh9xAzL/5gQ4jvgb8AFqDCk7shHhZZ9RUpZHgwhI4n2YQfGsebD3rc4h33fryIqrhl9bhwV
-9D2GXeFMjx99ZObfeKP7ST8Hr7id/33ckelcwoG8C0IeCzn6+2m8gtrkel7NY8BzXtUTUYLdiYMZ
-UpIFQO5Pa4NqsK2627N6mk0HUX19nHEGxMWpdc4FBVBfr/zNXYP4XlG4No/ORvpAVHs6NPNxzN7g
-jysnc/bCKQDc2gEuCZJ8AB+tnMo8I31WWz8XYdPQYB86FJhMjnyXOonvUS6hqQEGU/849VEO7a/m
-MAncK5Js30848eqdUEq5HLhYCNEGFfHsBCAdaAnUoYa+dwErgDWGoddojhn2r9jHnov+yqn5M+hk
-XKt+uhlZQ+/i1NlP06JteAMM5+TA3LkqHRUFN9zgvvxJ//gLqf/5CxYLiJWwf78KABIq2mw3Hdgt
-zvBta4HS7kNgTRYAlUvWABcHUTJFXIVpGeKH+hdRpmtXZbBBfR/BNNjFG3NtBuFQi474+1W1TzdH
-XYIdPMU+jnhUmv8GOzFRvWxKCWWlddTVRhMTGxxfdrACpwDM7HEHi/er9PXhW2zREG/GzY/XA+3D
-1kgpV66U8rvmV5mONrsjj/by8lN2y9LS8Mr033tXys7kSJBy7Fjv6mRkmKK/807oZKurrlOxr42b
-5S7zLcb0wv/7VEqQB2gnv+z7ZEhkLBLmgu/c5fv8auOKK0x9fvppcOVbfLcZCHxphwn+t7PYlHH4
-8CAKKKW89sJi2Y/N8gzmyxlv+xdH3Mrq6KGyiDZSgjy45UCQJJTypJPMv3/16sDaOv98s60fvNs6
-3WsI5n7YGs3xytatMG4c3Fr9Jjl0wYJgddLZbGkxmGLacB6z+HZlN665Rg2NhotBH97FHrqyjOFM
-GuHd6stL7MZDp08PkWDA7plbiacMgIKo9nQ4xbc1SUnXX0Qn9pLCAR6pnBJ0+Yr2VbBbduMw8VTQ
-gg5D/dvTuls3M52TExzZrCzrdBmd2Mup/E7WWZP9bieU4Un3HG7DFvqzkDNp1beT5wpuaCtKSEJ1
-hw9nB8+RHaxY4tA44okHcZrEsYn2YQdGU/Zhl5crI6cCRKRwY8I0Xn2qjJPvOQtpkbz7ZC4bnlU/
-VHCrp4IAACAASURBVD//DC++CI8/HhpZ7HU36cJbOfHIUgBOZjU9r/HO4Fx8Mdx7r0rPmQNlZdDa
-u7lgPpH/wwqsq32zU4aRFuXb8GafYYkUxiZCLezZo0JBJgQpVHdmZia5ufABFwGTGdm/hMU+ymdl
-QMJebmYWXcmh4+zu8MRNwRES2JcfQy6dyKUTEwKIKOposGUQw71u3pxpS6ekZLos5w1lzduCsQ1r
-+d7gGexgDok3hnjiuoet0bjg/vthyxaVbtkSnp89lMH3qLAOIkpw2zOdePRRs/xTT6keeajZ9sI0
-W3pd29G06+vdDN1u3WDgQJWWtbUs+bnEbXl/mVc+nMd4jmlM4NDQ83yuHxsLffua55s3B1E47Gci
-C1L7+t/t6l+zjg+4lb/zDCdt+jIoslkJRtAUUC9kKa0q6M4uhtYsoaSgOnDhDMrtphT7G0fcSkWL
-drZ0ZW5wDHZddT3jj3zFecxkGCsCfulrFPHEvRk3P14PtA/7uMV+z2OQ8qOPnJerrVV7IlvLeetP
-DoQ1iWfabjh/om/O6DeuXCinc5EsJV6tUQ0Bw4eb+vj5Z//auMpuysD77wdXvqeeMtt+8EH/29k6
-dYOtoV2xvYMnoGwY53zOnMDa2h3by9bYzp/+CIp8dXVSRkWZMtbUBNbeoq4TbY0tmhScCQGHth20
-tVks2gTc3n9uWSBf5n75PjfLLy/6IggSmqB92BqNf1jqLHxy62Lb+WWXuZ6FHRMDH3xg3QVLEjX7
-F1b9e3nIZCtcn89JpQuVnAj6P+bbQp0RA49wMTNI4Ajpm38Nunw1NbB2rXnubYQzR6wjAQCbghzJ
-YccOM93Tv82bAGh/qjktvEPtnqDGad+3z0wH0sMGKG1hbox9eFtwHNnFxWAx/tzERDUqEgh1djt2
-1Rw6ElhjBkf2mA7sw9GBL7/sWrKOB3iVW/iQDrsWBdyeP2iD7YGm5ndtbFjnALjTo7RINn64jKwR
-j7Ei9QLWJ5zO7+kTyLrwZXKX7gmfsAa/3/MlH249nZ8Yz+DYTbz6qnu/3+DB8OhFm1nAmfzCeJo9
-fC/SEtyVjVYdTrr/Jf7JveykB+sTz/Q5oMYJt51JNc0A6F29if0rg7tj7oYNymiDGoL3d6h0wACI
-oZb+bCZq4fygyZeZmcm8eZmoUBHQK4DQ2gkd4ykWyhDEUc3BzYUBywfq/yEv13x+AjXYFXbhSSuC
-FJ60dMU27qc1t5HGeZWBb9u59LxMUigkhlqyTrgjCBJCea7p8imPDdxgRyeZY+oxZZFxYvtksIUQ
-1wshrhNCnBEqgTTHF1lZcM8JvzLwltPI+P0Fhh34mZOOLOa0/dPJ+OkhMk//jUmTGk4eCSWVRZV0
-eVfNHBvPL7w29DOvNoa4/cFWDEf1rE8sW8q6N4JnZOzZkJ3AA7xKL3bw+6O+T/VumdKKzW1G2c53
-vvtbMMXzK364Mwa1yaGcVmxmAA+vuTpwwexoXbiLJIqIoTYggw1QEGf2sgtXBGeq+KGtBymubcV2
-evFzzJ8CnhhY09bsYdfsLQhQOkXZzgLiKSeNQtrKwKOdtOjUjoOkUE9M0KKdVeaZPezKuABnnAEx
-7UwndkxlhJzY3oybWw/AAlQAz/hSL9gHkAp8Dmwxjv8BHb2sGws8DfwBbAAWA6NclA3UNaFxwZEj
-Ut5+u3IxCerlGgY1dBqD3E1XGUONBCk7d1broUPNvPOet92/UKTI0r3eL7Cef8JttrrLUi8MumyH
-D0vZrJmpouxs/9qx/xsXdftzUGW86SZTvpde8r+duuo6WUGcrbGi7QeDIt/hvCO2NstpIeuq6wJq
-76MBL8sXeFjezr/k9Lf9i/ftyJav1thk3NGsf8DtzT37aVt7804Nzl7OSx+eZmvz97Q/Bdzep5+a
-z83EiUEQUEq5+N5vbI0u6XhZwO2tfmWurb01iWcGQUITQuTDtqDigz8R4HuC3wghmgG/opaknWAc
-5cA8IUQrL5p4E7gCOF1KeSLwETBbCBH4uI7GK3JyYMQI+Pe/1bkkiikxz7Cw1w0sve8b1r42j4XX
-f8C7A96kDuUc27sXzjoLZs0KnVwHNxdy8iwzhOYfV00hoZP3U0s7v3qfbUef4YU/svPHP4Iq38yZ
-5nDzoEH+R9ZKnahiNFbQgoIC9QsULK6ceiXvcwuTeIfTBvjvi4xuFk12i/628z2/BMeRnbfQ3Fmr
-ILYz0X6G/LSydswDPMqL/Js72HrEv/Xcjhz+w3RTlLYOcDwciOrckVzSWc0Q9ltSA24PoCbXLo54
-QoBTxAlNPPGD0Wl8y2XM4WwK0gL/eW+eZvawW1RHaF2XN1bdegD7gAQvynXxpV0fZbgV9eLQze5a
-GipE6oMe6vYF6oEbHK5vBH50Ul5Onjw5kBen457JkyfbDimlXLqoTqamNuxMX3KJlHv2OK//7bdS
-tmljlo2Lk3L+/NDIOmvIw3Y9m36ytrLW5zZ+b3+RrY2sfpOCJtvkyZPliSdOljBZgpRPBhAArLay
-Vp7TYpGMpVqClNu3B0fGsoIyWYeaOlyPkIdzDwfU3sLu19p0Of/qt4Mi400jrpCTQU4GuTxlfMDt
-vfKK+Wz+P3vnHR5lsT3+z2x6742WAKEjvQkKwYICVkC9ylXs9erXa9efV4K9XHvXq2K7dq9irwQQ
-kI70ToAU0kgjfbPz++Pd7Lup297dUObzPPvs7PvOzJ6cbHJ25pw558YbDRBQSrlo9uu2SZf0nuPx
-fAsW6DKeeabn8kkp5e+nPWLT45wu4z2eb/lyXUajMrI9/rg+pyenAZrYvaJI3skT8jpelVclLfB8
-Qjvw0gr7S5xL7LvXxXldYSawT0qZ3XRBSlmAVkVspoOx5wMCbDnrm1gITBFChBoo5xFBdXE1a5/6
-jaxJc/mz60zeTnuQESNg/HiYPl07azx/fvNzn95i2f99QtDJo6kr1BzSAQFahPWXX0L3djLpz5wJ
-y5Zh8yP711ZSfur5bP/0L0Nl27oVZv31AA8wj8OEUXL3U/gHu55XKPi+29lBH27n31y672HDfO+N
-jbBjh/76XA/Sa/sH+xM4eQIN1uCzRQa523d/vg4/tNDhPYEDiOgS4dF85r6DbG1pUKh4Y6G+fKtO
-8SBE3Ir9LodR2c4sB/Q/RnOS5yts++QpBca4sDGV6Ctswjz/t6mvsCXVxdUddXUaI5OmAET0jOcp
-7uJ1rud/DWd7PqE7OGPVmx5AGPAVcB+QTjs1sgGLK/O6KEMe8Hsb1xcAhx2M/S/QAIgW129DW7WP
-anHdw+9Nvqe8XMoffpDy9Uuy5F8R42UdAc2Wsz9zWktXsQQpYyiRm0NGyqxZL8qy7FJDZbI0WuTC
-Ux9qJkNSbL1cvNj5OXbtknJgYpFcySgpQR7wSzU05/BZZ9mt+E8qcrsOs6XRIoee0Gib68UXjZFv
-zdML5Z+MkffyiMxI3iotHpaJfuIJ/ee99FJjZFx47jOGrgxX/GuBLCZWZjFRvpj+nOcCSikX9b9G
-3wGZ8bzH861eretx0CADBJRSZvWzq2F90csez5edrcvYpYsBAkopL7+oWvYgW45gtfzkGfdysdtT
-vPOQzCNZ1hIoS0SsARJKed11+s/9sudqlLW1+nz+/tLjv0F7cHKF7eoSoskpdQ7wMCBF6/MuAjD2
-TEtz4u3ksKcCCBVCBEkp20vnEw9UWxXUcixAXIvrSIvEYrZgrjXTWN9IY30j5qAwGqUJs1nzKdbV
-ac+mLZtorKiisbqOxpp6zNX1WGrqODDwDGpEKA0NEBKinVuMjISEyj1EJQQS3TvO7WpPB3dWsnxT
-BEuXaiultWu185HjCORalrWhgOI25zmdXxhYswY+X0P153exaNi19PvPnSSP9Owbfm1ZLWuGX01G
-9oe2a70DD7B8QRE9Jzjv8+vdG7585SAps7RUYt0a97H2xL8RlfejWythe37/Hb79VmsLAQ+8EI9w
-88CjMAmuu0Fwo/VkymuvwU03eZ4OsvK9/zGJlYxlJYsS8hDiJY/mmzRJbxu1wg5Yr4eIN47wIETc
-SsKc6cQ/VAwIEsrhHx7PCNvrexLAONLZRegQD0PEab3CltLz3/Xjaa9x/vbH6EouT01zrw62PS1X
-2BZLU94A98kvC2E/qewnlTD3ip01I6pbBP5oR84CZCmNDRb8AjwT0ugVdlCQ9qirA7MZamq0DIi+
-xJ3/dIsARx9Jbx778uaXgVbM8zORCdiHpqSzk920/mPfw9n0JLvV9UvYzV56tbq+jhn0R9varSaE
-Mr84KgPieHzoR1T1GEB8PMTFaY/ISOj502uIQyWY8nIILdhDStlW6hr9mcGeVnOvYSTVhBBKDbuC
-BpLXeyJ+EycQPLAXq06E2lrtj3fLFu0f9rTff7RpNpQaJq1/nrpRr/LVuAcZ8cndTh1taklOtpmH
-+/Uluf4Av6CdfF0bcwq91nzuVh3pfjMHs+K+Dxj7qLYfPKL0N7JOuoeM1f92XTgrjY1w++3668su
-g+HD3Z4OgNmz4c47tdSNmzdrW/oTJjge1x7SIvl6w7s2P87Zl3hebnLECAgL02Tcvx+ys5sXs3CH
-rnm6wY6f6rnBTu1pIjQUqquhqAgKCyHRw5ipO4rrqOAM4Ay2XTTVYxnj4uDGwDfpWb+d1MP7KNv7
-BjG9PDvzm5snKCWWUmJJGOS4vyOCg7VFQnm59nk/dMjzVKJFRdB0lv1//4Pp0zM9ms8/2J9yIomi
-AhOS0gPlHuvRyMIfTURGNv3smj6PeIMtpZzsqI8QwpvVQouBtpxjkUBVB6vrprFhQgjRYpXdFArc
-6kBhll070/rsR2OLK9rz01QQ3+oqBFLfZv93yCbG+iqUGp5szIHGHP5Y4c+uFa3738lthFLTav5E
-CigkyXZl2LBMJk4M5MYNF5E4MJ4nX36KdKxJYEp2kTlqvDbemszk118zKd//HFdMKyRs22peatQS
-QDxGPV/8uZJtvWHOHAgNzSQ2Vh/X3vPcuZl88QVceunDJNfDHKucV8SNoNt143nIaqwdzdPmcwDU
-TJ5HxsK52k+75mlMd2Uw8cmz3JpvzRpYv1577e+fafWluSFXi+dLLoE339Rev/ZaJhMmuD/fxQPP
-J1KWkwWYMXHfPyZ5LF9AACQlZXJwTxXTGMPmt3sw3/SD2/MdOgQnNJxNV/K43NSbf84Y4pF8AA8+
-mEl0NFRXa6/vvDOTnj3dn+/++zOpqMgCMgB4/4N5+Pt7pkeA2/iU3mwlE1h0ZywvffG6R/Pl5mrP
-kMlHH8HIkZ7Jl5mZSb+EQ+wtv59wDlO4/Xni42M8mk8zWlkAhIVleCwfQKYwESW1v76KvSU8/97z
-Hs1Xsepi+mMhmeuJCx5DZuZTHstpNkPT/4dHHskkPt6An9v67Az+TvfUcLYWkXFla1qzAejfxvWe
-aOeqO+Iv4G9Ad8A+hVZPNN92m2UG5gIWTOwFeuBHZLgkNlBbpfr5ad/6AwOhfE8SFkswf4X0otEv
-iNy6fUiTH6dOCmFMrJYFqqFBC6AqL4falZEcNpupp55AGmzvV9J6Zx6AOgIJpabZtQb8uXDoDkLP
-SOLAAS1464kntHuZmc6f+4nqEUXqrNFIOYrVfmMJfvJBiqt2solBYIa33tL6DR4MEyfCpImtNzqk
-1FZrU6bAr9Z8HPuYwxR+o/6cWSwcVk4bLhSXmfjz/azovhYOfs16hvDiS6ey8O+uz1NbVkvKdx9w
-HkP5ivM46STjqkJddx28+SaAhcMff0vJv050e678174mE+3fxIHIAQSGBxoi44n+q0jnezKBJR9f
-AZe4sY1iZfVqOEwk24nk8+GZ3BPleIwzJCRAXp7WLiqCnj3dn0tbcWUAmaSlaV/QjOBQZCq9i7Uj
-fLUFnh33aWjQjzUJoe2CGMFrRTP4Gs33UbtsDkw41aP5tAp2GQA8/HCmR3M1Ue8XAmZtH/vwfs/P
-do0t/4loSsnkU/bUGHPEckTjSmZyA1GUs6Qg1u2tiqysLLKysgAvGmwp5eNO9pvvyrwu8iXwuhAi
-VUq5D0AIkYRmxO+x72i9Xmi3mv4f8CgwGXjXrutk4GcpZavwxEkPPMC8eVpN3ibFrsrsb31Ni+cL
-ARhqvdDV9g0qtZ3+2veagAfmUnnwMBX3/4u6smo+vjaa4kPw/vuan+SEE6CyEgp/GUG5qCdr5AxC
-BvWmZPdPRKfH8eIjJzeb1xOEEIx6YBry/qkcvvBOeqwysd/uq82mTXDJqQdZaxpFTmgE5shYsn5r
-xK8gl/8eDGJXZXOfW0SkH5avFpExOYAsIwQETP4m+q94l9sHzmFp1VCoCeH882HWLC1GwFkOfvQ7
-aTKXN5jBZ2FzWD8+zRD5AEaOhElR6xlWvpDnzBVk3fYUjHJvLsuatfqL/m19V3WPiPQksEae99i7
-CLjU7bmMynDWEvst8EIPM3/an+/1NMOZPTUJqTSFhphLPDsWUGkXnRMRYVwpzJrIZLB+l6jZ61l6
-0qoq7f8SaL5wo0q0NviHgFlbmFQd9DyfeKCl1taO6B4NBqT47123lRvQdqIWlV2KFhblOhkZGWRk
-ZLBnD0yalAk4Wffdmci0lg8gBrgaeA340notHS0ZiVeiw+3eOwBtpfwxmmvZBLwDbAdC7fpNQDtz
-/UqL8a+iZUeLs76+Ai3xypA23kudw5bauefTT9cjJG/hudZh5iDv4EnbS5NJy2R2113Nz2EbyebN
-UoaH6yJMnSplY6NzY9c9l9VM9qW3fmK4fIvn/Mc2f7Z/b9nY4KRwdmzZIiVYZBLXydPESfKe2+4x
-TL66yjpZRYhNxryVB9ye6xz9+Ll86y3DRJQ/fGuW/dkiZ/KZfCz9Px7N9eyz0nqOfa4cOXKuMQJK
-KRdOedT2wy8c8U+P5lr0S530o0GClOPGGSSglHLh0Ft0Gc952qO5DizZK8uJkDcTLWf79TXsb/vK
-80pkCFUSLPKDDzyby9JokQ342X7m2vJaQ2RcnnKebc5ld3zu8XwJCU3TORcl7nIYnhDiUiAbeAO4
-Fv1cdndgsRDiLVfndAUpZQNwOpox3mJ9hAOnyOYr5EqgFO0YmD03o6UyXSqE2Ij2xWOKlHKDN+U+
-mpk4EX7+Wdv2vPlmOC/g+zb7TWYhYWFw7bXa9v8rr7i24nWVgQO1M+RN/PADzJ3reFz5/nJi77jC
-9npl4nROfPoCw+Ub+e+LKUfbG04172btE65Xx/rkEwBBAcnk9j+VoIggw+QLDA9kW4y+Vb/nHffC
-xaWEFSv012PHeiqZzpD4PLYykM+5gOt33+FRURWRtZA+bCeOIuKizYbJGJCuu56CD3p2GNvvf59T
-RxA5dOWuQ/c4HuAsiXY7X/merbArdhcRSSWxlBEtjMv4FdwllhpCAeFxtrOqwir8rbFG1YQQFGnM
-301DqO7rMRd7/rNXurqR4IxVb3oAp6IZyj3AE2jGz2J3fxSwD7jKlXmP1AdH4TlsX2CuM8vtn2+Q
-i694Wy484zG5cNJcmXXBS3LtS0tlTY3v5bnnHn11l0ye/PHi+e32NZulzEr5m21AqYiW+WuMyQHd
-FlnDb7W9l6s5ly0WKQcM0H+2Tz81Xr6Fk+fZ3mBR/2vcmmPfzjpbzveICE3HRmFptMgyIm0yHlzr
-/u9qVfwZ+u/inv8ZJuOaj7bLTB6Ql/O2vLT/So/mWjjtSZuMWUNvMUhCKRdd/pZt3j96eXbwfuW8
-721zrY493SAJpbz/fv2znpnp2Vx5K/bbJss3pRgjoJQya8jN+u/nvGc9mqu+3n6Tz7kVtqtBZ3ej
-bT9fK6W0AAghnrcz/quFEDcB9wNeXWkrOg+/QD/6zjyBvjNP6GxRAHj4YVi3Djb9lMPvnELfj3aS
-dXAfE3++H5O/volkNmvR7mvy5/I1a+nHDrb83+uMH2FMDui2SH3iRpjyHACjC74l549sup2U5tTY
-TZu0DGygBR9Nn268fDHnTWLHwj4sYhKrys9hohtz5L7yNRVcxlpGsLLLZfj5XWeYfMIk2B8+iBMO
-Lwcg56fNJA137/cVX67nEY8Z5XmWsyaSTu5LptUHGd92mgOnEXl6ljPZtZtnk9kR1Ls7O+hDAUns
-NvXFg1OG1OXoWc7qIjzPI96EfT7xEg8LgJUd9udnLiOGUoiI4hzPprMhI/UVtizzbIXt8uoa16PE
-RwNzmox1OywC3nNdlCOTzMxMl6L4FM2x15239OjnB59/Dn/0upe+RTsByFg4l3UJWYjMuaRdMp71
-mwO47z5YvhygP2NZwRvTF3Dhsxd6RaYm0k7vw+q4KTSUVPAKN5L6VTIPn+Tc2HfesZsnLZMnn9Ta
-Ruqx3zUTibl7B7W1QD7MzXW9/nLd4hWEUMsEltEQO8nxABcp7ToItmsG+/Cfm9A8Yq5hrjXTtSHb
-eiAH6v/8iEcN+sKZkqKl2W1o0KKnq6rcj+4OLMrR272MM9h+Z55Ov39pEYZDw+ByD+Yy52sGOxPI
-rt3Nzwb9j4yzOxzj6ZZ4kX8Kl1vjiicMxjCDnTN0Ojf/kUg5UZzQfbg1Tt49qvYU8Bk3UUEkVzk5
-xlUfdhC2WMN2ibL2Uyh8Rng4jF/7MmtjTrFdG162kGG3ZjAtcRWTJzcZa42Lr49m1oLLfCLbwZe/
-ZDzL+YBLeW1+sC3CtiPqKuro8eq9DLCeNPQ0mUt7BIeIZkldfvvN9TliduoO7JAMAx3YViwDBtva
-pq3u5RQ/sGgPAWh+60oiCAwz5mgcaJHS9rnwPckpHlGmG+ywfsYZ7GS9JDYHPXNhI4vtthFCDTp3
-hr7C9qfB4+NxRmc5a6J6yDhe4mbe5zK2B3r2ha/2QBGz+IIrecdx5yac2TdvegDrgZtaXLO0eH07
-sNqVeY/UB8qHfdTRUNMgF465q1mE6AA2N8sB/NhjxuYBdoTZLGWPHrq/6qWXHI9ZesvHtgELQi9y
-OvrdHR7Vg5zlZZe5Nra+qr5ZpHnBX/mGy7fy6cVyESfLl7lB3t33C7fmWHG/XrJqTcwpBkso5eTJ
-ug6//979ebb4n2CbaP+iPYbJV1eny2cyeRZncNXlZhlHkezPFvneE3mGybj+rdWynAgpQW4M86xk
-1/z5+s/7978bJKCU8qOP9HlnzfJsrg2vL7NNhpeixN8BnhdCzBdCnCSEiAQQQvgLIXoLIR4CHkH5
-rxWdhH+wPxkrnmDfNxtZPOA69vv3pD4kmt69tWQmGzfCPfcYd77VGfz8mqc/feIJva51e4TNf9nW
-jhg70OPczx1xir4pwW+/WUNgnGT315tsyXxy/HqQOCTZwQjX6XbxyUxiMTfxCq8enOGSfE3sqEjm
-P1zFEk6iMM34XQAjqnaZzTDYsoEQqklnJ4kj2ylh5waBgfoK1mJpSnziHkWH/Cghnm0MICw9xRgB
-gYiUcCKtZSLC6z3bE/fWCjvKLiFQRUX7/Zyhrsj1CVz1Yb8MnAJcZn00/enUom+vfwm87rIkRyjK
-h+0ZvvBht0XvswbQ+6zXANjls3dtn6uvhkce0ZJ/HDgA774L11zTdt8Nry5laMUSQMtk1++JK72q
-x5EjtQxvFRVamdUdO6BfP+fG7lyURwKxxHGI/V3GYdwmrk5yspYLurRUkzEnp/1yrO2xqHo0/2E0
-kMkZifCnwX/XJ5mWMZL/kso+5BdT4PqbXZ6jqTBHLSFUJKQTZNxuM6AVAWnyDRcUNC8K4gpFtpiz
-TL75BjZsMOYzGZmmR51Fmj0z2N7IIw7NDXa5h6e6Gg65HnXm0vd2KaUZrab0/6ElH2lap5iAzcBN
-wAWy46A0heK4IzRUX2VHU0rtP++lMq/tP9i6uY/Y2n+m/52U0d4wgzr+/nDJqB3cyZP8wJnkPuy8
-T+3d4ukkUMRgNrLv7/d7RT4hYJBdEQx3SmNv3663PS180RZ92cE/eJmz+Za4ncsdD2iDHN19TTcv
-/MoHxuQzhhWczQJKNxxwe54i+1LYBn6psC8IFG2t2OUusZuXMJsPmMZ3dBO5jgc4iX3qYk9X2OZS
-N8LEndk3b++BVoSjKxDmyTxH6gPlw1YYSGWllNdHfyQLiZcS5MKRt7fq8/uHebKIOClBNiLkrm+2
-+ES2rBnP2/xpy7vMcGqMxWKfqUnKDRu8J599beOnnnJ9vL2ce/caLp5c8+/fbW/wV8R4t+b4/HNd
-xrNdO7LvFEt76PkHllz3ntvzREXpchYZV5JeSimbnbk/tPuQ2/Ms6XWZbZ7FV7xtmHwHNpfL57lZ
-zucy+VHIFR7N9fYDe+WFfCyv4k3v+LCFEG+3MPaVUspcKWWV618VFIrji/Bw+PvfzCRYE09PXPMM
-ax7Xs5+VlcFV96fQlx28zI0s6XsVvc8a4BPZul6mF4Pol7+QxvrGDnprbNumr7ZiY5uvgo1msB4o
-7vIKu7RUlzM4GLdKxToiboTuxE6ocs+J7e0VdkOcHl9gPuBeqHh9naS8XPOEmkzNz04bQbl/HBYE
-h4ih/ID7S9iAKn1PPDDJuD3xyEi4hReZw3ucVfOpR3PlBqTxKRfxFlc7PcZVH/blQohvgR9lG4Uy
-jkWUD9szOsuHfaQy/uXZrP1kPiNKf8OEpM+9M1nd+Bk9rjmDWbNg716AWP5f1MtsX6RHV3lbj73P
-HkiBKZkky0FiZCmbP1zDoCvGdDhm8WK9ffLJeDUw7oReVczkBwaxmV4/1gBO1SECmm+HR0Zm8uCD
-WttIPaaM7oYFgQlJkiWP+sP1LldVO7SzhFCCqSbMKwZb2qcnLShwa47SrQeppwclxHEfwTz44OWA
-cbq8dPA6/lgfjgU//gyGNDfnCa7Ro86CkoyLOgtPDrf9nsOporG+Eb9AP7fmcidxijt/YncARUKI
-b4UQ1wghjA8LVSiOUYRJ0C3rAwpM2p9NJJWU3P8MSUmwZIne7+23ISnZd6HswiTYmTbF9rrorQUO
-xyxcqLcnGZ8vpRkD06r5nAuYRyazDr6Ixey8f7P0mz+4l0c5ny/pHulZNa32CAwPpMCkZWAzCChc
-bgAAIABJREFUITm4OsfBiNZM+fZmqgjnEDGcWPi10SLi303/Vx1Q4t4Ku3xXEQGYSaaAcGH8xmpw
-YhQWNAPoSfKU0Dp9hR3SxbgVtsnfRCURtteVue7vAvgi0xlSyvFWI302WuGP54QQm4CvgK+llG3W
-lD5aUatCz1D6a03ikGR2fv4LppmnkiAL+YKZze4//TTMmNF8jC/06D/zXHhKS1IYsn5Zh33NtWZ6
-LHiVdM5kF32aHQ3zBgkDEygSCSTIIsKo5sCyfXSf6Fxx7JCF3/MojwGQlfT/yPCSLt/s9Rhbd/mz
-j1Qeq+uCqzvv4aWakY+hjKiuBtWstCOoh77CDq5wb4V9eK8ecXZl+CCGGaxL+y12Twx2eINusMO6
-GniuCzjsF0VUo2aoD+eWNwuWcwVfrLB7AUgpD0op35RSngUkohUC6YtWrWunEOJp10VRKI4f+pw/
-GLn+L5b0uYJfw85DCBgzRqs4dtttnSPT4Num8KTfvYxjOSdW/cqePe333fLWcp6suYWd9GVp0GSG
-DPG+fDlRupM8/1fnHdnB+/Q9cf/BTp5Xc4Ntoy/lYy5mOePZmx/s8viYan1VHj3Y+D3x8AHdWc9Q
-fuQMVvuNc2uO2gO6wa4JNz7c3iiD/bnpQj7mIn5iCpE94xwPcIFqfz1UvPqg+ytsd6LMXVphSymz
-27gcASQASWhlLmOBf6JlPDvqUT5sz1A+7PZJHJJM4o632W0NZ+3IB+wLPYYnh7P4zEdZ8Z32esEC
-uPXWtvse+lAvsWru2dcniWgqug+CsiwAqlduAs5yalxS0SZb+6OCJfyaqRUBMVqPniRPsTRKksz6
-8aPE4S4mdHeCqAmD6cp6QPuH7U6JloY83WC/UZfNT1YdGqVLIwqA1NfDLeZnAC1pUYNxuV0AeD/1
-fnJ3VFFBJLeFup/c5sL193Exe6gg0unfhctb4gBCiEFo2+HnopXUbPpz3QYssD4UCoUTCOHbzGsd
-cc458J3VYH/2WfsGu+vab2ztoPOn+UAyEIMHw0atHbDNufL1NYdq6NGgpc6xIIjuk+At8Twy2CXb
-i0lAS39XJqKJTjZ+SzwhQfucSallOjObtTP4rtBYrG81SwPziDehFQCRRFJBbV4j2vrPNVomTTH6
-b2tVr7/xo1ZHhcvdL8/O8OJfGMhqwIUvT86c/Wp6AM8AOwGL9WFGq851G5DuylxHwwN1DltxnFFQ
-oOVbbzpnu3176z7bP/vL1qGKEFmZX+kT2Tb8d6N8k6vkDbwsz01d59SYLe+vtsm6J6CPV+X7Xi8T
-LU9xMV35pi+3y/10kw34yR1Bg70joJQyPl6XMc+NNOA33CBlCFWyO/vkG48UGi7fohs/ttUB+CNt
-tltzbN2q/4x9vPArv+giff4PP3R/nt2B/WwT4aV62NcAYUAd2rmKF6SUpR0PUSgURwuJiVrd7a+t
-Qcrz58Ojjzbvk/fkB/S1ttelnscEL6wG2yL9vMEM9/sPjY0g9mtBOxERHY/ZUNyFV3meE9hIXK8E
-nAtTcw9PVth7/PtyDgcw0cj548v53FjRbCQn63nECwq00qCuUFQENYRygB5E9DJevuC4MPzRcgAE
-HnZvT9xbaUmbsM925kl60hCz61FnrhrsBOBU4DzgemCWEGIBWnT4Spff/ShA+bA9Q/mwjcGXerzi
-Cs1g92U7fZ57gZo7/k1IbAgAtbVw356rOZNgZvMhgVf83auy2BMSAgMHagVcpIT167Xz3x2xYn8K
-L3ILAJkXwwYv6jG1WyP/4VpS2UfX3XlYzJsw+TsX19tk4C34EdPb4GwkdiQlwSarS9+dMpv2aUm/
-/z6Tbdu0tlG6DOmmB4iF1LgXdeZtg21UAZAwi/dziddKKb+TUl6DlpL0OjSj/54QIl8I8boQYroQ
-QtXDViiOUqZNg9fCb2cLA7mi5hVWXvOm7d4HH8Dykr7M5UEmddnFsHvO9KlsI0fq7TVrHPffuFFv
-n+BZ+WKHhEX6cZ74mtP4jQFspfCvfKfHZmfr7bQ0w0WzMTAyh8n8zt/4iNq1rp/AbVYKO9RAwayE
-dde/rLhbsatxw2au4Q1m8RlDxEbHA1zEiAIgFrPFVpnMJZzZN3fmAVwE5KL5tiuNmrczHygftuI4
-JWvmCzb/WqFIkEVbCmVlpZTduun+O3dyenvKC7pY8tJLHfdPStL779zpffm2hIywveGG15Y6PW7W
-LF3ODz7wnnwLR95me6OFZz7u8vjERF3O3Fzj5SvaWmR7g0Mixq057D+7iwbdYLCEUn56yxL5BlfL
-T7hAfjLRieL2bVBRapZn87W8hA/kjYFveC2X+B67tp8QIkMI8awQYjfwEZBiNdirXf/qoFAojhTG
-vHE1+SbtaFGCLCJ37PlcdWauLd91YiJce63v5RoxQm+vXdtx38JCPQNnaCj08oLPtSXlMWm2duUm
-5x3Z9itse1+44STZJaYsdC15SqNZUlWkZ6T2RtWz6DQtyUk1IVTICLcqdslD+p64Jcr4PfGU6t1c
-w3+4kM/ocuBPt+aoqPLjG87hv8zmy9h26uy2gas+7DQhxPloPuxpQJPDoQYt09lXwLdSSs+KmR5B
-KB+2ZygftjH4Wo8hsSFsmvsmKXO1I1tDK5eSt3QPmicMnnmmefCNrxg2VHI3TzKS1QzbvJ6qwvWE
-JbZ9vGjVKr09ZIh2zt3beqxNToU8rV2/I9vpcZG71hJPd4qJJy3Ne2f8/Lvq2c5cTU96aFshh2Uy
-FUSw028Ajz461XbPKF36B/uTFFlDYYWWeKak0vUCI6JMN9gi1niD7R+n74kHVLvnxLbPchYR4Xw8
-gTu5xL8ALkULRX8H7Sx2nJRyhpTyvWPJWCsUxzOjH5hK1tQnbK8PWc/E3nMPzJ7dOTKFhQuuCnqf
-C/icPuxi539XtdtXvPgCXzCDu3iCs/tub7efkYjevW1tv+xdTo2pKqzit7KRFJHIIWJJSXK/DrQj
-QnrqK+wQF9OTlm7VrEoklUT5HzZULnvC4vQsce4kT/Gr0A22Kd74AL7ABN1gB9W658RuabCdxZ3E
-KU8DXwNLpZQeHBs/OlCrQs9Q+jOGztJjxvd38ddLJ1LxwnwmDUviqcu1oLTOJL/nBPps01KTln2z
-BG7NaLNfwpofGc0PzOB/LA3vDvTzuh7FtKnM/OxzdpFOl8Te/ODEmPwV+0m3tiv8Y4kJ8F7Zs/De
-+go7stq1FXblLt3AV4YkeU2XcXFNVevcS09qX1ozINH4FXZIkr61FFx/ZBvs/VLKO10co1AojmKG
-/uNk+MfJODhB5TP8Mk6GbW8AEP7XH232kRZJrxL9pGm3GR2XCjWKrif34kut5ALFHeRit6d0Xbat
-XRKRhjdd2DGDurCMEzlIMrkinZtdGFuzTzfY1VHeK9LoaT7xpWFnsJk4Yiilex/jT96HJOsr7NAG
-9wy2/XEwV1xLruYST3Ol/7GA8mF7hvJhG4PSo07q7JPgNa3dr2QZ5loz/sHN/5Xt+20XaVLbTy0V
-MfSYrG1Ve1uPqalauk+zGfLyoKoKwhxk8KzZmm1rV8WnGS6TPXH9E0gxLcNiAWrh+gYICHBurDlH
-N9jm2CSv6dLTfOJvB99IU2mY9aMNEakZYb2TuZ5XqSCSupAEvnBnjuW/8hUvUkkEVYWn8o3jIYD7
-ucQTgTloecSjgVJgJfC+lLKoo7EKhULhCV3Hp5Jv6kqKJRcTFrb/lM2gc9Ob9dk//3fSrO2dCeMZ
-Y/JNsnZ/f+0c9S6r+3rPHsfnvy17sm1tc7c0b4kGaMUwEhL06PnCQujqZJ2RukNVmPHDn0YsSclo
-scbGExcHgdQRyyGqDgThaj5xbydOiUgJ53WuB8C/Rjs/5mq+8sB9OzjdWnJjcYULmQKdOftl/wAu
-BCrR84nbPyqAC1yd80h9oM5hKxRHJK+MnS/P4AcZRI189NHW9xf3mK2fNz73GZ/KNnWqflb5yy8d
-9//vCY/KLfSX1QTLJde863X5hgzR5Vu92vlxs2dLKWiU8RTKD18u9Zp8v02ap//uJs11eXxIiP7z
-VVQYL5+UUgYG6u9RXe36+IVnPq7/jKPv9No57HHAB0AJ8CxaetJLrc/Po620PxRCjHVlXoVCoXCF
-sBvn8BNnUkewrbpYExYL/K36bU5iCQ8wj6Qrp/tUtnS7xf6uHY4jvp8OvJeBbCWUauTFl3hRMo1k
-O/dzgQuB4gUFIDFRTAIxPaONF8yKX4ydU7fUNSd2XR3UWBf+fn4Q7qU09x5nO7N3YrsQdebqlvh9
-aBHil0gpG1reFELcDXwI/D/gHBfnPiJRPmzPUL5XY1B6bM7UqXqpyOXLteCkJt/nunWQVxxIHiex
-Pf4kMu3KZvtCj5Mbf2UWD5LOLnbNPxvufr3dvlLCzp1NrwR9BrjlpXSJJD1Q3KV84vZ9k5K8p0u/
-BH0LPKDcNSe2/XZ4bKz3ytZGRup51cvLm38JcgZxWA8TF5HeM9gTgBFtGWsAKWW9EOJ2YJ2L8yoU
-CoXTJCTAmDGwYoW2ov76a61oCWh1vJs480wtYYov6ZZYz2iWAHCwoOOz2IWF+mIrPLy5MfUW/UP3
-M50NJHMQ/5UD4MoJTo2zX427aqBcIaiLXgAksMq1FXbFrkJu5UNKiUEG9QBOMVg6DU8LgJiqdYNt
-inLhXJcz++ZND7QogyAHfYKBWlfmPVIfKB+2QnHE8tRTuh/x5JO1a42NUvbsqV9fsMD3cu35cbtN
-gAN+PTrsu2SJLuvw4b6Rb+FZ/7a9adbQW5wa09AgpRC6rPX13pNvw+vLbG+0MWyMa2Nf/cNu7Fgv
-SSjli+nPyQ+4RH7DdPnnyy4EAlj556l/yfP4Us7hHfndczu848MGsoGpDvpMBfa6OK9CoVC4xKWX
-an7KOIoZvuR5tn+xie+/15NuREXBlCm+l6vrhDTM+AHQpfEA1cXV7fbVt8OhTx9vS6YR0F1fHgcc
-cm5PvCivgVhZjMBCfLzzR8HcIax7LI2YKCKeMkuU4wF21Obre+I1IV4IEbcy6nAWs/kvZ/EdMtvF
-4ufARjGErzifd7kcv/7O/+Jd3RL/GJgvhLgD+ERKaVvXCyEigb8BT6JlQzsmUD5sz1C+V2NQemxN
-UhK8Oeg5Zm+4i0Aa2DxnNMF0YQz3spKxXHMNBLUo9OsLPQaGB7InMJ1e9dsxIdn341YG/H1km32r
-F61iElXspA99+3QBvH/8LLR3iq0dVp7n1JiK5ZspZjgN+LO25mTgd6/pMnJUXwJoQGIiJhhc2RSv
-K9ANdn2Y9wy2OVQPjGsodj3qzD5QLcqF7ySurrD/DewE3gBKhRAHhBDbhBAH0PT6GrDN2k+hUCi8
-yoQHTsUfMwCDqlZxWtXXLGM8j/n/i//7v86TqzB+EABm/ChY2f4KbMSvT5LFZHLpxhlFH/hEtujB
-3Wzt2Oocp8Y0pSUNwIx/oHeDAqJjBE2bv2Vl0Njo/NjGIt1gmyO8aLDDdSvbWOq6E9tXmc6qhBAZ
-wMPAVTSV7tGoRDPkD0gpvXOivhNQqxnPUPozBqXHtuk78wSyTr6fjCUP2a75YeHE85Lo1q11f1/p
-cfXZ87jm9Ux20Jf/Cw4io51+sSU7bO2okent9DKWpBH6v+0kcy4WswWTf8dGuDZb3zqvjdQi47yl
-S39/bdVZXq45o8vKtGQqzmBfWlN6obSmjQg7K+vGuS53V9gunyGQUlYB/xRC3An0B6LQzl9vk1J6
-r8yMQqFQtMHE3zPJOiuU9F9fxWwKZP/M25j00Q2dKlPC5MFssp7m2ry57T6N9Y30qNUNdtfJfX0g
-GYQmhPFTwHQKG2LIoRtX5taTlBrc4Rhzjm6wG+K8H8oeF6cbtUOHnDfY26PGsJF/EMshwtPbdkMY
-QrMw8SPIYAshQoCbwJb7fxHwipSyFtjkgoxHJcqH7RnK92oMSo/tY/I3kfHjPcA9ALaUpG3hKz0O
-GqS32zPY+37bRS9qAThoSiG5j5NWyQDuGvAtGzZo7SnFkOSg4ojIt/N1p3QBvKvL2FgtrSto+cSd
-Dcj7I2IqH1jjot/JMFSkZhSOnMqc7xMpJ4oTevZvdwelLRpqzHxdM5UKIikllrCwN50e26HBthrr
-JcAIu8tnA5cIIU6yGm2FQqFQ2NG3r14EZN8+OHy4ddatg79utNb1gpyYIXjxaHMrunXDZrBzcmCk
-g8Xo4cNQQQSRVBLQsw1fg8HExViIppw4SqjYHw/jnMusVlyst+PjvSQcYBk4mPcYDECgi3GClbkV
-nM6vAJSJaIRw3mA7Ooc8Fy1H+F/AC8CLwAbrtbnOnBsz8gHEAHcAq9BW91uAn4AJTo7PBPahJXax
-fzzXTn+Xz9cpFAqFlFIOHKifW162rPX9/1y2SP6Xv8lNDJS/jr3Xp7Jde60u20svOe4/dqzWN5wK
-+ccvbiTPdpE/Ui+2CfjH9e87PW706I51bhTffae/z5Qpro3dl7XHNni/X6qUUjp9DtvRlvgFwPvA
-5dZJEUKYgHeAWcA8578aGMJ1wO3AJCnlFqssTwOLhBBTpZS/OBgvgX9JKd/ztqAKheL4ZsQI2LIF
-Ushj+491nHhi89rM35RP5GsmAvDeTb6VzT4gL8eJQPHcXO35MBGk9Oq4rxGYI3X3gPlgcQc9m+Or
-FbYnmc5qDuoO7JoAF0LEcezD7gWc32SsAaSUFiHEI2irbl8jgVellFvsZLkHuBG4GXBksMHFg47K
-h+0ZyvdqDEqPxuBLPV4Q8i2PcT3dyGXpe7NhXvNjW01b0gBDhnhVlFa4YrAbGyE/X3/dRXNhe1WX
-Mj5Bbxc6X7HZvn62rwy2q0HiNQW6ha8JdC0xjCODHQzsbuP6biCojesACCEmSikXuySJczzV8oKU
-sk4IUYZWl1uhUCiOCHqOiqPbm9rStEvuqmb3ior0jGyBgdC/v29lS4suYwa/0Z0DpK0IRFvztE1B
-gX4WOj4egjsOKDcEU5JusE0lhU6Nqa9q4JaKxykmnmKRSFTUTG+J1+zstKsr7Poi3cLXB7m2whZ2
-i+fWN4WwSCnbPKDn7j2jEULEAEXAo1LKBxz0nYt2FC0BSAQagG+Bx2UbZ8eFELIj/SgUCkV71Byq
-wT8ukgBrYpfy7FKiUrV1xTffwDnWeobjxmkVx3zJ7m+20PscLZQ9OyCdtPqd7fZduRLGWgsmDxum
-VUPzNstv/5wTn7kAgBXJ5zI2/yuHYwo3HCRxqJbFrUgkkGBxztC7Q3lhHf9Luo4oygn1q+cM83eO
-B1n57JUi3rppDZFUMGRyPPf/fgpCCKSUDnd/vV/LzftcDRSg1ed2RDVwGLhOSlkhhBgGfAGcbt0V
-MHtRToVCcRwREhvC1pAhDKhZC8COd5YyOlOrzb1smd5v/Hjfy5Y4Qt8TT2rIQVokwtS2vSjaVkJP
-ysmlK127truxaiihqQlUEUoRCRRanDvuVr6nhERruyIgjoQOe3tGeEwAl/EeJiQ0amfq/QL9nBpb
-KBP4iTMBiHXx6L0z57DbTQzXwT2nlqVCiNOAn53omiWlbFUnTQgxCLgbmCGlLG09rIVQUj7V4vV6
-aw3vT4ELgf+2HJORkUFWVhag+2nUs/PPWVlZZGRkYM+RINfR9tykS0B9Ho+iz2N2dCDzrXt3L7/2
-EGmsIjMzk/4f3s84VpJDd8aPfg0I8KkeIrpGcg+BBFNPJrUc2n2IFz58sc3+kzfHs4ebyQT2rBoH
-aNsBTXrMyMgg0/oZNUq+wNMmEs6dAKRHZnK2E+Oefu0pkoFMoCo4zqv68wswcQ8BVv3B4fxKnn3n
-OafGBwVpz5DJxo1YJXYOfyf6dLRMb++es/vIS9G2qB3RqtyNEKIHsAC42kN/+Urr81jaMNjZ2dk2
-RWdnZ5OWlubBWykUiuOJwP69If9P1jGMA4ejSQPK9pYy+8Dj7EVb70wc/Cjgg0LYLaj2iyS4UQur
-Llp7oN1+8kCOrW0K9YEDG0hI1E1LkZMxZw0VulezJtSLEWdN7yeCCJb1AFTmOB95pgWpZQFZ5OXp
-htwZHBpsd3zRQginUpRa/cY7HHZsPX93tJX5nVJKx84NfVyClLLlr79pl6DN/YzLL7+81TckhfM0
-ffsGpT9PsF/BKNzH15/HhNFpdP/jIDkNSVCVyaBDsOXZnxhv/bdT5J9CwmDfG2uwRijXaAa77K99
-ENh2P//CXFtbROtBUk0rbG/oMTZWb5eXQ3294zGWw/q6rj7S+1nj6k3B0KgVrKw+6HzkmRaklgFk
-MGCApr9585w8Id3RIW0g25nD3EaNc3Lu7sBWtG1w++tft3gdCkS1uFYNmFpcOwctEcyVbbxXu4ff
-FQqFwhnOOUdPsnH//VKujD/TdmFhRmanyfXpSc/LN7lK3ssj8p27t7bbb33kyTZ51zzxi8/kS0zU
-9Zab67j/O9ctl49xt3yDq+XH0971unwbwk+0CfjXy0ucHnfJJfrP9d572jWMSJwipUxz9luDEeMc
-IYToBixEy04WIoT4u93tlicZ1wExQohUqUeABwPzhBBzpXaGOxV4HK0kaKvtcFArG0+x153So/so
-PRpDZ+hxzhxYsEBrf/fwWubxEwAWBL3nXeYTGdpi/3m3cMcfWvsfVXB5O/0Sq/bY2nGj9OQv3tZl
-QgIUWgO9Cwv189/tsTFsHM8wDoAnMwwXpxWf9HuAB9dUUk4Ut8cOamWA2mPGn3cxm01UEElSyb3A
-UKff0xkf9pHEbWjJXHoBLQ/ZZbd4nQfUA/aR37OBS4D1Qgg/tFX4D2jZz1RedIVCYThnnw3p6bBr
-F1QRRglxJFDM6sTpjJnY0/EEXqKXXcayPXva7lNXY2FPYyoCM/EU02VcD98IB6TE1VNKEYkUUra7
-BwzreJvbPsuZs9W9PGF3nzP5fI3WvsyF80XpxX8ylCUArOd6197UmWX48fpAbYkrFAoD+O47KYXQ
-tkFHsFrmii5y9/fbOlWm9ev1rdn+/dvus3273qdPN+/nELdnafcLbW/+x40fOuw/fbou69dfe1++
-G27Q3++FF5wfty14iG3g1v+ulVI6vyXuk+QmCoVCcTwzbZq2LX7KKZA8bSQHl+yi19R+nSpTT7vF
-/d69YGkjVLgpGxtAl94h3hfKjoZo/SS1Od9xqLivV9gxMXq71OGhYp1Qsx6gFpJkbC7x4x7lw/YM
-5Xs1BqVHY+hMPZ51lvbQ8K3xa4vISC3VaHEx1NVp+cK7dm3ex95g92yxe+9tXco43WBbChwbbF/l
-EW/CXYMd3qgfAQvvamwucYVCoVAco1wY9xsRxavoxR4Kfr6Jrlc0D4DqyGB7G1Nyoq3td8hxmtGr
-DmRSTDglxBEX+XcgwIvSuWewpUUSIfUVdkRXA3OJH++oXOIKheJYZlnqxYzf/zEAf1z5Nie9dUWz
-+xdeCJ99prXfew8uvdR3stnnE/8z5TzG5f2v3b51FXUERWlJXcz4YWqox+TvXY/vb0+vp+iOx4mh
-lOr0oZy/80mHY6oOS6ZGLCGKcuICKplffwnAcZVLXKFQKBRuUJ/aB/ZrbfOmba3ux6/6gSF0YQd9
-SU/37TZ+SFoSRcRTSCI5sluHfUu2FtJ06qvYlEiyl401QAylnMonAKwvcu6QUXmFYIm1BnpSrIPO
-baAMtgOUD9szlO/VGJQejUHpsTmBwwdhPWFEaPbmZvca6xt5Jvt8gqmjEROVXQ4Bus/V27oMPPVk
-EtF8130iYFYHfcu2F9gMdllQEsmGS9Oa0C56RefQOuf2xO1LcUa6thsOoKLEFQqF4nglIWOQrZ1y
-qLnBzvkjm2DqACgxJRCd6lqAlKck6i5sWwKV9qjaU2BrHw71TarX8O66Ezu8wTmDXVamt6PcUKfy
-YXeA8mErFIpjmfrD9ZgiQvG35jY/nF9JeHI4ACsf+JYxD50NwLroDIaXLvSpbBYLBAWB2ZqUpLoa
-QtrZlV98xdtMnH8VAH/0uoyTdr/rdfnK95fb6ptXEk6ErHQ45ocftCN+AKefDj9ba1UqH7ZCoVAo
-OiQwPJA3Y+9g+6F4NjOIh3YHMMq6n1y9ZqutX2XXAT6XzWSC5GTIsRYLy89vnp3Nnh1hI/iJh0mi
-gIQBY30iX0SXCBox4YeFCA7TUN1AQGjHken20eT2UebOogy2A5QP2zOUz9AYlB6NQemxNT9Nfpwv
-vtDaF+6AURO0tv/WDbY+csDAVuN8ocsuXZwz2Bv9hvECwwD492SviNIKk7+JK8M+oqAqjFJi+Krc
-RGJox2PifvuURbxEKTEcKpwBzHHtPd0XV6FQKBRHO0Ptjl6vWqW3F1eN4hdOo5RoYk8f4XvBgNSE
-atLZyckspmxj+zW7C3QXNkk+rFa6OPlCvmc6yxlPaUWbFZqbEbR/JxNZwrksIK22dVS+I5QPuwOU
-D1uhUBzr/PILTJmitYcNg3XrtGjm6Ggt4bWfSVJRLgkN9/36bvGgG5i45TUAFs14nklf3NJmv8mT
-IStLa//yC5x2mm/kGz0aVq/W2n/+CWMd7MZnjbqDjDVPA7Bw6hNM/v4uwHkftlphKxQKxXHM2LEg
-rKZiwwaorNRW2k1rlUGDRacYawBLsl5TU+blt9uvs1bYrmY786vQO/nFue7EVj5sBygftmcon6Ex
-KD0ag9JjayIjYfBg2LgRpMXCyt+r+fXPcNv9CRPaHucLXfp1S7G1/YvaN9gHD+rtI9lgBxzWOwUk
-RHfQs22UwVYoFIrjnIuGbuPajS9xHl+x+1/n8UvgS7Z7p5/eeXIF99QNdkhpXpt96g/X83DprRSQ
-xEHRhbi4a3wlHtF2NtcZgx1Uo3cKSnZ9ha182B2gfNgKheJ4YP2zCxl22ykA5JNMKvtoIBB/fygq
-am6YfMm2j9bR/xIt4G1n0GD61G5s1Sd/VQ4pY7oDUGhKIrHxYKs+3uLD8z4j4uv3iaGUinMvY/pX
-HX9ZmDFgK2Xb8omhlAd+mcjQ07SKZMqHrVAoFAqnGHzDyRSatL3kFA6yitGcxTecM819J/txAAAY
-ZElEQVTcacYaIHZwF3LoykpGs4a2I9VLNuTa2oeCUtrs4y261u3hHL7hZP4gLGe7w/5rawawkFP4
-kplE9Epw2L8lakvcAcqH7RnKZ2gMSo/GoPTYNv7B/mw54zYSf7gbgKFs4BvO4a8pS4CT2hzjC13G
-DUwiyC+HxkagDs6v07Kf2VO5RT/uVR7Z3StytIfJLnDMPqCsPey3zd35IqRW2AqFQqFg/Ke3siph
-qu111ug7GXpT28baV/j5NQ8iy28j7qxud46tXZvgW4MdkKgbbPuAsrZobGxe/EPlEjcY5cNWKBTH
-Exazha3vryYwOpQ+5w/ubHEAGDcOVqzQ2osWwcSJze9njbqdjDXPaO0zHiPjx3t8JtvaJ39lxN1a
-VN666MkML/293b4lJRAfr7WjopoXAlG5xBUKhULhEiZ/E4OuGNPZYjQjLU032NnZrQ32z1EX8iWp
-dOcAQ0e3cwbNS4R00VfYobWHOuzraR5xUAbbIcqH7RnKZ2gMSo/GoPRoHL7SZWqq3t63r/X9hdVj
-+RMtxViWjzKcNRE6JJ1ZfEYx8RCdQlYHfetWb2QVV1BKDLnVI4AnXH4/ZbAVCoVCccTSq0stg9hF
-KvsIWh4KNK/ukaO7sOnuWxc2cb2i+IJZAISUd9y3Nvsgo1gDwLr6RrfeT/mwO0D5sBUKhaJzWTXv
-e0ZnTgdgbcypjDj0q+2e2axFjVss2uva2tZR5N5ESq1Gd12d9rqqCkLbqdi17J+fMv65iwD4s8sM
-xuV+YbunzmErFAqF4qgnZpi+Jx5Xmd3sXn6+bqwTE31rrEHLwd4USAZQXNx+X3Oh7sRuCHfPia22
-xB2gfNieoXyGxqD0aAxKj8bhK10mj9UNdop5PxazBZO/ttbcu1fv16OH10TokPh4yLXmbikubl8O
-S6FuzRtj49vu5ABlsBUKhUJxxBKeHE6JiCNOlhBIA/nr8kgZ3Q2Aus8W8Cnvs5M+mKPOACb5XD5n
-V9iixO5mnHsGW/mwO0D5sBUKhaLz2Rw+hkFVqwBY9/TvDL9NCzxbeOK9TP7zcQCyJj5AxqJ5Ppdt
-/ogX6LruG+IppuKfmUx65tw2+/1j1kFWfbGPeIq58vF+zLw73XZPncNWKBQKxTFBbvdxlG0LYCsD
-iCyOYbj1evCBnbY+AQP7dIpsPc07mIQWCLeorXNnVnZXJbOSZABuGOTeeymD7QDlw/YM5TM0BqVH
-Y1B6NA5f6nLNZS9w331a++bDcKH1emyJbrCjRnWOwZZ2/mhZ1P6euP12ebx7O+IqSlyhUCgURzYD
-BujtrVu1Z2mRdKvdZbvedVI6nYFI0K2v6ZB3DbbyYXeA8mErFApF57N9O/Tvr7W7dtWSpez7fTep
-p2pGuljEE28p6hTZlt3yMeNfvBiA5d0u4MQDn7bZLyICDh/W2qWlzat1KR+2QqFQKI4JeveGwECo
-r9eOUJWUwJqCblzEcoaxnqF9armhk2QL7qYvl4MPt73CrqvTjbWfn3uVukAZbIcoH7ZnKJ+hMSg9
-GoPSo3H4Upf+/jB0KKzSAsVZuRLWbApiBeNYwTjubDsw2ycEjBnONL6jiASik1P4pY0+pVvy2UYG
-xcRzIKAvQrzj1nspg61QKBSKI56MYWUkrFrKWFZQ/WY/Vh2ebbs3fHgHA71MTHocPzANgJR28olX
-7C6iHzvoxw52SgdJxztA+bA7QPmwFQqF4shg6Y0fMuHVvwOwNnISJzVkUVOj3cvObl7Vy5fU1Oj5
-wwMCtO1v0cIbve7p3xl+x6kArI+axLCyrGb3VS5xhUKhUBwz9Ln+VCxoNm1oxRLCarQgs169Os9Y
-g1b8Izxcazc0QFlZ6z41ObpvuybczRBx1Ja4Q5QP2zOUz9AYlB6NQenROHyty8QhyWyIGM+QyqX4
-YWEMK/me6Zzbif7rJlJSYKf1SHh+PsS0qO3RkKtHsDdExLn9PmqFrVAoFIqjgvKZV9ra73AFc5jP
-lVd2MMBHJCfr7YMHW9+X+fpFS2Jy6w5OctT5sIUQWUACUN/i1tNSyg+cGD8FeBgIBgKAd4En2nJW
-Kx+2QqFQHDk01jeyIek0hlt9wFkjbydj9b87Vyjg3WHPkv7X56SQT+4/HufkFy9sdv/mORX89l4O
-yRzk6szuXDK3eVa2Y/kctgSmSin3uzpQCHES8A1wgZRygRCiG7ACiATuM1ZMhUKhUBiJX6Afgw78
-xJqXFhGUEMmkK8Z0tkgApIp9TGAZAPv3tjZNe0si2cpAtjKQW4a6/z5Ho8H2hCeA5VLKBQBSyhwh
-xLPAI0KIF6WU+S0HKB+2ZyifoTEoPRqD0qNxdJYuA8MDGXnP6T57P6dI6nhP3P5Ssvs74ketD9vh
-1kGrAUKkACcCC1vcWoi2NX6OAXIpFAqF4jjDv3uKrR1Q3GrdZ5jBPhp92AuBDcBIIA4oBN6RUs53
-MG4K8CNwuZTyPbvrsUAx8IqU8h8txigftkKhUCg6ZPUjPzHq/jMBWBc9meGlv9vuWSwQFARms/a6
-pgaCg5uPP5bPYZcBO4FJwCDgBeBVIcRTDsY1HX6rbHG9wvrsfqy9QqFQKI5bIvvpK+zI6uYr7JIS
-3VhHR7c21q7QqT5sIcRpwM9OdM2SUp4CIKU8v8W9L4QQk4F/CiFekFIeMFLGjIwMsrKyAN1Po56d
-f87KyiIjIwN7jgS5jrbnJl0C6vOoPo9HxHOTHjMyMsi0fkaPBLk64zl6VDo9uZTDRBAW/DDZdvcv
-PmEWeZxOJpKSmm7A6jbncQZ/p3t6h6VAfyf6VTu4vxK4ERgFtGewm1LNRLS4Hml9LmlrUHZ2tk2h
-2dnZpKWlORBFoVAoFMcT8T1C2Sd6ISUUV8TYUqYCVG7LpR8H0dbg2vI6Kyur1RdvZ+hUgy2lrAF2
-ONtfCBEAhEgpK1rcarQ++3UwfKP1Oa3F9Z7W5w1tDbr88svd+iak0Gj69g1Kf55gv4JRuI/6PBpH
-0wpb6RFMJq3edYXVMh2wWzZWb9ePeTWEaHU1MzIymulv3rx5Tr3PURV0JoTIAO6RUp7Z4vozwK1A
-Hynlbuu1UCBASr00ihBiKVAvpZxsd+0O4BEgreWxLhV0plAoFApnmDQJFi/W2j/9BFOmaO2sk+4n
-Y+kjenvJQ63GHsuJU04VQkyTUn4PNiN+LfBek7G2sg6IEUKkWlfyAHcBvwshzpZSfmNNnHIr8O+2
-zmCDWtl4ir3ulB7dR+nRGJQejUPpsjlpabrB3rdPv+6fp7/w6+VZlZKjzWCvQTO69wkhHgXC0FKU
-PgS0jBLPs94zN12QUi4VQpwNPCyEeBgIBF6SUj7uC+EVCoVCcWxiXzFs355Gmjy0YYf0/fHQAZ4Z
-7KNqS9zXqC1xhUKhUDjDD3f+Tvy/7yaNbHakncGEvR8A0DvVTMP+PFLZxzurTiB9VHSrscfylrhC
-oVAoFEcUyckw3HpkK78kG9DOX+/L9aeRHhygB10HefYeymA7QPmwPUP5uYxB6dEYlB6NQ+myOXEj
-02zthKq9AOTmQqP1DFNiIoSEePYeR2OmM4VCoVAojii6jOtBPQEApFjyqMipYNs2/X7fvp6/h/Jh
-d4DyYSsUCoXCWXYGn0Cfuk0AbP7Pcn6uGMdtt2n3rrkG3nij7XHHci5xhUKhUCiOOIoSBwJQRyAH
-1+Syf10JJmter4EDPZ9f+bAdoHzYnqH8XMag9GgMSo/GoXTZmnXnPcicFx9mLz25JdifKz6YwKOs
-ZTv9qA5+Dxji0fxqha1QKBQKhQF0P60fu+hDI/4szWqgT+VaQqhlGH+RPj7R4/mVD7sDlA9boVAo
-FM5SUgLx1kLOo1nJSsYCcMA/je4Ne9sdp3zYCoVCoVD4kLg43Vd9Ft/aru/vNsGQ+ZUP2wHKh+0Z
-ys9lDEqPxqD0aBxKl20zbRps2QI/MJXZfEhv9mCadb4hc6sVtkKhUCgUBnHNNVq5zb30pDd7KDAl
-M+zeaYbMrXzYHaB82AqFQqFwlTffhBU3vcdj5jvIeepjht9+Sof9nfVhK4PdAcpgKxQKhcIdzLVm
-pEUSEBrgsK8y2AYghJBz585V/hkPUH4uY1B6NAalR+NQujQOFSWuUCgUCsUxhFphd4DaElcoFAqF
-t1ErbIVCoVAojiHUOWwHqHPYnqH8XMag9GgMSo/GoXTpe9QKW+F1srOzO1uEYwKlR2NQejQOpUvf
-onzYHaB82MagdimMQenRGJQejUPp0hiUD1uhUCgUimMIZbAdoL49ekZmZiZZWVlKjx6i9GgMSo/G
-oXTpe9SWeAcIIZRyFAqFQuF1VKYzhUKhUCiOEdSWuEKhUCgURwHKYCsUCoVCcRSgDLbCawghUoQQ
-PwohLJ0ti0KhMB4hxBIhhEUI0aOzZTkeUJnOWiCESASeBUZaL20EbpVS5naeVEcfQogZwNNAA6AC
-JdxECDEMuAmYAJgBP+BX4CEpZXFnynY0IYToDdwAZFgvRQAFwONSyu87S66jGSHETLTPpfr7dhEh
-RBqwCdjZxu0MKWV5W+PUCtsOIUQg8AvaF5mB1kcVsFAIEdaZsh2F3AWcBiwDHEY/KtrlYyAaGCml
-HAKcDkwBlgohgjtVsqOLqcBFwIVSylFAf+APYIEQYmKnSnYUYv1f+TjwPerv211WSSmHt/Fo01iD
-MtgtmQOcANwtpbRIKS3A3UAvtG/nCucZL6Xc3dlCHANY0D6PNQBSyjzgKaAPMK0zBTvKyAHmSin3
-AFhTGD6B9j/wnM4U7CjlJmAFsKqzBTmeUAa7OTOBfVLK7KYLUsoCYIv1nsJJrF92FJ4zpMnI2JFv
-fY72tTBHK1LKr6SUb7e4HGV9LvK1PEczQohY4A7gXtTq2qcog92cIcDeNq5n8//bu/dgz+c6juPP
-F5VryP0u7FJhc43UahdtMcx0QcnSGqR0E6UksWZUbo1LZGIasxjGoDLDKlQIi4lhZMplERGD7C6y
-Lvvqj8/3t53z3d/v7O93rPM7393XY+bMd8/n+/t8vu9zZs/v/ft8vp/P51t63hEjyvabbYo3o9w3
-vGWEw1lsSFoPOBf4a3WM7v0YuNj2k/0OpOHWknSxpDsl/UPSpZK2HKpCEvZgqwNz2pTPBpaXtMwI
-xxMxiKSlgUOAC20/0u94mkbSppIeAZ6k9A4/a/vlPofVGJLGAvsCJ/c7loZ7izKJ9Oe2dwS2p0zQ
-vVPS9p0qJWEPltmOMdodD8wFjux3IE1k+1HbYyjD4Q8D90n6WJ/DapJTgJ/abtexiS7ZftL2ONv3
-Vt/PAb5KmeT8k071krAHe56y3KNuJeAV23NHOJ6I+SQdDOwD7NGahBbDY3uO7e9Qlnad1+94mkDS
-eGAL4Px2p0c4nMWO7dcoS7126vSarMMe7H7Kco+6jSnrsSP6QtKBwFHArll/3TtJy1ZviHUPAJ+X
-9G7bb4x0XA2zO2UfgLul+fl57ep4naTXgWNtX9+P4JpE0krAf9v8n3uLITrS6WEPdjWwkaSNWgWS
-1qIk8av6FlXz5VbD2yBpMmVd+262n6vK9pJ0WH8ja5TrJbXrubwfmJVkvXC2T7A9ZuCaYf7f296j
-Kkuy7s7Z1FYeVWvbtwLu6VQpCXuwiyg96VMkLS1pKcrmADOBX/YzsIbLcNkwSToAuIDyf3OSpMlV
-At8bWLefsTWMganVkiRUfIsy2efsvkbWbKodozsGvidpbZg/mfQ0YDVgaqdKebxmzYCtSben/FKz
-NekwSDqVsivXhpT1wvdTfp87pjfTPUkvUH5/9TdEA1NtnzTyUTWPpJ2BQ4EdKLNzl6XMWTnP9mX9
-jK2JJO1BmRy1NrAm8Hdgru1t+xpYQ1TLtw4HxldFq1P2+zjZ9s0d6yVhR0REjH4ZEo+IiGiAJOyI
-iIgGSMKOiIhogCTsiIiIBkjCjoiIaIAk7IiIiAZIwo6IiMWepHUkXS9pXr9jGa4k7IiIWKxJ+hxw
-O7AJfdgqWdLWki6Q9KCk+yX9TdJZklbvpZ0k7IiIWNwdQ3l4ye30ZxvVyyk7Fm5nexxlF8hJwG2S
-lu22kSTsiIhY3O1s+9E+Xn8e8P3WY3FtP03ZO3wssGe3jSRhR0TjSBpb7Q/ea71JktZ5J2KK0ct2
-V/etJe0i6S+SHpY0U9IlrQd0vE3jbM+slT1THVfptpEk7IgGkDRF0glDnL9O0mO93hNrIkn7A3cx
-vKHNVYD7Je26aKOKppP0MeBG4Le2xwKbAcsBN1WPvhw222+2Kd6Mcj/9lm7bScKOaIYpQMeETXmu
-8xrA8iMRTL9I2hOYBhxg+7Ze69u+AjgRuEbSNos4vGi2U4B/2T4d5ifZHwIfBPZflBeqHqd5CHCh
-7Ue6rZeEHdEcQ81u3QZY3/Y/RyqYt0PSppKelrRBD3XeC1wIXGv7uuFe2/a5wKPAr6tn3scSTtLy
-wEeBGbVTD1EexzphwGsvkTSvi6+Dhrjk8cBc4Mhe4nxXLy+OiNHJ9lzKG0BT7A28D3i2hzqHUp6/
-fMYiuP4ZwEXAXsA1i6C9aLZVKbdYdpN0b+3cc8DAIfHvAt08h/7f7QolHQzsA0xoTULrVj5dRoxi
-1b3recAu5dvBn+AlfaJW9omq3k618gmSvivpCUlzJN0kaavqtRMk3SXp1WqyzQFDxHOQpBlVG7Or
-CTr7DeNHGw/MsP16D3UmA/8FFhgKl7S/pDskvSDpxernOUnSmA5t/XFAmxEvUmZyX2N7m9rX+rbn
-/03Y/rfth7r4ml2/iKQDgaOAXW0/32uQSdgRo5jti2wvRZmYYttLDfiaZvvm6vzUVpWq3oxa+TGU
-Hvg44OPAxsANknYE9gM+A4yhDBVPk7RdPRZJv6D0Sm8A1qfcN/8TcLmk43r80T5OD5NtJK1CGfZ/
-qD7jV9I3gUuBq4BNgQ2AUynDjW3jsv0UMAeY2GPc0XwL3Fqy/SpljfbW9XOSjh7mh9J6O5Mpf4e7
-2X6uKttL0mHdtpGEHbF46DRjulX+su1zbM+yfR9wDrAm8GvgG7afrtaGHlfVGdTLlrQ3cARwi+3j
-q3ZetH08cCtwoqTNhwxQ2k/SdEkzKBPkdq2+P6KLn+8D1fHpNucOBp63fbrtl2y/YvtK4EyGvu//
-DLDqkjCzPgbp9LdyDLClpMPnv1CaABxNWZUw/AuWUasLKB94J0maXCXwvYF1u20n97AjlgzX1r5v
-zUy9q9Zjfbg6jq29/mvV8cI2bV9OGeI+EPhRpwCqGdpXVG+IWwO7V/feu9F6U3upzbl5wGqSdrd9
-44DyUynLcjqZRXnzXhfoeXgymkPSqZTdxTYEXN2nNrCj7TegjEpJmgj8RNKxlP8TzwJ72n78bYZw
-NuU++Gm1cvP/UbCFSsKOWDI8U/t+Trty27MlwYLLwz5CeXO5r03bT1XH7buMZSLlg0Ivk+Ra8bS7
-530Wpefye0m3UD5A/KYadnx5iDZb11+hhziigWwf0+Xr7uAduE1ie7VF0U6GxCOWDK/1WF4fNly5
-KruvvnwF+B0lma/ZZSwTgJu7fG1La+OJpesnbF9ctTmdcm/8l8BTki6TtNYQbbbaarepRcSok4Qd
-Ed14iZKUx9QmvrW+lra97cIakbQFJbH3mrBnVce2D0qwfavtvSjLvo6grJ/9AvAnSZ1GElvD5bM6
-nI8YVZKwI5phxB8JWDOD0sPeuN3JahnZVl20M5HSo729qreypPW7qNd6cMMaba49SdIKALZfsH0+
-ZUb5g5TJah/q0ObqlPvfj3dx/Yi+S8KOaIb/UNZhv4fyj6MkXTmC1z+vOk6pn5C0HvBn4MNdtDMe
-uLdaRgPwbbobkn4UmE37Dwy/qtqdr5pI1EryC2xOIWkZymSzB3pcCx7RN0nYEc1wd3X8ZLUM6cuU
-BFa3sOVdwyq3PZ2yTOpLkn4maRNJy1cbtUynrMe+bKgfoLIU8ASApB2AV2233RGqdv23gOuBDSXV
-e9kGzqw2kVlR0iqSpgCfAqbbfpgFbV3FMuwtTiNGmux+j7RFxMJIWhE4n5KE3k3ZdOQrlCHf1q5d
-piRaA5sAj9XKH7e9iaQ/U3ZOq79+KnDQgHKAKbanDYjji8DXKQlvXnWNacC53cz6ljSO0lu/A3i2
-9aCFLn8Hu1B68t+y/YsB5TtTlpSNp2yaYmAmcEmnuCSdAXwT2Nz2Y/XzEaNREnZENIakq4EdKJPf
-hrV3ejVzfCZwvu2jF2V8Ee+kJOyIaIxqi9JbKRu/7NvhOcND1V8J+APwCvDp1qYZEU2Qe9gR0Ri2
-X6KstX6L8vSuXv0AuIck62ig9LAjopEkLdfr4wmHUyditEjCjoiIaIAMiUdERDRAEnZEREQDJGFH
-REQ0QBJ2REREAyRhR0RENEASdkRERAMkYUdERDTA/wCSWr2+/kfm+gAAAABJRU5ErkJggg==
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
     </div>
   </div>

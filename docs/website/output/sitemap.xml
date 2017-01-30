@@ -15,7 +15,7 @@
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/archive.html</loc>
-  <lastmod>2017-01-16T08:05:00Z</lastmod>
+  <lastmod>2017-01-30T19:44:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/blog/</loc>
@@ -27,11 +27,15 @@
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/</loc>
-  <lastmod>2016-12-29T04:38:00Z</lastmod>
+  <lastmod>2017-01-30T18:22:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/cat_electronics/</loc>
   <lastmod>2016-11-16T18:08:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/categories/cat_tutorial/</loc>
+  <lastmod>2017-01-30T18:22:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/components/</loc>
@@ -80,6 +84,10 @@
  <url>
   <loc>https://afalaize.github.io/pyphs/posts/inductor/</loc>
   <lastmod>2016-11-16T17:36:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/posts/phscore/</loc>
+  <lastmod>2017-01-30T18:23:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/posts/resistor/</loc>

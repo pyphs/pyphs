@@ -107,7 +107,7 @@ This software is developped by Antoi">
 <h2>Installation</h2>
 <dl class="docutils">
 <dt>With <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a>:</dt>
-<dd><div class="first last"><pre class="code text"><a name="rest_code_ed8f98752e184a12b8098a8df26ac5f6-1"></a>pip install pyphs
+<dd><div class="first last"><pre class="code text"><a name="rest_code_395b2f89d5d34b41b7223d69d2111a5c-1"></a>pip install pyphs
 </pre></div></dd>
 </dl>
 <p>See also the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>.</p>
@@ -202,24 +202,24 @@ in the <em>Port-Hamiltonian Systems</em> (PHS) formalism. This structures physic
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_54337a59243a45fda697a038f0d3556d-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-2"></a>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNetlist</span><span class="p">(</span><span class="s1">'dlc_netlist.net'</span><span class="p">)</span>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-5"></a>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSGraph</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-8"></a>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
-<a name="rest_code_54337a59243a45fda697a038f0d3556d-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">buildCore</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-2"></a>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNetlist</span><span class="p">(</span><span class="s1">'dlc_netlist.net'</span><span class="p">)</span>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-5"></a>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSGraph</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-8"></a>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
+<a name="rest_code_1e73caf79b4b46d6915c943962f64dd5-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">buildCore</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export <strong>LaTeX</strong>
 </h3>
-<pre class="code python"><a name="rest_code_da9f1bb521194fe89c7427870a11c52c-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_da9f1bb521194fe89c7427870a11c52c-2"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_da9f1bb521194fe89c7427870a11c52c-3"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">document</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_71542380c958493ea544f55d66fff0b0-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_71542380c958493ea544f55d66fff0b0-2"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+<a name="rest_code_71542380c958493ea544f55d66fff0b0-3"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">document</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
@@ -233,14 +233,14 @@ in the <em>Port-Hamiltonian Systems</em> (PHS) formalism. This structures physic
 <div class="section" id="export-c">
 <h3>4. Export <strong>C++</strong>
 </h3>
-<pre class="code python"><a name="rest_code_3a8e22cfb33846fd96b785b55cc7516f-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
-<a name="rest_code_3a8e22cfb33846fd96b785b55cc7516f-2"></a><span class="n">method</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalMethodStandard</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_3a8e22cfb33846fd96b785b55cc7516f-3"></a>
-<a name="rest_code_3a8e22cfb33846fd96b785b55cc7516f-4"></a><span class="c1"># Numerical evaluation of 'method'</span>
-<a name="rest_code_3a8e22cfb33846fd96b785b55cc7516f-5"></a><span class="n">numcore</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalCore</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-<a name="rest_code_3a8e22cfb33846fd96b785b55cc7516f-6"></a>
-<a name="rest_code_3a8e22cfb33846fd96b785b55cc7516f-7"></a><span class="c1"># Export the set of C++ file for simulation</span>
-<a name="rest_code_3a8e22cfb33846fd96b785b55cc7516f-8"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">numcore2cpp</span><span class="p">(</span><span class="n">numcore</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_e2c04ed6367f4f35a1606dbacecc8779-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
+<a name="rest_code_e2c04ed6367f4f35a1606dbacecc8779-2"></a><span class="n">method</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalMethodStandard</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+<a name="rest_code_e2c04ed6367f4f35a1606dbacecc8779-3"></a>
+<a name="rest_code_e2c04ed6367f4f35a1606dbacecc8779-4"></a><span class="c1"># Numerical evaluation of 'method'</span>
+<a name="rest_code_e2c04ed6367f4f35a1606dbacecc8779-5"></a><span class="n">numcore</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalCore</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+<a name="rest_code_e2c04ed6367f4f35a1606dbacecc8779-6"></a>
+<a name="rest_code_e2c04ed6367f4f35a1606dbacecc8779-7"></a><span class="c1"># Export the set of C++ file for simulation</span>
+<a name="rest_code_e2c04ed6367f4f35a1606dbacecc8779-8"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">numcore2cpp</span><span class="p">(</span><span class="n">numcore</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">
@@ -258,7 +258,7 @@ in the <em>Port-Hamiltonian Systems</em> (PHS) formalism. This structures physic
 </div>
 <div class="section" id="acknowledgement">
 <h2>Acknowledgement</h2>
-<p>It was initialized as a part of the PhD project of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a>, under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>,  through a funding from French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130), and in connection with the French National Research Agency project <a class="reference external" href="https://hamecmopsys.ens2m.fr/">HaMecMoPSys</a> between 2012 and 2016.</p>
+<p>The developped of this software began as a part of the PhD project of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a>, under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>,  through a funding from French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130), and in connection with the French National Research Agency project <a class="reference external" href="https://hamecmopsys.ens2m.fr/">HaMecMoPSys</a> between 2012 and 2016.</p>
 </div>
 <div class="section" id="references">
 <h2>References</h2>

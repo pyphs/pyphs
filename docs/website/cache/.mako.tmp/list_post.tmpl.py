@@ -5,10 +5,10 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
-_modified_time = 1485808391.046316
+_modified_time = 1485808417.350918
 _enable_loop = True
 _template_filename = u'/Users/Falaize/anaconda/lib/python2.7/site-packages/nikola/data/themes/base/templates/list_post.tmpl'
-_template_uri = 'list_post.tmpl'
+_template_uri = u'list_post.tmpl'
 _source_encoding = 'utf-8'
 _exports = [u'content']
 

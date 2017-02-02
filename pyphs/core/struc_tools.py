@@ -116,6 +116,7 @@ def split_linear(core, split=True):
                 move_stor(core, nxl, core.dims.x()-1)
                 hess = movesquarematrixcolnrow(hess, nxl, core.dims.x()-1)
     core.setexpr('Q', hess[:nxl, :nxl])
+
     # number of linear components
     setattr(core.dims, '_xl', nxl)
 

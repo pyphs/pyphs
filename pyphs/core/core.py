@@ -21,74 +21,6 @@ from pyphs.core.struc_tools import reduce_linear_dissipations, \
 from pyphs.latex import document, core2tex
 
 
-###############################################################################
-
-
-def symbols(obj):
-    """
-    Sympy 'symbols' function with real-valued assertion
-    """
-    return sympy.symbols(obj, real=True)
-
-###############################################################################
-
-
-def _build_get_mat(core, dims_names, name):
-    """
-    mat is ('matrix, ('m', 'n')) with matrix the matrix argument to define \
-and 'x' and 'y' the variables that corresponds to block of struct.name
-    """
-    namei, namej = dims_names
-
-    def get_mat():
-        """
-        return bloc (namei, namej) of structure matrix M.
-        """
-        debi, endi = getattr(core.inds, namei)()
-        debj, endj = getattr(core.inds, namej)()
-        return geteval(core, name)[debi:endi, debj:endj]
-    return get_mat
-
-
-def _build_set_mat(core, dims_names, name):
-    """
-    mat is ('matr', ('m', 'n')) with matr the matrix argument to define \
-and 'x' and 'y' the variables that corresponds to block of struct.name
-    """
-    vari, varj = dims_names
-
-    def set_mat(val):
-        """
-        set bloc (vari, varj) of structure matrix name to val
-        """
-        if core.M.shape[0] != core.dims.tot():
-            core.M = sympy.zeros(core.dims.tot())
-        if name == 'J':
-            Jab = sympy.Matrix(val)
-            Rab = getattr(core, 'R'+vari + varj)()
-            Rba = getattr(core, 'R'+varj + vari)()
-            Mab = Jab - Rab
-            Mba = -Jab.T - Rba
-        if name == 'R':
-            Jab = getattr(core, 'J'+vari + varj)()
-            Jba = getattr(core, 'J'+varj + vari)()
-            R = sympy.Matrix(val)
-            Mab = Jab - R
-            Mba = Jba - R.T
-        if name == 'M':
-            Mab = sympy.Matrix(val)
-            Mba = getattr(core, 'M'+varj + vari)()
-        debi, endi = getattr(core.inds, vari)()
-        debj, endj = getattr(core.inds, varj)()
-        core.M[debi:endi, debj:endj] = sympy.Matrix(Mab)
-        if vari != varj:
-            core.M[debj:endj, debi:endi] = sympy.Matrix(Mba)
-
-    return set_mat
-
-###############################################################################
-
-
 class PHSCore:
 
     def __init__(self, label=None):
@@ -134,6 +66,40 @@ class PHSCore:
         self._struc_build_set_mat = \
             lambda mat, name: _build_set_mat(self, mat, name)
         self._struc_getset()
+
+        nxl = 0
+        hess = hessian(self.H, self.x)
+        self.setexpr('Q', hess[:nxl, :nxl])
+
+        # number of linear components
+        setattr(self.dims, '_xl', nxl)
+
+        nwl = 0
+        jacz = jacobian(self.z, self.w)
+        self.setexpr('Zl', jacz[:nwl, :nwl])
+
+        # number of linear components
+        setattr(self.dims, '_wl', nwl)
+
+        names = ('xl', 'xnl', 'wl', 'wnl', 'y', 'cy')
+        self.inds._set_inds(names, self)
+
+        # get() and set() for structure matrices
+        self._struc_getset(dims_names=names)
+
+        def gen_lnl_accessors(name='dxH', dim_label='x'):
+            return (lambda: geteval(self, name)[:getattr(self.dims, dim_label+'l')()],
+                    lambda: geteval(self, name)[getattr(self.dims, dim_label+'l')():])
+        # build accessors for nonlinear and linear parts
+        for name in {'x', 'dx', 'dxH', 'dxHd'}:
+            lnl_accessors = gen_lnl_accessors(name, 'x')
+            setattr(self, name+'l', lnl_accessors[0])
+            setattr(self, name+'nl', lnl_accessors[1])
+
+        for name in {'w', 'z'}:
+            lnl_accessors = gen_lnl_accessors(name, 'w')
+            setattr(self, name+'l', lnl_accessors[0])
+            setattr(self, name+'nl', lnl_accessors[1])
 
 ###############################################################################
 
@@ -651,6 +617,73 @@ varying parameter(s).
         if title is None:
             title = r'PyPHS Core'
         document(core2tex(self), title, filename=filename)
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+
+def symbols(obj):
+    """
+    Sympy 'symbols' function with real-valued assertion
+    """
+    return sympy.symbols(obj, real=True)
+
+###############################################################################
+
+
+def _build_get_mat(core, dims_names, name):
+    """
+    mat is ('matrix, ('m', 'n')) with matrix the matrix argument to define \
+and 'x' and 'y' the variables that corresponds to block of struct.name
+    """
+    namei, namej = dims_names
+
+    def get_mat():
+        """
+        return bloc (namei, namej) of structure matrix M.
+        """
+        debi, endi = getattr(core.inds, namei)()
+        debj, endj = getattr(core.inds, namej)()
+        return geteval(core, name)[debi:endi, debj:endj]
+    return get_mat
+
+
+def _build_set_mat(core, dims_names, name):
+    """
+    mat is ('matr', ('m', 'n')) with matr the matrix argument to define \
+and 'x' and 'y' the variables that corresponds to block of struct.name
+    """
+    vari, varj = dims_names
+
+    def set_mat(val):
+        """
+        set bloc (vari, varj) of structure matrix name to val
+        """
+        if core.M.shape[0] != core.dims.tot():
+            core.M = sympy.zeros(core.dims.tot())
+        if name == 'J':
+            Jab = sympy.Matrix(val)
+            Rab = getattr(core, 'R'+vari + varj)()
+            Rba = getattr(core, 'R'+varj + vari)()
+            Mab = Jab - Rab
+            Mba = -Jab.T - Rba
+        if name == 'R':
+            Jab = getattr(core, 'J'+vari + varj)()
+            Jba = getattr(core, 'J'+varj + vari)()
+            R = sympy.Matrix(val)
+            Mab = Jab - R
+            Mba = Jba - R.T
+        if name == 'M':
+            Mab = sympy.Matrix(val)
+            Mba = getattr(core, 'M'+varj + vari)()
+        debi, endi = getattr(core.inds, vari)()
+        debj, endj = getattr(core.inds, varj)()
+        core.M[debi:endi, debj:endj] = sympy.Matrix(Mab)
+        if vari != varj:
+            core.M[debj:endj, debi:endi] = sympy.Matrix(Mba)
+
+    return set_mat
 
 ###############################################################################
 ###############################################################################

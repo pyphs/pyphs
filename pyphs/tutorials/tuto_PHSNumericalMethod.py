@@ -24,3 +24,4 @@ from pyphs import PHSNumericalMethod
 
 # instantiate a pyphs.PHSNumericalEval object associated with a pyphs.PHSCore
 method = PHSNumericalMethod(core)
+

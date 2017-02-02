@@ -7,42 +7,27 @@
 .. description: 
 .. type: text
 
-This is a companion site for the python package `PyPHS <https://github.com/afalaize/pyphs/>`__, dedicated to the treatment of passive multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
-
-------------------------
-
-This software is developped by `Antoine Falaize <https://afalaize.github.io/>`__ in association with the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
-
-Introduction
---------------
-PyPHS implements a set of numerical methods for the treatment of dynamical systems
-in the *Port-Hamiltonian Systems* (PHS) formalism. This structures physical systems into
-
-* energy conserving parts,
-* power dissipating parts and
-* source parts.
-
-Now, this guarantees a power balance is fulfilled, including for simulations based on an adapted numerical method. 
+Welcome to PyPHS!
+------------------
+PyPHS is a Python (2.7-3.5) package that implements a set of numerical methods for the simulation of multi-physical systems with the *Port-Hamiltonian Systems* approach.
 
 .. image:: /figures/home2.png
 	:width: 650
 	:align: center
 
-1. Systems are described by directed multi-graphs: 
+It provides:
 
-* use of `Networkx MultiDiGraph <https://networkx.github.io/>`__ for graph structure,
-* use of `Sympy <http://www.sympy.org/>`__ for symbolic computations.
+1. A python class `pyphs.PHSCore` that encodes the core **Port-Hamiltonian structure**. 
+2. An automated generation of PHS cores from **netlists** through 
 
-2. The time-continuous port-Hamiltonian structure is build from an automated graph analysis (see [GraphAnalysis2016]_).
+(i) the implementation of a specially designed **graph analysis** (see [GraphAnalysis2016]_), and 
+(ii) a set of elementary **components** compiled in a **dictionary**.
 
-3. The discrete-time port-Hamiltonian structure is derived from a structure preserving numerical method (see [NumericalMethod2015]_).
-
-4. **LaTeX** description code and **C++** simulation code are automatically generated:
-	
-* Use of `Sympy <http://www.sympy.org/>`__ `Latex <http://docs.sympy.org/latest/modules/printing.html#module-sympy.printing.ccode>`__ and `CCode <http://docs.sympy.org/latest/modules/printing.html#module-sympy.printing.ccode>`__ printers.
+3. A python class `pyphs.PHSSimulation` that runs the simulation of a discrete-time port-Hamiltonian structure, derived from a structure preserving numerical method (see [NumericalMethod2015]_). 
+4. An automated C++ and $\LaTeX$ code generation.
 
 .. image:: /figures/home1.png
-	:width: 500
+	:width: 580
 	:align: center
 
 Installation
@@ -56,7 +41,7 @@ With `pip <https://pypi.python.org/pypi/pip/>`__:
 See also the `GitHub repository <https://github.com/afalaize/pyphs/>`__. 
 
 
-Example
+Typical use
 --------------
 
 Consider the following serial diode-inductor-capacitor (DLC) electronic circuit:
@@ -163,7 +148,9 @@ Licence
 
 Acknowledgement
 -----------------
-The developped of this software began as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__,  through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__ between 2012 and 2016.
+This software is currently developped by `Antoine Falaize <https://afalaize.github.io/>`__ (LaSIE, CNRS UMR 7356, ULR) in association with the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
+
+The developpement of PyPHS began as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__,  through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__ between 2012 and 2016.
 
 References
 -----------

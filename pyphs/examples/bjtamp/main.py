@@ -16,6 +16,7 @@ from pyphs import PHSNetlist, PHSGraph
 label = 'bjtamp'
 os.chdir(os.path.dirname(sys.argv[0]))
 path = os.getcwd()
+
 netlist_filename = path + os.sep + label + '.net'
 netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)

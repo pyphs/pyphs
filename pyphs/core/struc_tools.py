@@ -6,6 +6,7 @@ Created on Thu Jun  9 11:46:11 2016
 """
 from __future__ import absolute_import, division, print_function
 import sympy
+from sympy.matrices.matrices import ShapeError
 from .calculus import hessian, jacobian
 from .symbs_tools import simplify
 from .misc_tools import myrange, geteval
@@ -158,6 +159,9 @@ def reduce_linear_dissipations(core):
     except AttributeError:
         core.split_linear()
         iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
+    except ShapeError:
+        core.split_linear()
+        iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
 
     Dwl = iDwl.inv()
     Mwlnl = sympy.Matrix.hstack(core.Mwlxl(),
@@ -181,7 +185,7 @@ def reduce_linear_dissipations(core):
     core.z = core.z[core.dims.wl():]
     core.dims._wl = 0
     core.M = Mnlwl*core.Zl*Dwl*Mwlnl + Mnl
-    core.build_exprs()
+    core._exprs_built = False
 
 
 def output_function(core):

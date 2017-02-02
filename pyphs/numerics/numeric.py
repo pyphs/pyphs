@@ -7,6 +7,7 @@ Created on Fri Jun  3 15:27:55 2016
 
 from __future__ import absolute_import, division, print_function
 
+from pyphs.core.misc_tools import geteval
 from pyphs.core.symbs_tools import free_symbols
 from .tools import (lambdify, find, getarg_generator, setarg_generator,
                     getfunc_generator, setfunc_generator, evalfunc_generator,
@@ -121,13 +122,13 @@ class PHSNumericalEval:
     def __init__(self, core):
         self.core = core.__deepcopy__()
         if not self.core._exprs_built:
-            self.core.exprs_build()
+            self.core.build_exprs()
         self.build()
 
     def build(self):
         # for each function, subs, stores func args, args_inds and lambda func
-        for name in self.core.exprs_names:
-            expr = getattr(self.core, name)
+        for name in self.core.exprs_names.union(self.core.struc_names):
+            expr = geteval(self.core, name)
             if hasattr(expr, 'index'):
                 expr = list(expr)
                 for i, expr_i in enumerate(expr):
@@ -139,7 +140,7 @@ class PHSNumericalEval:
             setattr(self, name, func)
             setattr(self, name+'_args', args)
             setattr(self, name+'_inds', inds)
-    
+
     @staticmethod
     def _expr_to_numerics(expr, allargs):
         """

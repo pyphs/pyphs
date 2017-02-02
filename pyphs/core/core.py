@@ -126,7 +126,7 @@ class PHSCore:
         self.inds = Indices(self)
 
         # Structure
-        self.struc_names = list()
+        self.struc_names = ['M', 'J', 'R']
         self.connectors = list()
         self.M = sympy.zeros(0)
         self._struc_build_get_mat = \
@@ -402,14 +402,15 @@ dissipative variables w are no more accessible.
 ###############################################################################
 ###############################################################################
 
-    def apply_subs(self, subs=None):
+    def apply_subs(self, subs=None, selfsubs=True):
         """
         replace all instances of key by value for each key:value in
 \PHSCore.subs
         """
         if subs is None:
             subs = {}
-        subs.update(self.subs)
+        if selfsubs:
+            subs.update(self.subs)
         for name in self.symbs_names:
             attr = getattr(self, name)
             attr = list(attr)
@@ -432,7 +433,15 @@ dissipative variables w are no more accessible.
                 attr = attr.subs(subs)
             setattr(self, name, attr)
         self.M = self.M.subs(subs)
-        self.subs = {}
+        if selfsubs:
+            self.subs = {}
+        else:
+            self.subs.update(subs)
+            for key in self.subs.keys():
+                try:
+                    self.subs[key] = self.subs[key].subs(subs)
+                except AttributeError:
+                    pass
 
     def is_nl(self):
         return bool(self.dims.xnl())

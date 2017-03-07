@@ -122,7 +122,7 @@ def free_symbols_mat(mat):
 
 
 def free_symbols(obj):
-    if hasattr(obj, 'shape') and any([e == 0 for e in obj.shape]):
+    if hasattr(obj, 'shape') and any(e == 0 for e in obj.shape):
         symbs = set()
     elif hasattr(obj, 'shape'):
         symbs = free_symbols_mat(obj)

@@ -21,10 +21,10 @@ from pyphs.tutorials.tuto_PHSCore import core
 
 # Define the simulation parameters
 config = {'fs': 48e3,               # Sample rate
-          'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
-          'theta': 0.5,             # theta-scheme for the structure
+          'gradient': 'theta',      # in {'discret', 'theta', 'trapez'}
+          'theta': .5,              # theta-scheme for the structure
           'split': False,           # apply core.split_linear() beforehand
-          'maxit': 100,             # Max number of iterations for NL solvers
+          'maxit': 10,              # Max number of iterations for NL solvers
           'numtol': 1e-16,          # Global numerical tolerance
           'path': None,             # Path to the folder to save the results
           'files_to_save': ('x', 'dx', 'dxH',
@@ -51,7 +51,7 @@ def sig(t, mode='sin'):
     elif mode == 'impact':
         dur = 0.5*1e-3
         start = 0.001
-        out = A if (t > start and t < start + dur) else 0.
+        out = A if start <= t < start + dur else 0.
     elif mode == 'none':
         out = 0.
     return numpy.array([out])

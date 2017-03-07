@@ -95,7 +95,7 @@ def sig(t, mode='sin'):
     elif mode == 'impact':
         dur = 1e-3
         start = 0.005
-        out = 1. if (t > start and t < start + dur) else 0.
+        out = 1. if start <= t < start + dur else 0.
     elif mode == 'none':
         out = 0.
     return numpy.array([out])

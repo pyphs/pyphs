@@ -147,8 +147,12 @@ class PHSNumericalEval:
         self.build(vectorize)
 
     def build(self, vectorize=True):
+        names = self.core.exprs_names
+        names = names.union(self.core.struc_names)
+        names = names.union({'dxH'})
+
         # for each function, subs, stores func args, args_inds and lambda func
-        for name in self.core.exprs_names.union(self.core.struc_names):
+        for name in names:
             expr = geteval(self.core, name)
             if hasattr(expr, 'index'):
                 expr = list(expr)

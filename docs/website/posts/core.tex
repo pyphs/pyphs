@@ -60,11 +60,11 @@ Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{out}}\end{array}\right) ;
 %
 \section{Constitutive relations}
 %
-Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{x_{\mathrm{L}}^{2}}{2 L} + \frac{x_{\mathrm{C}}^{2}}{2 C} ; $ 
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{x_{\mathrm{L}}^{2}}{2 \cdot L} + \frac{x_{\mathrm{C}}^{2}}{C} \cdot \left(\frac{Cnl}{4} \cdot x_{\mathrm{C}}^{2} + 0.5\right) ; $ 
 %
 \\
 %
-Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{x_{\mathrm{L}}}{L}\\\frac{x_{\mathrm{C}}}{C}\end{array}\right) ; $ 
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{x_{\mathrm{L}}}{L}\\\frac{1.0}{C} \cdot x_{\mathrm{C}} \cdot \left(Cnl \cdot x_{\mathrm{C}}^{2} + 1\right)\end{array}\right) ; $ 
 %
 \\
 %
@@ -81,11 +81,15 @@ Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\fr
 \hline
 parameter & value (SI)
 \\ \hline
-C :& 2e-09
+C :& 5.06605918212e-06
 \\
-R :& 1000.0
+R :& Rnl*(xL**2 + 1)
 \\
-L :& 0.05
+L :& 0.5
+\\
+Cnl :& 100000000.0
+\\
+Rnl :& 100.0
 \\
 \hline
 \end{tabular}
@@ -96,11 +100,11 @@ L :& 0.05
 %
 
 %
-$ \mathbf{M} = \left(\begin{array}{ccc}- R & -1 & -1\\1 & 0 & 0\\1 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M} = \left(\begin{array}{ccc}- Rnl \cdot \left(x_{\mathrm{L}}^{2} + 1\right) & -1 & -1\\1 & 0 & 0\\1 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{M_{xx}} = \left(\begin{array}{cc}- R & -1\\1 & 0\end{array}\right) ; $ 
+$ \mathbf{M_{xx}} = \left(\begin{array}{cc}- Rnl \cdot \left(x_{\mathrm{L}}^{2} + 1\right) & -1\\1 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -136,11 +140,11 @@ $ \mathbf{J_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $
 %
 
 %
-$ \mathbf{R} = \left(\begin{array}{ccc}1.0 R & 0 & 0\\0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{R} = \left(\begin{array}{ccc}1.0 \cdot Rnl \cdot \left(x_{\mathrm{L}}^{2} + 1\right) & 0 & 0\\0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{R_{xx}} = \left(\begin{array}{cc}1.0 R & 0\\0 & 0\end{array}\right) ; $ 
+$ \mathbf{R_{xx}} = \left(\begin{array}{cc}1.0 \cdot Rnl \cdot \left(x_{\mathrm{L}}^{2} + 1\right) & 0\\0 & 0\end{array}\right) ; $ 
 %
 \\
 %

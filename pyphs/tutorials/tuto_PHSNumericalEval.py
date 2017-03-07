@@ -62,5 +62,5 @@ for name in ('dxH', 'z', 'Jxx', 'Rxx'):
 
 # Notice function are vectorized:
 x1, x2 = range(0, 3), range(4, 7)
-print("\nVectorized evaluation:\nx1={}, x2={}".format(x1, x2))
+print("\nVectorized (not parallel) evaluation:\nx1={}, x2={}".format(x1, x2))
 print("H(x1, x2)={}".format(evals.H(x1, x2)))

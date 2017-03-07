@@ -152,14 +152,26 @@ class PHSNumericalMethod:
 
 
 def prepare_core(core, config):
-    subs = {}
+    subs_theta = {}
+    subs_trapez = {}
     for i, (xi, dxi) in enumerate(zip(core.x, core.dx())):
-        subs[xi] = xi+config['theta']*dxi
+        subs_theta[xi] = xi+config['theta']*dxi
+        subs_trapez[xi] = xi+dxi
 
     # subs the structure
-    core.M = simplify(core.M.subs(subs))
-    for i, z in enumerate(core.z):
-        core.z[i] = z.subs(subs)
+    def M_theta():
+        core.M = simplify(core.M.subs(subs_theta))
+
+    def M_trapez():
+        core.M = simplify((core.M + core.M.subs(subs_trapez))/2)
+
+    def z_theta():
+        for i, z in enumerate(core.z):
+            core.z[i] = z.subs(subs_theta)
+
+    def z_trapez():
+        for i, z in enumerate(core.z):
+            core.z[i] = (z + z.subs(subs_trapez))/2
 
     # build discrete evaluation of the gradient
     if config['gradient'] == 'discret':
@@ -167,15 +179,21 @@ def prepare_core(core, config):
         dxHnl = discrete_gradient(core.H, core.xnl(), core.dxnl(),
                                   config['numtol'])
         core._dxH = dxHl + dxHnl
+        M_theta()
+        z_theta()
     elif config['gradient'] == 'theta':
         core._dxH = gradient_theta(core.H,
                                    core.x,
                                    core.dx(),
                                    config['theta'])
+        M_theta()
+        z_theta()
     else:
         assert config['gradient'] == 'trapez', 'Unknown method for \
 gradient evaluation: {}'.format(config['gradient'])
         core._dxH = gradient_trapez(core.H, core.x, core.dx())
+        M_trapez()
+        z_trapez()
 
     core.setexpr('dxH', core.dxH)
 

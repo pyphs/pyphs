@@ -69,8 +69,8 @@ setup(name='pyphs',
         'Operating System :: Unix',
         'Operating System :: MacOS',
         'Operating System :: MacOS :: MacOS X',
-        'Operating System :: Microsoft'
-        'Operating System :: Microsoft :: Windows'
+        'Operating System :: Microsoft',
+        'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',

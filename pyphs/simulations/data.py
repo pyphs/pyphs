@@ -69,8 +69,14 @@ class PHSData:
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
 
-        for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
-            yield scalar_product(dtx, dxh)
+        if not hasattr(self.core, 'evals'):
+            self.core.build_evals()
+        H = self.core.evals.H
+        for x, dx in zip(self.x(**options), self.dx(**options)):
+            xpost = map(sum, zip(x, dx))
+            yield (H(*xpost) - H(*x))*self.config['fs']
+#        for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
+#            yield scalar_product(dtx, dxh)
 
     def pd(self, imin=None, imax=None, decim=None):
         """
@@ -150,10 +156,7 @@ class PHSData:
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
 
-        def dxtodtx(dx):
-            return dx*self.config['fs']
-
-        for dtx, w, y in zip(self.dx(postprocess=dxtodtx, **options),
+        for dtx, w, y in zip(self.dx(postprocess=self.dxtodtx, **options),
                              self.w(**options),
                              self.y(**options)):
             yield list(dtx) + list(w) + list(y)

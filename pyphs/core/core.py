@@ -13,7 +13,8 @@ from pyphs.core.misc_tools import geteval
 from pyphs.core.calculus import gradient, jacobian
 from pyphs.core.dimensions import Dimensions
 from pyphs.core.indices import Indices
-from pyphs.core.symbs_tools import _assert_expr, _assert_vec, free_symbols
+from pyphs.core.symbs_tools import (_assert_expr, _assert_vec, free_symbols,
+                                    simplify)
 from pyphs.core.struc_tools import reduce_linear_dissipations, \
     split_linear, output_function, move_stor, move_diss, move_port, \
     move_connector
@@ -304,6 +305,12 @@ argument 'name', and add 'name' to the set of expressions names \
 ###############################################################################
 ###############################################################################
 
+    def init_M(self):
+        """
+        Init the structure matrix M = J - R with zeros(nx + nw + ny + nc)
+        """
+        self.M = sympy.zeros(self.dims.tot())
+
     def _struc_getset(self, dims_names=None):
         """
         define atttributes set and get for all structure matrices
@@ -381,7 +388,7 @@ dissipative variables w are no more accessible.
 ###############################################################################
 ###############################################################################
 
-    def apply_subs(self, subs=None, selfsubs=True):
+    def apply_subs(self, subs=None, selfsubs=False):
         """
         replace all instances of key by value for each key:value in
 \PHSCore.subs
@@ -414,7 +421,9 @@ dissipative variables w are no more accessible.
                 try:
                     attr = attr.subs(subs)
                 except:
-                    print('Warning: subs did not apply for {}'.format(name))
+                    # print('Warning: subs did not apply for {}'.format(name))
+                    pass
+
             setattr(self, name, attr)
         self.M = self.M.subs(subs)
         if selfsubs:
@@ -538,6 +547,7 @@ unique PHScore.
             x = (x, )
         self.x += list(x)
         self.H += H
+        self.H.simplify()
 
     def add_dissipations(self, w, z):
         """
@@ -551,7 +561,6 @@ dissipation function z.
         z : sympy.Expr or list of
         """
         try:
-            hasattr(w, 'index')
             w = _assert_vec(w)
             z = _assert_vec(z)
             assert len(w) == len(z), 'w and z should have same dimension.'
@@ -561,7 +570,7 @@ dissipation function z.
             w = (w, )
             z = (z, )
         self.w += list(w)
-        self.z += list(z)
+        self.z += map(simplify, list(z))
 
     def add_ports(self, u, y):
         """

@@ -70,7 +70,7 @@ mat_delim = "("
 mat_str = 'array'
 
 # multiplication symbol: None, “ldot”, “dot”, or “times”
-mul_symbol = None
+mul_symbol = 'dot'
 
 # Special characters
 special_chars = ['#']

@@ -26,7 +26,7 @@ HL = xL**2/(2*L)                    # define sympy expression
 core.add_storages(xL, HL)           # add storage function to the `core` object
 
 xC, C, Cnl = core.symbols(['xC', 'C', 'Cnl'])   # define sympy symbols
-HC = (1+Cnl*xC**2)*xC**2/(2*C)      # define sympy expression
+HC = (1./2.+Cnl*xC**2/4)*xC**2/(C)      # define sympy expression
 core.add_storages(xC, HC)           # add storage function to the `core` object
 
 wR, R = core.symbols(['wR', 'R'])   # define sympy symbols
@@ -53,11 +53,11 @@ Jxy = sympy.Matrix([[-1.],
 core.set_Jxy(Jxy)
 
 # Physical parameters with f0 ~ (2*pi*sqrt(L*C))**-1
-F0 = 100.                              # 1 kH
+F0 = 100.                               # 1 kH
 L_value = 5e-1                          # 500 mH
-C_value = (2*numpy.pi*F0)**-2/L_value   # 50.66 nF
-Cnl_value = 1e8                         # d.u.
-R_value = 1e2                           # 1 kOhm
+C_value = (2*numpy.pi*F0)**-2/L_value   # 5.066 µF
+Cnl_value = 1e8                         # dimensionless
+R_value = 1e2                           # 0.1 kOhm
 
 # Dictionary with core.symbols as keys and parameters value as values
 subs = {L: L_value,
@@ -69,10 +69,9 @@ core.subs.update(subs)
 # Build of the resistive structure R in M = J-R
 core.build_R()
 
-# change R to R(xL) = Rnl * abs(xC) with Rnl = 0.1 kOhm/Coulomb
+# change R to R(xL) = Rnl * xC^
 Rnl = core.symbols('Rnl')
-core.apply_subs(subs={R: Rnl*(1+core.x[0]**2)},
-                selfsubs=False)
+core.apply_subs(subs={R: Rnl*(1+core.x[0]**2)})
 
 # save value for symbol Rnl = 0.1 kOhm/Coulomb
 core.subs.update({Rnl: 1e2})

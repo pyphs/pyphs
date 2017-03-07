@@ -6,10 +6,10 @@ Created on Tue May 24 11:20:26 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from pyphs.numerics.methods import dic_of_numerical_methods
-from pyphs.numerics import PHSNumericalCore
 from pyphs.config import standard_simulations
 from pyphs.cpp.simu2cpp import simu2cpp
+from pyphs.numerics.method import PHSNumericalMethod
+from pyphs.numerics.numeric import PHSNumericalCore
 from .data import PHSData
 from pyphs.misc.io import open_files, close_files, dump_files
 import subprocess
@@ -59,6 +59,7 @@ class PHSSimulation:
         setattr(self, '_core', core.__deepcopy__())
 
         self.fs = 0
+        self.it = list()
 
         self.init_numericalcore()
         assert self.config['language'] in ['c++', 'python']
@@ -67,22 +68,28 @@ class PHSSimulation:
 
     def init_numericalmethod(self):
         if not self.fs == self.config['fs']:
-            Method = dic_of_numerical_methods[self.config['method']]
+            Method = PHSNumericalMethod
             self.method = Method(self._core, config=self.config)
             self.fs = self.config['fs']
 
-    def init_numericalcore(self):
+    def init_numericalcore(self, x0=None):
         self.init_numericalmethod()
         setattr(self, 'nums', PHSNumericalCore(self.method,
                                                config=self.config))
+        if x0 is not None:
+            x0 = np.array(x0)
+            assert len(x0.shape) == 1, \
+                'x0 is not a 1D array, got x={}'.format(x0)
+            self.nums.set_x(x0)
 
     def init(self, sequ=None, seqp=None, x0=None, nt=None, config=None):
         if config is None:
             config = {}
         self.config.update(config)
+        self._core.M = self.nums.method.core.M
         setattr(self, 'data', PHSData(self._core, self.config))
         self.data.init_data(sequ, seqp, x0, nt)
-        self.init_numericalcore()
+        self.init_numericalcore(x0=x0)
 
     def process(self):
         """
@@ -111,6 +118,23 @@ class PHSSimulation:
             print('ratio compared to real-time: {0!s}'.format(format(
                 time_ratio, 'f')))
 
+
+    def init_pb(self):
+        pb_widgets = ['\n', 'Simulation: ',
+                      progressbar.Percentage(), ' ',
+                      progressbar.Bar(), ' ',
+                      progressbar.ETA()
+                      ]
+        self.pbar = progressbar.ProgressBar(widgets=pb_widgets,
+                                       maxval=self.data.config['nt'])
+        self.pbar.start()
+
+    def update_pb(self):
+        self.pbar.update(self.n)
+
+    def close_pb(self):
+        self.pbar.finish()
+
     def process_py(self):
 
         # get generators of u and p
@@ -122,27 +146,19 @@ class PHSSimulation:
                            self.config['files_to_save'])
 
         if self.config['progressbar']:
-            pb_widgets = ['\n', 'Simulation: ',
-                          progressbar.Percentage(), ' ',
-                          progressbar.Bar(), ' ',
-                          progressbar.ETA()
-                          ]
-            pbar = progressbar.ProgressBar(widgets=pb_widgets,
-                                           maxval=self.data.config['nt'])
-            pbar.start()
-        else:
-            print("\n*** Simulation... ***\n")
+            self.init_pb()
 
         # init time step
-        n = 0
+        self.n = 0
         for (u, p) in zip(seq_u, seq_p):
             self.nums.update(u=np.array(u), p=np.array(p))
             dump_files(self.nums, files)
-            n += 1
+            self.n += 1
             if self.config['progressbar']:
-                pbar.update(n)
+                self.update_pb()
         if self.config['progressbar']:
-            pbar.finish()
+            self.close_pb()
+
         time.sleep(0.5)
         close_files(files)
 
@@ -160,9 +176,8 @@ class PHSSimulation:
             input("Press a key when done.\nWaiting....\n")
         else:
             # Replace generic term 'phobj_path' by actual object path
-            script = \
-                self.config['cpp_build_and_run_script'].replace('pyphs_path',
-                                                      self.config['path'])
+            script = self.config['cpp_build_and_run_script']
+            script = script.replace('pyphs_path', self.config['path'])
             # exec Build and Run script
             system_call(script)
 

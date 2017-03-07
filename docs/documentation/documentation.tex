@@ -332,6 +332,214 @@ To split the system into its linear and nonlinear part, use \pythoninline{phs.sp
 
 \section{Numerical Methods}
 \subsection{PHSNumericalMethod}
+
+\begin{equation}
+\mat F_{\lab l} = \mat{I}_{\lab l}\cdot\vvl - \M{ll}\cdot\vfl- \M{lnl}\cdot\vfnl- \M{ly}\cdot\vu = \zeros.
+\end{equation}
+%
+\begin{equation}
+[\mat D]_{i,j} \triangleq \frac{\partial [\mat F_{\lab l}]_i}{\partial [\vvl]_j}
+\end{equation}
+%
+\begin{equation}
+\vec{q}_{\lab l} \triangleq \mat D\cdot \vvl - \mat F_{\lab l}\quad \Rightarrow\quad \vvl = \mat D^{-1}\cdot\vec{q}_{\lab l}
+\end{equation}
+%
+\begin{equation}
+\vfl = \left( \begin{array}{c}
+\Q\\
+\zeros
+\end{array}\right)\cdot\vxl + \left(\begin{array}{cc}
+\theta_\vx\,\Q& \zeros\\
+\zeros & \Z{l}
+\end{array}\right)\cdot\mat D ^{-1}\cdot\vec{q}_{\lab l}
+\end{equation}
+%
+\begin{equation}
+\mat F_{\lab{nl}} = \mat{I}_{\lab{nl}}\cdot\vvnl - \M{nll}\cdot\vfl- \M{nlnl}\cdot\vfnl- \M{nly}\cdot\vu = \zeros.
+\end{equation}
+%
+\begin{equation}
+\begin{array}{rcl} 
+\mat{I}_{\lab l} 
+&=& 
+\left(\begin{array}{ll}
+\frac{\Id(\nxl)}{\delta t}&\zeros \\ 
+\zeros &\Id(\nwl)
+\end{array}\right)
+\\
+\vvl
+&=& 
+\left(\begin{array}{c}
+\delta \vxl \\
+\vwl
+\end{array}\right) 
+\\
+\M{ll}
+&=&
+\left(\begin{array}{ll}
+\M{xlxl}&\M{xlwl} \\ 
+\M{wlxl}&\M{wlwl} 
+\end{array}\right)
+\\
+\M{lxl}
+&=&
+\left(\begin{array}{l}
+\M{xlxl} \\ 
+\M{wlxl} 
+\end{array}\right)
+\\
+\M{lnl}
+&=&
+\left(\begin{array}{ll}
+\M{xlxnl}&\M{xlwnl} \\ 
+\M{wlxnl}&\M{wlwnl} 
+\end{array}\right)
+\\
+\M{ly}
+&=&
+\left(\begin{array}{l}
+\M{xly} \\ 
+\M{wly} 
+\end{array}\right)
+\\
+\dxHd{l}(\vxl, \delta\vxl, \theta_\vx)
+&=&
+\Q\cdot(\vxl + \theta_\vx \, \delta\vxl)
+\\
+\vfl(\vvl; \vxl, \theta_\vx)
+&=&
+\left(\begin{array}{c}
+\dxHd{l}(\vxl, \delta\vxl, \theta_\vx) \\ 
+\Z{l} \cdot \vwl
+\end{array}\right)
+\\
+\vfnl(\vvnl; \vxnl, \theta_\vx)
+&=&
+\left(\begin{array}{c}
+\dxHd{nl}(\vxnl, \delta\vxnl, \theta_\vx) \\ 
+\vz_{\lab{nl}}(\vwnl)
+\end{array}\right)
+\\
+\N{lxl} 
+&=&
+\M{lxl}\cdot\Q
+\\
+\N{ll}
+&=&
+\M{ll}\cdot
+\left(
+\begin{array}{ll}
+\theta_\vx\,\Q& \zeros \\
+\zeros & \Z{l}
+\end{array}
+\right)
+\\
+\mat{I}_{\lab l} \cdot \vvl 
+&=&
+\M{ll}\cdot\vfl  + \M{lnl}\cdot\vfnl + \M{ly}\cdot\vu
+\\
+&=&
+\N{lxl}\cdot \vxl + \N{ll}\cdot\vvl  + \M{lnl}\cdot\vfnl + \M{ly}\cdot\vu
+\\
+\,
+\cdot 
+\left(\begin{array}{c}
+\delta \vxl \\
+\vwl
+\end{array}\right)
+ &  =&\cdot\left(\begin{array}{ll}
+\M{xlxl}&\zeros \\ 
+\zeros&\Z{l}
+\end{array}\right)\cdot \left(\begin{array}{c}
+\delta \vxl \\
+\vwl
+\end{array}\right) \\
+\mat{iD}_{\lab l} &=& \left(\begin{array}{ll}
+\frac{\Id}{\delta t}&0 \\ 
+0 &\Id
+\end{array}\right)-\left(\begin{array}{ll}
+\M{xlxl}&\M{xlwl} \\ 
+\M{wlxl}&\M{wlwl} 
+\end{array}\right)\,\left(\begin{array}{ll}
+\frac{1}{2}\,\mat{Q}&0 \\ 
+0 &\mat{Z}_{\lab l}
+\end{array}\right) 
+\\
+\overline{\N{lxl}}
+&=&
+\left(\begin{array}{ll}
+\M{xlxl}\\ 
+\M{wlxl}
+\end{array}\right)\,\mat Q
+\\
+\overline{\N{lnl}}
+&=&
+\left(\begin{array}{ll}
+\M{xlxnl} & \M{xlwnl}\\ 
+\M{wlxnl} & \M{wlwnl}
+\end{array}\right)
+\\
+\overline{\N{ly}}
+&=&
+\left(\begin{array}{ll}
+\M{xly}\\ 
+\M{wly}
+\end{array}\right)
+\\
+\overline{\N{nlnl}}
+&=&
+\left(\begin{array}{ll}
+\M{xnlxnl}& \M{xnlwnl} \\ 
+ \M{wnlxnl}& \M{wnlwnl} 
+\end{array}\right)
+\\
+\overline{\N{nll}}
+&=&
+\left(\begin{array}{ll}
+\M{xnlxl}& \M{xnlwl} \\ 
+ \M{wnlxl}& \M{wnlwl} 
+\end{array}\right)
+\,
+\left(\begin{array}{ll}
+\frac{1}{2}\Q	& 0\\ 
+0& \mat Z_\lab l
+\end{array}\right)
+\\
+\overline{\N{nlxl}}
+&=&
+\left(\begin{array}{ll}
+\M{xnlxl}\\ 
+ \M{wnlxl}
+\end{array}\right)
+\,
+\Q
+\\
+\overline{\N{nly}}
+&=&
+\left(\begin{array}{ll}
+\M{xnly}\\ 
+ \M{wnly}
+\end{array}\right)
+\\
+\mathcal{J}_{\vec f \lab {nl}}(\vec v_{\lab {nl}})
+&=&
+\left(\begin{array}{ll}
+\mathcal{J}_{\nabla \Hnl}	& 0\\ 
+0& \mathcal{J}_{\vznl}
+\end{array}\right)
+\\
+\mat I_{\lab{nl}}
+&=&
+\left(
+\begin{array}{cc}
+\frac{\Id}{\delta t} & 0 \\
+0 & \Id
+\end{array}
+\right)
+\end{array}
+\end{equation}
+
 \subsection{PHSNumericalMethodStandard}
 \appendix
 \section{Algorithms}

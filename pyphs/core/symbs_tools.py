@@ -14,11 +14,7 @@ def timeout_simplify(expr):
     @stopit.threading_timeoutable(default='not finished')
     def func():
         return sympy.simplify(expr)
-    result = func(timeout=3.)
-    if result == 'not finished':
-        return expr
-    else:
-        return result
+    return func(timeout=3.)
 
 
 def _simplify_expr(expr):
@@ -30,19 +26,29 @@ def _simplify_expr(expr):
 def _simplify_list(lis):
     assert hasattr(lis, '__len__'), "{0!s}\ntype({1!s}) not a valid argument for\
 'utils.calculus.simplify_list' ".format(lis, type(lis))
-    return timeout_simplify(lis)
+    not_finished = False
+    for i, e in enumerate(lis):
+        lis[i] = _simplify_expr(e)
+        if lis[i] == 'not finished':
+            not_finished = True
+            break
+    return 'not finished' if not_finished else lis
 
 
 def _simplify_mat(mat):
     assert hasattr(mat, 'shape'), "{0!s}\ntype({1!s}) not a valid argument for\
 'utils.calculus.simplify_mat' ".format(mat, type(mat))
     dim1, dim2 = mat.shape
+    not_finished = False
     for i in range(dim1):
         row = [elt for elt in mat[i, :]]
         row = _simplify_list(row)
+        if row == 'not finished':
+            not_finished = True
+            break
         for j in range(dim2):
             mat[i, j] = row[j]
-    return mat
+    return 'not finished' if not_finished else mat
 
 
 def simplify(obj):
@@ -74,26 +80,57 @@ def inverse(Mat, dosimplify=False):
 
 
 def matvecprod(mat, vec):
-    nvec = vec.shape[0]
-    nmat, mmat = mat.shape
-    if nvec == 0:
-        return sympy.zeros(nmat, 0)
+    """
+    Safe dot product of a matrix whith shape (m, n) and a vector with shape (l, 1).
+    """
+    assert vec.shape[1] <= 1
+    l = vec.shape[0]
+    m, n = mat.shape
+    assert l == n
+    if m == 0 or l == 0:
+        return sympy.zeros(m, 1)
     else:
         return mat*vec
 
 
 ###############################################################################
 
+def free_symbols_expr(expr):
+    _assert_expr(expr)
+    symbs = sympy.sympify(expr).free_symbols
+    return symbs
+
+
+def free_symbols_vec(vec):
+    _assert_vec(vec)
+    symbs = set()
+    for el in vec:
+        symbs = symbs.union(free_symbols_expr(el))
+    return symbs
+
+
+def free_symbols_mat(mat):
+    _assert_mat(mat)
+    m, n = mat.shape
+    symbs = set()
+    for i in range(m):
+        try:
+            symbs = symbs.union(free_symbols_vec(mat[i, :]))
+        except AssertionError:
+            pass
+    return symbs
+
 
 def free_symbols(obj):
-    if hasattr(obj, '__len__'):
+    if hasattr(obj, 'shape') and any([e == 0 for e in obj.shape]):
         symbs = set()
-        for el in obj:
-            _assert_expr(el)
-            symbs = symbs.union(sympy.sympify(el).free_symbols)
+    elif hasattr(obj, 'shape'):
+        symbs = free_symbols_mat(obj)
     else:
-        _assert_expr(obj)
-        symbs = sympy.sympify(obj.free_symbols)
+        try:
+            symbs = free_symbols_expr(obj)
+        except AssertionError:
+            symbs = free_symbols_vec(obj)
     return symbs
 
 ###############################################################################
@@ -107,7 +144,7 @@ got {0}".format(type(obj))
 def _assert_vec(obj):
     # if matrix then transpose to column vector
     if hasattr(obj, 'shape'):
-        assert 1 in obj.shape, "Matrix argument should have a single \
+        assert 1 in obj.shape, "Vector argument should have a single \
 dimension, got dim(obj)={0}".format(obj.shape)
         obj = obj.T if obj.shape[0] < obj.shape[1] else obj
     else:
@@ -130,4 +167,3 @@ got {0}".format(type(obj))
     for n in range(nrows):
         row = obj.tolist()[n]
         row = _assert_vec(row)
-        obj[n, :] = row

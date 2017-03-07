@@ -15,6 +15,7 @@ NumericalOperationParser = {'add': numpy.add,
                             'prod': lambda a1, a2: a1*a2,
                             'dot': numpy.dot,
                             'inv': numpy.linalg.inv,
+                            'div': numpy.divide,
                             'norm': lambda x: numpy.sqrt(float(numpy.dot(x,
                                                                          x))),
                             'copy': lambda x: x
@@ -46,6 +47,7 @@ def evalfunc_generator(nums, name):
     args = getattr(nums.method, name + '_args')
     inds = getattr(nums.method, name + '_inds')
     func = lambdify(args, expr, subs=nums.method.core.subs)
+
     if len(inds) > 0:
         inds = numpy.array(inds)
     else:
@@ -182,6 +184,6 @@ def regularize_dims(vec):
     """
     return column vector of zeros if vec has no shape along 2nd dimension
     """
-    if vec.shape[1] == 0:
+    if any(dim == 0 for dim in vec.shape):
         vec = sympy.zeros(vec.shape[0], 1)
     return vec

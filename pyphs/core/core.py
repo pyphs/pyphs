@@ -10,76 +10,76 @@ from __future__ import absolute_import, division, print_function
 import sympy
 import copy
 from pyphs.core.misc_tools import geteval
-from pyphs.core.discrete_calculus import discrete_gradient
-from pyphs.core.calculus import gradient, jacobian, hessian
+from pyphs.core.calculus import gradient, jacobian
 from pyphs.core.dimensions import Dimensions
 from pyphs.core.indices import Indices
-from pyphs.core.symbs_tools import _assert_expr, _assert_vec
+from pyphs.core.symbs_tools import _assert_expr, _assert_vec, free_symbols
 from pyphs.core.struc_tools import reduce_linear_dissipations, \
     split_linear, output_function, move_stor, move_diss, move_port, \
     move_connector
-from pyphs.latex import document, core2tex
+from pyphs.latex import texdocument, core2tex
+from pyphs.numerics.numeric import PHSNumericalEval
 
 
 class PHSCore:
+    """
+    This is the base class for the core *Port-Hamiltonian Systems* structure
+    in PyPHS.
+    """
+
+    _dxH = None
 
     def __init__(self, label=None):
+        """
+        Constructor for PHSCore objects.
 
-        # Self Attrs to copy
-        self.attrstocopy = {'label', '_exprs_built', 'subs', 'connectors'}
+        Parameter
+        ----------
+
+        label: None or string
+            An optional label object (default is None).
+        """
 
         # Init label
         self.label = label
 
-        # Init Flags
-        self._exprs_built = False
-
-        # init subs with empty dictionary
-        self.subs = dict()
-
-        # init symbols with empty lists
+        # init lists of symbols
         self.symbs_names = set()
         for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
             self.setsymb(name, list())
 
-        # Ordered list of names of variables considered as arguments
+        # Ordered list of symbols of variables considered as arguments
         self.args_names = ('x', 'dx', 'w', 'u', 'p')
 
+        # init expressions (and lists of expressions)
         self.exprs_names = set()
         self.setexpr('H', sympy.sympify(0))
-
-        # init with empty lists
         self.setexpr('z', list())
         self.setexpr('g', list())
 
-        # Get tools
-        self.symbols = symbols
+        # init tools
         self.dims = Dimensions(self)
         self.inds = Indices(self)
 
         # Structure
         self.struc_names = ['M', 'J', 'R']
-        self.connectors = list()
         self.M = sympy.zeros(0)
         self._struc_build_get_mat = \
             lambda mat, name: _build_get_mat(self, mat, name)
         self._struc_build_set_mat = \
             lambda mat, name: _build_set_mat(self, mat, name)
         self._struc_getset()
+        self.connectors = list()
 
-        nxl = 0
-        hess = hessian(self.H, self.x)
-        self.setexpr('Q', hess[:nxl, :nxl])
-
-        # number of linear components
-        setattr(self.dims, '_xl', nxl)
-
-        nwl = 0
-        jacz = jacobian(self.z, self.w)
-        self.setexpr('Zl', jacz[:nwl, :nwl])
+        self.setexpr('Q', sympy.zeros(0, 0))
 
         # number of linear components
-        setattr(self.dims, '_wl', nwl)
+        setattr(self.dims, '_xl', 0)
+
+        self.setexpr('Zl', sympy.zeros(0, 0))
+
+        # number of linear components
+        setattr(self.dims, '_wl', 0)
 
         names = ('xl', 'xnl', 'wl', 'wnl', 'y', 'cy')
         self.inds._set_inds(names, self)
@@ -88,10 +88,13 @@ class PHSCore:
         self._struc_getset(dims_names=names)
 
         def gen_lnl_accessors(name='dxH', dim_label='x'):
-            return (lambda: geteval(self, name)[:getattr(self.dims, dim_label+'l')()],
-                    lambda: geteval(self, name)[getattr(self.dims, dim_label+'l')():])
+            return (lambda: geteval(self, name)[:getattr(self.dims,
+                                                         dim_label+'l')()],
+                    lambda: geteval(self, name)[getattr(self.dims,
+                                                        dim_label+'l')():])
+
         # build accessors for nonlinear and linear parts
-        for name in {'x', 'dx', 'dxH', 'dxHd'}:
+        for name in {'x', 'dx', 'dxH'}:
             lnl_accessors = gen_lnl_accessors(name, 'x')
             setattr(self, name+'l', lnl_accessors[0])
             setattr(self, name+'nl', lnl_accessors[1])
@@ -101,11 +104,23 @@ class PHSCore:
             setattr(self, name+'l', lnl_accessors[0])
             setattr(self, name+'nl', lnl_accessors[1])
 
+        # Attributes to copy when calling the __copy__ method
+        self.attrstocopy = {'label', 'subs', 'connectors'}
+
+        # Dictionary for numerical substitution of all sympy.symbols
+        self.subs = dict()
+
+        # sympy.symbols method with special assumptions
+        self.symbols = symbols
+
 ###############################################################################
 
     def __add__(core1, core2):
 
         core = PHSCore()
+
+        assert set(core1.symbs_names) == set(core2.symbs_names)
+
         # Concatenate lists of symbols
         for name in core1.symbs_names:
             attr1 = getattr(core1, name)
@@ -160,6 +175,8 @@ class PHSCore:
                      ['M']):
             attr = getattr(self, name)
             setattr(core, name, copy.copy(attr))
+        core.dims._xl = copy.copy(self.dims._xl)
+        core.dims._wl = copy.copy(self.dims._wl)
         return core
 
     def __deepcopy__(self, memo=None):
@@ -171,6 +188,8 @@ class PHSCore:
                      ['M']):
             attr = getattr(self, name)
             setattr(core, name, copy.deepcopy(attr, memo))
+        core.dims._xl = copy.copy(self.dims._xl)
+        core.dims._wl = copy.copy(self.dims._wl)
         return core
 
 ###############################################################################
@@ -189,6 +208,25 @@ class PHSCore:
 state with symbol "xi" for each "xi" in state vector 'CorePHS.x'.
         """
         return [self.symbols('d'+str(x)) for x in self.x]
+
+    def dxH(self):
+        """
+        """
+        if self._dxH is None:
+            return gradient(self.H, self.x)
+        else:
+            return self._dxH
+
+    def jacz(self):
+        """
+        """
+        return jacobian(self.z, self.w)
+
+    def output(self):
+        """
+        Return the expression for y.
+        """
+        return output_function(self)
 
     def args(self):
         """
@@ -233,31 +271,6 @@ a list of symbols "name" (eg "x", "w" or "y") and add "name" to \
 ###############################################################################
 ###############################################################################
 
-    def build_exprs(self):
-        """
-        Build the following system functions as sympy expressions and append \
-them as attributes to the exprs module:
-    - 'dxH' the continuous gradient vector of storage scalar function exprs.H,
-    - 'dxHd' the discrete gradient vector of storage scalar function exprs.H,
-    - 'hessH' the continuous hessian matrix of storage scalar function exprs.H,
-    - 'jacz' the continuous jacobian matrix of dissipative vector function \
-exprs.z,
-    - 'output' the continuous output vector function,
-    - 'outputd' the discrete output vector function.
-        """
-
-        self.setexpr('dxH', gradient(self.H, self.x))
-        self.setexpr('dxHd', discrete_gradient(self.H, self.x, self.dx()))
-        self.setexpr('hessH', hessian(self.H, self.x))
-
-        self.setexpr('jacz', jacobian(self.z, self.w))
-
-        y, yd = output_function(self)
-        self.setexpr('output', y)
-        self.setexpr('outputd', yd)
-
-        self._exprs_built = True
-
     def setexpr(self, name, expr):
         """
         Add the sympy expression 'expr' to the 'CorePHS' module, with \
@@ -272,16 +285,12 @@ argument 'name', and add 'name' to the set of expressions names \
 
     def freesymbols(self):
         """
-        Retrun a set of freesymbols in all exprs in 'CorePHS.exprs_names'
+        Retrun a set of freesymbols in all exprs in 'PHSCore.exprs_names'
         """
         symbs = set()
         for name in self.exprs_names:
             attr = getattr(self, name)
-            if hasattr(attr, "__len__"):
-                for expr in attr:
-                    symbs.union(expr.free_symbols)
-            else:
-                symbs.union(attr.free_symbols)
+            symbs.union(free_symbols(attr))
         return symbs
 
 
@@ -334,11 +343,11 @@ dissipative variables w are no more accessible.
         """
         reduce_linear_dissipations(self)
 
-    def split_linear(self, split=True):
+    def split_linear(self, criterion=None):
         """
         Split the system into linear and nonlinear parts.
         """
-        split_linear(self, split=split)
+        split_linear(self, criterion=criterion)
 
     def labels(self):
         """
@@ -358,6 +367,10 @@ dissipative variables w are no more accessible.
 
 ###########################################################################
 ###########################################################################
+
+    def build_evals(self):
+        self.evals = PHSNumericalEval(self)
+
 ###############################################################################
 ###############################################################################
 ###############################################################################
@@ -386,17 +399,22 @@ dissipative variables w are no more accessible.
                 except AttributeError:
                     pass
             setattr(self, name, attr)
-        for name in self.exprs_names:
+        for name in self.exprs_names.union(['_dxH']):
             attr = getattr(self, name)
-            if hasattr(attr, "__len__"):
+            if hasattr(attr, "shape"):
+                ni, nj = attr.shape
+                for i in range(ni):
+                    for j in range(nj):
+                        attr[i, j] = attr[i, j].subs(subs)
+            elif hasattr(attr, "__len__"):
                 attr = list(attr)
                 for i, at in enumerate(attr):
-                    try:
-                        attr[i] = at.subs(subs)
-                    except AttributeError:
-                        pass
+                    attr[i] = at.subs(subs)
             else:
-                attr = attr.subs(subs)
+                try:
+                    attr = attr.subs(subs)
+                except:
+                    print('Warning: subs did not apply for {}'.format(name))
             setattr(self, name, attr)
         self.M = self.M.subs(subs)
         if selfsubs:
@@ -616,7 +634,7 @@ varying parameter(s).
             filename = 'core.tex'
         if title is None:
             title = r'PyPHS Core'
-        document(core2tex(self), title, filename=filename)
+        texdocument(core2tex(self), title, filename=filename)
 
 ###############################################################################
 ###############################################################################

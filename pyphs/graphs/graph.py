@@ -44,14 +44,13 @@ port-Hamiltonian systems.
     def set_analysis(self, verbose=False, plot=False):
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
-    def buildCore(self, verbose=False, plot=False, build_exprs=True):
+    def buildCore(self, verbose=False, plot=False, apply_connectors=True):
         self.set_analysis(verbose=verbose, plot=plot)
         self.analysis.perform()
         buildCore(self)
         core = self.core.__deepcopy__()
-        if build_exprs:
+        if apply_connectors:
             core.apply_connectors()
-            core.build_exprs()
         return core
 
     def build_from_netlist(self):

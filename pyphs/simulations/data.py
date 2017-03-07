@@ -80,11 +80,9 @@ class PHSData:
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
-        R = self.core.R()
-        from pyphs.numerics.tools import lambdify
-        lambda_R = lambdify(self.core.args(),
-                            R,
-                            subs=self.core.subs)
+        if not hasattr(self.core, 'evals'):
+            self.core.build_evals()
+        R = self.core.evals.R
         for w, z, a, b, args in zip(self.w(**options),
                                     self.z(**options),
                                     self.a(**options),
@@ -93,7 +91,7 @@ class PHSData:
             yield scalar_product(w, z) + \
                 scalar_product(a,
                                a,
-                               lambda_R(*args))
+                               R(*[args[i] for i in self.core.evals.R_inds]))
 
     def ps(self, imin=None, imax=None, decim=None):
         """
@@ -208,8 +206,8 @@ class PHSData:
         if x0 is None:
             x0 = [0, ]*self.core.dims.x()
         else:
-            assert isinstance(x0, list), \
-                'x0 not a list, got {0!s}'.format(x0)
+            assert isinstance(x0, (list, tuple, numpy.array)), \
+                'x0 not a list, tuple or numpy.array: got {}'.format(x0)
             assert len(x0) == self.core.dims.x(), 'len(x0) is len(x)'
             assert isinstance(x0[0], (float, int)), \
                 'x0[0] not a number, got {0!s}'.format(type(x0[0]))

@@ -176,17 +176,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><div id="toc-static"></div>
-Here, we define the port-Hamiltonian structure associated with the standard serial resistor-coil-capacitor (RLC) circuit.
+<p>In this tutorial, we firstly recall the <em>port-Hamiltonian systems (PHS)</em> formalism in parallel with a description of the <code>pyphs.PHSCore</code> object. Secondly, we build the <code>pyphs.PHSCore</code> object associated with the standard serial resistor-coil-capacitor (RLC) circuit.
 <!-- TEASER_END --></p>
-<p>Steps are:</p>
-<ol>
-<li>prepare the <em>governing equations</em>,</li>
-<li>instantiate a <code>pyphs.PHSCore</code> <em>object</em>,</li>
-<li>add the <em>components</em> (storage, dissipative and source),</li>
-<li>define the <em>PHS structure</em> matrices (serial connection),</li>
-<li>set the <em>physical parameters</em>.</li>
-</ol>
 
 </div>
 </div>
@@ -196,7 +187,15 @@ Here, we define the port-Hamiltonian structure associated with the standard seri
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="1.-Governing-equations">1. Governing equations<a class="anchor-link" href="#1.-Governing-equations">&#182;</a></h1><p>Following the reference <a href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1, §2.2]</a>, the RLC circuit is described as follows:</p>
+<h1 id="Core-PHS-structure-of-the-RLC-circuit">Core PHS structure of the RLC circuit<a class="anchor-link" href="#Core-PHS-structure-of-the-RLC-circuit">&#182;</a></h1><p>Steps are:</p>
+<ol>
+<li>prepare the <em>governing equations</em>,</li>
+<li>instantiate a <code>pyphs.PHSCore</code> <em>object</em>,</li>
+<li>add the <em>components</em> (storage, dissipative and source),</li>
+<li>define the <em>PHS structure</em> matrices (serial connection),</li>
+<li>set the <em>physical parameters</em>.</li>
+</ol>
+<h2 id="1.-Governing-equations">1. Governing equations<a class="anchor-link" href="#1.-Governing-equations">&#182;</a></h2><p>Following the reference <a href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1, §2.2]</a>, the RLC circuit is described as follows:</p>
 <ul>
 <li>$x_L$ is the coil flux so that $v_L = \frac{\mathrm d x_L}{\mathrm d  t}$ is the coil voltage, </li>
 <li>$x_C$ is the electric charge associated with the capacitor so that $i_C = \frac{\mathrm d x_C}{\mathrm d  t}$ is the capacitor current, </li>
@@ -220,12 +219,12 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 1 & 0 & 0 & 0 \\ \hline
 1 & 0 & 0 & 0 \\  \hline
 1 & 0 & 0 & 0
-\end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right) $$<h3 id="Physical-parameters">Physical parameters<a class="anchor-link" href="#Physical-parameters">&#182;</a></h3><ul>
+\end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right) $$<h4 id="Physical-parameters">Physical parameters<a class="anchor-link" href="#Physical-parameters">&#182;</a></h4><ul>
 <li>$C=2\times 10^{-9}$F, </li>
 <li>$L=50\times 10^{-3}$H, </li>
 <li>$R = 10^3\Omega$.</li>
 </ul>
-<h1 id="2.-Object-instantiation">2. Object instantiation<a class="anchor-link" href="#2.-Object-instantiation">&#182;</a></h1>
+<h2 id="2.-Object-instantiation">2. Object instantiation<a class="anchor-link" href="#2.-Object-instantiation">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -299,7 +298,7 @@ core.Jxy() = Matrix(0, 0, [])
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="3.-Adding-the-components">3. Adding the components<a class="anchor-link" href="#3.-Adding-the-components">&#182;</a></h1><h2 id="Defining-symbols">Defining symbols<a class="anchor-link" href="#Defining-symbols">&#182;</a></h2><p>The <code>pyphs</code> package is based on the <code>sympy</code> package to provide the symbolic manipulation of PHS structures. To declare symbols, we use the <code>phs.symbols</code> method. As an example, we declare below the symbols associated with the coil:</p>
+<h2 id="3.-Adding-the-components">3. Adding the components<a class="anchor-link" href="#3.-Adding-the-components">&#182;</a></h2><h3 id="Defining-symbols">Defining symbols<a class="anchor-link" href="#Defining-symbols">&#182;</a></h3><p>The <code>pyphs</code> package is based on the <code>sympy</code> package to provide the symbolic manipulation of PHS structures. To declare symbols, we use the <code>phs.symbols</code> method. As an example, we declare below the symbols associated with the coil:</p>
 <ul>
 <li>the state $x_L$ (magnetic flux of the coil), and </li>
 <li>the parameter $L$ (coil inductance).</li>
@@ -326,7 +325,7 @@ core.Jxy() = Matrix(0, 0, [])
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Defining-expressions">Defining expressions<a class="anchor-link" href="#Defining-expressions">&#182;</a></h2><p>Now, the variables <code>xL</code> and <code>L</code> are instances of the <code>sympy.Symbol</code> object, with the assumption that quantities are real-valued only. Then, expressions can be defined with the standard <code>sympy</code> syntax. As an example, we define below the storage function associated with the coil $H_L(x_L)=\frac{x_L^2}{2L}$:</p>
+<h3 id="Defining-expressions">Defining expressions<a class="anchor-link" href="#Defining-expressions">&#182;</a></h3><p>Now, the variables <code>xL</code> and <code>L</code> are instances of the <code>sympy.Symbol</code> object, with the assumption that quantities are real-valued only. Then, expressions can be defined with the standard <code>sympy</code> syntax. As an example, we define below the storage function associated with the coil $H_L(x_L)=\frac{x_L^2}{2L}$:</p>
 
 </div>
 </div>
@@ -349,7 +348,7 @@ core.Jxy() = Matrix(0, 0, [])
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="the-core.add_storages-method">the <code>core.add_storages</code> method<a class="anchor-link" href="#the-core.add_storages-method">&#182;</a></h2><p>To include a storage component to a <code>PHSCore</code>, we make use of the <code>core.add_storages</code> method:</p>
+<h3 id="the-core.add_storages-method">the <code>core.add_storages</code> method<a class="anchor-link" href="#the-core.add_storages-method">&#182;</a></h3><p>To include a storage component to a <code>PHSCore</code>, we make use of the <code>core.add_storages</code> method:</p>
 
 </div>
 </div>
@@ -512,7 +511,7 @@ core.H = xL**2/(2*L) + xC**2/(2*C)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="the-core.add_dissipations-method">the <code>core.add_dissipations</code> method<a class="anchor-link" href="#the-core.add_dissipations-method">&#182;</a></h2><p>To include a dissipative component to a <code>PHSCore</code>, we make use of the <code>core.add_dissipations</code> method:</p>
+<h3 id="the-core.add_dissipations-method">the <code>core.add_dissipations</code> method<a class="anchor-link" href="#the-core.add_dissipations-method">&#182;</a></h3><p>To include a dissipative component to a <code>PHSCore</code>, we make use of the <code>core.add_dissipations</code> method:</p>
 
 </div>
 </div>
@@ -668,7 +667,7 @@ add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="the-core.add_ports-method">the <code>core.add_ports</code> method<a class="anchor-link" href="#the-core.add_ports-method">&#182;</a></h2><p>To include an external port to a <code>PHSCore</code> object, we make use of the <code>core.add_ports</code> method:</p>
+<h3 id="the-core.add_ports-method">the <code>core.add_ports</code> method<a class="anchor-link" href="#the-core.add_ports-method">&#182;</a></h3><p>To include an external port to a <code>PHSCore</code> object, we make use of the <code>core.add_ports</code> method:</p>
 
 </div>
 </div>
@@ -739,7 +738,7 @@ add_ports(self, u, y) method of pyphs.core.core.PHSCore instance
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="4.-Defining-the-interconnection-structure">4. Defining the interconnection structure<a class="anchor-link" href="#4.-Defining-the-interconnection-structure">&#182;</a></h1><p>The interconnection structure of a PHS is defined by the matrix $\mathbf M$ structured as $$\mathbf M = \mathbf J- \mathbf R,$$ where</p>
+<h2 id="4.-Defining-the-interconnection-structure">4. Defining the interconnection structure<a class="anchor-link" href="#4.-Defining-the-interconnection-structure">&#182;</a></h2><p>The interconnection structure of a PHS is defined by the matrix $\mathbf M$ structured as $$\mathbf M = \mathbf J- \mathbf R,$$ where</p>
 <ul>
 <li>the skew-symmetric matrix $\mathbf J = \frac{1}{2}\left(\mathbf M- \mathbf M^\intercal\right) $ encodes the <em>conservative interconnection</em>, and </li>
 <li>the symmetric positive definite matrix $\mathbf R = \frac{-1}{2}\left(\mathbf M + \mathbf M^\intercal\right)$ encodes the <em>dissipative interconnection</em>.</li>
@@ -1016,7 +1015,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="5.-Setting-the-physical-parameters-values">5. Setting the physical parameters values<a class="anchor-link" href="#5.-Setting-the-physical-parameters-values">&#182;</a></h1><p>The correspondence between the parameters symbols defined above (here <code>L</code>, <code>C</code> and <code>R</code>) and their actual value is stored in the python dictionary <code>core.subs</code>, with parameters symbols as the dictionary's keys and numerical values as the dictionary's values. Here, the physical parameters are</p>
+<h2 id="5.-Setting-the-physical-parameters-values">5. Setting the physical parameters values<a class="anchor-link" href="#5.-Setting-the-physical-parameters-values">&#182;</a></h2><p>The correspondence between the parameters symbols defined above (here <code>L</code>, <code>C</code> and <code>R</code>) and their actual value is stored in the python dictionary <code>core.subs</code>, with parameters symbols as the dictionary's keys and numerical values as the dictionary's values. Here, the physical parameters are</p>
 <ul>
 <li>$L=50\times 10^{-3}$H, </li>
 <li>$C=2\times 10^{-9}$F, </li>
@@ -1053,7 +1052,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Bonus:-Generate-the-$\LaTeX$-description">Bonus: Generate the $\LaTeX$ description<a class="anchor-link" href="#Bonus:-Generate-the-$\LaTeX$-description">&#182;</a></h1><p>A <code>.tex</code> file containing a description of the system can now be generated with the <code>core.texwrite</code> command as follows:</p>
+<h2 id="Bonus:-Generate-the-$\LaTeX$-description">Bonus: Generate the $\LaTeX$ description<a class="anchor-link" href="#Bonus:-Generate-the-$\LaTeX$-description">&#182;</a></h2><p>A <code>.tex</code> file containing a description of the system can now be generated with the <code>core.texwrite</code> command as follows:</p>
 
 </div>
 </div>

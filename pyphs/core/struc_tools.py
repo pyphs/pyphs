@@ -6,9 +6,8 @@ Created on Thu Jun  9 11:46:11 2016
 """
 from __future__ import absolute_import, division, print_function
 import sympy
-from sympy.matrices.matrices import ShapeError
 from .calculus import hessian, jacobian
-from .symbs_tools import simplify
+from .symbs_tools import simplify, free_symbols
 from .misc_tools import myrange, geteval
 
 
@@ -25,6 +24,8 @@ def moveMcolnrow(core, indi, indf):
 def move_stor(core, indi, indf):
     new_indices = myrange(core.dims.x(), indi, indf)
     core.x = [core.x[el] for el in new_indices]
+    if core._dxH is not None:
+        core._dxH = [core._dxH[el] for el in new_indices]
     moveMcolnrow(core, indi, indf)
 
 
@@ -93,78 +94,63 @@ def split_monovariate(core):
     core.dims.wns = core.dims.w()-i
 
 
-def split_linear(core, split=True):
+def split_linear(core, criterion=None):
     """
     """
+    if criterion is None:
+        args = (core.x + core.dx() + core.w, core.dx() + core.w)
+        mats = (hessian(core.H, core.x), jacobian(core.z, core.w))
+        criterion = zip(mats, args)
+
     # split storage part
     nxl = 0
-    hess = hessian(core.H, core.x)
-    if split:
-        for _ in range(core.dims.x()):
-            hess_line = list(hess[nxl, :].T)
-            # init line symbols
-            line_symbols = set()
-            # collect line symbols
-            for el in hess_line:
-                line_symbols = line_symbols.union(el.free_symbols)
-            # if symbols are not states
-            if not any(el in line_symbols for el in core.x):
-                # do nothing and increment counter
-                nxl += 1
-            else:
-                # move the element at the end of states vector
-                move_stor(core, nxl, core.dims.x()-1)
-                hess = movesquarematrixcolnrow(hess, nxl, core.dims.x()-1)
-    core.setexpr('Q', hess[:nxl, :nxl])
-
+    hess = criterion[0][0]
+    arg = criterion[0][1]
+    for _ in range(hess.shape[0]):
+        # hess_row = list(hess[nxl, :].T)
+        hess_col = list(hess[:, nxl])
+        # collect line symbols
+        symbs = free_symbols(hess_col)
+        # if symbols are not states
+        if symbs.isdisjoint(arg):
+            # do nothing and increment counter
+            nxl += 1
+        else:
+            # move the element at the end of states vector
+            move_stor(core, nxl, core.dims.x()-1)
+            hess = movesquarematrixcolnrow(hess, nxl, core.dims.x()-1)
     # number of linear components
     setattr(core.dims, '_xl', nxl)
+    setattr(core, 'Q', hessian(core.H, core.xl()))
 
     # split dissipative part
     nwl = 0
-    jacz = jacobian(core.z, core.w)
-    if split:
-        for _ in range(core.dims.w()):
-            jacz_line = list(jacz[nwl, :].T)
-            # init line symbols
-            line_symbols = set()
-            # collect line symbols
-            for el in jacz_line:
-                line_symbols = line_symbols.union(el.free_symbols)
-            # if symbols are not dissipation variables
-            if not any(el in line_symbols for el in core.w):
-                # do nothing and increment counter
-                nwl += 1
-            else:
-                # move the element to end of dissipation variables vector
-                move_diss(core, nwl, core.dims.w()-1)
-                jacz = movesquarematrixcolnrow(jacz, nwl, core.dims.w()-1)
-    core.setexpr('Zl', jacz[:nwl, :nwl])
-
+    jacz = criterion[1][0]
+    arg = criterion[1][1]
+    for _ in range(jacz.shape[0]):
+        # jacz_row = list(jacz[nwl, :].T)
+        jacz_col = list(jacz[:, nwl])
+        # collect line symbols
+        symbs = free_symbols(jacz_col)
+        # if symbols are not dissipation variables
+        if symbs.isdisjoint(arg):
+            # do nothing and increment counter
+            nwl += 1
+        else:
+            # move the element to end of dissipation variables vector
+            move_diss(core, nwl, core.dims.w()-1)
+            jacz = movesquarematrixcolnrow(jacz, nwl, core.dims.w()-1)
     # number of linear components
     setattr(core.dims, '_wl', nwl)
-
-    names = ('xl', 'xnl', 'wl', 'wnl', 'y', 'cy')
-    core.inds._set_inds(names, core)
-
-    # get() and set() for structure matrices
-    core._struc_getset(dims_names=names)
-
-    # build expressions for the new structure
-    core.build_exprs()
+    core.setexpr('Zl', jacobian(core.zl(), core.wl()))
 
 
 def reduce_linear_dissipations(core):
-    try:
-        iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
-    except AttributeError:
-        core.split_linear()
-        iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
-    except ShapeError:
-        core.split_linear()
-        iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
 
+    core.split_linear()
+    iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
     Dwl = iDwl.inv()
+
     Mwlnl = sympy.Matrix.hstack(core.Mwlxl(),
                                 core.Mwlxnl(),
                                 core.Mwlwnl(),
@@ -186,7 +172,6 @@ def reduce_linear_dissipations(core):
     core.z = core.z[core.dims.wl():]
     core.dims._wl = 0
     core.M = Mnlwl*core.Zl*Dwl*Mwlnl + Mnl
-    core._exprs_built = False
 
 
 def output_function(core):
@@ -211,10 +196,9 @@ components, considering the discrete version of storage function gradient
         Vyu = core.Myy()*sympy.Matrix(core.u)
 
         if core.dims.x() > 0:  # Check if system has storage parts
-            Vyx = core.Myx()*sympy.Matrix(core.dxH)
-            Vyxd = core.Myx()*sympy.Matrix(core.dxHd)
+            Vyx = core.Myx()*sympy.Matrix(core.dxH())
         else:
-            Vyx = Vyxd = sympy.zeros(core.dims.y(), 1)
+            Vyx = sympy.zeros(core.dims.y(), 1)
 
         if core.dims.w() > 0:  # Check if system has dissipative parts
             Vyw = core.Myw()*sympy.Matrix(core.z)
@@ -224,11 +208,7 @@ components, considering the discrete version of storage function gradient
         out = list(Vyx + Vyw + Vyu)
         out = simplify(out)
 
-        outd = list(Vyxd + Vyw + Vyu)
-        outd = simplify(outd)
-
     else:
         out = sympy.Matrix(list(list()))
-        outd = sympy.Matrix(list(list()))
 
-    return list(out), list(outd)
+    return list(out)

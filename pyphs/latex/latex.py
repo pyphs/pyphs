@@ -60,7 +60,7 @@ def docpreamble(title):
     return str_preamble + latex_authors + latex_affiliations
 
 
-def document(content, title, filename=None):
+def texdocument(content, title, filename=None):
     """
     return latex code as plain string for global phs description
     """

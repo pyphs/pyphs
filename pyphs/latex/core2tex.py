@@ -65,8 +65,6 @@ def coresyms2tex(core):
 
 
 def coreexprs2tex(core):
-    if not core._exprs_built:
-        core.build_exprs()
     sm = symbol_names(core)
     str_relations = cr(2)
     str_relations += r"\section{Constitutive relations}"
@@ -74,7 +72,7 @@ def coreexprs2tex(core):
         str_relations += obj2tex(core.H, r'\mathtt{H}(\mathbf{x})',
                                  'Hamiltonian', sm,
                                  toMatrix=False)
-        str_relations += obj2tex(core.dxH,
+        str_relations += obj2tex(core.dxH(),
                                  r'\nabla \mathtt{H}(\mathbf{x})',
                                  'Hamiltonian gradient', sm)
     if core.dims.w() > 0:

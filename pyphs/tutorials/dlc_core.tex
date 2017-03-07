@@ -81,13 +81,13 @@ Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\fr
 \hline
 parameter & value (SI)
 \\ \hline
-C :& 2e-09
+C :& 5.06605918212e-08
 \\
-R :& r*Abs(xC)
+R :& r
 \\
-r :& 1000.0
+r :& 100.0
 \\
-L :& 0.05
+L :& 0.5
 \\
 \hline
 \end{tabular}
@@ -98,11 +98,11 @@ L :& 0.05
 %
 
 %
-$ \mathbf{M} = \left(\begin{array}{ccc}- 1.0 r \left|{x_{\mathrm{C}}}\right| & -1.0 & -1.0\\1.0 & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M} = \left(\begin{array}{ccc}- 1.0 r & -1.0 & -1.0\\1.0 & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{M_{xx}} = \left(\begin{array}{cc}- 1.0 r \left|{x_{\mathrm{C}}}\right| & -1.0\\1.0 & 0\end{array}\right) ; $ 
+$ \mathbf{M_{xx}} = \left(\begin{array}{cc}- 1.0 r & -1.0\\1.0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -138,11 +138,11 @@ $ \mathbf{J_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $
 %
 
 %
-$ \mathbf{R} = \left(\begin{array}{ccc}1.0 r \left|{x_{\mathrm{C}}}\right| & 0 & 0\\0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{R} = \left(\begin{array}{ccc}1.0 r & 0 & 0\\0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{R_{xx}} = \left(\begin{array}{cc}1.0 r \left|{x_{\mathrm{C}}}\right| & 0\\0 & 0\end{array}\right) ; $ 
+$ \mathbf{R_{xx}} = \left(\begin{array}{cc}1.0 r & 0\\0 & 0\end{array}\right) ; $ 
 %
 \\
 %

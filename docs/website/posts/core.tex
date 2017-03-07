@@ -30,7 +30,7 @@ $\dim(\mathbf{x})=$ $ n_\mathbf{x} = 2 ; $
 %
 \\
 %
-$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 1 ; $ 
+$\dim(\mathbf{w})=$ $ n_\mathbf{w} = 0 ; $ 
 %
 \\
 %
@@ -46,10 +46,6 @@ $\dim(\mathbf{p})=$ $ n_\mathbf{p} = 0 ; $
 \section{System variables}
 %
 State variable $ \mathbf{x} = \left(\begin{array}{c}x_{\mathrm{L}}\\x_{\mathrm{C}}\end{array}\right) ; $ 
-%
-\\
-%
-Dissipation variable $ \mathbf{w} = \left(\begin{array}{c}w_{\mathrm{R}}\end{array}\right) ; $ 
 %
 \\
 %
@@ -69,14 +65,6 @@ Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{x_{\mathrm{L}}^{2}}{2 L} + \frac{x_
 \\
 %
 Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{x_{\mathrm{L}}}{L}\\\frac{x_{\mathrm{C}}}{C}\end{array}\right) ; $ 
-%
-\\
-%
-Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}R w_{\mathrm{R}}\end{array}\right) ; $ 
-%
-\\
-%
-Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{c}R\end{array}\right) ; $ 
 %
 \\
 %
@@ -108,15 +96,11 @@ L :& 0.05
 %
 
 %
-$ \mathbf{M} = \left(\begin{array}{cccc}0 & -1 & -1 & -1\\1 & 0 & 0 & 0\\1 & 0 & 0 & 0\\1 & 0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M} = \left(\begin{array}{ccc}- R & -1 & -1\\1 & 0 & 0\\1 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{M_{xx}} = \left(\begin{array}{cc}0 & -1\\1 & 0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{M_{xw}} = \left(\begin{array}{c}-1\\0\end{array}\right) ; $ 
+$ \mathbf{M_{xx}} = \left(\begin{array}{cc}- R & -1\\1 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -124,23 +108,7 @@ $ \mathbf{M_{xy}} = \left(\begin{array}{c}-1\\0\end{array}\right) ; $
 %
 \\
 %
-$ \mathbf{M_{wx}} = \left(\begin{array}{cc}1 & 0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{M_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{M_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
-%
-\\
-%
 $ \mathbf{M_{yx}} = \left(\begin{array}{cc}1 & 0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{M_{yw}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
 %
 \\
 %
@@ -150,7 +118,7 @@ $ \mathbf{M_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $
 %
 
 %
-$ \mathbf{J} = \left(\begin{array}{cccc}0 & -1.0 & -1.0 & -1.0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{J} = \left(\begin{array}{ccc}0 & -1.0 & -1.0\\1.0 & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -158,19 +126,7 @@ $ \mathbf{J_{xx}} = \left(\begin{array}{cc}0 & -1.0\\1.0 & 0\end{array}\right) ;
 %
 \\
 %
-$ \mathbf{J_{xw}} = \left(\begin{array}{c}-1.0\\0\end{array}\right) ; $ 
-%
-\\
-%
 $ \mathbf{J_{xy}} = \left(\begin{array}{c}-1.0\\0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{J_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{J_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
 %
 \\
 %
@@ -180,27 +136,15 @@ $ \mathbf{J_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $
 %
 
 %
-$ \mathbf{R} = \left(\begin{array}{cccc}0 & 0 & 0 & 0\\0 & 0 & 0 & 0\\0 & 0 & 0 & 0\\0 & 0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{R} = \left(\begin{array}{ccc}1.0 R & 0 & 0\\0 & 0 & 0\\0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{R_{xx}} = \left(\begin{array}{cc}0 & 0\\0 & 0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{R_{xw}} = \left(\begin{array}{c}0\\0\end{array}\right) ; $ 
+$ \mathbf{R_{xx}} = \left(\begin{array}{cc}1.0 R & 0\\0 & 0\end{array}\right) ; $ 
 %
 \\
 %
 $ \mathbf{R_{xy}} = \left(\begin{array}{c}0\\0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{R_{ww}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
-%
-\\
-%
-$ \mathbf{R_{wy}} = \left(\begin{array}{c}0\end{array}\right) ; $ 
 %
 \\
 %

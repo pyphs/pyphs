@@ -3,6 +3,8 @@
 """
 Created on Sat Jan 14 11:50:23 2017
 
+Here, we build the PHS core asssociated with the
+
 @author: Falaize
 """
 

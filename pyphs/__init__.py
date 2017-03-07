@@ -2,18 +2,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-import sys
-
 from .core.core import PHSCore
 from .graphs.graph import PHSGraph
+from .graphs import netlist2core
 from .graphs.netlists import PHSNetlist
 from .numerics import (PHSNumericalMethod, PHSNumericalCore,
-                       PHSNumericalEval, PHSNumericalOperation,
-                       PHSNumericalMethodStandard)
+                       PHSNumericalEval, PHSNumericalOperation)
 from .simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
-from .latex import core2tex, netlist2tex, graphplot2tex, document
+from .latex import core2tex, netlist2tex, graphplot2tex, texdocument
 from .cpp.numcore2cpp import numcore2cpp
 from .cpp.simu2cpp import simu2cpp
 
@@ -22,21 +19,11 @@ __licence__ = \
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.2.pre1'
-__author_email__ = 'antoine.falaize@gmail.com'
+__version__ = '0.2.pre3'
+__author_email__ = 'antoine.falaize@ircam.fr'
 
 __all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
-           'signalgenerator', 'PHSNumericalMethodStandard',
-           'PHSNumericalOperation', 'PHSNumericalMethod', 'PHSNumericalCore',
-           'PHSNumericalEval',
-           'core2tex', 'netlist2tex', 'graphplot2tex', 'document',
-           'numcore2cpp', 'simu2cpp']
-
-
-def __licence_text__():
-    "PRINT OF THE LICENCE"
-    os.chdir(os.path.dirname(sys.argv[0]))
-    file_ = open(r'./LICENCE.rst', "r")
-    with file_ as openfileobject:
-        for line in openfileobject:
-            print(line)
+           'signalgenerator', 'PHSNumericalOperation', 'PHSNumericalMethod',
+           'PHSNumericalCore', 'PHSNumericalEval',
+           'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
+           'numcore2cpp', 'simu2cpp', 'netlist2core']

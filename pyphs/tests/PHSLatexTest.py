@@ -8,7 +8,7 @@ Created on Tue Dec 27 18:24:27 2016
 
 from pyphs.tests.data import NetlistThieleSmallNL
 from pyphs import PHSGraph
-from pyphs.latex import document, core2tex
+from pyphs.latex import texdocument, core2tex
 
 
 def TestCore2Tex():
@@ -16,5 +16,5 @@ def TestCore2Tex():
     graph = PHSGraph(netlist=netlist)
     core = graph.buildCore()
     content = core2tex(core)
-    document(content, 'test core2tex', 'test_core2tex.tex')
+    texdocument(content, 'test core2tex', 'test_core2tex.tex')
     return True

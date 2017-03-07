@@ -132,17 +132,24 @@ NAVIGATION_LINKS = {
         ("/docs/documentation.pdf", "Documentation"),
         (
         	(
-        		("/posts/phscore/", "1. Declaration"), 
-        		("/posts/phssimu/", "2. Simulation"), 
-        		("/posts/phsgraph/", "3. Graph analysis"), 
+        		("/posts/port-hamiltonian-systems/", "Port-Hamiltonian Systems"),
+        	), 
+        	"Port-Hamiltonian Systems"
+        ),
+        (
+        	(
+        		("/posts/port-hamiltonian-systems/", "Port-Hamiltonian Systems"),
+        		("/posts/phscore/", "PHSCore"), 
+        		("/building/", "PHSSimulation"), 
+        		("/building/", "PHSGraph"), 
         	), 
         	"Tutorials"
         ),
         (
         	(
         		("/posts/electronics/", "Electronic"), 
-        		("/posts/mechanics/", "Mechanic"), 
-        		("/posts/magnetic/", "Magnetic"), 
+        		("/building/", "Mechanic"), 
+        		("/building/", "Magnetic"), 
         	), 
         	"Dictionary"
         ),

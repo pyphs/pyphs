@@ -3,9 +3,9 @@
 Copyright or © or Copr. Antoine Falaize and Thomas Hélie
 
 Affiliation:
-Project-Team S3 (Sound Signals and Systems), Analysis/Synthesis team, 
-Laboratory of Sciences and Technologies of Music and Sound (UMR 9912), 
-IRCAM-CNRS-UPMC, 
+Project-Team S3 (Sound Signals and Systems), Analysis/Synthesis team,
+Laboratory of Sciences and Technologies of Music and Sound (UMR 9912),
+IRCAM-CNRS-UPMC,
 1 place Igor Stravinsky, F-75004 Paris
 
 contributor(s) : Antoine Falaize, Thomas Hélie, Thu Jul 9 23:11:37 2015
@@ -47,7 +47,7 @@ Created on Thu Jun  2 21:33:07 2016
 
 from __future__ import absolute_import
 from setuptools import setup
-from pyphs import __author__, __version__, __licence__, __author_email__ 
+from pyphs import __author__, __version__, __licence__, __author_email__
 
 
 ###############################################################################
@@ -67,11 +67,10 @@ setup(name='pyphs',
         'Natural Language :: English',
         'Development Status :: 3 - Alpha',
         'Operating System :: Unix',
-		'Operating System :: MacOS',
+        'Operating System :: MacOS',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft'
         'Operating System :: Microsoft :: Windows'
-        'Environment :: Console',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
@@ -92,7 +91,6 @@ setup(name='pyphs',
                 'pyphs.simulations',
                 'pyphs.plots',
                 'pyphs.numerics',
-                'pyphs.numerics.methods',
                 'pyphs.misc',
                 'pyphs.misc.signals',
                 'pyphs.graphs',

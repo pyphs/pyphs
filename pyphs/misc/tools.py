@@ -14,7 +14,7 @@ def get_date():
     dt_format = '%Y/%m/%d %H:%M:%S'
     return now.strftime(dt_format)
 
-    
+
 def pause():
     try:
         raw_input()
@@ -90,7 +90,7 @@ def progressbar(progress):
 
 def splitlist(lis, len_out):
     """
-    Split the 'lis' in a list1 of list2 with max(len(list(2)))='len_out'
+    Split the 'lis' in a list1 of lists2 with max(len(lists2))='len_out'
     """
     lis.reverse()
     lis_out = list()
@@ -139,3 +139,24 @@ def decimate(it, nd=10):
             l.append(el)
         n += 1
     return l
+
+
+def remove_duplicates(lis):
+    """
+    Remove duplicate entries from a given list, preserving ordering.
+    """
+    out_list = []
+    for el in lis:
+        if el not in out_list:
+            out_list.append(el)
+    return out_list
+
+
+def get_strings(obj):
+    strings = []
+    if not isinstance(obj, str):
+        for el in obj:
+            strings += get_strings(el)
+    else:
+        strings.append(obj)
+    return strings

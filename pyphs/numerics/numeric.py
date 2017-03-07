@@ -7,6 +7,7 @@ Created on Fri Jun  3 15:27:55 2016
 
 from __future__ import absolute_import, division, print_function
 
+from pyphs.misc.tools import remove_duplicates, get_strings
 from pyphs.core.misc_tools import geteval
 from pyphs.core.symbs_tools import free_symbols
 from .tools import (lambdify, find, getarg_generator, setarg_generator,
@@ -20,7 +21,7 @@ class PHSNumericalCore:
     """
     Class that serves as a container for all numerical functions
     """
-    def __init__(self, method, config=None):
+    def __init__(self, method, config=None, build=True):
 
         # init config with standard configuration options
         self.config = standard_simulations.copy()
@@ -31,54 +32,67 @@ class PHSNumericalCore:
 
         self.method = method
 
-        self.build_args()
-        self.build_funcs()
-        self.build_ops()
+        if build:
+            self.build()
 
-    def build_args(self):
-        """
-        define accessors and mutators of numerical values associated with
-        arguments of expressions.
-        """
+    def build(self):
         # init args values with 0
         setattr(self, 'args', numpy.array([0., ]*self.method.core.dims.args()))
-
         for name in self.method.args_names:
-            inds = getattr(self.method, name + '_inds')
-            setattr(self, name, getarg_generator(self, inds))
-            setattr(self, 'set_' + name, setarg_generator(self, inds))
+            self.build_arg(name)
 
-    def build_funcs(self):
-        """
-        link and lambdify all functions for python simulation
-        """
-        # link evaluation to internal values
         for name in self.method.funcs_names:
-                setattr(self, name + '_eval', evalfunc_generator(self, name))
-                setattr(self, name, getfunc_generator(self, name))
-                setattr(self, 'set_' + name, setfunc_generator(self, name))
-                setattr(self, '_' + name, getattr(self, name + '_eval')())
+            self.build_func(name)
 
-    def build_ops(self):
+        for name in self.method.ops_names:
+            self.build_op(name)
+
+        self.names = remove_duplicates(get_strings(self.method.update_actions))
+        for name in ('exec', 'iter'):
+            try:
+                self.names.remove
+            except ValueError:
+                pass
+
+    def build_arg(self, name):
         """
-        link and lambdify all functions for python simulation
+        define accessor and mutator of numerical values associated with
+        arguments of expressions.
+        """
+        inds = getattr(self.method, name + '_inds')
+        setattr(self, name, getarg_generator(self, inds))
+        setattr(self, 'set_' + name, setarg_generator(self, inds))
+
+    def build_func(self, name):
+        """
+        link and lambdify a function for python simulation
         """
         # link evaluation to internal values
-        for name in self.method.ops_names:
-                setattr(self, name + '_eval',
-                        evalop_generator(self, getattr(self.method,
-                                                       name + '_op')))
-                setattr(self, name, getfunc_generator(self, name))
-                setattr(self, 'set_' + name, setfunc_generator(self, name))
-                setattr(self, '_' + name, getattr(self, name + '_eval')())
+        func = evalfunc_generator(self, name)
+        value = func()
+        setattr(self, name + '_eval', func)
+        setattr(self, '_' + name, value)
+        setattr(self, name, getfunc_generator(self, name))
+        setattr(self, 'set_' + name, setfunc_generator(self, name))
+
+    def build_op(self, name):
+        """
+        link and lambdify an operation for python simulation
+        """
+        func = evalop_generator(self, getattr(self.method, name + '_op'))
+        value = func()
+        setattr(self, name + '_eval', func)
+        setattr(self, '_' + name, value)
+        setattr(self, name, getfunc_generator(self, name))
+        setattr(self, 'set_' + name, setfunc_generator(self, name))
 
     def update(self, u=None, p=None):
 
         if u is None:
-            u = numpy.zeros(self.method.ny)
+            u = numpy.zeros(self.method.core.dims.y())
 
         if p is None:
-            p = numpy.zeros(self.method.np)
+            p = numpy.zeros(self.method.core.dims.p())
 
         self.set_u(u)
         self.set_p(p)
@@ -103,15 +117,20 @@ class PHSNumericalCore:
 
     def iterexecs(self, commands, res_name, step_name):
         # init it counter
-        it = 0
+        self.it = 0
         # init step on iteration
         getattr(self, 'set_' + step_name)(1.)
         # loop while res > tol, step > tol and it < itmax
         while getattr(self, res_name)() > self.config['numtol'] \
                 and getattr(self, step_name)() > self.config['numtol']\
-                and it < self.config['maxit']:
+                and self.it < self.config['maxit']:
             self.execs(commands)
-            it += 1
+            self.it += 1
+#        if it >= self.config['maxit']:
+#            message = 'Warning: {} = {} after {} iterations'
+#            print(message.format(res_name,
+#                                 getattr(self, res_name)(),
+#                                 it))
 
 
 class PHSNumericalEval:
@@ -119,13 +138,15 @@ class PHSNumericalEval:
     Class that serves as a container for numerical evaluation of all
     functions from a given PHSCore.
     """
-    def __init__(self, core):
+    def __init__(self, core, vectorize=True):
         self.core = core.__deepcopy__()
-        if not self.core._exprs_built:
-            self.core.build_exprs()
-        self.build()
+        if not hasattr(self.core, 'dxH'):
+            self.core.build_dxH()
+        if not hasattr(self.core, 'output'):
+            self.core.build_output()
+        self.build(vectorize)
 
-    def build(self):
+    def build(self, vectorize=True):
         # for each function, subs, stores func args, args_inds and lambda func
         for name in self.core.exprs_names.union(self.core.struc_names):
             expr = geteval(self.core, name)
@@ -136,18 +157,22 @@ class PHSNumericalEval:
             else:
                 expr = expr.subs(self.core.subs)
             func, args, inds = self._expr_to_numerics(expr,
-                                                      self.core.args())
+                                                      self.core.args(),
+                                                      vectorize)
             setattr(self, name, func)
             setattr(self, name+'_args', args)
             setattr(self, name+'_inds', inds)
 
     @staticmethod
-    def _expr_to_numerics(expr, allargs):
+    def _expr_to_numerics(expr, allargs, vectorize):
         """
         get symbols in expr, and return lambdified evaluation, \
 arguments symbols and arguments position in list of all arguments
         """
         symbs = free_symbols(expr)
         args, inds = find(symbs, allargs)  # args are symbs reorganized
-        func = lambdify(args, expr)
+        if vectorize:
+            func = numpy.vectorize(lambdify(args, expr))
+        else:
+            func = lambdify(args, expr)
         return func, args, inds

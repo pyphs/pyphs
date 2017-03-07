@@ -25,8 +25,8 @@ xL, L = core.symbols(['xL', 'L'])   # define sympy symbols
 HL = xL**2/(2*L)                    # define sympy expression
 core.add_storages(xL, HL)           # add storage function to the `core` object
 
-xC, C = core.symbols(['xC', 'C'])   # define sympy symbols
-HC = xC**2/(2*C)                    # define sympy expression
+xC, C, Cnl = core.symbols(['xC', 'C', 'Cnl'])   # define sympy symbols
+HC = (1+Cnl*xC**2)*xC**2/(2*C)      # define sympy expression
 core.add_storages(xC, HC)           # add storage function to the `core` object
 
 wR, R = core.symbols(['wR', 'R'])   # define sympy symbols
@@ -42,7 +42,7 @@ Jxx = numpy.array([[0., -1.],
                    [1., 0.]])
 core.set_Jxx(Jxx)
 
-# ... or list()...
+# ... or list ...
 Jxw = [[-1.],
        [0.]]
 core.set_Jxw(Jxw)
@@ -52,29 +52,32 @@ Jxy = sympy.Matrix([[-1.],
                    [0.]])
 core.set_Jxy(Jxy)
 
-# Physical parameters
-L_value = 50e-3     # 50mH
-C_value = 2e-9      # 2nF
-R_value = 1e3       # 1 kOhm
+# Physical parameters with f0 ~ (2*pi*sqrt(L*C))**-1
+F0 = 100.                              # 1 kH
+L_value = 5e-1                          # 500 mH
+C_value = (2*numpy.pi*F0)**-2/L_value   # 50.66 nF
+Cnl_value = 1e8                         # d.u.
+R_value = 1e2                           # 1 kOhm
 
 # Dictionary with core.symbols as keys and parameters value as values
 subs = {L: L_value,
         C: C_value,
+        Cnl: Cnl_value,
         R: R_value}
 core.subs.update(subs)
 
 # Build of the resistive structure R in M = J-R
 core.build_R()
 
-# change R to R(xC) = r * abs(xC) with r = 1e2Ohms/Coulomb
-r = core.symbols('r')
-core.apply_subs(subs={R: r*sympy.Abs(core.x[1])},
+# change R to R(xL) = Rnl * abs(xC) with Rnl = 0.1 kOhm/Coulomb
+Rnl = core.symbols('Rnl')
+core.apply_subs(subs={R: Rnl*(1+core.x[0]**2)},
                 selfsubs=False)
 
-# save value for symbol r
-core.subs.update({r: R_value})
+# save value for symbol Rnl = 0.1 kOhm/Coulomb
+core.subs.update({Rnl: 1e2})
 
-# not executed if import from an other module
+# not executed if this script is imported in an other module
 if __name__ == '__main__':
     # Export latex description
-    core.texwrite(filename='dlc_core.tex', title='PHSCore of a DLC')
+    core.texwrite(filename='dummy_core.tex', title='a Dummy PHSCore')

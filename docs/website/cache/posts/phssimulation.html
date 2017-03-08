@@ -241,9 +241,9 @@ div#notebook {
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Define the simulation parameters</span>
 <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fs&#39;</span><span class="p">:</span> <span class="mf">48e3</span><span class="p">,</span>               <span class="c1"># Sample rate (Hz)</span>
           <span class="s1">&#39;gradient&#39;</span><span class="p">:</span> <span class="s1">&#39;discret&#39;</span><span class="p">,</span>    <span class="c1"># gradient evaluation in {&#39;discret&#39;, &#39;theta&#39;, &#39;trapez&#39;}</span>
-          <span class="s1">&#39;theta&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span>              <span class="c1"># theta for evaluation of the structure</span>
-          <span class="s1">&#39;split&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>           <span class="c1"># apply core.split_linear() beforehand</span>
-          <span class="s1">&#39;maxit&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>             <span class="c1"># Max number of iterations for NL solvers</span>
+          <span class="s1">&#39;theta&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>             <span class="c1"># theta for evaluation of the structure</span>
+          <span class="s1">&#39;split&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>            <span class="c1"># Split and presolve the explicit equations</span>
+          <span class="s1">&#39;maxit&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>              <span class="c1"># Max number of iterations for NL solvers</span>
           <span class="s1">&#39;numtol&#39;</span><span class="p">:</span> <span class="mf">1e-16</span><span class="p">,</span>          <span class="c1"># Global numerical tolerance</span>
           <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>             <span class="c1"># Path to saved results. If None, /data/ is created.</span>
           <span class="s1">&#39;progressbar&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>     <span class="c1"># Display a progress bar</span>

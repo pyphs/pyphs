@@ -129,13 +129,8 @@ TRANSLATIONS_PATTERN = "{path}.{lang}.{ext}"
 
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
-        ("/docs/documentation.pdf", "Documentation"),
-        (
-        	(
-        		("/posts/port-hamiltonian-systems/", "Port-Hamiltonian Systems"),
-        	), 
-        	"Port-Hamiltonian Systems"
-        ),
+#        ("/building/", "Documentation"),
+#        ("/building/", "Port-Hamiltonian Systems"),
         (
         	(
         		("/posts/phscore/", "PHSCore"), 

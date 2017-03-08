@@ -138,10 +138,9 @@ NAVIGATION_LINKS = {
         ),
         (
         	(
-        		("/posts/port-hamiltonian-systems/", "Port-Hamiltonian Systems"),
         		("/posts/phscore/", "PHSCore"), 
-        		("/phsnumericaleval/", "PHSNumericalEval"), 
-        		("/phssimulation/", "PHSSimulation"), 
+        		("/posts/phsnumericaleval/", "PHSNumericalEval"), 
+        		("/posts/phssimulation/", "PHSSimulation"), 
         	), 
         	"Tutorials"
         ),

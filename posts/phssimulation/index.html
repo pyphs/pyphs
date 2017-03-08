@@ -58,15 +58,6 @@ Th">
 <!-- /.navbar-header -->
         <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
             <ul class="nav navbar-nav">
-<li>
-<a href="../../docs/documentation.pdf">Documentation</a>
-            </li>
-<li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Port-Hamiltonian Systems <b class="caret"></b></a>
-            <ul class="dropdown-menu"><li>
-<a href="../port-hamiltonian-systems/">Port-Hamiltonian Systems</a>
-            </li></ul>
-</li>
 <li class="dropdown">
 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tutorials <b class="caret"></b></a>
             <ul class="dropdown-menu">
@@ -200,9 +191,9 @@ Th">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Define the simulation parameters</span>
 <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'fs'</span><span class="p">:</span> <span class="mf">48e3</span><span class="p">,</span>               <span class="c1"># Sample rate (Hz)</span>
           <span class="s1">'gradient'</span><span class="p">:</span> <span class="s1">'discret'</span><span class="p">,</span>    <span class="c1"># gradient evaluation in {'discret', 'theta', 'trapez'}</span>
-          <span class="s1">'theta'</span><span class="p">:</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span>              <span class="c1"># theta for evaluation of the structure</span>
-          <span class="s1">'split'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>           <span class="c1"># apply core.split_linear() beforehand</span>
-          <span class="s1">'maxit'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>             <span class="c1"># Max number of iterations for NL solvers</span>
+          <span class="s1">'theta'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>             <span class="c1"># theta for evaluation of the structure</span>
+          <span class="s1">'split'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>            <span class="c1"># Split and presolve the explicit equations</span>
+          <span class="s1">'maxit'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>              <span class="c1"># Max number of iterations for NL solvers</span>
           <span class="s1">'numtol'</span><span class="p">:</span> <span class="mf">1e-16</span><span class="p">,</span>          <span class="c1"># Global numerical tolerance</span>
           <span class="s1">'path'</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>             <span class="c1"># Path to saved results. If None, /data/ is created.</span>
           <span class="s1">'progressbar'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>     <span class="c1"># Display a progress bar</span>

@@ -36,7 +36,7 @@ Installation
 With `pip <https://pypi.python.org/pypi/pip/>`__: 
 	.. code:: 
 		
-		pip install pyphs	
+		pip install -U pyphs	
 	
 See also the `GitHub repository <https://github.com/afalaize/pyphs/>`__. 
 
@@ -107,7 +107,7 @@ Run the following python code from the netlist file directory:
 
 	content = pyphs.netlist2tex(netlist)
 	content += pyphs.core2tex(core)
-	pyphs.document(content, title='DLC', filename='dlc.tex')
+	pyphs.texdocument(content, title='DLC', filename='dlc.tex')
 
 This yields the following **tex** file:
 	

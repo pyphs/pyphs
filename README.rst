@@ -25,7 +25,7 @@ Installation
 
 	.. code:: 
 		
-		pip install pyphs
+		pip install -U pyphs
 	
 	
 * For `Anaconda <https://www.continuum.io/>`__ (**on Mac OSX only**):

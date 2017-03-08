@@ -7,7 +7,7 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://afalaize.github.io/pyphs/</loc>
-  <lastmod>2017-02-02T20:46:00Z</lastmod>
+  <lastmod>2017-03-07T22:46:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/2016/</loc>
@@ -19,7 +19,7 @@
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/archive.html</loc>
-  <lastmod>2017-02-12T11:52:00Z</lastmod>
+  <lastmod>2017-03-08T00:21:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/blog/</loc>
@@ -27,7 +27,7 @@
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/blog/index-1.html</loc>
-  <lastmod>2017-02-12T11:52:00Z</lastmod>
+  <lastmod>2017-03-08T00:21:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/building/</loc>
@@ -108,6 +108,14 @@
  <url>
   <loc>https://afalaize.github.io/pyphs/posts/phscore/</loc>
   <lastmod>2017-01-30T18:23:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/posts/phsnumericaleval/</loc>
+  <lastmod>2017-03-08T00:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/posts/phssimulation/</loc>
+  <lastmod>2017-03-08T00:21:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/posts/port-hamiltonian-systems/</loc>

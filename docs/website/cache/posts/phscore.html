@@ -176,8 +176,9 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this tutorial, we firstly recall the <em>port-Hamiltonian systems (PHS)</em> formalism in parallel with a description of the <code>pyphs.PHSCore</code> object. Secondly, we build the <code>pyphs.PHSCore</code> object associated with the standard serial resistor-coil-capacitor (RLC) circuit.
+<p>In this tutorial, we firstly recall the <em>port-Hamiltonian systems (PHS)</em> formalism in parallel with a description of the <code>pyphs.PHSCore</code> object. Secondly, we build the <code>pyphs.PHSCore</code> object associated with a nonlinear serial RLC-like circuit with a linear coil, a nonlinear capacitor, and a modulated resistor.
 <!-- TEASER_END --></p>
+<p>The corresponding Python script <code>phscore.py</code> can be found in the tutorials at <code>\pyphs\tutorials\</code></p>
 
 </div>
 </div>
@@ -187,14 +188,16 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Core-PHS-structure-of-the-RLC-circuit">Core PHS structure of the RLC circuit<a class="anchor-link" href="#Core-PHS-structure-of-the-RLC-circuit">&#182;</a></h1><p>Steps are:</p>
+<h1 id="Core-PHS-structure-of-the-modulated-RLC-circuit">Core PHS structure of the modulated RLC circuit<a class="anchor-link" href="#Core-PHS-structure-of-the-modulated-RLC-circuit">&#182;</a></h1><p>Steps are:</p>
 <ol>
 <li>prepare the <em>governing equations</em>,</li>
 <li>instantiate a <code>pyphs.PHSCore</code> <em>object</em>,</li>
 <li>add the <em>components</em> (storage, dissipative and source),</li>
-<li>define the <em>PHS structure</em> matrices (serial connection),</li>
-<li>set the <em>physical parameters</em>.</li>
+<li>define the <em>PHS structure</em> matrices (here the serial connection),</li>
+<li>set the <em>physical parameters</em>,</li>
+<li>change the constant resistance parameter to a parameter modulated by the state value.</li>
 </ol>
+<p>Bonus: Generate the associated LaTex document.</p>
 <h2 id="1.-Governing-equations">1. Governing equations<a class="anchor-link" href="#1.-Governing-equations">&#182;</a></h2><p>Following the reference <a href="http://www.mdpi.com/2076-3417/6/10/273/pdf">[1, §2.2]</a>, the RLC circuit is described as follows:</p>
 <ul>
 <li>$x_L$ is the coil flux so that $v_L = \frac{\mathrm d x_L}{\mathrm d  t}$ is the coil voltage, </li>
@@ -203,9 +206,9 @@ div#notebook {
 <li>$y=i_{\mathrm{out}}$ is the output current, and </li>
 <li>$u=v_{\mathrm{out}}$ is the input voltage.</li>
 </ul>
-<p>The constitutive laws are:</p>
+<p>For this tutorial, the constitutive laws are:</p>
 <ul>
-<li>the quadratic storage function $H(x_L, x_C)=\frac{x_L^2}{2L}+\frac{x_C^2}{2C},$ so that the coil current is $i_L=\frac{\partial H}{\partial x_L}=\frac{x_L}{L}$ and the capacitor voltage is $v_C=\frac{\partial H}{\partial x_C}=\frac{x_C}{C}$,</li>
+<li>the storage function (Hamiltonian) $$H(x_L, x_C)=\frac{x_L^2}{2L}+\frac{x_C^2}{C} \, \left( \frac{1}{2} + \frac{C_{\mathrm{nl}}}{4}\,x_C^2\right),$$ so that the (linear) coil current is $i_L=\frac{\partial H}{\partial x_L}=\frac{x_L}{L}$ and the (nonlinear) capacitor voltage is $v_C=\frac{\partial H}{\partial x_C}=\frac{1}{C}\,\left( x_C + C_{\mathrm{nl}}\,x_C^3\right)$,</li>
 <li>the linear dissipation function $z_R(w_R)= R \,w_R = v_R$ with $v_R$ the resistor voltage. </li>
 </ul>
 <p>The Kirchhoff's laws for a serial connection read:</p>
@@ -219,12 +222,23 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 1 & 0 & 0 & 0 \\ \hline
 1 & 0 & 0 & 0 \\  \hline
 1 & 0 & 0 & 0
-\end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_C}\\ \frac{\partial H}{\partial x_L}\\ \hline z_R\\ \hline u \end{array}\right) $$<h4 id="Physical-parameters">Physical parameters<a class="anchor-link" href="#Physical-parameters">&#182;</a></h4><ul>
-<li>$C=2\times 10^{-9}$F, </li>
-<li>$L=50\times 10^{-3}$H, </li>
-<li>$R = 10^3\Omega$.</li>
+\end{array}\right)\cdot \left(\begin{array}{c}\frac{\partial H}{\partial x_L}\\ \frac{\partial H}{\partial x_C}\\ \hline z_R\\ \hline u \end{array}\right) $$<h4 id="Physical-parameters">Physical parameters<a class="anchor-link" href="#Physical-parameters">&#182;</a></h4><ul>
+<li>$L=500\times 10^{-3}$H, </li>
+<li>$C=5,066\times 10^{-6}$F, </li>
+<li>$C_{\mathrm{nl}}=10^{8}$, </li>
+<li>$R = 10^2\Omega$.</li>
 </ul>
 <h2 id="2.-Object-instantiation">2. Object instantiation<a class="anchor-link" href="#2.-Object-instantiation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First, we import some external modules:</p>
+
 </div>
 </div>
 </div>
@@ -236,11 +250,57 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Support for Python 2.x and Python 3.x</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="c1"># load the pyphs.PHSCore class in the current namespace</span>
-<span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">PHSCore</span>
+<span class="c1"># import of external packages</span>
+<span class="kn">import</span> <span class="nn">numpy</span>  <span class="c1"># numerical tools</span>
+<span class="kn">import</span> <span class="nn">sympy</span>  <span class="c1"># symbolic tools</span>
+</pre></div>
 
-<span class="c1"># instantiate a pyphs.PHSCore object</span>
-<span class="n">core</span> <span class="o">=</span> <span class="n">PHSCore</span><span class="p">()</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this tutorial, we need only the core PHS structure implemented by the <code>pyphs.PHSCore</code> object:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># import of the pyphs.PHSCore class</span>
+<span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">PHSCore</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The instantiation takes an optional argument <code>label</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># instantiate a pyphs.PHSCore object</span>
+<span class="n">core</span> <span class="o">=</span> <span class="n">PHSCore</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;my_core&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -260,14 +320,10 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;isinstance(core, PHSCore) = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">core</span><span class="p">,</span> <span class="n">PHSCore</span><span class="p">)))</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.x = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.dims.w() = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">w</span><span class="p">()))</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.J() = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">J</span><span class="p">()))</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.Jxy() = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Jxy</span><span class="p">()))</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="nb">isinstance</span><span class="p">(</span><span class="n">core</span><span class="p">,</span> <span class="n">PHSCore</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -278,15 +334,100 @@ $$\left(\begin{array}{c}\frac{\mathrm d x_L}{\mathrm d  t} \\ \frac{\mathrm d x_
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>isinstance(core, PHSCore) = True
-core.x = []
-core.dims.w() = 0
-core.J() = Matrix(0, 0, [])
-core.Jxy() = Matrix(0, 0, [])
-</pre>
+<div class="output_area"><div class="prompt output_prompt">Out[4]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
 </div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[5]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">w</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">M</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[7]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix(0, 0, [])</pre>
+</div>
+
 </div>
 
 </div>
@@ -298,10 +439,10 @@ core.Jxy() = Matrix(0, 0, [])
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="3.-Adding-the-components">3. Adding the components<a class="anchor-link" href="#3.-Adding-the-components">&#182;</a></h2><h3 id="Defining-symbols">Defining symbols<a class="anchor-link" href="#Defining-symbols">&#182;</a></h3><p>The <code>pyphs</code> package is based on the <code>sympy</code> package to provide the symbolic manipulation of PHS structures. To declare symbols, we use the <code>phs.symbols</code> method. As an example, we declare below the symbols associated with the coil:</p>
+<h2 id="3.-Adding-the-components">3. Adding the components<a class="anchor-link" href="#3.-Adding-the-components">&#182;</a></h2><h3 id="Defining-symbols">Defining symbols<a class="anchor-link" href="#Defining-symbols">&#182;</a></h3><p>The pyphs package is based on the <code>sympy</code> package to provide the symbolic manipulation of PHS structures. To declare symbols, we use the <code>phs.symbols</code> method. As an example, we declare below the symbols associated with the coil:</p>
 <ul>
-<li>the state $x_L$ (magnetic flux of the coil), and </li>
-<li>the parameter $L$ (coil inductance).</li>
+<li>the state $x_L$ (magnetic flux of the coil measured in Weber), and</li>
+<li>the parameter $L$ (coil inductance measured in Henry).</li>
 </ul>
 
 </div>
@@ -309,13 +450,30 @@ core.Jxy() = Matrix(0, 0, [])
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">xL</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xL&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">])</span>
+<span class="n">xL</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>xL</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -325,14 +483,25 @@ core.Jxy() = Matrix(0, 0, [])
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Defining-expressions">Defining expressions<a class="anchor-link" href="#Defining-expressions">&#182;</a></h3><p>Now, the variables <code>xL</code> and <code>L</code> are instances of the <code>sympy.Symbol</code> object, with the assumption that quantities are real-valued only. Then, expressions can be defined with the standard <code>sympy</code> syntax. As an example, we define below the storage function associated with the coil $H_L(x_L)=\frac{x_L^2}{2L}$:</p>
+<blockquote><p>Notice all symbols in <code>PyPHS</code> are assumed <strong>real-valued only</strong>. This is to alleviate complex solutions during the manipulation of expressions.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Defining-expressions">Defining expressions<a class="anchor-link" href="#Defining-expressions">&#182;</a></h3><p>Now, the variables <code>xL</code> and <code>L</code> are instances of the <code>sympy.Symbol</code> object, and expressions are defined with the standard <code>sympy</code> syntax. As an example, we define below the storage function associated with the coil $H_L(x_L)=\frac{x_L^2}{2L}$:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">HL</span> <span class="o">=</span> <span class="n">xL</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">L</span><span class="p">)</span>
@@ -348,17 +517,18 @@ core.Jxy() = Matrix(0, 0, [])
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="the-core.add_storages-method">the <code>core.add_storages</code> method<a class="anchor-link" href="#the-core.add_storages-method">&#182;</a></h3><p>To include a storage component to a <code>PHSCore</code>, we make use of the <code>core.add_storages</code> method:</p>
+<h3 id="the-core.add_storages-method">the <code>core.add_storages</code> method<a class="anchor-link" href="#the-core.add_storages-method">&#182;</a></h3><p>To include a storage component to a <code>PHSCore</code>, we make use of the <code>core.add_storages</code> method. As an example, the coil is added to the <code>core</code> object as follows:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xL</span><span class="p">,</span> <span class="n">HL</span><span class="p">)</span>
+<span class="n">core</span><span class="o">.</span><span class="n">x</span>
 </pre></div>
 
 </div>
@@ -369,48 +539,44 @@ core.Jxy() = Matrix(0, 0, [])
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Help on method add_storages in module pyphs.core.core:
+<div class="output_area"><div class="prompt output_prompt">Out[10]:</div>
 
-add_storages(self, x, H) method of pyphs.core.core.PHSCore instance
-    Add a storage component with state x and energy H.
-    * State x is append to the current list of states symbols,
-    * Expression H is added to the current expression of Hamiltonian.
-    
-    Parameters
-    ----------
-    
-    x : str, symbol, or list of
-    H : sympy.Expr
 
-</pre>
+<div class="output_text output_subarea output_execute_result">
+<pre>[xL]</pre>
 </div>
+
 </div>
 
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>As an example, the coil is added to the <code>core</code> object as follows:</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xL</span><span class="p">,</span> <span class="n">HL</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">H</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[11]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>xL**2/(2*L)</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -423,8 +589,8 @@ add_storages(self, x, H) method of pyphs.core.core.PHSCore instance
 <p>For the capacitor:</p>
 <ul>
 <li>the state is $x_C$ (electric charge),</li>
-<li>the parameter is $C$ (electric capacitance), and </li>
-<li>the storage function is $H_C(x_C)=\frac{x_C^2}{2C}$.</li>
+<li>the parameters are $C$ (electric capacitance), and $C_{\mathrm{nl}}$ (nonlinearity coefficient),</li>
+<li>the storage function is $H_C(x_C)=\frac{x_C^2}{C} \, \left( \frac{1}{2} + \frac{C_{\mathrm{nl}}}{4}\,x_C^2\right)$.</li>
 </ul>
 <p>This component is added to the <code>core</code> object as follows:</p>
 
@@ -433,12 +599,12 @@ add_storages(self, x, H) method of pyphs.core.core.PHSCore instance
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">xC</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xC&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">])</span>
-<span class="n">HC</span> <span class="o">=</span> <span class="n">xC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">C</span><span class="p">)</span>
-<span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xC</span><span class="p">,</span> <span class="n">HC</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">xC</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">Cnl</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;xC&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;Cnl&#39;</span><span class="p">])</span>   <span class="c1"># define sympy symbols</span>
+<span class="n">HC</span> <span class="o">=</span> <span class="n">xC</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span> <span class="o">+</span> <span class="n">Cnl</span><span class="o">*</span><span class="n">xC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="n">C</span>           <span class="c1"># define sympy expression</span>
+<span class="n">core</span><span class="o">.</span><span class="n">add_storages</span><span class="p">(</span><span class="n">xC</span><span class="p">,</span> <span class="n">HC</span><span class="p">)</span>                       <span class="c1"># add storage function to the `core` object</span>
 </pre></div>
 
 </div>
@@ -458,11 +624,10 @@ add_storages(self, x, H) method of pyphs.core.core.PHSCore instance
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.x = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;core.H = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">H</span><span class="p">))</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">x</span>
 </pre></div>
 
 </div>
@@ -473,12 +638,82 @@ add_storages(self, x, H) method of pyphs.core.core.PHSCore instance
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>core.x = [xL, xC]
-core.H = xL**2/(2*L) + xC**2/(2*C)
-</pre>
+<div class="output_area"><div class="prompt output_prompt">Out[13]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[xL, xC]</pre>
 </div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">H</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[14]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>xL**2/(2*L) + xC**2*(Cnl*xC**2/4 + 0.5)/C</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The expression for the voltage $v_C=\frac{\partial H}{\partial x_C}=\frac{x_C}{C}\,\left( 1 + C_{\mathrm{nl}}\,x_C^2\right)$ is obtained with</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">vC</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># equivalent to sympy.diff(core.H, xC)</span>
+<span class="n">vC</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[15]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1.0*xC*(Cnl*xC**2 + 1)/C</pre>
+</div>
+
 </div>
 
 </div>
@@ -511,54 +746,7 @@ core.H = xL**2/(2*L) + xC**2/(2*C)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="the-core.add_dissipations-method">the <code>core.add_dissipations</code> method<a class="anchor-link" href="#the-core.add_dissipations-method">&#182;</a></h3><p>To include a dissipative component to a <code>PHSCore</code>, we make use of the <code>core.add_dissipations</code> method:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">add_dissipations</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Help on method add_dissipations in module pyphs.core.core:
-
-add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
-    Add a dissipative component with dissipation variable w and dissipation function z.
-    
-    Parameters
-    ----------
-    
-    w : str, symbol, or list of
-    z : sympy.Expr or list of
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Recall the resistor is decribed by:</p>
+<h3 id="the-core.add_dissipations-method">the <code>core.add_dissipations</code> method<a class="anchor-link" href="#the-core.add_dissipations-method">&#182;</a></h3><p>To include a dissipative component to a <code>PHSCore</code>, we make use of the <code>core.add_dissipations</code> method. Recall the resistor is decribed by:</p>
 <ul>
 <li>the dissipative variable $w_R$ (resistor current),</li>
 <li>the parameter $R$ (electric resistance), and </li>
@@ -571,7 +759,7 @@ add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">wR</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;wR&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">])</span>    <span class="c1"># define sympy symbols</span>
@@ -596,7 +784,7 @@ add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">w</span>
@@ -610,7 +798,7 @@ add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[11]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[17]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -635,7 +823,7 @@ add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">z</span>
@@ -649,7 +837,7 @@ add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[12]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[18]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -667,17 +855,31 @@ add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="the-core.add_ports-method">the <code>core.add_ports</code> method<a class="anchor-link" href="#the-core.add_ports-method">&#182;</a></h3><p>To include an external port to a <code>PHSCore</code> object, we make use of the <code>core.add_ports</code> method:</p>
+<h3 id="the-core.add_ports-method">the <code>core.add_ports</code> method<a class="anchor-link" href="#the-core.add_ports-method">&#182;</a></h3><p>To include an external port to a <code>PHSCore</code> object, we make use of the <code>core.add_ports</code> method. Below, we define the external port with input $u=v_{\mathrm{out}}$ and output $y=i_{\mathrm{out}}$ (notice the symbols do not reflect the actual physical meaning of $u$ and $y$):</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">add_ports</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">u</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;vout&#39;</span><span class="p">,</span> <span class="s1">&#39;iout&#39;</span><span class="p">])</span> <span class="c1"># define sympy symbols</span>
+<span class="n">core</span><span class="o">.</span><span class="n">add_ports</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>                  <span class="c1"># add the port to the `core` object</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">u</span>
 </pre></div>
 
 </div>
@@ -688,47 +890,44 @@ add_dissipations(self, w, z) method of pyphs.core.core.PHSCore instance
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Help on method add_ports in module pyphs.core.core:
+<div class="output_area"><div class="prompt output_prompt">Out[20]:</div>
 
-add_ports(self, u, y) method of pyphs.core.core.PHSCore instance
-    Add one or several ports with input u and output y.
-    
-    Parameters
-    ----------
-    
-    u : str, symbol, or list of
-    y : str, symbol, or list of
 
-</pre>
+<div class="output_text output_subarea output_execute_result">
+<pre>[vout]</pre>
 </div>
+
 </div>
 
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Below, we define the external port with input $u=v_{\mathrm{out}}$ and output $y=i_{\mathrm{out}}$ (notice the symbols do not reflect the actual physical meaning of $u$ and $y$):</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">u</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">([</span><span class="s1">&#39;vout&#39;</span><span class="p">,</span> <span class="s1">&#39;iout&#39;</span><span class="p">])</span> <span class="c1"># define sympy symbols</span>
-<span class="n">core</span><span class="o">.</span><span class="n">add_ports</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>                  <span class="c1"># add the port to the `core` object</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">y</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[21]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[iout]</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -769,52 +968,21 @@ $$
 1 & 0 & 0 & 0 \\  \hline
 1 & 0 & 0 & 0
 \end{array}\right),$$ 
-that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a <code>numpy.array</code> as follows:</p>
+that is, $\mathbf R=0$.</p>
+<blockquote><p>Notice <code>core.M</code> only is an attribute, all other matrices are accessed with <em>getters</em> (e.g. <code>core.J()</code>, <code>core.Jxx()</code>, <code>core.Rxy()</code>, <code>core.Mwy()</code>) and <em>setters</em> (e.g. <code>core.set_J()</code>, <code>core.set_Jxx()</code>, <code>core.set_Rxy()</code>, <code>core.set_Mwy()</code>).</p>
+</blockquote>
+<p>First, we initialize the matrix $\mathbf M$ with zeros:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">init_M</span><span class="p">()</span>
 
-<span class="n">Jxx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                   <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="n">core</span><span class="o">.</span><span class="n">set_Jxx</span><span class="p">(</span><span class="n">Jxx</span><span class="p">)</span>
-
-<span class="n">Jxw</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                   <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-<span class="n">core</span><span class="o">.</span><span class="n">set_Jxw</span><span class="p">(</span><span class="n">Jxw</span><span class="p">)</span>
-
-<span class="n">Jxy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                   <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-<span class="n">core</span><span class="o">.</span><span class="n">set_Jxy</span><span class="p">(</span><span class="n">Jxy</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Then, the structure matrices are accessed as follows:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;M=&#39;</span><span class="p">)</span>
 <span class="n">core</span><span class="o">.</span><span class="n">M</span>
 </pre></div>
 
@@ -826,174 +994,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>M=
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[16]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Matrix([
-[0, -1, -1, -1],
-[1,  0,  0,  0],
-[1,  0,  0,  0],
-[1,  0,  0,  0]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;J=&#39;</span><span class="p">)</span>
-<span class="n">core</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>J=
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[17]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Matrix([
-[  0, -1.0, -1.0, -1.0],
-[1.0,    0,    0,    0],
-[1.0,    0,    0,    0],
-[1.0,    0,    0,    0]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;Jxx=&#39;</span><span class="p">)</span>
-<span class="n">core</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Jxx=
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[18]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Matrix([
-[  0, -1.0],
-[1.0,    0]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;Jxw + Jwx.T =&#39;</span><span class="p">)</span>
-<span class="n">core</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">Jwx</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Jxw + Jwx.T =
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[19]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Matrix([
-[0],
-[0]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;R=&#39;</span><span class="p">)</span>
-<span class="n">core</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>R=
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[20]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[22]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -1015,11 +1016,447 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="5.-Setting-the-physical-parameters-values">5. Setting the physical parameters values<a class="anchor-link" href="#5.-Setting-the-physical-parameters-values">&#182;</a></h2><p>The correspondence between the parameters symbols defined above (here <code>L</code>, <code>C</code> and <code>R</code>) and their actual value is stored in the python dictionary <code>core.subs</code>, with parameters symbols as the dictionary's keys and numerical values as the dictionary's values. Here, the physical parameters are</p>
+<p>The structure matrices can defined as 2-dimensional <code>numpy.array</code>, Python <code>list()</code> or <code>sympy.Matrix</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">Mxx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="n">core</span><span class="o">.</span><span class="n">M</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mxx</span>
+
+<span class="n">core</span><span class="o">.</span><span class="n">M</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[23]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[0, -1, 0, 0],
+[1,  0, 0, 0],
+[0,  0, 0, 0],
+[0,  0, 0, 0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">Jxw</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="n">core</span><span class="o">.</span><span class="n">set_Jxw</span><span class="p">(</span><span class="n">Jxw</span><span class="p">)</span>
+
+<span class="n">core</span><span class="o">.</span><span class="n">M</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[24]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[0, -1, -1, 0],
+[1,  0,  0, 0],
+[1,  0,  0, 0],
+[0,  0,  0, 0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p>Notice the skew-symmetry (respectively symmetry) of $\mathbf J$ (respectively $\mathbf R$) is preserved with the <em>setters</em> <code>core.set_Jab</code> (respectively <code>core.set_Rab</code>), for $\mathtt{a, b}$ in $(\mathrm{x, w, y})^2$. Above, $\mathbf{J}_{\mathrm{wx}}=-\mathbf{J}_{\mathrm{xw}}^{\intercal}$ has been automatically updated.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">Jxy</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">Matrix</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">core</span><span class="o">.</span><span class="n">set_Jxy</span><span class="p">(</span><span class="n">Jxy</span><span class="p">)</span>
+
+<span class="n">core</span><span class="o">.</span><span class="n">M</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[25]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[0, -1, -1, -1],
+[1,  0,  0,  0],
+[1,  0,  0,  0],
+[1,  0,  0,  0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, the structure matrices are accessed as follows.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">M</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[26]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[0, -1, -1, -1],
+[1,  0,  0,  0],
+[1,  0,  0,  0],
+[1,  0,  0,  0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">J</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[27]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[  0, -1.0, -1.0, -1.0],
+[1.0,    0,    0,    0],
+[1.0,    0,    0,    0],
+[1.0,    0,    0,    0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[28]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[  0, -1.0],
+[1.0,    0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Check for skew-symmetry:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">Jxw</span><span class="p">()</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">Jwx</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[29]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[0],
+[0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The matrix $\mathbf R$ is still zeros:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[30]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[0, 0, 0, 0],
+[0, 0, 0, 0],
+[0, 0, 0, 0],
+[0, 0, 0, 0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-core.build_R-method">The <code>core.build_R</code> method<a class="anchor-link" href="#The-core.build_R-method">&#182;</a></h3><p>The resistive structure $\mathbf R$ associated with linear dissipative components can be automatically derived as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">build_R</span><span class="p">()</span>
+<span class="n">core</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[31]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[1.0*R, 0, 0],
+[    0, 0, 0],
+[    0, 0, 0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p>Notice the methods <code>core.split_linear()</code> and <code>core.build_R()</code> change the organization of the vectors $\mathbf x$ and $\mathbf w$ (compare the evaluation below with the original definition).</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[32]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[xL, xC]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">w</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[33]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="5.-Setting-the-physical-parameters-values">5. Setting the physical parameters values<a class="anchor-link" href="#5.-Setting-the-physical-parameters-values">&#182;</a></h2><p>The correspondence between the parameters symbols defined above (here <code>L</code>, <code>C</code>, <code>Cnl</code> and <code>R</code>) and their actual value is stored in the python dictionary <code>core.subs</code>, with parameters symbols as the dictionary's keys and numerical values as the dictionary's values. Here, the physical parameters are</p>
 <ul>
-<li>$L=50\times 10^{-3}$H, </li>
-<li>$C=2\times 10^{-9}$F, </li>
-<li>$R = 10^3\Omega$.</li>
+<li>$L=500\times 10^{-3}$H, </li>
+<li>$C=5,066\times 10^{-6}$F, </li>
+<li>$C_{\mathrm{nl}}=10^{8}$, </li>
+<li>$R = 10^2\Omega$.</li>
 </ul>
 <p>This is stored as follows:</p>
 
@@ -1028,21 +1465,133 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">L_value</span> <span class="o">=</span> <span class="mf">50e-3</span>
-<span class="n">C_value</span> <span class="o">=</span> <span class="mf">2e-9</span>
-<span class="n">R_value</span> <span class="o">=</span> <span class="mf">1e3</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Physical parameters with f0 ~ (2*pi*sqrt(L*C))**-1</span>
+<span class="n">F0</span> <span class="o">=</span> <span class="mf">100.</span>                               <span class="c1"># 0.1 kH</span>
+<span class="n">L_value</span> <span class="o">=</span> <span class="mf">5e-1</span>                          <span class="c1"># 500 mH</span>
+<span class="n">C_value</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">F0</span><span class="p">)</span><span class="o">**-</span><span class="mi">2</span><span class="o">/</span><span class="n">L_value</span>   <span class="c1"># 5.066 µF</span>
+<span class="n">Cnl_value</span> <span class="o">=</span> <span class="mf">1e8</span>                         <span class="c1"># dimensionless</span>
+<span class="n">R_value</span> <span class="o">=</span> <span class="mf">1e2</span>                           <span class="c1"># 100 Ohm</span>
 
 <span class="n">subs</span> <span class="o">=</span> <span class="p">{</span><span class="n">L</span><span class="p">:</span> <span class="n">L_value</span><span class="p">,</span>
         <span class="n">C</span><span class="p">:</span> <span class="n">C_value</span><span class="p">,</span>
+        <span class="n">Cnl</span><span class="p">:</span> <span class="n">Cnl_value</span><span class="p">,</span> 
         <span class="n">R</span><span class="p">:</span> <span class="n">R_value</span><span class="p">}</span>
 
 <span class="n">core</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Substitutions">Substitutions<a class="anchor-link" href="#Substitutions">&#182;</a></h2><p>Below, we replace the constant resistance parameter $R$ with a positive function of the state component $x_L$: $$R(x_L) = R_{\mathrm{nl}} \, x_L^2$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># define a new symbol</span>
+<span class="n">Rnl</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;Rnl&#39;</span><span class="p">)</span>  
+
+<span class="c1"># define expression for R</span>
+<span class="n">R_expr</span> <span class="o">=</span> <span class="n">Rnl</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">core</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> 
+
+<span class="c1"># save value for symbol Rnl = 0.1 kOhm/Coulomb</span>
+<span class="n">core</span><span class="o">.</span><span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">Rnl</span><span class="p">:</span> <span class="mf">1e2</span><span class="p">})</span>
+
+<span class="c1"># apply the subsitution {R: R_expr} only</span>
+<span class="n">core</span><span class="o">.</span><span class="n">apply_subs</span><span class="p">(</span><span class="n">subs</span><span class="o">=</span><span class="p">{</span><span class="n">R</span><span class="p">:</span> <span class="n">R_expr</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p>Notice the option <code>selfsubs=True</code> can be passed to <code>core.apply_subs</code> to apply the substitution of all parameters in dictionary <code>core.subs</code>.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">M</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[36]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[-Rnl*(xL**2 + 1), -1, -1],
+[               1,  0,  0],
+[               1,  0,  0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[37]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Matrix([
+[1.0*Rnl*(xL**2 + 1), 0, 0],
+[                  0, 0, 0],
+[                  0, 0, 0]])</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -1059,7 +1608,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">texwrite</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
@@ -1075,7 +1624,7 @@ that is, $\mathbf R=0$. Each block of the matrix $\mathbf J$ can be defined as a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A <a href="/pyphs_outputs/RLC/core.tex">core.tex</a> has been generated, the compilation of which yields the following <a href="/pyphs_outputs/RLC/core.pdf">core.pdf</a>. A valid file name or title for the document can be specified.</p>
+<p>A <a href="/pyphs_outputs/RLC/core.tex">core.tex</a> has been generated, the compilation of which yields the following <a href="/pyphs_outputs/RLC/core.pdf">core.pdf</a>. A valid file name and/or a document title can be specified.</p>
 
 </div>
 </div>

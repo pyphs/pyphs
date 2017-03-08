@@ -169,7 +169,7 @@ class PHSData:
                    'decim': opts['decim'] if decim is None else decim}
 
         path = self.config['path'] + os.sep + 'data'
-        filename = path + os.sep + name.lower() + '.txt'
+        filename = path + os.sep + name + '.txt'
         generator = data_generator(filename, ind=ind, postprocess=postprocess,
                                    **options)
         return generator

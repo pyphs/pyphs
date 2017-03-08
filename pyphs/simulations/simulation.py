@@ -137,9 +137,6 @@ class PHSSimulation:
 
     def process_py(self):
 
-        self.config['files_to_save'] = map(str.lower,
-                                           self.config['files_to_save'])
-
         # get generators of u and p
         data = self.data
         seq_u = data.u()

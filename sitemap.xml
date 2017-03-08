@@ -7,7 +7,7 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://afalaize.github.io/pyphs/</loc>
-  <lastmod>2017-02-02T20:46:00Z</lastmod>
+  <lastmod>2017-03-07T22:46:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/2016/</loc>
@@ -19,11 +19,15 @@
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/archive.html</loc>
-  <lastmod>2017-01-30T20:45:00Z</lastmod>
+  <lastmod>2017-03-08T00:21:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/blog/</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <lastmod>2017-02-12T11:52:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/blog/index-1.html</loc>
+  <lastmod>2017-03-08T00:21:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/building/</loc>
@@ -31,7 +35,7 @@
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/</loc>
-  <lastmod>2017-01-30T18:22:00Z</lastmod>
+  <lastmod>2017-02-11T17:32:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/cat_electronics/</loc>
@@ -56,6 +60,10 @@
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/storages/</loc>
   <lastmod>2016-11-16T18:26:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/categories/theory/</loc>
+  <lastmod>2017-02-11T17:32:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/tutorial/</loc>
@@ -102,12 +110,28 @@
   <lastmod>2017-01-30T18:23:00Z</lastmod>
  </url>
  <url>
+  <loc>https://afalaize.github.io/pyphs/posts/phsnumericaleval/</loc>
+  <lastmod>2017-03-08T00:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/posts/phssimulation/</loc>
+  <lastmod>2017-03-08T00:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/posts/port-hamiltonian-systems/</loc>
+  <lastmod>2017-02-11T17:32:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://afalaize.github.io/pyphs/posts/resistor/</loc>
   <lastmod>2016-11-16T17:36:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/posts/source/</loc>
   <lastmod>2016-11-16T17:36:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/posts/storage-components/</loc>
+  <lastmod>2017-02-12T11:52:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/posts/tuto1/</loc>

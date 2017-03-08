@@ -43,15 +43,15 @@ nt = len(t)
 
 # def input signal
 def sig(t, mode='impact'):
+    freq = 1000.
+    amp = 1000.
     if mode == 'sin':
-        F = 1000.
-        A = 1000.
         pi = numpy.pi
-        out = A*numpy.sin(2*pi*F*t)
+        out = amp * numpy.sin(2*pi*f*t)
     elif mode == 'impact':
         dur = 0.5*1e-3
         start = 0.001
-        out = A if start <= t < start + dur else 0.
+        out = amp if start <= t < start + dur else 0.
     elif mode == 'zero':
         out = 0.
     return out

@@ -46,15 +46,22 @@ Created on Thu Jun  2 21:33:07 2016
 """
 
 from __future__ import absolute_import
-from setuptools import setup
+
+from setuptools import setup, find_packages
+
+# To use a consistent encoding
+from codecs import open
+
+from os import path
+
 from pyphs import __author__, __version__, __licence__, __author_email__
 
 
 ###############################################################################
+here = path.abspath(path.dirname(__file__))
 
-def readme():
-    with open('README.rst') as f:
-        return f.read()
+with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 ###############################################################################
 
@@ -62,7 +69,7 @@ def readme():
 setup(name='pyphs',
       version=__version__,
       description="Development Status :: 3 - Alpha",
-      long_description=readme(),
+      long_description=long_description,
       classifiers=[
         'Natural Language :: English',
         'Development Status :: 3 - Alpha',
@@ -82,24 +89,11 @@ setup(name='pyphs',
       ],
       keywords='dynamical systems, numerical analysis, \
       passive systems, port-hamiltonian systems',
-      url='https://github.com/A-Falaize/pyphs',
+      url='https://github.com/aFalaize/pyphs',
       author=__author__,
       author_email=__author_email__,
       license=__licence__,
-      packages=['pyphs',
-                'pyphs.core',
-                'pyphs.simulations',
-                'pyphs.plots',
-                'pyphs.numerics',
-                'pyphs.misc',
-                'pyphs.misc.signals',
-                'pyphs.graphs',
-                'pyphs.latex',
-                'pyphs.cpp',
-                'pyphs.tests',
-                'pyphs.dictionary',
-                'pyphs.dictionary.edges',
-                ],
+      packages=find_packages(exclude=['docs', 'examples']),
       zip_safe=False,
       install_requires=[
           'numpy',
@@ -109,9 +103,6 @@ setup(name='pyphs',
           'progressbar2',
           'matplotlib',
           'stopit'
-      ],
-      dependency_links=[
-          'http://github.com/user/repo/tarball/master#egg=package-1.0'
       ],
       test_suite='nose.collector',
       tests_require=['nose'],

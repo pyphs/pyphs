@@ -19,7 +19,7 @@ __licence__ = \
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2016"
-__version__ = '0.2.pre3'
+__version__ = '0.2.pre4'
 __author_email__ = 'antoine.falaize@ircam.fr'
 
 __all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',

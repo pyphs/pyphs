@@ -125,7 +125,7 @@ which is compiled to produce the following **pdf** file:
 
 	
 	# Numerical method for time discretization of 'core'
-	method = pyphs.PHSNumericalMethodStandard(core)
+	method = pyphs.PHSNumericalMethod(core)
 	
 	# Numerical evaluation of 'method'
 	numcore = pyphs.PHSNumericalCore(method)

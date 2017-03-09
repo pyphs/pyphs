@@ -22,12 +22,12 @@ from pyphs.graphs.tools import multi2single, getedges
 
 
 LAYOUT = 'spring'
-ITERATIONS = 500
+ITERATIONS = 1000
 
 
 def node_color(node):
     if node == datum:
-        return 'lightsalmon'
+        return 'plum'
     else:
         return 'gainsboro'
 
@@ -81,7 +81,7 @@ def type_colors(type_):
     if type_ == 'storage':
         colors = ('blue', 'lightskyblue')
     elif type_ == 'dissipative':
-        colors = ('green', 'lightsage')
+        colors = ('green', 'lightgreen')
     elif type_ == 'port':
         colors = ('red', 'lightsalmon')
     else:
@@ -115,7 +115,7 @@ def draw_edge(edge, pos, ax, move=0., forward=True, colors_type=None,
     d_o = orthogonal(d)
 
     P0, P2 = nodes
-    P1 = m + move*length(v)*d_o
+    P1 = m + move*length(v)*d_o  # verify !!!
 
     m1 = midle([P0, P1])
     m2 = midle([P1, P2])

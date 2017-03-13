@@ -33,12 +33,29 @@ It provides:
 Installation
 --------------
 
-With `pip <https://pypi.python.org/pypi/pip/>`__: 
+nstallation
+--------------
+
+* From sources with `pip <https://pypi.python.org/pypi/pip/>`_:
+
 	.. code:: 
 		
-		pip install -U pyphs	
+		pip install pyphs
 	
-See also the `GitHub repository <https://github.com/afalaize/pyphs/>`__. 
+	
+* From a download of the `PyPHS <https://github.com/afalaize/pyphs/>`_ package from the `GitHub repository <https://github.com/afalaize/pyphs/>`_, execute in the package folder (that contains a `setup.py` file):
+
+	- with `setuptools <https://setuptools.readthedocs.io/en/latest/>`_
+	
+	.. code:: 
+		
+		python setup.py install
+
+	- with `pip <https://pypi.python.org/pypi/pip/>`_
+
+	.. code:: 
+		
+		pip install .
 
 
 Typical use

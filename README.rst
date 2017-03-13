@@ -21,18 +21,26 @@ Licence
 Installation
 --------------
 
-* Using `pip <https://pypi.python.org/pypi/pip/>`__ (recommended):
+* From sources with `pip <https://pypi.python.org/pypi/pip/>`_:
 
 	.. code:: 
 		
-		pip install -U pyphs
+		pip install pyphs
 	
 	
-* For `Anaconda <https://www.continuum.io/>`__ (**on Mac OSX only**):
+* From a download of the `PyPHS <https://github.com/afalaize/pyphs/>`_ package, execute from the package folder that contains a `setup.py` file
+
+	- with `setuptools <https://setuptools.readthedocs.io/en/latest/>`_:
+	
+	.. code:: 
+		
+		python setup.py install
+
+	- with `pip <https://pypi.python.org/pypi/pip/>`_:
 
 	.. code:: 
 		
-		conda install -c afalaize pyphs
+		pip install .
 
 
 Documentation

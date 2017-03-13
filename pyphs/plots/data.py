@@ -8,11 +8,10 @@ Created on Mon Jun 27 13:12:43 2016
 from __future__ import absolute_import, division, print_function
 from .multiplots import multiplot
 from pyphs.latex.tools import nice_label
-from pyphs.misc.tools import geteval
 import os
 
 
-def plot_powerbal(data, mode='single', opts=None):
+def plot_powerbal(data, mode='single', opts=None, modeDtE='DxhDtx'):
     """
     Plot the power balance. mode is 'single' or 'multi' for single figure or \
 multifigure
@@ -38,7 +37,7 @@ multifigure
     if mode == 'single':
         from pyphs.plots.singleplots import singleplot
         datay = list()
-        datay.append([el for el in data.dtE()])
+        datay.append([el for el in data.dtE(modeDtE=modeDtE)])
         Psd = map(lambda x, y: - float(x) - float(y),
                   data.ps(),
                   data.pd())
@@ -50,10 +49,11 @@ multifigure
         assert mode == 'multi'
         from pyphs.plots.multiplots import multiplot
         datay = list()
-        datay.append([el for el in data.dtE()])
+        datay.append([el for el in data.dtE(modeDtE=modeDtE)])
         datay.append([el for el in data.pd()])
         datay.append([el for el in data.ps()])
-        deltaP = [sum(el) for el in zip(data.dtE(), data.pd(), data.ps())]
+        deltaP = [sum(el) for el in zip(data.dtE(modeDtE=modeDtE),
+                                        data.pd(), data.ps())]
         datay.append(deltaP)
         opts.update({'figsize': (6., 4.),
                      'unity': [r'(W)']*4,

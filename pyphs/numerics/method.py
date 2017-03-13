@@ -53,13 +53,14 @@ class PHSNumericalMethod:
         self.core = core.__deepcopy__()
 
         # set sample rate as a symbol...
-        self.fs = self.core.symbols('_fs')
+        self.fs = self.core.symbols('f_s')
         # ...  with associated parameter...
         if self.config['fs'] is None:
             self.core.add_parameters(self.fs)
         # ... or subs if an object is provided
         else:
             self.core.subs.update({self.fs: self.config['fs']})
+
         prepare_core(self.core, self.config)
 
         if self.config['split']:
@@ -146,7 +147,8 @@ class PHSNumericalMethod:
 
     def split_linear(self):
         args = (self.core.v(), )*2
-        mats = (self.core.jacF(), )*2
+        mats = (self.core.jacF()[:, :self.core.dims.x()],
+                self.core.jacF()[:, self.core.dims.x():])*2
         criterion = zip(mats, args)
         self.core.split_linear(criterion=criterion)
 

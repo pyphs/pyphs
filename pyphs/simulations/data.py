@@ -18,6 +18,7 @@ try:
 except ImportError:
     pass
 
+
 class PHSData:
     """
     container for simulation data
@@ -60,7 +61,7 @@ class PHSData:
                 yield el
             i += 1
 
-    def dtE(self, imin=None, imax=None, decim=None):
+    def dtE(self, imin=None, imax=None, decim=None, modeDtE='DxhDtx'):
         """
         Energy variation
         """
@@ -69,14 +70,16 @@ class PHSData:
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
 
-        if not hasattr(self.core, 'evals'):
-            self.core.build_evals()
-        H = self.core.evals.H
-        for x, dx in zip(self.x(**options), self.dx(**options)):
-            xpost = map(sum, zip(x, dx))
-            yield (H(*xpost) - H(*x))*self.config['fs']
-#        for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
-#            yield scalar_product(dtx, dxh)
+        if modeDtE == 'deltaH':
+            if not hasattr(self.core, 'evals'):
+                self.core.build_evals()
+            H = self.core.evals.H
+            for x, dx in zip(self.x(**options), self.dx(**options)):
+                xpost = map(sum, zip(x, dx))
+                yield (H(*xpost) - H(*x))*self.config['fs']
+        elif modeDtE == 'DxhDtx':
+            for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
+                yield scalar_product(dtx, dxh)
 
     def pd(self, imin=None, imax=None, decim=None):
         """
@@ -246,12 +249,12 @@ phs.paths['wav'].
             sig.append(s)
         wavwrite(sig, fs_in, path + os.sep + filename, fs_out=fs_out)
 
-    def plot_powerbal(self, mode='single', opts=None):
+    def plot_powerbal(self, mode='single', opts=None, modeDtE='deltaH'):
         """
         Plot the power balance. mode is 'single' or 'multi' for single figure \
 or multifigure (default is 'single').
         """
-        plot_powerbal(self, mode=mode, opts=opts)
+        plot_powerbal(self, mode=mode, opts=opts, modeDtE=modeDtE)
 
     def plot(self, var_list, imin=0, imax=None):
         """

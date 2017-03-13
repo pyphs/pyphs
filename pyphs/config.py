@@ -85,8 +85,9 @@ special_chars = ['#']
 # the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
 # !!! This should be a raw string (especially for Windows user, for which the
 # path separator '\' will be escape) !!!!
-eigen_path = r'This Should be your local path to the eigen library (it can be \
-configured in the script "config.py" from your local pyphs installation).'
+
+#eigen_path = r'This Should be your local path to the eigen library (it can be configured in the script "config.py" from your local pyphs installation).'
+eigen_path = '/Users/Falaize/Documents/DEV/c++/bibliothèques/eigen'
 
 # You can automatize the compilation and execution of the c++ files by giving a
 # shell script in "cpp_build_and_run_script" below. It is executed when the
@@ -135,7 +136,7 @@ standard_simulations = {'load_options': {'decim': 1, 'imin': 0, 'imax': None},
                         'gradient': 'discret', # in ['discret', 'theta', 'trapez']
                         'theta': 0.5,
                         'maxit': 100,
-                        'split': False,
+                        'split': True,
                         'eigen_path': eigen_path,
                         'cpp_build_and_run_script': None}
 

@@ -22,7 +22,7 @@ from pyphs.tutorials.phscore import core
 # Define the simulation parameters
 config = {'fs': 48e3,               # Sample rate
           'gradient': 'theta',      # in {'discret', 'theta', 'trapez'}
-          'theta': .5,              # theta-scheme for the structure
+          'theta': 1.,              # theta-scheme for the structure
           'split': False,           # apply core.split_linear() beforehand
           'maxit': 10,              # Max number of iterations for NL solvers
           'numtol': 1e-16,          # Global numerical tolerance
@@ -47,7 +47,7 @@ def sig(t, mode='impact'):
     amp = 1000.
     if mode == 'sin':
         pi = numpy.pi
-        out = amp * numpy.sin(2*pi*f*t)
+        out = amp * numpy.sin(2*pi*freq*t)
     elif mode == 'impact':
         dur = 0.5*1e-3
         start = 0.001
@@ -97,4 +97,5 @@ plt.show()
 plt.figure()
 simu.data.plot([('u', 0), ('x', 0), ('dtx', 0), ('y', 0)])
 
-simu.data.plot_powerbal(mode='single')
+simu.data.plot_powerbal(mode='multi')
+simu.data.plot_powerbal(mode='multi', modeDtE='deltaH')

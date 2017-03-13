@@ -24,7 +24,9 @@ except OSError:
 netlist_filename = path + label + '.net'
 core = netlist2core(netlist_filename)
 
-simu = PHSSimulation(core)
+core.build_R()
+
+simu = PHSSimulation(core, config={'split': True})
 
 dur = 0.01
 u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
@@ -35,6 +37,11 @@ def sequ():
         yield (el, )
 
 simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+
 simu.process()
 
-simu.data.plot_powerbal()
+simu.data.plot_powerbal(mode='multi')
+simu.data.plot_powerbal(mode='multi', modeDtE='deltaH')
+
+
+

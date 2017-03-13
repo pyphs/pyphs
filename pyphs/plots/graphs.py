@@ -157,7 +157,7 @@ def plot(graph, filename=None, ax=None, layout=None):
     if ax is None:
         fig = plt.figure()
         ax = plt.axes(frameon=False)
-    draw_nodes(graph, ax=ax)
+    draw_nodes(graph, ax)
     draw_edges(graph, ax)
     plt.tight_layout()
     ax.axes.get_xaxis().set_visible(False)

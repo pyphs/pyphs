@@ -122,19 +122,19 @@ Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{in}}\end{array}\right) ; 
 %
 \section{Constitutive relations}
 %
-Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{0.5 x_{\mathrm{L}}^{2}}{L} + \frac{0.5 x_{\mathrm{C}}^{2}}{C} ; $ 
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{0.5}{L} \cdot x_{\mathrm{L}}^{2} + \frac{0.5}{C} \cdot x_{\mathrm{C}}^{2} ; $ 
 %
 \\
 %
-Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0 x_{\mathrm{L}}}{L}\\\frac{1.0 x_{\mathrm{C}}}{C}\end{array}\right) ; $ 
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0}{L} \cdot x_{\mathrm{L}}\\\frac{1.0}{C} \cdot x_{\mathrm{C}}\end{array}\right) ; $ 
 %
 \\
 %
-Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\mu v_{0} \log{\left (1 + \frac{w_{\mathrm{D}}}{Is} \right )}\\Rd w_{\mathrm{D_R}}\\\frac{w_{\mathrm{D_gmin}}}{gmin}\end{array}\right) ; $ 
+Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}\mu \cdot v_{0} \cdot \log{\left (\frac{1}{Is} \cdot \left(Is + w_{\mathrm{D}}\right) \right )}\\Rd \cdot w_{\mathrm{D_R}}\\\frac{w_{\mathrm{D_gmin}}}{gmin}\end{array}\right) ; $ 
 %
 \\
 %
-Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{ccc}\frac{\mu v_{0}}{Is \left(1 + \frac{w_{\mathrm{D}}}{Is}\right)} & 0 & 0\\0 & Rd & 0\\0 & 0 & \frac{1}{gmin}\end{array}\right) ; $ 
+Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(\begin{array}{ccc}\frac{\mu \cdot v_{0}}{Is + w_{\mathrm{D}}} & 0 & 0\\0 & Rd & 0\\0 & 0 & \frac{1}{gmin}\end{array}\right) ; $ 
 %
 \\
 %

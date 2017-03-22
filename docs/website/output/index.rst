@@ -149,12 +149,12 @@ which is compiled to produce the following **pdf** file:
 	
 This yields the following **cpp** files:
 
-* `phobj.cpp </pyphs_outputs/dlc/cpp/phobj.cpp>`__
-* `phobj.h </pyphs_outputs/dlc/cpp/phobj.h>`__
+* `core.cpp </pyphs_outputs/dlc/cpp/core.cpp>`__
+* `core.h </pyphs_outputs/dlc/cpp/core.h>`__
 * `data.cpp </pyphs_outputs/dlc/cpp/data.cpp>`__
 * `data.h </pyphs_outputs/dlc/cpp/data.h>`__
 
-The `phobj.h` defines a class of `DLC` systems with passive update method for simulations.
+The `core.h` defines a class of `DLC` systems with a passive update method to be called for the simulations.
 
 Licence
 --------------

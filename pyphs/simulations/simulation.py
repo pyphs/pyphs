@@ -177,7 +177,10 @@ class PHSSimulation:
         else:
             # Replace generic term 'phobj_path' by actual object path
             script = self.config['cpp_build_and_run_script']
-            script = script.replace('pyphs_path', self.config['path'])
+            path = self.config['path']
+            if path is None:
+                path = os.getcwd()
+            script = script.replace('simulation_path', path)
             # exec Build and Run script
             system_call(script)
 

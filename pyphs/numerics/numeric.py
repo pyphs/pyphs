@@ -41,18 +41,17 @@ class PHSNumericalCore:
         for name in self.method.args_names:
             self.build_arg(name)
 
-        for name in self.method.funcs_names:
-            self.build_func(name)
-
-        for name in self.method.ops_names:
-            self.build_op(name)
-
+        # recover the names of the method's update functions and operations
         self.names = remove_duplicates(get_strings(self.method.update_actions))
-        for name in ('exec', 'iter'):
-            try:
-                self.names.remove
-            except ValueError:
-                pass
+        for name in self.names:
+            if name.startswith('ud_') and not name[3:] in self.names:
+                self.names.append(name[3:])
+        # build numerical evaluation for functions and operations
+        for name in self.names:
+            if name in self.method.funcs_names:
+                self.build_func(name)
+            elif name in self.method.ops_names:
+                self.build_op(name)
 
     def build_arg(self, name):
         """

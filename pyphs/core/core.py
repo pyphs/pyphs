@@ -426,15 +426,13 @@ dissipative variables w are no more accessible.
 
             setattr(self, name, attr)
         self.M = self.M.subs(subs)
-        if selfsubs:
-            self.subs = {}
-        else:
-            self.subs.update(subs)
-            for key in self.subs.keys():
-                try:
-                    self.subs[key] = self.subs[key].subs(subs)
-                except AttributeError:
-                    pass
+
+        self.subs.update(subs)
+        for k in subs.keys():
+            try:
+                self.subs.pop(k)
+            except KeyError:
+                pass
 
     def is_nl(self):
         return bool(self.dims.xnl())

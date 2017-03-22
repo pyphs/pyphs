@@ -27,14 +27,15 @@ def append_funcs(nums, files, objlabel):
 def _append_funcs_defs(nums, files):
     title = "\n\n// Functions Results Definitions\n"
     files['h']['private'] += title
-    for name in nums.method.funcs_names:
-        attr = getattr(nums, name)()
-        if len(attr.shape) > 0:
-            mat = sympy.Matrix(getattr(nums.method, name + '_expr'))
-            mtype = matrix_type(mat.shape[0], mat.shape[1])
-            files['h']['private'] += '\n{0} _{1};'.format(mtype, name)
-        else:
-            files['h']['private'] += '\ndouble _{0};'.format(name)
+    for name in nums.names:
+        if name in nums.method.funcs_names:
+            attr = getattr(nums, name)()
+            if len(attr.shape) > 0:
+                mat = sympy.Matrix(getattr(nums.method, name + '_expr'))
+                mtype = matrix_type(mat.shape[0], mat.shape[1])
+                files['h']['private'] += '\n{0} _{1};'.format(mtype, name)
+            else:
+                files['h']['private'] += '\ndouble _{0};'.format(name)
 
 
 ###############################################################################
@@ -44,28 +45,30 @@ def _append_funcs_get(nums, files, objlabel):
     title = "\n\n// Functions Results Accessors\n"
     files['h']['public'] += title
     files['cpp']['public'] += title
-    for name in nums.method.funcs_names:
-        attr = getattr(nums, name)()
-        if len(attr.shape) > 0:
-            h, cpp = _str_mat_func_get(nums.method, name, objlabel)
-        else:
-            h, cpp = _str_scal_func_get(name, objlabel)
-        files['h']['public'] += h
-        files['cpp']['public'] += cpp
+    for name in nums.names:
+        if name in nums.method.funcs_names:
+            attr = getattr(nums, name)()
+            if len(attr.shape) > 0:
+                h, cpp = _str_mat_func_get(nums.method, name, objlabel)
+            else:
+                h, cpp = _str_scal_func_get(name, objlabel)
+            files['h']['public'] += h
+            files['cpp']['public'] += cpp
 
 
 def _append_funcs_get_vector(nums, files, objlabel):
     title = "\n\n// Functions Results Accessors\n"
     files['h']['public'] += title
     files['cpp']['public'] += title
-    for name in nums.method.funcs_names:
-        attr = getattr(nums, name)()
-        if len(attr.shape) == 1:
-            getvec = _str_mat_func_get_vector(nums.method, name, objlabel)
-            h = getvec[0]
-            cpp = getvec[1]
-            files['h']['public'] += h
-            files['cpp']['public'] += cpp
+    for name in nums.names:
+        if name in nums.method.funcs_names:
+            attr = getattr(nums, name)()
+            if len(attr.shape) == 1:
+                getvec = _str_mat_func_get_vector(nums.method, name, objlabel)
+                h = getvec[0]
+                cpp = getvec[1]
+                files['h']['public'] += h
+                files['cpp']['public'] += cpp
 
 
 def _str_mat_func_get(method, name, objlabel):
@@ -108,14 +111,15 @@ def _append_funcs_updates(nums, files, objlabel):
     title = "\n\n// Functions Results Updates\n"
     files['h']['private'] += title
     files['cpp']['private'] += title
-    for name in nums.method.funcs_names:
-        attr = getattr(nums, name)()
-        if len(attr.shape) > 0:
-            h, cpp = _str_mat_func_update(nums.method, name, objlabel)
-        else:
-            h, cpp = _str_scal_func_update(nums.method, name, objlabel)
-        files['h']['private'] += h
-        files['cpp']['private'] += cpp
+    for name in nums.names:
+        if name in nums.method.funcs_names:
+            attr = getattr(nums, name)()
+            if len(attr.shape) > 0:
+                h, cpp = _str_mat_func_update(nums.method, name, objlabel)
+            else:
+                h, cpp = _str_scal_func_update(nums.method, name, objlabel)
+            files['h']['private'] += h
+            files['cpp']['private'] += cpp
 
 
 def _str_mat_func_update(method, name, objlabel):
@@ -151,13 +155,14 @@ def _str_scal_func_update(method, name, objlabel):
 def _append_funcs_data(nums, files, objlabel):
     title = "\n\n// Functions Results Initialisation Data"
     files['cpp']['data'] += title
-    for name in nums.method.funcs_names:
-        attr = getattr(nums, name)()
-        if len(attr.shape) > 0:
-            h = _str_mat_func_init_data(nums.method, name)
-        else:
-            h = _str_scal_func_init_data(nums.method, name)
-        files['cpp']['data'] += '\n' + h
+    for name in nums.names:
+        if name in nums.method.funcs_names:
+            attr = getattr(nums, name)()
+            if len(attr.shape) > 0:
+                h = _str_mat_func_init_data(nums.method, name)
+            else:
+                h = _str_scal_func_init_data(nums.method, name)
+            files['cpp']['data'] += '\n' + h
 
 
 def _str_mat_func_init_data(method, name):
@@ -199,13 +204,14 @@ def _str_scal_func_init_data(method, name):
 def _append_funcs_init(nums, files, objlabel):
     title = "\n\n// Functions Results Initialisation\n"
     files['cpp']['init'] += title
-    for name in nums.method.funcs_names:
-        attr = getattr(nums, name)()
-        if len(attr.shape) > 0:
-            cpp = _str_mat_func_init_cpp(nums.method, name)
-        else:
-            cpp = _str_scal_func_init_cpp(name)
-        files['cpp']['init'] += cpp
+    for name in nums.names:
+        if name in nums.method.funcs_names:
+            attr = getattr(nums, name)()
+            if len(attr.shape) > 0:
+                cpp = _str_mat_func_init_cpp(nums.method, name)
+            else:
+                cpp = _str_scal_func_init_cpp(name)
+            files['cpp']['init'] += cpp
 
 
 def _str_mat_func_init_cpp(method, name):

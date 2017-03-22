@@ -22,8 +22,8 @@ latex_preamble = [' ', ]
 
 # Below are the options for the DICTIONARY
 
-# Minimal conductance for accelerating convergenc of solver (diode, triode
-# and bipolar-junction transistors):
+# Minimal conductance for accelerating convergence of NL-solver (used e.g. in
+# diodes, triode and bipolar-junction transistors):
 GMIN = 1e-12
 
 
@@ -51,11 +51,11 @@ datum = '#'
 latex_compiler_path = ':/usr/texbin'
 
 # list of authors for latex exports
-footnote = r'\footnote{\url{https://github.com/afalaize/pyphs}}'
+footnote = r'\footnote{\url{https://afalaize.github.io/pyphs/}}'
 authors = [r'The \textsc{PyPHS}' + footnote + ' development team']
 
 # list of affiliations associated with the authors for latex exports
-affiliations = [r'Project-team S3\footnote{\url{http://s3.ircam.fr}}\\' +
+affiliations = [r'Project-team S3AM\footnote{\url{https://www.ircam.fr/recherche/equipes-recherche/systemes-et-signaux-sonores-audioacoustique-instruments-s3am/}}\\' +
                 r'STMS, IRCAM-CNRS-UPMC (UMR 9912)\\' +
                 r'1 Place Igor-Stravinsky, 75004 Paris, France']
 
@@ -83,16 +83,14 @@ special_chars = ['#']
 # Inform below the path to your local eigen library, e.g. if you provide
 # eigen_path = r'/roor/path/subpath/eigen', PyPHS will include the following in
 # the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
-# !!! This should be a raw string (especially for Windows user, for which the
-# path separator '\' will be escape) !!!!
-eigen_path = r'This Should be your local path to the eigen library (it can be \
-configured in the script "config.py" from your local pyphs installation).'
+# !!! This should be a raw string (especially for Windows user) !!!!
+eigen_path = r'...Local path to the eigen library (see pyphs.config.py)...'
 
 # You can automatize the compilation and execution of the c++ files by giving a
 # shell script in "cpp_build_and_run_script" below. It is executed when the
 # option "langage='c++'"" is used for the simulations. You can use the keyword
-# 'phobj_path' to recover the path of the current PHobject (it is replaced at
-# execution)
+# 'simulation_path' to recover the path of the current PHobject (it is replaced
+# at execution)
 cpp_build_and_run_script = None
 
 # The following is an example which uses xcode on mac osx. First, generate the
@@ -106,19 +104,19 @@ cpp_build_and_run_script = None
 #
 # cpp_build_and_run_script = """
 #
-# echo "Copy the xcode template project in the current PHobj.path"
-# mkdir phobj_path/xcode
-# cp -r """ + xcode_template_path + """/* phobj_path/xcode
+# echo "Copy the xcode template project in the current 'simulation_path'"
+# mkdir simulation_path/xcode
+# cp -r """ + xcode_template_path + """/* simulation_path/xcode
 #
 # echo "Copy the cpp files in the xcode template project"
-# cp -r phobj_path/cpp/* phobj_path/xcode/xcode_template_pyphs/
+# cp -r simulation_path/cpp/* simulation_path/xcode/xcode_template_pyphs/
 #
 # echo "Build the xcode template project for release"
-# xcodebuild -project phobj_path/xcode/xcode_template_pyphs.xcodeproj \
+# xcodebuild -project simulation_path/xcode/xcode_template_pyphs.xcodeproj \
 # -alltargets -configuration Release
 #
 # echo "Execute the xcode template project"
-# phobj_path/xcode/build/Release/xcode_template_pyphs
+# simulation_path/xcode/build/Release/xcode_template_pyphs
 #
 # """
 
@@ -135,7 +133,7 @@ standard_simulations = {'load_options': {'decim': 1, 'imin': 0, 'imax': None},
                         'gradient': 'discret', # in ['discret', 'theta', 'trapez']
                         'theta': 0.5,
                         'maxit': 100,
-                        'split': False,
+                        'split': True,
                         'eigen_path': eigen_path,
                         'cpp_build_and_run_script': None}
 

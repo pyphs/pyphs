@@ -17,6 +17,12 @@ def movesquarematrixcolnrow(matrix, indi, indf):
     return matrix[new_indices, new_indices]
 
 
+def movematrixcols(matrix, indi, indf):
+    n = matrix.shape[1]
+    new_indices = myrange(n, indi, indf)
+    return matrix[:, new_indices]
+
+
 def moveMcolnrow(core, indi, indf):
     core.M = movesquarematrixcolnrow(core.M, indi, indf)
 
@@ -100,13 +106,16 @@ def split_linear(core, criterion=None):
     if criterion is None:
         args = (core.x + core.dx() + core.w, core.dx() + core.w)
         mats = (hessian(core.H, core.x), jacobian(core.z, core.w))
-        criterion = zip(mats, args)
+        criterion = list(zip(mats, args))
+        movefunc = movesquarematrixcolnrow
+    else:
+        movefunc = movematrixcols
 
     # split storage part
     nxl = 0
     hess = criterion[0][0]
     arg = criterion[0][1]
-    for _ in range(hess.shape[0]):
+    for _ in range(hess.shape[1]):
         # hess_row = list(hess[nxl, :].T)
         hess_col = list(hess[:, nxl])
         # collect line symbols
@@ -118,7 +127,7 @@ def split_linear(core, criterion=None):
         else:
             # move the element at the end of states vector
             move_stor(core, nxl, core.dims.x()-1)
-            hess = movesquarematrixcolnrow(hess, nxl, core.dims.x()-1)
+            hess = movefunc(hess, nxl, core.dims.x()-1)
     # number of linear components
     setattr(core.dims, '_xl', nxl)
     setattr(core, 'Q', hessian(core.H, core.xl()))
@@ -127,7 +136,7 @@ def split_linear(core, criterion=None):
     nwl = 0
     jacz = criterion[1][0]
     arg = criterion[1][1]
-    for _ in range(jacz.shape[0]):
+    for _ in range(jacz.shape[1]):
         # jacz_row = list(jacz[nwl, :].T)
         jacz_col = list(jacz[:, nwl])
         # collect line symbols
@@ -139,7 +148,7 @@ def split_linear(core, criterion=None):
         else:
             # move the element to end of dissipation variables vector
             move_diss(core, nwl, core.dims.w()-1)
-            jacz = movesquarematrixcolnrow(jacz, nwl, core.dims.w()-1)
+            jacz = movefunc(jacz, nwl, core.dims.w()-1)
     # number of linear components
     setattr(core.dims, '_wl', nwl)
     core.setexpr('Zl', jacobian(core.zl(), core.wl()))
@@ -176,19 +185,17 @@ def reduce_linear_dissipations(core):
 
 def output_function(core):
     """
-    Returns the expression of the continuous output vector function y, and the\
-expression of the discrete output vector function yd.
+    Returns the expression of the continuous output vector function y.
 
     Input:
 
-        - core: pyphs.PHSCore
+        core: pyphs.PHSCore
 
     Output:
 
-        - y: list of sympy expressions associated with output vector \
-components, considering the continuous version of storage function gradient
-        - yd: list of sympy expressions associated with output vector \
-components, considering the discrete version of storage function gradient
+        y: list
+            of sympy expressions associated with output vector components,
+            considering the continuous version of storage function gradient
     """
     if core.dims.y() > 0:  # Check if system has external ports
 

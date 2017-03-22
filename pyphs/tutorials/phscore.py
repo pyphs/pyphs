@@ -74,7 +74,7 @@ Rnl = core.symbols('Rnl')
 core.apply_subs(subs={R: Rnl*(1+core.x[0]**2)})
 
 # save value for symbol Rnl = 0.1 kOhm/Coulomb
-core.subs.update({Rnl: 1e2})
+core.subs.update({Rnl: R_value})
 
 # not executed if this script is imported in an other module
 if __name__ == '__main__':

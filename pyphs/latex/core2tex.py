@@ -78,7 +78,7 @@ def coreexprs2tex(core):
     if core.dims.w() > 0:
         str_relations += obj2tex(core.z, r'\mathbf{z}(\mathbf{w})',
                                  'Dissipation function', sm)
-        str_relations += obj2tex(core.jacz,
+        str_relations += obj2tex(core.jacz(),
                                  r'\mathcal{J}_{\mathbf{z}}(\mathbf{w})',
                                  'Jacobian of dissipation function', sm)
     return str_relations

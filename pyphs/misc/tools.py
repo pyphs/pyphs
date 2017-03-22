@@ -152,11 +152,14 @@ def remove_duplicates(lis):
     return out_list
 
 
-def get_strings(obj):
+def get_strings(obj, remove=None):
+    if remove is None:
+        remove = list()
     strings = []
     if not isinstance(obj, str):
         for el in obj:
-            strings += get_strings(el)
+            strings += get_strings(el, remove=remove)
     else:
-        strings.append(obj)
+        if obj not in remove:
+            strings.append(obj)
     return strings

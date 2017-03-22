@@ -14,7 +14,7 @@ class PHSConnector(PHSGraph):
     """
     def __init__(self, label, nodes, **kwargs):
         # init PortHamiltonianObject
-        PHSGraph.__init__(self, label)
+        PHSGraph.__init__(self, label=label)
         # pop connector type
         connector_type = kwargs.pop('connector_type')
         # build correspondance between labels in subs and pars (dicpars)...

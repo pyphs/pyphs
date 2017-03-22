@@ -53,13 +53,14 @@ class PHSNumericalMethod:
         self.core = core.__deepcopy__()
 
         # set sample rate as a symbol...
-        self.fs = self.core.symbols('_fs')
+        self.fs = self.core.symbols('f_s')
         # ...  with associated parameter...
         if self.config['fs'] is None:
             self.core.add_parameters(self.fs)
         # ... or subs if an object is provided
         else:
             self.core.subs.update({self.fs: self.config['fs']})
+
         prepare_core(self.core, self.config)
 
         if self.config['split']:
@@ -146,7 +147,8 @@ class PHSNumericalMethod:
 
     def split_linear(self):
         args = (self.core.v(), )*2
-        mats = (self.core.jacF(), )*2
+        mats = (self.core.jacF()[:, :self.core.dims.x()],
+                self.core.jacF()[:, self.core.dims.x():])*2
         criterion = zip(mats, args)
         self.core.split_linear(criterion=criterion)
 
@@ -238,7 +240,7 @@ def set_structure(core, config):
             return output
         return func
 
-    def func_generator_F(n1):
+    def func_generator_tempF(n1):
 
         def func():
             temp = sp.zeros(len(geteval(core, 'v'+n1)), 1)
@@ -270,20 +272,20 @@ def set_structure(core, config):
 
     def func_generator_jacF(n1, n2):
         def func():
-            F, v = geteval(core, 'F'+n1), geteval(core, 'v'+n2)
+            F, v = geteval(core, 'tempF'+n1), geteval(core, 'v'+n2)
             return jacobian(F, v)
         return func
 
     def func_generator_G(n1):
         def func():
-            Fn1 = geteval(core, 'F'+n1)
+            Fn1 = geteval(core, 'tempF'+n1)
             vl = geteval(core, 'vl')
             JacFn1l = geteval(core, 'jacF'+n1+'l',)
             return list(regularize_dims(sp.Matrix(Fn1)) -
                         matvecprod(JacFn1l, sp.Matrix(vl)))
 
         def func2():
-            F = geteval(core, 'F')
+            F = geteval(core, 'tempF')
             vl = geteval(core, 'vl')
             JacFl = jacobian(F, vl)
             return list(regularize_dims(sp.Matrix(F)) -
@@ -300,7 +302,7 @@ def set_structure(core, config):
     core.setexpr('f', func_generator_f(''))
     core.setexpr('Mvv', func_generator_Mv('', ''))
     core.setexpr('Mvy', func_generator_y(''))
-    core.setexpr('F', func_generator_F(''))
+    core.setexpr('tempF', func_generator_tempF(''))
     core.setexpr('G', func_generator_G(''))
     core.setexpr('jacF', func_generator_jacF('', ''))
 
@@ -308,7 +310,7 @@ def set_structure(core, config):
         core.setexpr('v'+n1, func_generator_v(n1))
         core.setexpr('f'+n1, func_generator_f(n1))
         core.setexpr('Mv'+n1+'y', func_generator_y(n1))
-        core.setexpr('F'+n1, func_generator_F(n1))
+        core.setexpr('tempF'+n1, func_generator_tempF(n1))
         core.setexpr('G'+n1, func_generator_G(n1))
         for n2 in ('l', 'nl'):
             core.setexpr('Mv'+n1+'v'+n2, func_generator_Mv(n1, n2))
@@ -356,7 +358,7 @@ def set_execactions(method):
         jacFnl = method.operation('copy', ('Fnl', ))
         ijacFnl = method.operation('copy', ('Fnl', ))
 
-    method.setoperation('ud_Fnl', ud_Fnl)
+    method.setoperation('Fnl', ud_Fnl)
     method.setoperation('jacFnl', jacFnl)
     method.setoperation('ijacFnl', ijacFnl)
 
@@ -388,7 +390,7 @@ def set_execactions(method):
     list_.append('ijacFll')
     list_.append('Gl')
     list_.append('Gnl')
-    list_.append(('Fnl', 'ud_Fnl'))
+    list_.append('Fnl')
     list_.append('res_Fnl')
     method.set_execaction(list_)
 
@@ -401,7 +403,7 @@ def set_execactions(method):
     list_iter.append(('vnl', 'ud_vnl'))
     list_iter.append('Gl')
     list_iter.append('Gnl')
-    list_iter.append(('Fnl', 'ud_Fnl'))
+    list_iter.append('Fnl')
     list_iter.append('res_Fnl')
     list_iter.append('step_Fnl')
     method.set_iteraction(list_iter,

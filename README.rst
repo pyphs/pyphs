@@ -14,6 +14,8 @@ It was initially developed between 2012 and 2016 as a part of the PhD project of
   :target: https://www.quantifiedcode.com/app/project/0c1fbf5b44e94b4085a24c18a1895947
   :alt: Code issues   
   
+[![Build Status](https://www.travis-ci.org/afalaize/pyphs.svg?branch=master)](https://www.travis-ci.org/afalaize/pyphs)
+
 Licence
 --------------
 `PyPHS <https://github.com/afalaize/pyphs/>`__ is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`__ licence.

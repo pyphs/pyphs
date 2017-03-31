@@ -41,7 +41,6 @@ simu.init(sequ=sequ(), nt=int(dur*simu.fs))
 simu.process()
 
 simu.data.plot_powerbal(mode='multi')
-simu.data.plot_powerbal(mode='multi', modeDtE='deltaH')
 
 
 

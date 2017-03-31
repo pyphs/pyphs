@@ -354,7 +354,7 @@ def set_execactions(method):
         ijacFnl = method.operation('inv', ('jacFnl', ))
 
     else:
-        ud_Fnl = method.operation('copy', ('Fnl', ))
+        ud_Fnl = method.operation('copy', (None, ))
         jacFnl = method.operation('copy', ('Fnl', ))
         ijacFnl = method.operation('copy', ('Fnl', ))
 

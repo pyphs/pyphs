@@ -29,6 +29,8 @@ def evalop_generator(nums, op):
             args.append(evalop_generator(nums, arg))
         elif isinstance(arg, str):
             args.append(getattr(nums, arg))
+        elif arg is None:
+            args.append(numpy.array([]))
         else:
             assert isinstance(arg, (int, float))
             args.append(arg)

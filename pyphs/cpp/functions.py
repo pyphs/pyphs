@@ -9,6 +9,7 @@ from __future__ import absolute_import, division, print_function
 
 from sympy.printing import ccode
 from pyphs.cpp.tools import matrix_type, dereference, indent
+from pyphs.numerics.tools import _assert_expr
 import sympy
 
 
@@ -29,13 +30,14 @@ def _append_funcs_defs(nums, files):
     files['h']['private'] += title
     for name in nums.names:
         if name in nums.method.funcs_names:
-            attr = getattr(nums, name)()
-            if len(attr.shape) > 0:
+            expr = getattr(nums.method, name + '_expr')
+            try:
+                _assert_expr(expr)
+                files['h']['private'] += '\ndouble _{0};'.format(name)
+            except AssertionError:
                 mat = sympy.Matrix(getattr(nums.method, name + '_expr'))
                 mtype = matrix_type(mat.shape[0], mat.shape[1])
                 files['h']['private'] += '\n{0} _{1};'.format(mtype, name)
-            else:
-                files['h']['private'] += '\ndouble _{0};'.format(name)
 
 
 ###############################################################################
@@ -47,11 +49,12 @@ def _append_funcs_get(nums, files, objlabel):
     files['cpp']['public'] += title
     for name in nums.names:
         if name in nums.method.funcs_names:
-            attr = getattr(nums, name)()
-            if len(attr.shape) > 0:
-                h, cpp = _str_mat_func_get(nums.method, name, objlabel)
-            else:
+            expr = getattr(nums.method, name + '_expr')
+            try:
+                _assert_expr(expr)
                 h, cpp = _str_scal_func_get(name, objlabel)
+            except AssertionError:
+                h, cpp = _str_mat_func_get(nums.method, name, objlabel)
             files['h']['public'] += h
             files['cpp']['public'] += cpp
 
@@ -62,8 +65,10 @@ def _append_funcs_get_vector(nums, files, objlabel):
     files['cpp']['public'] += title
     for name in nums.names:
         if name in nums.method.funcs_names:
-            attr = getattr(nums, name)()
-            if len(attr.shape) == 1:
+            expr = getattr(nums.method, name + '_expr')
+            try:
+                _assert_expr(expr)
+            except AssertionError:
                 getvec = _str_mat_func_get_vector(nums.method, name, objlabel)
                 h = getvec[0]
                 cpp = getvec[1]
@@ -113,11 +118,13 @@ def _append_funcs_updates(nums, files, objlabel):
     files['cpp']['private'] += title
     for name in nums.names:
         if name in nums.method.funcs_names:
-            attr = getattr(nums, name)()
-            if len(attr.shape) > 0:
-                h, cpp = _str_mat_func_update(nums.method, name, objlabel)
-            else:
+            expr = getattr(nums.method, name + '_expr')
+            try:
+                _assert_expr(expr)
                 h, cpp = _str_scal_func_update(nums.method, name, objlabel)
+            except AssertionError:
+                h, cpp = _str_mat_func_update(nums.method, name, objlabel)
+
             files['h']['private'] += h
             files['cpp']['private'] += cpp
 
@@ -157,11 +164,12 @@ def _append_funcs_data(nums, files, objlabel):
     files['cpp']['data'] += title
     for name in nums.names:
         if name in nums.method.funcs_names:
-            attr = getattr(nums, name)()
-            if len(attr.shape) > 0:
-                h = _str_mat_func_init_data(nums.method, name)
-            else:
+            expr = getattr(nums.method, name + '_expr')
+            try:
+                _assert_expr(expr)
                 h = _str_scal_func_init_data(nums.method, name)
+            except AssertionError:
+                h = _str_mat_func_init_data(nums.method, name)
             files['cpp']['data'] += '\n' + h
 
 
@@ -206,11 +214,12 @@ def _append_funcs_init(nums, files, objlabel):
     files['cpp']['init'] += title
     for name in nums.names:
         if name in nums.method.funcs_names:
-            attr = getattr(nums, name)()
-            if len(attr.shape) > 0:
-                cpp = _str_mat_func_init_cpp(nums.method, name)
-            else:
+            expr = getattr(nums.method, name + '_expr')
+            try:
+                _assert_expr(expr)
                 cpp = _str_scal_func_init_cpp(name)
+            except AssertionError:
+                cpp = _str_mat_func_init_cpp(nums.method, name)
             files['cpp']['init'] += cpp
 
 

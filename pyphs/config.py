@@ -130,7 +130,7 @@ standard_simulations = {'load_options': {'decim': 1, 'imin': 0, 'imax': None},
                         'progressbar': False,
                         'files_to_save': ('x', 'dx', 'dxH', 'w', 'z', 'y'),
                         'numtol': EPS,
-                        'gradient': 'discret', # in ['discret', 'theta', 'trapez']
+                        'gradient': 'discret', # {'discret', 'theta', 'trapez'}
                         'theta': 0.5,
                         'maxit': 100,
                         'split': True,

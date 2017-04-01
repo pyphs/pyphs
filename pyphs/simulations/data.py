@@ -12,6 +12,9 @@ from pyphs.misc.signals.waves import wavwrite
 from pyphs.plots.data import plot, plot_powerbal
 import os
 import numpy
+from pyphs.numerics.tools import lambdify
+from pyphs.numerics.numeric import PHSNumericalEval
+
 
 try:
     import itertools.izip as zip
@@ -71,9 +74,7 @@ class PHSData:
                    'decim': options['decim'] if decim is None else decim}
 
         if modeDtE == 'deltaH':
-            if not hasattr(self.core, 'evals'):
-                self.core.build_evals()
-            H = self.core.evals.H
+            H = lambdify(self.core.x, self.core.H.subs(self.core.subs))
             for x, dx in zip(self.x(**options), self.dx(**options)):
                 xpost = map(sum, zip(x, dx))
                 yield (H(*xpost) - H(*x))*self.config['fs']
@@ -89,9 +90,11 @@ class PHSData:
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
-        if not hasattr(self.core, 'evals'):
-            self.core.build_evals()
-        R = self.core.evals.R
+
+        expr_R = self.core.R().subs(self.core.subs)
+        R, _, R_inds = PHSNumericalEval._expr_to_numerics(expr_R,
+                                                          self.core.args(),
+                                                          True)
         for w, z, a, b, args in zip(self.w(**options),
                                     self.z(**options),
                                     self.a(**options),
@@ -100,7 +103,7 @@ class PHSData:
             yield scalar_product(w, z) + \
                 scalar_product(a,
                                a,
-                               R(*[args[i] for i in self.core.evals.R_inds]))
+                               R(*[args[i] for i in R_inds]))
 
     def ps(self, imin=None, imax=None, decim=None):
         """

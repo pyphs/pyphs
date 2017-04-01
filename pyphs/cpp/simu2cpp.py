@@ -125,7 +125,13 @@ def _str_initvecs(simu):
     string += "\n"
     names = simu.config['files_to_save']
     for name in names:
-        dim = getattr(simu.nums, name)().shape[0]
+        print(name)
+        print(getattr(simu.nums, name)())
+        val = getattr(simu.nums, name)()
+        if len(val.shape) == 0:
+            dim = 1
+        else:
+            dim = val.shape[0]
         string += "\nvector<double> {0}Vector({1});".format(name, dim)
     return indent(string)
 
@@ -272,7 +278,11 @@ def _gets(simu, objlabel):
     string = ''
     names = simu.config['files_to_save']
     for name in names:
-        dim = getattr(simu.nums, name)().shape[0]
+        val = getattr(simu.nums, name)()
+        if len(val.shape) == 0:
+            dim = 1
+        else:
+            dim = val.shape[0]
         string += ("\n\n{0}Vector = ".format(name)) + \
             objlabel.lower() + (".{0}_vector();".format(name))
         string += """

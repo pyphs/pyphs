@@ -76,6 +76,8 @@ core.apply_subs(subs={R: Rnl*(1+core.x[0]**2)})
 # save value for symbol Rnl = 0.1 kOhm/Coulomb
 core.subs.update({Rnl: R_value})
 
+core.M[1, 1] = core.g()[1]
+
 # not executed if this script is imported in an other module
 if __name__ == '__main__':
     # Export latex description

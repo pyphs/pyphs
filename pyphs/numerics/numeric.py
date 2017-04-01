@@ -86,6 +86,9 @@ class PHSNumericalCore:
         setattr(self, 'set_' + name, setfunc_generator(self, name))
 
     def update(self, u=None, p=None):
+        """
+        update the system for input u and parameter p
+        """
 
         if u is None:
             u = numpy.zeros(self.method.core.dims.y())

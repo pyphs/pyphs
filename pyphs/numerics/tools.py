@@ -7,8 +7,10 @@ Created on Fri Jun  3 11:26:41 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs.core.symbs_tools import simplify as simp
+from pyphs.core.symbs_tools import _assert_expr
 import numpy
 import sympy
+from sympy.printing.theanocode import theano_function
 import copy
 
 NumericalOperationParser = {'add': numpy.add,
@@ -159,11 +161,21 @@ def lambdify(args, expr, subs=None, simplify=True):
             expr = expr.subs(subs)
     if simplify:
         expr = simp(expr)
+    expr = sympy.sympify(expr)
     # array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
-    expr_lambda = sympy.lambdify(args,
-                                 expr,
-                                 dummify=False,
-                                 modules='numpy')
+
+    try:
+        if vector_expr:
+            expr_lambda = theano_function(args, expr,
+                                          on_unused_input='ignore')
+        else:
+            expr_lambda = theano_function(args, [expr],
+                                          on_unused_input='ignore')
+    except:
+        expr_lambda = sympy.lambdify(args,
+                                     expr,
+                                     dummify=False,
+                                     modules='numpy')
     return expr_lambda
 
 

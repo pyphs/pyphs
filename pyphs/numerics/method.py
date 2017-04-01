@@ -154,48 +154,46 @@ class PHSNumericalMethod:
 
 
 def prepare_core(core, config):
-    subs_theta = {}
-    subs_trapez = {}
-    for i, (xi, dxi) in enumerate(zip(core.x, core.dx())):
-        subs_theta[xi] = xi+config['theta']*dxi
-        subs_trapez[xi] = xi+dxi
 
-    # subs the structure
-    def M_theta():
-        core.M = simplify(core.M.subs(subs_theta))
+    def sub_M(subs):
+        core.M = simplify(core.M.subs(subs))
 
-    def M_trapez():
-        core.M = simplify((core.M + core.M.subs(subs_trapez))/2)
-
-    def z_theta():
+    def sub_z(subs):
         for i, z in enumerate(core.z):
-            core.z[i] = z.subs(subs_theta)
+            core.z[i] = simplify(z.subs(subs))
 
-    def z_trapez():
-        for i, z in enumerate(core.z):
-            core.z[i] = (z + z.subs(subs_trapez))/2
-
+    subs = {}
     # build discrete evaluation of the gradient
     if config['gradient'] == 'discret':
         dxHl = list(sp.Matrix(core.Q)*(sp.Matrix(core.xl()) + 0.5*sp.Matrix(core.dxl())))
         dxHnl = discrete_gradient(core.H, core.xnl(), core.dxnl(),
                                   config['numtol'])
         core._dxH = dxHl + dxHnl
-        M_theta()
-        z_theta()
+
+        for i, (xi, dxi) in enumerate(zip(core.x, core.dx())):
+            subs[xi] = xi+config['theta']*dxi
+
     elif config['gradient'] == 'theta':
         core._dxH = gradient_theta(core.H,
                                    core.x,
                                    core.dx(),
                                    config['theta'])
-        M_theta()
-        z_theta()
+        for i, (xi, dxi) in enumerate(zip(core.x, core.dx())):
+            subs[xi] = xi+config['theta']*dxi
+
     else:
         assert config['gradient'] == 'trapez', 'Unknown method for \
 gradient evaluation: {}'.format(config['gradient'])
         core._dxH = gradient_trapez(core.H, core.x, core.dx())
-        M_trapez()
-        z_trapez()
+
+        for i, (xi, dxi) in enumerate(zip(core.x, core.dx())):
+            subs[xi] = xi+dxi
+
+    for i, (gi, gi_discret) in enumerate(zip(core.g(), core.dxH())):
+        subs[gi] = gi_discret
+
+    sub_M(subs)
+    sub_z(subs)
 
     core.setexpr('dxH', core.dxH)
 

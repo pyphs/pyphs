@@ -5,13 +5,18 @@ Created on Sat Jun 11 19:41:09 2016
 @author: Falaize
 """
 
+import os
+from matplotlib.pyplot import text
+from pyphs.config import latex_compiler_path, plot_format
+from pyphs.misc.tools import decimate
+
 
 def dec(li, opts):
     """
     decimate liste li so that number of ploted points is no mode than \
 opts['maxnplot'].
     """
-    from pyphs.misc.tools import decimate
+    li = list(li)
     ndecim = max((1, int(len(li)/opts['maxnplot'])))
     return [el for el in decimate(li, ndecim)]
 
@@ -21,14 +26,12 @@ def activate_latex(opts):
     activate latex for plot texts
     """
     # Path for latex compiler
-    import os
-    from pyphs.generation.codelatex.config import compiler_path
-    os.environ['PATH'] = os.environ['PATH'] + compiler_path
+    os.environ['PATH'] = os.environ['PATH'] + latex_compiler_path
     # Activate use of latex expressions
     from matplotlib.pyplot import rc
     rc('text', usetex=opts['latex'])
     # Add Latex Preamble
-    from pyphs.plots.config import latex_preamble
+    from pyphs.config import latex_preamble
     from matplotlib import rcParams
     rcParams['text.latex.preamble'] = latex_preamble
 
@@ -37,7 +40,6 @@ def annotate(x, y, pos, annote, legendfontsize):
     """
     function for plot annotation
     """
-    from matplotlib.pyplot import text
     nbin = int(pos*len(x))
     binx = x[nbin]
     biny = y[nbin]
@@ -46,7 +48,7 @@ def annotate(x, y, pos, annote, legendfontsize):
          horizontalalignment='center', verticalalignment='center')
 
 
-def setticks(ax, properties):
+def setticks(ax, properties, plotindex=None):
     """
     manage ticks and grids of a figure
     """
@@ -61,26 +63,29 @@ def setticks(ax, properties):
 
     nbinsx = properties['nbinsx'] + 1
     nbinsy = properties['nbinsy'] + 1
-
-    if properties['log'] == '':
+    if plotindex is None:
+        log = properties['log']
+    else:
+        log = properties['log'][plotindex]
+    if log == '' or properties['log'] is None:
         locatorxMaj = MaxNLocator(nbins=nbinsx)
         locatoryMaj = MaxNLocator(nbins=nbinsy)
         locatorxMin = AutoMinorLocator()
         locatoryMin = AutoMinorLocator()
 
-    elif properties['log'] == 'x':
+    elif log == 'x':
         locatorxMaj = AutoLocator()
         locatoryMaj = MaxNLocator(nbins=nbinsy)
         locatorxMin = locatorxMaj
         locatoryMin = AutoMinorLocator()
 
-    elif properties['log'] == 'y':
+    elif log == 'y':
         locatorxMaj = MaxNLocator(nbins=nbinsx)
         locatoryMaj = AutoLocator()
         locatorxMin = AutoMinorLocator()
         locatoryMin = locatoryMaj
 
-    elif properties['log'] == 'xy':
+    elif log == 'xy':
         locatorxMaj = AutoLocator()
         locatoryMaj = AutoLocator()
         locatorxMin = locatorxMaj
@@ -141,3 +146,35 @@ def whichplot(which, axe):
         return axe.semilogy
     elif which == 'xy':
         return axe.loglog
+
+
+standard = {'loc': 0,  # legend location
+            'unitx': None,  # x axis label
+            'unity': None,  # y axis label
+            'linestyles': ('-b', '--r', '-.g', ':m'),  # styles (1->4 lines)
+            #
+            'axedef': None,  # left,bot,right,top (.15, .15, .75, .75, .1, .3)
+            'fontsize': 20,                             #
+            'log': None,  # logscale: 'x','y','xy'
+            'legendfontsize': None,                     #
+            'linewidth': 2.5,                           #
+            'figsize': (7., 6.),                        #
+            'nbinsx': 5,  # number of x axis ticks
+            'nbinsy': 5,  # number of y axis ticks
+            'minor': False,  # Show minor grid
+            'markersize': 6,                            #
+            'markeredgewidth': 0.5,  #
+            'latex': False,  # Latex rendering
+            'maxnplot': int(1e5),  # max number of line bins  before decimation
+            'ylims': 'extend',
+            'format': plot_format,
+            'limits': None,
+            'labels': None,
+            'maintitle': None,
+            'filelabel': None,
+            'nfft': 2**12,
+            'colormap': 'BuPu',
+            'xpos_ylabel': -0.08,
+            'cmap': 'BuPu',  # 'inferno', 'gnuplot2', 'CMRmap', 'PuBu',
+            'dpi': 100,
+            }

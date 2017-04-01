@@ -5,6 +5,21 @@ Created on Sat Mar  5 13:53:43 2016
 @author: Falaize
 """
 import numpy
+from datetime import datetime
+
+
+def get_date():
+    " Return current date and time "
+    now = datetime.now()
+    dt_format = '%Y/%m/%d %H:%M:%S'
+    return now.strftime(dt_format)
+
+
+def pause():
+    try:
+        raw_input()
+    except NameError:
+        input()
 
 
 def geteval(obj, attr):
@@ -30,7 +45,7 @@ def myrange(N, indi, indf):
     """
     return 'range(N)' with index 'indi' at position 'indf'
     """
-    lis = range(N)
+    lis = list(range(N))
     if indi < indf:
         deb = lis[:indi] + lis[indi+1:indf+1]
         end = lis[indf+1:]
@@ -51,7 +66,6 @@ def progressbar(progress):
      A value under 0 represents a 'halt'.
      A value at 1 or bigger represents 100%
      """
-    import sys
     barLength = 10  # Modify this to change the length of the progress bar
     status = ""
     if isinstance(progress, int):
@@ -68,14 +82,15 @@ def progressbar(progress):
     block = int(round(barLength*progress))
     text = "\rPercent: [{0}] {1}% {2}".format("#"*block+"-"*(barLength-block),
                                               progress*100, status)
-    print text
+    print(text)
+#    import sys
 #    sys.stdout.write(text)
 #    sys.stdout.flush()
 
 
 def splitlist(lis, len_out):
     """
-    Split the 'lis' in a list1 of list2 with max(len(list(2)))='len_out'
+    Split the 'lis' in a list1 of lists2 with max(len(lists2))='len_out'
     """
     lis.reverse()
     lis_out = list()
@@ -115,7 +130,8 @@ def decimate(it, nd=10):
         One in 'nd' values from 'it'.
 
     """
-    assert (isinstance(nd, int) and nd > 0), "'nd' is not an integer: {0!r}".format(nd)
+    assert isinstance(nd, int), "'nd' is not an integer: {0!r}".format(nd)
+    assert nd > 0, "'nd' is not a positive integer: {0!r}".format(nd)
     l = list()
     n = 0
     for el in it:
@@ -123,3 +139,27 @@ def decimate(it, nd=10):
             l.append(el)
         n += 1
     return l
+
+
+def remove_duplicates(lis):
+    """
+    Remove duplicate entries from a given list, preserving ordering.
+    """
+    out_list = []
+    for el in lis:
+        if el not in out_list:
+            out_list.append(el)
+    return out_list
+
+
+def get_strings(obj, remove=None):
+    if remove is None:
+        remove = list()
+    strings = []
+    if not isinstance(obj, str):
+        for el in obj:
+            strings += get_strings(el, remove=remove)
+    else:
+        if obj not in remove:
+            strings.append(obj)
+    return strings

@@ -129,21 +129,29 @@ TRANSLATIONS_PATTERN = "{path}.{lang}.{ext}"
 
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
-        ("/posts/tuto0", "0 - Getting started"),
-        ("/posts/tuto1", "1 - Graph analysis"),
-        ("/docs/documentation.pdf", "Documentation"),
-		('/sphinx/py-modindex.html', 'Package index'),
-        ("/categories/", "Categories"),
+#        ("/building/", "Documentation"),
+#        ("/building/", "Port-Hamiltonian Systems"),
+        (
+        	(
+        		("/posts/phscore/", "PHSCore"), 
+        		("/posts/phsnumericaleval/", "PHSNumericalEval"), 
+        		("/posts/phssimulation/", "PHSSimulation"), 
+        	), 
+        	"Tutorials"
+        ),
+        (
+        	(
+        		("/posts/electronics/", "Electronic"), 
+        		("/building/", "Mechanic"), 
+        		("/building/", "Magnetic"), 
+        	), 
+        	"Dictionary"
+        ),
     ),
 }
 
 # Name of the theme to use.
-THEME = "lanyon"
-
-# Theme lanyon 
-# GLOBAL_CONTEXT = {
-#         "lanyon_subtheme": "theme-base-08"
-#     }
+THEME = "bootstrap3"
 
 # Primary color of your theme. This will be used to customize your theme and
 # auto-generate related colors in POSTS_SECTION_COLORS. Must be a HEX value.
@@ -284,7 +292,7 @@ COMPILERS = {
 # Nikola supports logo display.  If you have one, you can put the URL here.
 # Final output is <img src="LOGO_URL" id="logo" alt="BLOG_TITLE">.
 # The URL may be relative to the site root.
-# LOGO_URL = ''
+LOGO_URL = '/MyAwesomeIcon.png'
 
 # If you want to hide the title of your website (for example, if your logo
 # already contains the text), set this to False.
@@ -1183,9 +1191,14 @@ UNSLUGIFY_TITLES = True
 
 # Put in global_context things you want available on all your templates.
 # It can be anything, data, functions, modules, etc.
-GLOBAL_CONTEXT = {}
+GLOBAL_CONTEXT = {"lanyon_subtheme": "theme-base-xx", # color for lanyon: replace xx with 08=red, 09=orange, 0a=yellow, 0b=green, 0c=cyan, 0d=blue, 0e=prurple, 0f=maroon,
+				 }
 
 # Add functions here and they will be called with template
 # GLOBAL_CONTEXT as parameter when the template is about to be
 # rendered
 GLOBAL_CONTEXT_FILLER = []
+
+rst_prolog = """
+.. include:: .special.rst
+"""

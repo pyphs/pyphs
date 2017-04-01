@@ -1,0 +1,4 @@
+mechanics_dual.source F ('#', 'n1'): type=force;
+mechanics_dual.mass M ('n1', 'n2'): M=('M', 0.01);
+mechanics_dual.stiffness K ('n2', 'n3'): K=('K', 1000.0);
+mechanics_dual.damper A ('n3', '#'): A=('A', 1.0);

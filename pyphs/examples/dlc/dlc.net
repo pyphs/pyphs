@@ -1,0 +1,4 @@
+electronics.source IN ('#', 'n1'): type=voltage;
+electronics.diode D ('n1', 'n2'): v0=('v0', 0.026); mu=('mu', 1.7); Is=('Is', 2e-09); R=('Rd', 0.5);
+electronics.inductor L ('n2', 'n3'): L=('Lsymbol', 0.1);
+electronics.capacitor C ('n3', '#'): C=('Csymbol', 2.533e-07);

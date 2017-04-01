@@ -4,11 +4,27 @@ Created on Sun Mar  6 15:53:51 2016
 
 @author: Falaize
 """
+from __future__ import absolute_import, division, print_function
+
+import numpy
+
+try:
+    import itertools.izip as zip
+except ImportError:
+    pass
+
+try:
+    import itertools.imap as map
+except ImportError:
+    pass
+
 import os
 
+numpy_float_resolution = numpy.finfo(float).resolution
+float_resolution = int(numpy.abs(numpy.log10(numpy_float_resolution)))
 
 def list2str(l):
-    return str(str(l).strip('[]')).replace(',', '') + '\n'
+    return ('{:} '*len(l)).format(*l)[:-1]  + '\n'
 
 
 def open_files(path, files_to_open):
@@ -25,18 +41,19 @@ def close_files(files):
             _file.close()
 
 
-def dump_files(simu, files):
+def dump_files(nums, files):
     for key in files:
         _file = files[key]
-        obj = getattr(simu, key)()
-        lis = list(obj.flatten())
-        _file.write(list2str(lis))
+        obj = getattr(nums, key)()
+        if not isinstance(obj, list):
+            obj = list(obj.flatten())
+        _file.write(list2str(obj))
 
 
-def write_data(phs, seq, var):
-    if not os.path.exists(phs.paths['data']):
-        os.makedirs(phs.paths['data'])
-    _file = open(phs.paths['data'] + os.sep + var + '.txt', 'w')
+def write_data(path, seq, var):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    _file = open(path + os.sep + var + '.txt', 'w')
     for el in seq:
         _file.write(list2str(el))
     _file.close()
@@ -50,17 +67,19 @@ def data_generator(filename, ind=None, decim=1,
     f = open(filename, "r")
     i = 0
     for line in f:
-        if i >= imin and i < imax:
-            if not bool(i % decim):
-                if ind is None:
-                    out = [float(x) for x in line.split()]
-                    yield out if postprocess is None else map(postprocess,
-                                                              out)
+        if imin <= i < imax and not bool(i % decim):
+            if ind is None:
+                out = [float(x) for x in line.split()]
+                if postprocess is None:
+                    y = out
                 else:
-                    assert isinstance(ind, int), 'Index should be an \
-integer. Got {0!s}'.format(type(ind))
-                    out = float(line.split()[ind])
-                    yield out if postprocess is None else postprocess(out)
+                    y = list(map(postprocess, out))
+                yield y
+            else:
+                assert isinstance(ind, int), 'Index should be an \
+    integer. Got {0!s}'.format(type(ind))
+                out = float(line.split()[ind])
+                yield out if postprocess is None else postprocess(out)
         i += 1
 
 

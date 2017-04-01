@@ -1,0 +1,7 @@
+electronics.source IN ('A', '#'): type=voltage;
+electronics.resistor R ('A', 'B'): R=('R', 10.0);
+electronics.inductor L ('B', 'C'): L=('L', 0.05);
+connectors.gyrator T ('C', '#', 'D', '#'): alpha=('Bl', 50.);
+mechanics_dual.mass M ('D', 'E'): M=('M', 0.1);
+mechanics_dual.stiffness K ('E', 'F'): K=('K', 1e6);
+mechanics_dual.damper A ('F', '#'): A=('A', 10);

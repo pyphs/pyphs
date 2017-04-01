@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " vocab="http://ogp.me/ns" lang="en">
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
 <head>
 <meta charset="utf-8">
+<base href="https://afalaize.github.io/pyphs/blog/">
 <meta name="description" content="This is a companion site for the python package PyPHS">
-<meta name="viewport" content="width=device-width">
-<title>PyPHS | PyPHS</title>
-<link href="../assets/css/all.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PyPHS</title>
+<link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta content="#618AC8" name="theme-color">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
 <link rel="canonical" href="https://afalaize.github.io/pyphs/blog/">
+<link rel="next" href="index-1.html" type="text/html">
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
     tex2jax: {
@@ -24,45 +28,190 @@ MathJax.Hub.Config({
 </script><!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]-->
 </head>
 <body>
-    <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
-    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
-            styles, `#sidebar-checkbox` for behavior. -->
-    <input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox"><!-- Toggleable sidebar --><div class="sidebar" id="sidebar">
-        <div class="sidebar-item">
-            <p><a href="https://github.com/afalaize/pyphs/" target="_blank">PyPHS</a> as been developed between 2012 and 2016 as part of the PhD project of Antoine Falaize, through EDITE (UPMC ED-130) funding in the <a href="http://s3.ircam.fr/?lang=en" target="_blank">project/team S3</a> (Sound Signals and Systems) at <a href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/" target="_blank">STMS Research Lab</a> (CNRS UMR 9912), hosted by IRCAM. It is distributed under the french <a href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html" target="_blank">CeCILL-B</a> licence.</p>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://afalaize.github.io/pyphs/">
+                <img src="../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
+            </a>
         </div>
-        
-    <nav id="menu" role="navigation" class="sidebar-nav"><a class="sidebar-nav-item" href="../posts/tuto0">0 - Getting started</a>
-        <a class="sidebar-nav-item" href="../posts/tuto1">1 - Graph analysis</a>
-        <a class="sidebar-nav-item" href="../docs/documentation.pdf">Documentation</a>
-        <a class="sidebar-nav-item" href="../sphinx/py-modindex.html">Package index</a>
-        <a class="sidebar-nav-item" href="../categories/">Categories</a>
-    
-    
-    </nav>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tutorials <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../posts/phscore/">PHSCore</a>
+                    </li>
+<li>
+<a href="../posts/phsnumericaleval/">PHSNumericalEval</a>
+                    </li>
+<li>
+<a href="../posts/phssimulation/">PHSSimulation</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dictionary <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../posts/electronics/">Electronic</a>
+                    </li>
+<li>
+<a href="../building/">Mechanic</a>
+                    </li>
+<li>
+<a href="../building/">Magnetic</a>
+            </li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav navbar-right"></ul>
 </div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
 
-    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
-         content to avoid any CSS collisions with our real content. -->
-    <div class="wrap">
-      <div class="masthead">
-        <div class="container">
-          
-    <h3 id="brand" class="masthead-title">
-      <a href="https://afalaize.github.io/pyphs/" title="PyPHS" rel="home">PyPHS</a>
-    </h3>
-
-        </div>
-      </div>
-
-      <div class="container content" id="content">
-        
-
-<div class="posts">
-    <article class="post h-entry post-text"><header><h1 class="post-title p-name"><a href="../posts/tuto1/" class="u-url">Automated graph analysis</a></h1>
+    
+<div class="postindex">
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/storage-components/" class="u-url">Storage components</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">afalaize</span></p>
-            <p class="dateline"><a href="../posts/tuto1/" rel="bookmark"><time class="post-date published dt-published" datetime="2016-11-13T11:30:33+02:00" title="2016-11-13 11:30">2016-11-13 11:30</time></a></p>
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/storage-components/" rel="bookmark"><time class="published dt-published" datetime="2017-02-11T20:04:20+01:00" title="2017-02-11 20:04">2017-02-11 20:04</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <p>Write your post here.</p>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/port-hamiltonian-systems/" class="u-url">Port-Hamiltonian Systems</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/port-hamiltonian-systems/" rel="bookmark"><time class="published dt-published" datetime="2017-02-11T18:19:33+01:00" title="2017-02-11 18:19">2017-02-11 18:19</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<p>In this tutorial, we recall the <em>port-Hamiltonian systems (PHS)</em> formalism in section 1, and we give an example with the standard serial resistor-coil-capacitor (RLC) circuit in section 2.</p>
+<p class="more"><a href="../posts/port-hamiltonian-systems/"> click to read the rest of the article …</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/electronics/" class="u-url">Electronics</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/electronics/" rel="bookmark"><time class="published dt-published" datetime="2017-01-30T21:38:02+01:00" title="2017-01-30 21:38">2017-01-30 21:38</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<div class="section" id="storages">
+<h2>Storages</h2>
+<p><a class="reference external" href="../posts/capacitor/"><img alt="capa" src="../dico/elec/capacitor.png"></a> Capacitor</p>
+<p><a class="reference external" href="../posts/inductor/"><img alt="induc" src="../dico/elec/inductor.png"></a> Inductor</p>
+</div>
+<div class="section" id="dissipatives">
+<h2>Dissipatives</h2>
+<p><a class="reference external" href="../posts/resistor/"><img alt="Resistor" src="../dico/elec/resistor.png"></a> Resistor</p>
+<p><a class="reference external" href="../posts/diode/"><img alt="diode" src="../dico/elec/diode.png"></a> Diode</p>
+</div>
+<div class="section" id="sources">
+<h2>Sources</h2>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/dictionary/" class="u-url">Dictionary</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/dictionary/" rel="bookmark"><time class="published dt-published" datetime="2017-01-30T21:37:48+01:00" title="2017-01-30 21:37">2017-01-30 21:37</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <span></span>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/diode/" class="u-url">Diode PN</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/diode/" rel="bookmark"><time class="published dt-published" datetime="2016-11-16T20:38:46+01:00" title="2016-11-16 20:38">2016-11-16 20:38</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<img alt="/dico/elec/diode.jpg" class="align-center" src="../dico/elec/diode.jpg" style="width: 150px;"><p class="more"><a href="../posts/diode/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/source/" class="u-url">Source</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/source/" rel="bookmark"><time class="published dt-published" datetime="2016-11-16T18:12:45+01:00" title="2016-11-16 18:12">2016-11-16 18:12</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <p>Write your post here.</p>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/resistor/" class="u-url">Resistor</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/resistor/" rel="bookmark"><time class="published dt-published" datetime="2016-11-16T18:12:37+01:00" title="2016-11-16 18:12">2016-11-16 18:12</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<img alt="/dico/elec/inductor.jpg" class="align-center" src="../dico/elec/inductor.jpg" style="width: 150px;"><p class="more"><a href="../posts/resistor/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/inductor/" class="u-url">Inductor</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/inductor/" rel="bookmark"><time class="published dt-published" datetime="2016-11-16T18:12:27+01:00" title="2016-11-16 18:12">2016-11-16 18:12</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<img alt="/dico/elec/inductor.jpg" class="align-center" src="../dico/elec/inductor.jpg" style="width: 150px;"><p class="more"><a href="../posts/inductor/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/capacitor/" class="u-url">Capacitor</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/capacitor/" rel="bookmark"><time class="published dt-published" datetime="2016-11-16T18:12:20+01:00" title="2016-11-16 18:12">2016-11-16 18:12</time></a></p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<img alt="/dico/elec/capacitor.jpg" class="align-center" src="../dico/elec/capacitor.jpg" style="width: 150px;"><p class="more"><a href="../posts/capacitor/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/tuto1/" class="u-url">Automated graph analysis</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                afalaize
+            </span></p>
+            <p class="dateline"><a href="../posts/tuto1/" rel="bookmark"><time class="published dt-published" datetime="2016-11-13T11:30:33+02:00" title="2016-11-13 11:30">2016-11-13 11:30</time></a></p>
         </div>
     </header><div class="p-summary entry-summary">
     <div tabindex="-1" id="notebook" class="border-box-sizing">
@@ -92,48 +241,14 @@ MathJax.Hub.Config({
 </div>
 </div>
     </div>
-    </article><article class="post h-entry post-text"><header><h1 class="post-title p-name"><a href="../posts/tuto0/" class="u-url">Getting Started: PyPHS declaration and simulation</a></h1>
-        <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">afalaize</span></p>
-            <p class="dateline"><a href="../posts/tuto0/" rel="bookmark"><time class="post-date published dt-published" datetime="2016-11-05T16:30:33+02:00" title="2016-11-05 16:30">2016-11-05 16:30</time></a></p>
-        </div>
-    </header><div class="p-summary entry-summary">
-    <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p></p>
-<div id="toc-static"></div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The basic use of the <em>pyphs.PortHamiltonianObject</em> is illustrated here with the modeling and time-domain simulation of the standard resistor-coil-capacitor (RLC) circuit.
-</p>
-<p class="more"><a href="../posts/tuto0/">Read more…</a></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-    </div>
     </article>
 </div>
 
-
-
-
-
-            <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><script type="text/x-mathjax-config">
+        <nav class="postindexpager"><ul class="pager">
+<li class="next">
+                <a href="index-1.html" rel="next">Older posts</a>
+            </li>
+        </ul></nav><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><script type="text/x-mathjax-config">
 MathJax.Hub.Config({
     tex2jax: {
         inlineMath: [ ['$','$'], ["\\(","\\)"] ],
@@ -145,16 +260,19 @@ MathJax.Hub.Config({
         styles: {'.MathJax_Display': {"margin": 0}}
     }
 });
-</script><footer id="footer"><p>Contents © 2016         <a href="mailto:antoine.falaize@gmail.com">afalaize</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2017         <a href="mailto:antoine.falaize@gmail.com">afalaize</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
 </div>
-    </div>
-    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
-    
-    
-    
-            <script src="../assets/js/all-nocdn.js"></script><!-- fancy dates --><script>
+</div>
+
+
+            <script src="../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
     moment.locale("en");
     fancydates(0, "YYYY-MM-DD HH:mm");
     </script><!-- end fancy dates -->

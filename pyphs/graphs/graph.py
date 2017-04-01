@@ -96,9 +96,13 @@ port-Hamiltonian systems.
                                      'ctrl': '?',
                                      'label': 'serial{0}'.format(self._idser),
                                      'graph': sg})
+            nodes_to_remove = list()
             for degree in self.degree_iter():
                 if degree[1] == 0:
-                    self.remove_node(degree[0])
+                    nodes_to_remove.append(degree[0])
+                    
+            for node in nodes_to_remove:
+                self.remove_node(node)
         return bool(len(se))
 
     def split_parallel(self):

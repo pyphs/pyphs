@@ -18,7 +18,8 @@ NumericalOperationParser = {'add': numpy.add,
                             'div': numpy.divide,
                             'norm': lambda x: numpy.sqrt(float(numpy.dot(x,
                                                                          x))),
-                            'copy': lambda x: x
+                            'copy': lambda x: x,
+                            'none': lambda: None,
                             }
 
 

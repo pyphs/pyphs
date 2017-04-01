@@ -6,6 +6,27 @@ Created on Mon Jun 27 16:01:13 2016
 """
 
 from __future__ import absolute_import, division, print_function
+import os
+
+
+def formatPath(path):
+    r"""
+return a string representation of the path with:
+    - doubling of escape characters \\;
+    - strip of the side ' characters.
+    """
+    return repr(path).strip("'")
+
+
+# formated OS dependent path separator
+SEP = formatPath(os.sep)
+
+
+def main_path(simu):
+    """
+Return a formated string associated with the path in simu.config['path']
+    """
+    return formatPath(simu.config['path'])
 
 
 def dereference(method):

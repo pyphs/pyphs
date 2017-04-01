@@ -168,12 +168,14 @@ class PHSSimulation:
 
         if self.config['cpp_build_and_run_script'] is None:
             print("\no==========================================================\
-            ==o\n")
+==o\n")
             print("Please, execute:\n" + self.config['path'] + os.sep + 'cpp' +
-                  os.path.sep + "/main.cpp")
-            print("\no==========================================================\
-            ==o\n")
-            input("Press a key when done.\nWaiting....\n")
+                  os.path.sep + "main.cpp")
+            try:
+                input("Press enter when done\nWaiting...\n\no=================\
+===========================================o\n")
+            except SyntaxError:
+                pass
         else:
             # Replace generic term 'phobj_path' by actual object path
             script = self.config['cpp_build_and_run_script']

@@ -317,6 +317,7 @@ def set_structure(core, config):
             core.setexpr('jacF'+n1+n2, func_generator_jacF(n1, n2))
             core.setexpr('jacG'+n1+n2, func_generator_jacG(n1, n2))
 
+
 def set_execactions(method):
 
     #######################################
@@ -346,39 +347,62 @@ def set_execactions(method):
         temp2 = method.operation('dot', ('ijacFll', temp1))
         temp3 = method.operation('dot', ('jacFnll', temp2))
         jacFnl = method.operation('add', ('jacGnlnl', temp3))
+
         ijacFnl = method.operation('inv', ('jacFnl', ))
+
+        # ud_vnl
+        temp1 = method.operation('dot', ('ijacFnl', 'Fnl'))
+        temp2 = method.operation('prod', (-1., temp1))
+        ud_vnl = method.operation('add', ('vnl', temp2))
+
+        # res_impfunc
+        method.setoperation('res_Fnl', method.operation('norm', ('Fnl', )))
+
+        #######################################
+        # step_impfunc
+        temp1 = method.operation('prod', (-1., 'save_Fnl'))
+        temp2 = method.operation('add', ('Fnl', temp1))
+        step_Fnl = method.operation('norm', (temp2, ))
 
     elif method.core.dims.nl() > 0:
         ud_Fnl = method.operation('copy', ('Gnl', ))
         jacFnl = method.operation('copy', ('jacGnlnl', ))
         ijacFnl = method.operation('inv', ('jacFnl', ))
 
+        # ud_vnl
+        temp1 = method.operation('dot', ('ijacFnl', 'Fnl'))
+        temp2 = method.operation('prod', (-1., temp1))
+        ud_vnl = method.operation('add', ('vnl', temp2))
+
+        # res_impfunc
+        method.setoperation('res_Fnl', method.operation('norm', ('Fnl', )))
+
+        #######################################
+        # step_impfunc
+        temp1 = method.operation('prod', (-1., 'save_Fnl'))
+        temp2 = method.operation('add', ('Fnl', temp1))
+        step_Fnl = method.operation('norm', (temp2, ))
+
     else:
-        ud_Fnl = method.operation('copy', (None, ))
-        jacFnl = method.operation('copy', ('Fnl', ))
-        ijacFnl = method.operation('copy', ('Fnl', ))
+        ud_Fnl = method.operation('copy', ('Gnl', ))
+        jacFnl = method.operation('copy', ('jacGnlnl', ))
+        ijacFnl = method.operation('copy', ('jacGnlnl', ))
+        ud_vnl = method.operation('copy', ('vnl', ))
+
+        # res_impfunc
+        method.setoperation('res_Fnl', method.operation('copy', (0., )))
+
+        #######################################
+        # step_impfunc
+        step_Fnl = method.operation('copy', (0., ))
 
     method.setoperation('Fnl', ud_Fnl)
     method.setoperation('jacFnl', jacFnl)
     method.setoperation('ijacFnl', ijacFnl)
-
-    # res_impfunc
-    method.setoperation('res_Fnl', method.operation('norm', ('Fnl', )))
-
-    #######################################
-    # step_impfunc
-    temp1 = method.operation('prod', (-1., 'save_Fnl'))
-    temp2 = method.operation('add', ('Fnl', temp1))
-    step_Fnl = method.operation('norm', (temp2, ))
+    method.setoperation('ud_vnl', ud_vnl)
     method.setoperation('step_Fnl', step_Fnl)
 
     #######################################
-    # ud_vnl
-    temp1 = method.operation('dot', ('ijacFnl', 'Fnl'))
-    temp2 = method.operation('prod', (-1., temp1))
-    ud_vnl = method.operation('add', ('vnl', temp2))
-    method.setoperation('ud_vnl', ud_vnl)
-
     #######################################
     #######################################
     #######################################

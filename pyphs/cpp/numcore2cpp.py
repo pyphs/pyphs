@@ -11,7 +11,7 @@ from pyphs.cpp.preamble import str_preamble
 from pyphs.cpp.arguments import append_args
 from pyphs.cpp.functions import append_funcs
 from pyphs.cpp.operations import append_ops
-from pyphs.cpp.tools import indent, matrix_type
+from pyphs.cpp.tools import indent, matrix_type, main_path, SEP, formatPath
 from pyphs.config import eigen_path as config_eigen_path
 import os
 
@@ -39,7 +39,7 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
     files['h']['starting'] += '\n'
     files['h']['starting'] += "\n#ifndef {0}_H".format(objlabel)
     files['h']['starting'] += "\n#define {0}_H".format(objlabel)
-    h, cpp = _str_includes(eigen_path)
+    h, cpp = _str_includes(formatPath(eigen_path))
     files['h']['starting'] += h
     files['cpp']['starting'] += cpp
     files['h']['starting'] += _str_namespaces()
@@ -184,7 +184,7 @@ def append_destructuor(objlabel, files):
 
 ###############################################################################
 def include_Eigen(eigen_path):
-    return r'#include <{0}{1}Eigen{1}Dense>'.format(eigen_path, os.sep)
+    return r'#include <{0}{1}Eigen{1}Dense>'.format(eigen_path, SEP)
 
 
 def _str_includes(eigen_path):

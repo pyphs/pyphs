@@ -6,7 +6,7 @@ Created on Tue Jun 28 14:31:08 2016
 """
 
 from pyphs.cpp.numcore2cpp import numcore2cpp
-from .tools import indent
+from .tools import indent, main_path, SEP
 from .preamble import str_preamble
 import os
 
@@ -14,12 +14,12 @@ import os
 def simu2cpp(simu, objlabel=None):
     if objlabel is None:
         objlabel = 'core'.upper()
-    path = simu.config['path'] + os.sep + 'cpp'
+    path = main_path(simu) + SEP + 'cpp'
     if not os.path.exists(path):
         os.mkdir(path)
     numcore2cpp(simu.nums, objlabel=objlabel, path=path,
                 eigen_path=simu.config['eigen_path'])
-    filename = path + os.sep + 'main.cpp'
+    filename = path + SEP + 'main.cpp'
     _file = open(filename, 'w')
     string = main(simu, objlabel)
     _file.write(string)
@@ -138,11 +138,11 @@ def _str_open_files(simu):
     string = "\n"
     names = ('x0', 'u', 'p')
     for name in names:
-        string += """
+        string += r"""
     ifstream {0}File;
     {0}File.open("{1}{2}data{2}{0}.txt");
 
-    if ({0}File.fail()) """.format(name, simu.config['path'], os.sep)
+    if ({0}File.fail()) """.format(name, main_path(simu), SEP)
         string += "{" + """
         cerr << "Failed opening {0} file" << endl;
         exit(1);""".format(name) + "}"
@@ -187,9 +187,8 @@ def _init_file(simu, name):
     open files for saving data
     """
     string = """
-    ofstream """ + name + """File;
-    """ + name + """File.open(""" + '"' + simu.config['path'] + os.sep + \
-        'data' + os.sep + name + """.txt");"""
+    ofstream {0}File;
+    {0}File.open("{1}{2}data{2}{0}.txt");""".format(name, main_path(simu), SEP)
     return string
 
 
@@ -265,7 +264,7 @@ def _str_process(simu, objlabel):
     cout << endl;
     cout << "{0}{1}data{1}"<< endl;
     cout << endl;
-""".format(simu.config['path'], os.sep)
+""".format(main_path(simu), SEP)
     return string
 
 

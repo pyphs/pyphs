@@ -73,14 +73,18 @@ def _append_args_accessors_matrix(method, files, objlabel):
     files['cpp']['public'] += title
     for name in method.args_names:
         arg = getattr(method, name+'_expr')
-        dim = len(arg)
+        dim0 = len(arg)
+        if dim0 == 0:
+            dim1 = 0
+        else:
+            dim1 = 1
         files['h']['public'] += \
-            '\n{0} {1}() const;'.format(matrix_type(dim, 1), name)
+            '\n{0} {1}() const;'.format(matrix_type(dim0, dim1), name)
         files['cpp']['public'] += \
-            "\n{0} {1}::{2}() const".format(matrix_type(dim, 1),
+            "\n{0} {1}::{2}() const".format(matrix_type(dim0, dim1),
                                             objlabel, name) + ' {'
         files['cpp']['public'] += \
-            indent('\n{0} m;'.format(matrix_type(dim, 1)))
+            indent('\n{0} m;'.format(matrix_type(dim0, dim1)))
         for i, symb in enumerate(arg):
             files['cpp']['public'] += \
                 indent("\nm({0}, 0) = *{1};".format(i, str(symb)))
@@ -98,12 +102,16 @@ def _append_args_mutators_matrix(method, files, objlabel):
     files['cpp']['public'] += title
     for name in method.args_names:
         arg = getattr(method, name+'_expr')
-        dim = len(arg)
+        dim0 = len(arg)
+        if dim0 == 0:
+            dim1 = 0
+        else:
+            dim1 = 1
         files['h']['public'] += '\nvoid set_' + name + \
-            '(Matrix<double, ' + str(dim) + ', 1> &);'
+            '(Matrix<double, {0}, {1}> &);'.format(dim0, dim1)
         files['cpp']['public'] += \
             "\nvoid {0}::set_{1}".format(objlabel, name) + \
-            "(Matrix<double, {0}, 1> & m)".format(dim) + " {"
+            "(Matrix<double, {0}, {1}> & m)".format(dim0, dim1) + " {"
         for i, symb in enumerate(arg):
             files['cpp']['public'] += \
                 '\n'+indent("*{0} = m({1}, 0);".format(str(symb), i))

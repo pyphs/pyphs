@@ -30,7 +30,8 @@ def op2cpp(op):  # used in place of lambda s: '({0}) + ({1})'.format
               'dot': '({0})*({1})'.format,
               'inv': '({0}).inverse()'.format,
               'norm': lambda s: 'sqrt(({0}).dot({1}))'.format(s, s),
-              'copy': '{0}'.format
+              'copy': '{0}'.format,
+              'none': lambda: ''
               }
     args = []
     for arg in op.args:
@@ -62,7 +63,11 @@ def _str_mat_op_def(nums, name):
     mat = getattr(nums, name)()
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
-    mtype = matrix_type(mat.shape[0], mat.shape[1])
+    if not bool(numpy.prod(mat.shape)):
+        shape = (0, 0)
+    else:
+        shape = mat.shape
+    mtype = matrix_type(shape[0], shape[1])
     return '\n{0} _{1};'.format(mtype, name)
 
 
@@ -127,7 +132,11 @@ def _str_mat_op_get(nums, name, objlabel):
     mat = getattr(nums, name)()
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
-    mtype = matrix_type(mat.shape[0], mat.shape[1])
+    if not bool(numpy.prod(mat.shape)):
+        shape = (0, 0)
+    else:
+        shape = mat.shape
+    mtype = matrix_type(shape[0], shape[1])
     get_h = '\n{0} {1}() const;'.format(mtype, name)
     get_cpp = \
         '\n{0} {1}::{2}() const'.format(mtype, objlabel, name)
@@ -167,6 +176,7 @@ def _append_ops_data(nums, files, objlabel):
     files['cpp']['data'] += title
     for name in nums.method.ops_names:
         attr = getattr(nums, name)()
+        print('{} : {}'.format(name, len(attr.shape)))
         if len(attr.shape) > 0:
             h = _str_mat_op_init_data(nums, name)
         else:
@@ -182,7 +192,11 @@ def _str_mat_op_init_data(nums, name):
     for n in range(mat.shape[1]):
         for m in range(mat.shape[0]):
             init_data += '{0}, '.format(mat[m, n])
-    init_data = '{0}'.format(init_data[:-2]) + '};'
+    if numpy.prod(mat.shape) > 0:
+        end = -2
+    else:
+        end = None
+    init_data = '{0}'.format(init_data[:end]) + '};'
     return init_data
 
 
@@ -210,7 +224,11 @@ def _str_mat_op_init_cpp(nums, name):
     mat = getattr(nums, name)()
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
-    mtype = matrix_type(mat.shape[0], mat.shape[1])
+    if not bool(numpy.prod(mat.shape)):
+        shape = (0, 0)
+    else:
+        shape = mat.shape
+    mtype = matrix_type(shape[0], shape[1])
     return '_{0} = Map<{1}> ({0}_data);'.format(name, mtype)
 
 

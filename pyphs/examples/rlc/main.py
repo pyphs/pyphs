@@ -26,7 +26,8 @@ core = netlist2core(netlist_filename)
 
 core.build_R()
 
-simu = PHSSimulation(core, config={'split': True})
+simu = PHSSimulation(core, config={'split': True, 'language': 'c++',
+                                   'eigen_path': r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen'})
 
 dur = 0.01
 u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)

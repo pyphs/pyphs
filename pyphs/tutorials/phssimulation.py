@@ -19,26 +19,6 @@ from pyphs import PHSSimulation
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core
 
-xcode_template_path = '/Users/Falaize/Documents/DEV/c++/xcode_template_pyphs'
-
-cpp_build_and_run_script = """
-
-echo "Copy xcode template"
-mkdir simulation_path/xcode
-cp -r """ + xcode_template_path + """/* simulation_path/xcode
-
-echo "Copy cpp files"
-cp -r simulation_path/cpp/* simulation_path/xcode/xcode_template_pyphs/
-
-echo "Build release"
-xcodebuild -project simulation_path/xcode/xcode_template_pyphs.xcodeproj -alltargets \
--configuration Release
-
-echo "Run"
-simulation_path/xcode/build/Release/xcode_template_pyphs
-
-"""
-
 # Define the simulation parameters
 config = {'fs': 48e3,               # Sample rate
           'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -49,10 +29,11 @@ config = {'fs': 48e3,               # Sample rate
           'path': None,             # Path to the folder to save the results
           'progressbar': False,     # Display a progress bar
           'timer': False,           # Display minimal timing infos
-          'language': 'c++',     # in {'python', 'c++'}
-          'cpp_build_and_run_script': cpp_build_and_run_script,  # call to compiler and exec binary
-          'eigen_path': r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen',     # path to Eigen C++ linear algebra library
+          'language': 'python',     # in {'python', 'c++'}
+          'cpp_build_and_run_script': None,  # call to compiler and exec binary
+          'eigen_path': r'None',    # path to Eigen C++ linear algebra library
           }
+          
 # Instantiate a pyphs.PHSSimulation object associated with a given core PHS
 simu = PHSSimulation(core, config=config)
 
@@ -112,17 +93,17 @@ x_list = list(x)
 x1_list = list(x1)
 
 # plot x_L(t)
-plt.figure()
+plt.figure(1)
 plt.plot(t_list, x1_list)
 plt.show()
 
 # phase plot
-plt.figure()
+plt.figure(2)
 plt.plot([ex[0] for ex in x_list], [ex[1] for ex in x_list])
 plt.show()
 
 # plot of several signals with the simu.data object
-plt.figure()
+plt.figure(3)
 simu.data.plot([('u', 0), ('x', 0), ('x', 1), ('dtx', 0), ('y', 0)])
 
 # power balance

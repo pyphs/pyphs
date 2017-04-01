@@ -149,7 +149,7 @@ class PHSNumericalMethod:
         args = (self.core.v(), )*2
         mats = (self.core.jacF()[:, :self.core.dims.x()],
                 self.core.jacF()[:, self.core.dims.x():])*2
-        criterion = zip(mats, args)
+        criterion = list(zip(mats, args))
         self.core.split_linear(criterion=criterion)
 
 

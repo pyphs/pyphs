@@ -47,7 +47,8 @@ class GraphAnalysis:
             # force realizability for datum (no edge imposes the potential)
             self.lambd[0, :] = 0
             # exclude datum from analysis
-            self.ic_nodes = self.ic_nodes[1:]
+            index_datum = self.nodes.index(datum)
+            self.ic_nodes.pop(self.ic_nodes.index(index_datum))
         # Init lists of edges for analysis
         self.ec_edges = []
         self.fc_edges = []

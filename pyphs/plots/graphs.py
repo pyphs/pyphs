@@ -178,7 +178,7 @@ def plot_analysis(graph, analysis):
         if node in ic_nodes_labels:
             nodes_colors.append('lightsalmon')
         else:
-            nodes_colors.append('lightsage')
+            nodes_colors.append('lightgreen')
     plt.figure()
     ax = plt.axes(frameon=False)
     draw_nodes(graph, ax=ax, colors=nodes_colors)

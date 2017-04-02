@@ -13,6 +13,6 @@ from . import mechanics
 from . import connectors
 from . import mechanics_dual
 from . import magnetics
-
-__all__ = ['electronics', 'mechanics', 'magnetics', 'connectors',
+from . import beams
+__all__ = ['electronics', 'mechanics', 'magnetics', 'connectors', 'beams',
            'mechanics_dual']

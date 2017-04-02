@@ -38,6 +38,12 @@ i-th parameter is defined as 'label_pari'.
         """
         init with filename to read data from 'filename.net'
         """
+        n = filename[filename.rfind(os.sep)+1:]
+        f = filename[:filename.rfind(os.sep)+1]
+        if len(n) == 0:
+            n, f = f, n
+        print('Read netlist {}'.format(n))
+        print('from folder {}'.format(f))
         self.filename = filename
         if not os.path.isfile(self.filename) or clear:
             file_ = open(self.filename, 'w')
@@ -208,10 +214,10 @@ or tuple (str, float).
         Formated string that corresponds to a single line in the netlist \
         (includes end cariage return).
     """
-    
-    component = '{0}.{1} {2} {3}:'.format(dic['dictionary'], 
+
+    component = '{0}.{1} {2} {3}:'.format(dic['dictionary'],
                                           dic['component'],
-                                          dic['label'], 
+                                          dic['label'],
                                           dic['nodes'])
     pars = ""
     if dic['arguments'] is not None:

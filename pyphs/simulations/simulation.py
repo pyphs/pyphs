@@ -89,12 +89,13 @@ class PHSSimulation:
         self._core.M = self.nums.method.core.M
         setattr(self, 'data', PHSData(self._core, self.config))
         self.data.init_data(sequ, seqp, x0, nt)
-        self.init_numericalcore(x0=x0)
+        self.nums.set_x(x0=x0)
 
     def process(self):
         """
         process simulation for all time steps
         """
+        print('Process...')
         if self.config['timer']:
             tstart = time.time()
 
@@ -117,6 +118,7 @@ class PHSSimulation:
             time_ratio = time_it*self.config['fs']
             print('ratio compared to real-time: {0!s}'.format(format(
                 time_ratio, 'f')))
+        print('Done')
 
     def init_pb(self):
         pb_widgets = ['\n', 'Simulation: ',
@@ -165,7 +167,7 @@ class PHSSimulation:
 
         simu2cpp(self)
 
-        if self.config['cpp_build_and_run_script'] is None:
+        if self.config['script'] is None:
             print("\no==========================================================\
 ==o\n")
             print("Please, execute:\n" + self.config['path'] + os.sep + 'cpp' +

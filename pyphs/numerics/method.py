@@ -39,6 +39,7 @@ class PHSNumericalMethod:
             default is None).
 
         """
+        print('Build numerical method...')
 
         # recover PHSNumericalOperation class
         self.operation = PHSNumericalOperation

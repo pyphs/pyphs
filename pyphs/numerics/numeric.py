@@ -23,6 +23,8 @@ class PHSNumericalCore:
     """
     def __init__(self, method, config=None, build=True):
 
+        print('Build numerical core...')
+
         # init config with standard configuration options
         self.config = simulations.copy()
         # update with provided config
@@ -141,6 +143,8 @@ class PHSNumericalEval:
     functions from a given PHSCore.
     """
     def __init__(self, core, vectorize=True):
+        print('Build numerical evaluations...')
+
         self.core = core.__deepcopy__()
         if not hasattr(self.core, 'dxH'):
             self.core.build_dxH()

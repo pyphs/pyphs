@@ -360,6 +360,7 @@ dissipative variables w are no more accessible.
         """
         Split the system into linear and nonlinear parts.
         """
+        print('Split linear/nonlinear...')
         split_linear(self, criterion=criterion)
 
     def labels(self):

@@ -13,7 +13,20 @@ __all__ = ['Gyrator', 'Transformer']
 
 class Gyrator(PHSConnector):
     """
-    gyrator
+    Gyrator
+    ========
+
+    Parameters
+    -----------
+
+    label : str,
+        Gyrator label.
+
+    nodes: tuple of nodes labels
+        Ordering is ('A1', 'A2', 'B1', 'B2')
+
+    kwargs: dic with following "keys:values"
+        * 'alpha' : gyrator value or symbol label or tuple (label, value).
     """
     def __init__(self, label, nodes, **kwargs):
         kwargs.update({'connector_type': 'gyrator'})
@@ -27,7 +40,20 @@ class Gyrator(PHSConnector):
 
 class Transformer(PHSConnector):
     """
-    transformer
+    Transformer
+    ============
+
+    Parameters
+    -----------
+
+    label : str,
+        Transformer label.
+
+    nodes: tuple of nodes labels
+        Ordering is ('A1', 'A2', 'B1', 'B2')
+
+    kwargs: dic with following "keys:values"
+        * 'alpha' : transformer value or symbol label or tuple (label, value).
     """
     def __init__(self, label, nodes, **kwargs):
         kwargs.update({'connector_type': 'transformer'})

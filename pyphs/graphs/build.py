@@ -99,7 +99,7 @@ def _setCore(graph):
         index_e_in_connector = graph.core.cy.index(e_label)
         alpha = graph.analysis.get_edge_data(e, 'alpha')
         if alpha is not None:
-            graph.core.connectors[index_e_in_connector]['alpha'] = alpha
+            graph.core.connectors[index_e_in_connector//2]['alpha'] = alpha
         new_indices_connector.append(index_e_in_connector)
     graph.core.cy = [graph.core.cy[el] for el in new_indices_connector]
     graph.core.cu = [graph.core.cu[el] for el in new_indices_connector]

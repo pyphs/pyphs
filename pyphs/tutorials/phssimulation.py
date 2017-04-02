@@ -19,6 +19,11 @@ from pyphs import PHSSimulation
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core
 
+from pyphs import *; path = '/Users/Falaize/Desktop/rhodes.net'; rhodes = PHSGraph(netlist=path); core = rhodes.buildCore()
+
+core.apply_connectors()
+
+core.build_R()
 
 # Define the simulation parameters
 config = {'fs': 48e3,           # Sample rate (Hz)
@@ -75,7 +80,7 @@ def sequ():
 
 # state initialization
 # !!! must be array with shape (core.dims.x(), )
-x0 = (0., 0.)
+x0 = None
 
 # Initialize the simulation
 simu.init(sequ=sequ(), x0=x0, nt=nt)

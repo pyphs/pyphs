@@ -28,6 +28,8 @@ class PHSData:
     """
     def __init__(self, core, config):
 
+        print('Build data i/o...')
+
         # init config with standard configuration options
         self.config = simulations.copy()
         self.config.update(config)

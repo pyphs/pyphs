@@ -140,7 +140,7 @@ class Damper(PHSDissipativeLinear):
         else:
             coeff = kwargs['A']
         PHSDissipativeLinear.__init__(self, label, nodes, coeff=coeff,
-                                      inv_coeff=True)
+                                      inv_coeff=False)
 
     @staticmethod
     def metadata():

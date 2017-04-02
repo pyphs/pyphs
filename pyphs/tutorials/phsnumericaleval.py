@@ -12,7 +12,7 @@ date: 28 February 2017
 from __future__ import division, print_function, absolute_import
 
 # retrieve the pyphs.PHSCore of a simple RLC from the previous tutorial
-from pyphs.tutorials.tuto_PHSCore import core
+from pyphs.tutorials.phscore import core
 
 # load the pyphs.PHSNumericalEval class in the current namespace
 from pyphs import PHSNumericalEval
@@ -23,7 +23,8 @@ evals = PHSNumericalEval(core)
 # values for arguments
 x = [5e-4, 2e-2]
 dx = [5e-3, 2e-1]
-w = [5e-3, ]
+#w = [5e-3, ]
+w = list()
 u = [1.5, ]
 
 # collect all arguments

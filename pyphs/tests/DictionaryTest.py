@@ -13,14 +13,14 @@ from __future__ import division
 
 
 def dlc():
-    from pyphs.examples.dlc import core
+    from pyphs.examples.dlc.dlc import core
     core.build_R()
     assert core.dims.wnl == 1
     return True
 
 
 def bjt():
-    from pyphs.examples.bjtamp import core
+    from pyphs.examples.bjtamp.bjtamp import core
     core.build_R()
     assert core.dims.wnl == 2
     return True

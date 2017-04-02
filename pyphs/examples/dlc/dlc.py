@@ -23,10 +23,8 @@ netlist_filename = path + os.sep + label + '.net'
 
 netlist = PHSNetlist(netlist_filename)
 
-
 graph = PHSGraph(netlist=netlist)
 core = graph.buildCore()
-
 
 if __name__ == '__main__':
     tsig = 0.01

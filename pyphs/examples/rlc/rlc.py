@@ -17,7 +17,7 @@ label = 'rlc'
 
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
-netlist_filename = path + label + '.net'
+netlist_filename = path + os.sep + label + '.net'
 netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)
 core = netlist2core(netlist_filename)

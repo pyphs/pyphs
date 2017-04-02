@@ -18,6 +18,8 @@ import numpy as np
 class TestPHSNetlistInit(TestCase):
     def test_netlist_init_and_add_components(self):
         netlist = NetlistThieleSmallNL()
+        print(netlist.netlist())
+        print(target_netlist)
         self.assertTrue(netlist.netlist() == target_netlist)
 
 

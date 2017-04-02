@@ -25,6 +25,8 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
         objlabel = objlabel.upper()
     if path is None:
         path = os.getcwd() + os.sep + objlabel
+    if not os.path.exists(path):
+        os.makedirs(path)
     if eigen_path is None:
         eigen_path = config_eigen_path
     files = {}

@@ -21,7 +21,7 @@ install:
   - conda_deps='pip libgfortran cython numpy scipy networkx matplotlib nose sympy theano'
   - conda create -q -n test-environment "python=$TRAVIS_PYTHON_VERSION" $conda_deps
   - source activate test-environment
-  - pip_deps='stopit progressbar2 nose coveralls'
+  - pip_deps='stopit progressbar2 nose codecov coveralls'
   - pip install $pip_deps
   - pip install .
 # command to run tests

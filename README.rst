@@ -1,5 +1,7 @@
 PyPHS
 ======
+A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
+
 .. image:: https://badge.fury.io/py/pyphs.svg
     :target: https://badge.fury.io/py/pyphs
 
@@ -11,12 +13,6 @@ PyPHS
     
 .. image:: https://img.shields.io/badge/documentation-website-blue.svg
     :target: https://afalaize.github.io/pyphs/
-
-A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
-
-It is developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
-
-It was initially developed between 2012 and 2016 as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__, through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__.
 
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/afalaize/pyphs
@@ -35,6 +31,10 @@ It was initially developed between 2012 and 2016 as a part of the PhD project of
    :target: https://landscape.io/github/afalaize/pyphs/master
    :alt: Health
        
+It is developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
+
+It was initially developed between 2012 and 2016 as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__, through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__.
+
 Installation
 ==============
 It is possible to install ``pyphs`` from package (if you just want to use it) or source (if you plan to

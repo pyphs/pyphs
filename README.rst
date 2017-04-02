@@ -50,7 +50,7 @@ To install the ``pyphs`` package, you must have either Python 2.7 or Python
 - `sympy <http://www.sympy.org/fr/>`_
 - `numpy <http://www.numpy.org>`_
 - `scipy <http://www.scipy.org>`_
-- _`matplotlib <http://matplotlib.org/>`_
+- `matplotlib <http://matplotlib.org/>`_
 - `networkx <http://networkx.github.io/>`_
 - `stopit <https://pypi.python.org/pypi/stopit>`_
 - `progressbar2 <https://pypi.python.org/pypi/progressbar2>`_
@@ -61,6 +61,8 @@ required versions and make sure that these modules are up to date, otherwise it
 can result in unexpected errors or false computations!
 
 Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if available for faster numerical evaluation of symbolic functions.
+
+Finally, the generated `C++` code rely on the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ (see **Configuration** below).
 
 Install from package
 --------------------
@@ -98,6 +100,16 @@ To run the included tests::
 
     python setup.py test
 
+Configuration
+--------------
+
+After installation, it is recommanded to configure the `config.py </pyphs/config.py>`_ to your needs. The local path can be recovered with
+    
+    >>> import pyphs
+    >>> help(pyph)
+
+Particularily, this is where the local path to the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified (and then included in the generated C++ code).
+
 Upgrade of existing installations
 ---------------------------------
 
@@ -133,23 +145,30 @@ The package has a very simple structure, divided into the following folders:
 `/docs <docs>`_
   package documentation
 `/pyphs/tutorials </pyphs/tutorials>`_
-  this folder includes tutorials programs for the main classes
+  tutorials programs for the main `pyphs classes
 `/pyphs/examples </pyphs/examples>`_
   additional examples (executable programs)
 `/pyphs/core </pyphs/core>`_
     define the core PHS structure class `PHSCore`
-`/pyphs/core </pyphs/numerics>`_
-    define the classes `PHSEval`, `PHSNumericalMethod` and `PHSNumericalCore` for the numerical evaluation of `PHSCore`
-`/pyphs/core </pyphs/graphs>`_
+`/pyphs/graphs </pyphs/graphs>`_
     define the classes `PHSNetlist` and `PHSGraph`
-`/pyphs/core </pyphs/simulations>`_
-    define the classes `PHSSimulation`
+`/pyphs/dictionary </pyphs/dictionary>`_
+  components (`PHSGraph`)
+`/pyphs/numerics </pyphs/numerics>`_
+    define the classes `PHSEval`, `PHSNumericalMethod` and `PHSNumericalCore` for the numerical evaluation of `PHSCore`
+`/pyphs/simulations </pyphs/simulations>`_
+    define the classes `PHSSimulation` and `PHSData` for simulation
+`/pyphs/latex </pyphs/latex>`_
+    LaTeX code generation
+`/pyphs/cpp </pyphs/cpp>`_
+    C++ code generation
 `/pyphs/tests </pyphs/tests>`_
-  tests
+  test programs (withe nose`)
+`/pyphs/plots </pyphs/plots>`_
+    Plot tools
+`/pyphs/misc </pyphs/misc>`_
+    Miscelaneous tools
   
-Configuration
-==============
-
 Documentation
 ==============
 

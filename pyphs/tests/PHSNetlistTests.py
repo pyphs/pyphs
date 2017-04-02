@@ -13,6 +13,7 @@ from pyphs import PHSNetlist
 from pyphs.config import datum as config_datum
 config_datum = "'"+config_datum+"'"
 
+
 def NetlistThieleSmallNL(label='TSnl', clear=True,
                          R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
     """
@@ -57,7 +58,7 @@ def NetlistThieleSmallNL(label='TSnl', clear=True,
     netlist.add_line(gyrator)
 
     # masse
-    mass = {'dictionary': 'mechanics',
+    mass = {'dictionary': 'mechanics_dual',
             'component': 'mass',
             'label': 'M',
             'nodes': ('D', 'E'),
@@ -65,7 +66,7 @@ def NetlistThieleSmallNL(label='TSnl', clear=True,
     netlist.add_line(mass)
 
     # ressort cubic
-    stifness = {'dictionary': 'mechanics',
+    stifness = {'dictionary': 'mechanics_dual',
                 'component': 'springcubic',
                 'label': 'K',
                 'nodes': ('E', 'F'),
@@ -75,13 +76,15 @@ def NetlistThieleSmallNL(label='TSnl', clear=True,
     netlist.add_line(stifness)
 
     # amortissement
-    damper = {'dictionary': 'mechanics',
+    damper = {'dictionary': 'mechanics_dual',
               'component': 'damper',
               'label': 'A',
               'nodes': ('F', datum),
               'arguments': {'A': ('A', A)}}
     netlist.add_line(damper)
 
+    netlist.write()
+
     return netlist
 netlist = NetlistThieleSmallNL()
-target_netlist = "electronics.source IN ('A', "+config_datum+"): type=voltage;\nelectronics.resistor R ('A', 'B'): R=('R', 1000.0);\nelectronics.inductor L ('B', 'C'): L=('L', 0.05);\nconnectors.gyrator G ('C', "+config_datum+", 'D', "+config_datum+"): alpha=('Bl', 50);\nmechanics.mass M ('D', 'E'): M=('M', 0.1);\nmechanics.springcubic K ('E', 'F'): K2=('K2', 1e+20); K0=('K0', 5000.0);\nmechanics.damper A ('F', "+config_datum+"): A=('A', 1);"
+target_netlist = "electronics.source IN ('A', "+config_datum+"): type=voltage;\nelectronics.resistor R ('A', 'B'): R=('R', 1000.0);\nelectronics.inductor L ('B', 'C'): L=('L', 0.05);\nconnectors.gyrator G ('C', "+config_datum+", 'D', "+config_datum+"): alpha=('Bl', 50);\nmechanics_dual.mass M ('D', 'E'): M=('M', 0.1);\nmechanics_dual.springcubic K ('E', 'F'): K2=('K2', 1e+20); K0=('K0', 5000.0);\nmechanics_dual.damper A ('F', "+config_datum+"): A=('A', 1);"

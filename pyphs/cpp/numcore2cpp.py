@@ -11,8 +11,8 @@ from pyphs.cpp.preamble import str_preamble
 from pyphs.cpp.arguments import append_args
 from pyphs.cpp.functions import append_funcs
 from pyphs.cpp.operations import append_ops
-from pyphs.cpp.tools import indent, matrix_type, main_path, SEP, formatPath
-from pyphs.config import eigen_path as config_eigen_path
+from pyphs.cpp.tools import indent, matrix_type, SEP, formatPath
+from pyphs.config import EIGEN_PATH as config_eigen_path
 import os
 
 standard_config = {'path': os.getcwd()}
@@ -24,7 +24,9 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
     else:
         objlabel = objlabel.upper()
     if path is None:
-        path = os.getcwd()
+        path = os.getcwd() + os.sep + objlabel
+    if not os.path.exists(path):
+        os.makedirs(path)
     if eigen_path is None:
         eigen_path = config_eigen_path
     files = {}
@@ -225,8 +227,8 @@ def iterate(method, actions, res_label, step_label):
     string += "\nunsigned int iter_{0} = 0;".format(res_label)
     string += "\n_{0} = 1;".format(step_label)
     it = "(iter_{0}<{1})".format(res_label, method.config['maxit'])
-    res = "({0}()>{1})".format(res_label, method.config['numtol'])
-    step = "({0}()>{1})".format(step_label, method.config['numtol'])
+    res = "({0}()>{1})".format(res_label, method.config['eps'])
+    step = "({0}()>{1})".format(step_label, method.config['eps'])
     string += \
         "\nwhile ({0} & {1} & {2})".format(it, res, step) + '{'
     string += \

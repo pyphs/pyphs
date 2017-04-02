@@ -13,7 +13,7 @@ from pyphs.core.symbs_tools import free_symbols
 from .tools import (lambdify, find, getarg_generator, setarg_generator,
                     getfunc_generator, setfunc_generator, evalfunc_generator,
                     evalop_generator)
-from pyphs.config import standard_simulations
+from pyphs.config import simulations
 import numpy
 
 
@@ -24,7 +24,7 @@ class PHSNumericalCore:
     def __init__(self, method, config=None, build=True):
 
         # init config with standard configuration options
-        self.config = standard_simulations.copy()
+        self.config = simulations.copy()
         # update with provided config
         if config is None:
             config = {}
@@ -123,8 +123,8 @@ class PHSNumericalCore:
         # init step on iteration
         getattr(self, 'set_' + step_name)(1.)
         # loop while res > tol, step > tol and it < itmax
-        while getattr(self, res_name)() > self.config['numtol'] \
-                and getattr(self, step_name)() > self.config['numtol']\
+        while getattr(self, res_name)() > self.config['eps'] \
+                and getattr(self, step_name)() > self.config['eps']\
                 and self.it < self.config['maxit']:
             self.execs(commands)
             self.it += 1

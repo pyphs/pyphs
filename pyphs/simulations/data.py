@@ -6,7 +6,7 @@ Created on Thu Jun  9 10:22:56 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs.config import standard_simulations
+from pyphs.config import simulations
 from pyphs.misc.io import data_generator, write_data
 from pyphs.misc.signals.waves import wavwrite
 from pyphs.plots.data import plot, plot_powerbal
@@ -29,7 +29,7 @@ class PHSData:
     def __init__(self, core, config):
 
         # init config with standard configuration options
-        self.config = standard_simulations.copy()
+        self.config = simulations.copy()
         self.config.update(config)
         self.core = core
 
@@ -45,7 +45,7 @@ class PHSData:
             setattr(self, name, dummy_func(name))
 
     def t(self, imin=None, imax=None, decim=None):
-        options = self.config['load_options']
+        options = self.config['load']
         if imin is None:
             imin = options['imin']
         if imax is None:
@@ -68,7 +68,7 @@ class PHSData:
         """
         Energy variation
         """
-        options = self.config['load_options']
+        options = self.config['load']
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
@@ -86,7 +86,7 @@ class PHSData:
         """
         Dissipated power
         """
-        options = self.config['load_options']
+        options = self.config['load']
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
@@ -109,7 +109,7 @@ class PHSData:
         """
         Source power
         """
-        options = self.config['load_options']
+        options = self.config['load']
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
@@ -121,7 +121,7 @@ class PHSData:
         """
         right-hand side
         """
-        options = self.config['load_options']
+        options = self.config['load']
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
@@ -134,7 +134,7 @@ class PHSData:
         """
         arguments of the system function in exprs
         """
-        options = self.config['load_options']
+        options = self.config['load']
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
@@ -157,7 +157,7 @@ class PHSData:
         """
         left-hand side
         """
-        options = self.config['load_options']
+        options = self.config['load']
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
@@ -169,7 +169,7 @@ class PHSData:
 
     def data_generator(self, name, ind=None, postprocess=None,
                        imin=None, imax=None, decim=None):
-        opts = self.config['load_options']
+        opts = self.config['load']
         options = {'imin': opts['imin'] if imin is None else imin,
                    'imax': opts['imax'] if imax is None else imax,
                    'decim': opts['decim'] if decim is None else decim}

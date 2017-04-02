@@ -19,39 +19,20 @@ from pyphs import PHSSimulation
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core
 
-xcode_template_path = '/Users/Falaize/Documents/DEV/c++/xcode_template_pyphs'
-
-cpp_build_and_run_script = """
-
-echo "Copy xcode template"
-mkdir simulation_path/xcode
-cp -r """ + xcode_template_path + """/* simulation_path/xcode
-
-echo "Copy cpp files"
-cp -r simulation_path/cpp/* simulation_path/xcode/xcode_template_pyphs/
-
-echo "Build release"
-xcodebuild -project simulation_path/xcode/xcode_template_pyphs.xcodeproj -alltargets \
--configuration Release
-
-echo "Run"
-simulation_path/xcode/build/Release/xcode_template_pyphs
-
-"""
 
 # Define the simulation parameters
-config = {'fs': 48e3,               # Sample rate
-          'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
-          'theta': 0.5,             # theta-scheme for the structure
-          'split': False,           # apply core.split_linear() beforehand
-          'maxit': 10,              # Max number of iterations for NL solvers
-          'numtol': 1e-16,          # Global numerical tolerance
-          'path': None,             # Path to the folder to save the results
-          'progressbar': False,     # Display a progress bar
-          'timer': False,           # Display minimal timing infos
-          'language': 'c++',     # in {'python', 'c++'}
-          'cpp_build_and_run_script': cpp_build_and_run_script,  # call to compiler and exec binary
-          'eigen_path': r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen',    # path to Eigen C++ linear algebra library
+config = {'fs': 48e3,           # Sample rate (Hz)
+          'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
+          'theta': 0.5,         # theta-scheme for the structure
+          'split': False,       # split implicit from explicit part
+          'maxit': 10,          # Max number of iterations for NL solvers
+          'eps': 1e-16,         # Global numerical tolerance
+          'path': None,         # Path to the results folder
+          'pbar': False,        # Display a progress bar
+          'timer': False,       # Display minimal timing infos
+          'lang': 'python',     # language in {'python', 'c++'}
+          'script': None,       # call to C++ compiler and exec binary
+          'eigen': None,        # path to Eigen C++ library
           }
 
 # Instantiate a pyphs.PHSSimulation object associated with a given core PHS

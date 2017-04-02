@@ -13,7 +13,7 @@ from pyphs.core.symbs_tools import free_symbols, simplify, matvecprod
 from pyphs.core.calculus import jacobian
 from pyphs.core.struc_tools import geteval
 from pyphs.numerics.tools import find, PHSNumericalOperation, regularize_dims
-from pyphs.config import standard_simulations
+from pyphs.config import simulations
 from pyphs.core.discrete_calculus import (discrete_gradient, gradient_theta,
                                           gradient_trapez)
 
@@ -32,7 +32,7 @@ class PHSNumericalMethod:
 
         config: dict or None
             A dictionary of simulation parameters. If None, the standard
-            pyphs.config.standard_simulations is used (default is None).
+            pyphs.config.simulations is used (default is None).
 
         args: list of strings or None
             A list of symbols for arguments. If None, core.args() is used (the
@@ -44,7 +44,7 @@ class PHSNumericalMethod:
         self.operation = PHSNumericalOperation
 
         # set config
-        self.config = standard_simulations.copy()
+        self.config = simulations.copy()
         if config is None:
             config = {}
         self.config.update(config)
@@ -164,16 +164,17 @@ def prepare_core(core, config):
 
     subs = {}
     # build discrete evaluation of the gradient
-    if config['gradient'] == 'discret':
-        dxHl = list(sp.Matrix(core.Q)*(sp.Matrix(core.xl()) + 0.5*sp.Matrix(core.dxl())))
+    if config['grad'] == 'discret':
+        dxHl = list(sp.Matrix(core.Q)*(sp.Matrix(core.xl()) +
+                    0.5*sp.Matrix(core.dxl())))
         dxHnl = discrete_gradient(core.H, core.xnl(), core.dxnl(),
-                                  config['numtol'])
+                                  config['eps'])
         core._dxH = dxHl + dxHnl
 
         for i, (xi, dxi) in enumerate(zip(core.x, core.dx())):
             subs[xi] = xi+config['theta']*dxi
 
-    elif config['gradient'] == 'theta':
+    elif config['grad'] == 'theta':
         core._dxH = gradient_theta(core.H,
                                    core.x,
                                    core.dx(),
@@ -182,7 +183,7 @@ def prepare_core(core, config):
             subs[xi] = xi+config['theta']*dxi
 
     else:
-        assert config['gradient'] == 'trapez', 'Unknown method for \
+        assert config['grad'] == 'trapez', 'Unknown method for \
 gradient evaluation: {}'.format(config['gradient'])
         core._dxH = gradient_trapez(core.H, core.x, core.dx())
 
@@ -327,7 +328,7 @@ def set_execactions(method):
         ud_vl = method.operation('dot', ('ijacFll', temp))
     else:
         ijacFll = method.operation('copy', ('jacFll', ))
-        ud_vl = method.operation('copy', ('Fl', ))
+        ud_vl = method.operation('copy', ('jacFll', ))
 
     method.setoperation('ijacFll', ijacFll)
     method.setoperation('ud_vl', ud_vl)

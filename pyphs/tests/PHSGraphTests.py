@@ -16,6 +16,9 @@ import numpy as np
 netlist = NetlistThieleSmallNL()
 graph = PHSGraph(netlist=netlist)
 
+symbols = graph.core.symbols
+
+
 target_edges = [('A', config_datum,
                  {'ctrl': 'f',
                   'label': graph.core.symbols('yIN'),
@@ -26,47 +29,54 @@ target_edges = [('A', config_datum,
                   'label': graph.core.symbols('wR'),
                   'link': None,
                   'type': 'dissipative',
-                  'z': {'e_ctrl': graph.core.symbols('wR')/graph.core.symbols('R'),
-                        'f_ctrl': graph.core.symbols('R')*graph.core.symbols('wR')}}),
+                  'z': {'e_ctrl': symbols('wR')/symbols('R'),
+                        'f_ctrl': symbols('R')*symbols('wR')}}),
                 ('B', 'C',
                  {'ctrl': 'e',
-                 'label': graph.core.symbols('xL'),
-                 'link': None, 'type': 'storage'}),
-                 ('E', 'F',
-                  {'ctrl': 'f',
-                  'label': graph.core.symbols('xK'),
+                  'label': symbols('xL'),
                   'link': None, 'type': 'storage'}),
-                 ('D', config_datum,
-                  {'alpha': graph.core.symbols('Bl'),
+                ('E', 'F',
+                 {'ctrl': 'f',
+                  'label': symbols('xK'),
+                  'link': None, 'type': 'storage'}),
+                ('D', config_datum,
+                 {'alpha': None,
                   'connector_type': 'gyrator',
                   'ctrl': '?',
-                  'label': 'yG2',
-                  'link': 'yG1',
+                  'label': symbols('yG2'),
+                  'link': symbols('yG1'),
                   'type': 'connector'}),
-                 ('D', 'E',
-                  {'ctrl':
-                   'e', 'label': graph.core.symbols('xM'),
-                   'link': None, 'type': 'storage'}),
+                ('D', 'E',
+                 {'ctrl':
+                  'e', 'label': symbols('xM'),
+                  'link': None, 'type': 'storage'}),
                 ('F', config_datum,
                  {'ctrl': '?',
-                 'label': graph.core.symbols('wA'),
-                 'link': None,
-                 'type': 'dissipative',
-                 'z': {'e_ctrl': graph.core.symbols('wA')/graph.core.symbols('A'),
-                       'f_ctrl': graph.core.symbols('A')*graph.core.symbols('wA')}}),
+                  'label': symbols('wA'),
+                  'link': None,
+                  'type': 'dissipative',
+                  'z': {'e_ctrl': symbols('wA')/symbols('A'),
+                        'f_ctrl': symbols('A')*symbols('wA')}}),
                 ('C', config_datum,
-                 {'alpha': graph.core.symbols('Bl'),
+                 {'alpha': symbols('Bl'),
                   'connector_type': 'gyrator',
                   'ctrl': '?',
-                  'label': 'yG1',
-                  'link': 'yG2',
+                  'label': symbols('yG1'),
+                  'link': symbols('yG2'),
                   'type': 'connector'})]
 target_edges.sort()
 
 target_M = np.array([
-                    [0, -1.0*graph.core.symbols('Bl'), -1.0, 0, -1.0, 0],
-                    [1.0*graph.core.symbols('Bl'), 0, 0, -1.0, 0, 1.0],
+                    [0, +1.0*symbols('Bl'), -1.0, 0, -1.0, 0],
+                    [-1.0*symbols('Bl'), 0, 0, -1.0, 0, 1.0],
                     [1.0, 0, 0, 0, 0, 0],
                     [0, 1.0, 0, 0, 0, 0],
                     [1.0, 0, 0, 0, 0, 0],
                     [0, -1.0, 0, 0, 0, 0]])
+
+
+def split_sp():
+    netlist = NetlistThieleSmallNL()
+    graph = PHSGraph(netlist=netlist)
+    graph.split_sp()
+    return True

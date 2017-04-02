@@ -56,7 +56,7 @@ def NetlistThieleSmallNL(label='TSnl', clear=True,
     netlist.add_line(gyrator)
 
     # masse
-    mass = {'dictionary': 'mechanics',
+    mass = {'dictionary': 'mechanics_dual',
             'component': 'mass',
             'label': 'M',
             'nodes': ('D', 'E'),
@@ -64,7 +64,7 @@ def NetlistThieleSmallNL(label='TSnl', clear=True,
     netlist.add_line(mass)
 
     # ressort cubic
-    stifness = {'dictionary': 'mechanics',
+    stifness = {'dictionary': 'mechanics_dual',
                 'component': 'springcubic',
                 'label': 'K',
                 'nodes': ('E', 'F'),
@@ -74,7 +74,7 @@ def NetlistThieleSmallNL(label='TSnl', clear=True,
     netlist.add_line(stifness)
 
     # amortissement
-    damper = {'dictionary': 'mechanics',
+    damper = {'dictionary': 'mechanics_dual',
               'component': 'damper',
               'label': 'A',
               'nodes': ('F', datum),

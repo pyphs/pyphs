@@ -22,7 +22,7 @@ It was initially developed between 2012 and 2016 as a part of the PhD project of
     :target: https://www.travis-ci.org/afalaize/pyphs
  
 .. image:: https://coveralls.io/repos/github/afalaize/pyphs/badge.svg?branch=master
-    :target: https://coveralls.io/github/afalaize/pyphs
+    :target: https://coveralls.io/github/afalaize/pyphs?branch=master
 
 .. image:: https://codecov.io/gh/afalaize/pyphs/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/afalaize/pyphs

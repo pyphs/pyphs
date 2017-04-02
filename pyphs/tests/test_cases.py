@@ -16,6 +16,7 @@ from .PHSSimulationTest import (simulation_rlc_with_split,
                                 simulation_rlc_without_split,
                                 simulation_nlcore_full)
 from .cppTest import cpp_nlcore_full
+from DictionaryTest import dlc, bjt
 import numpy as np
 
 
@@ -95,3 +96,10 @@ class TestSimulation(TestCase):
 class TestCpp(TestCase):
     def test_cpp_nlcore_full(self):
         self.assertTrue(cpp_nlcore_full())
+
+
+class TestDico(TestCase):
+    def test_bjt(self):
+        self.assertTrue(bjt())
+    def test_dlc(self):
+        self.assertTrue(dlc())

@@ -22,6 +22,7 @@ install:
   - deps='pip libgfortran cython numpy scipy networkx matplotlib nose sympy theano'
   - conda create -q -n test-environment "python=$TRAVIS_PYTHON_VERSION" $deps
   - source activate test-environment
+  - pip install stopit
   - pip install .
 # command to run tests
 script: nose

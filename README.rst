@@ -12,14 +12,17 @@ PyPHS
 .. image:: https://coveralls.io/repos/github/afalaize/pyphs/badge.svg?branch=master
     :target: https://coveralls.io/github/afalaize/pyphs
 
-.. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/afalaize/pyphs/master
-   :alt: Code Health
-   
 .. image:: https://www.quantifiedcode.com/api/v1/project/0c1fbf5b44e94b4085a24c18a1895947/badge.svg
   :target: https://www.quantifiedcode.com/app/project/0c1fbf5b44e94b4085a24c18a1895947
-  :alt: Code issues   
-  
+  :alt: issues   
+
+.. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/afalaize/pyphs/master
+   :alt: Health
+   
+.. image:: https://badge.fury.io/py/pyphs.svg
+    :target: https://badge.fury.io/py/pyphs
+    
 A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
 
 It is developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 

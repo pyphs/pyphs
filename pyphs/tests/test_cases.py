@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 from unittest import TestCase
 from pyphs import PHSNetlist
 from .PHSNetlistTests import NetlistThieleSmallNL, target_netlist
-from .PHSGraphTests import graph, target_edges, target_M
+from .PHSGraphTests import graph, target_edges, target_M, split_sp
 from .PHSLatexTest import TestCore2Tex
 from .PHSSimulationTest import (simulation_rlc_with_split,
                                 simulation_rlc_without_split,
@@ -35,7 +35,7 @@ import numpy as np
 #
 #
 
-class TestPHSGraphBuildFromNetlist(TestCase):
+class TestPHSGraph(TestCase):
     def test_graph_build_from_netlist(self):
         edges = graph.edges(data=True)
         edges.sort()
@@ -54,8 +54,6 @@ class TestPHSGraphBuildFromNetlist(TestCase):
                         print(arg1, arg2)
         self.assertTrue(all(res))
 
-
-class TestPHSGraphBuildCore(TestCase):
     def test_graph_build_core(self):
         graph.buildCore()
         graph.core.apply_connectors()
@@ -72,6 +70,9 @@ class TestPHSGraphBuildCore(TestCase):
         test_M = np.array(graph.core.M)-target_M
         results = (test_M == np.zeros(target_M.shape))
         self.assertTrue(all(list(results.flatten())))
+
+    def test_split_sp(self):
+        self.assertTrue(split_sp())
 
 
 class TestCore2Latex(TestCase):

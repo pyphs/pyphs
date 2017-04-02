@@ -18,6 +18,7 @@ graph = PHSGraph(netlist=netlist)
 
 symbols = graph.core.symbols
 
+
 target_edges = [('A', config_datum,
                  {'ctrl': 'f',
                   'label': graph.core.symbols('yIN'),
@@ -72,3 +73,10 @@ target_M = np.array([
                     [0, 1.0, 0, 0, 0, 0],
                     [1.0, 0, 0, 0, 0, 0],
                     [0, -1.0, 0, 0, 0, 0]])
+
+
+def split_sp():
+    netlist = NetlistThieleSmallNL()
+    graph = PHSGraph(netlist=netlist)
+    graph.split_sp()
+    return True

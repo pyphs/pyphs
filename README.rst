@@ -3,12 +3,16 @@ PyPHS
 .. image:: https://badge.fury.io/py/pyphs.svg
     :target: https://badge.fury.io/py/pyphs
 
-.. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
-    :target: https://www.travis-ci.org/afalaize/pyphs
- 
+.. image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
+    :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+
 .. image:: https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg
     :target: https://www.travis-ci.org/afalaize/pyphs
 
+
+.. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
+    :target: https://www.travis-ci.org/afalaize/pyphs
+ 
 .. image:: https://coveralls.io/repos/github/afalaize/pyphs/badge.svg?branch=master
     :target: https://coveralls.io/github/afalaize/pyphs
 
@@ -28,9 +32,6 @@ A python software dedicated to the simulation of multiphysical systems in the Po
 It is developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
 
 It was initially developed between 2012 and 2016 as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__, through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__.
-
-.. image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
-    :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
 
 Installation
 --------------

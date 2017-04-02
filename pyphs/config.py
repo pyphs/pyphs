@@ -9,17 +9,6 @@ import numpy
 
 ###############################################################################
 
-# Below are the options for PLOTS
-
-# Export format:
-plot_format = 'pdf'
-
-# Can be used to define commands to be use in plot axis and lines labels:
-latex_preamble = [' ', ]
-
-
-###############################################################################
-
 # Below are the options for the DICTIONARY
 
 # Minimal conductance for accelerating convergence of NL-solver (used e.g. in
@@ -84,14 +73,14 @@ special_chars = ['#']
 # eigen_path = r'/roor/path/subpath/eigen', PyPHS will include the following in
 # the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
 # !!! This should be a raw string (especially for Windows user) !!!!
-eigen_path = r'...Local path to the eigen library (see pyphs.config.py)...'
+EIGEN_PATH = r'eigen'
 
 # You can automatize the compilation and execution of the c++ files by giving a
 # shell script in "cpp_build_and_run_script" below. It is executed when the
 # option "langage='c++'"" is used for the simulations. You can use the keyword
 # 'simulation_path' to recover the path of the current PHobject (it is replaced
 # at execution)
-cpp_build_and_run_script = None
+SCRIPT = None
 
 # The following is an example which uses xcode on mac osx. First, generate the
 # c++ code for a dummy PortHamiltonianObject, Second, init an empty xcode
@@ -100,13 +89,13 @@ cpp_build_and_run_script = None
 # the compilation options to your liking and save. Finally, uncomment the
 # following and inform the path to your template:
 #
-# xcode_template_path = '/Users/.../xcode_template_pyphs'
+# XCODE_PATH = '/Users/.../xcode_template_pyphs'
 #
-# cpp_build_and_run_script = """
+# SCRIPT = """
 #
 # echo "Copy the xcode template project in the current 'simulation_path'"
 # mkdir simulation_path/xcode
-# cp -r """ + xcode_template_path + """/* simulation_path/xcode
+# cp -r """ + XCODE_PATH + """/* simulation_path/xcode
 #
 # echo "Copy the cpp files in the xcode template project"
 # cp -r simulation_path/cpp/* simulation_path/xcode/xcode_template_pyphs/
@@ -122,19 +111,74 @@ cpp_build_and_run_script = None
 
 ###############################################################################
 
-standard_simulations = {'load_options': {'decim': 1, 'imin': 0, 'imax': None},
-                        'fs': 48e3,
-                        'path': None,
-                        'language': 'python',
-                        'timer': False,
-                        'progressbar': False,
-                        'files_to_save': ('x', 'dx', 'dxH', 'w', 'z', 'y'),
-                        'numtol': EPS,
-                        'gradient': 'discret', # {'discret', 'theta', 'trapez'}
-                        'theta': 0.5,
-                        'maxit': 100,
-                        'split': True,
-                        'eigen_path': eigen_path,
-                        'cpp_build_and_run_script': None}
+# Below are the options for SIMULATIONS
 
-standard_global = standard_simulations
+# Default samplerate (Hz)
+FS = 48e3
+
+# Hamiltonian gradient evaluation
+# in {'discret', 'theta', 'trapez'}
+GRADIENT = 'discret'
+
+# Parameter of the theta numerical scheme:
+# M(x+theta*dx) with gradient={'discret', 'theta'}
+# grad(H(x+theta*dx)) with gradient='theta'
+THETA = 0.5
+
+# Path to save the simulation results. If None, the current
+# working directory is used.
+SIMULATION_PATH = None
+
+# Simulation language in {'python', 'c++'}
+# Notice the 'c++' option need an appropriate configuration
+# of the EIGEN_PATH and SCRIPT above.
+LANGUAGE = 'python'
+
+# Split the structure into explicit (up to a matrix inversion) and implicit parts
+# before the simulation. Then presolve (invert the matrix) for the explicit part 
+# at runtime before the implicit function solver iterations.
+SPLIT = True
+
+# Names of the files to save in PATH/data.
+# Should be known elements of PHSNumericalCore
+# !!! for ploting with the PHSData object: FILES = ('x', 'dx', 'dxH', 'w', 'z', 'y')!!!
+FILES = ('x', 'dx', 'dxH', 'w', 'z', 'y')
+
+# Display minimal timing informations
+TIMER = False
+
+# Display a progressbar at runtime
+PBAR = False
+
+# Options for the data reader. The data are read from index imin 
+# to index imax, rendering one element out of the number decim
+LOAD_OPTS = {'imin': 0, 'imax': None, 'decim': 1}
+
+# Maximum number of implicit functions solvers
+MAXIT = 100
+
+simulations = {'fs': FS,
+               'grad': GRADIENT,         
+               'theta': THETA,                  
+               'path': SIMULATION_PATH,
+               'lang': LANGUAGE,
+               'timer': TIMER,
+               'pbar': PBAR,
+               'files': FILES,
+               'eps': EPS,
+               'maxit': int(MAXIT),
+               'split': SPLIT,
+               'eigen': EIGEN_PATH,
+               'script': SCRIPT,
+               'load': LOAD_OPTS}
+
+###############################################################################
+
+# Below are the options for PLOTS
+
+# Export format:
+plot_format = 'pdf'
+
+# Can be used to define commands for latex rendering in plot axis and lines labels:
+latex_preamble = [' ', ]
+

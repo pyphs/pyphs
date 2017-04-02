@@ -56,7 +56,6 @@ class PHSCore:
         self.exprs_names = set()
         self.setexpr('H', sympy.sympify(0))
         self.setexpr('z', list())
-        self.setexpr('g', list())
 
         # init tools
         self.dims = Dimensions(self)
@@ -151,7 +150,6 @@ class PHSCore:
 
         # Concatenate lists of expressions
         core1.setexpr('z', list(core1.z)+list(core2.z))
-        core1.setexpr('g', list(core1.g)+list(core2.g))
 
         core1.connectors += core2.connectors
 
@@ -210,8 +208,16 @@ state with symbol "xi" for each "xi" in state vector 'CorePHS.x'.
         """
         return [self.symbols('d'+str(x)) for x in self.x]
 
+    def g(self):
+        """
+        Returns the symbols "gxi" associated with the gradient of the storage\
+function w.r.t the state "xi" for each "xi" in state vector 'CorePHS.x'.
+        """
+        return [self.symbols('g'+str(x)) for x in self.x]
+
     def dxH(self):
         """
+        Return the gradient of storage function.
         """
         if self._dxH is None:
             return gradient(self.H, self.x)

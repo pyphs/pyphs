@@ -5,7 +5,11 @@ STOP_RENDERING = runtime.STOP_RENDERING
 __M_dict_builtin = dict
 __M_locals_builtin = locals
 _magic_number = 10
+<<<<<<< HEAD
+_modified_time = 1479307255.760586
+=======
 _modified_time = 1490183512.602974
+>>>>>>> master
 _enable_loop = True
 _template_filename = u'/Users/Falaize/anaconda/lib/python2.7/site-packages/nikola/data/themes/base/templates/comments_helper.tmpl'
 _template_uri = u'comments_helper.tmpl'

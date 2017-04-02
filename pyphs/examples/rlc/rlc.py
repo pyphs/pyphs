@@ -9,18 +9,13 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-import sys
 from pyphs import (netlist2core, PHSSimulation, signalgenerator,
                    PHSNetlist, PHSGraph)
 
 
 label = 'rlc'
 
-try:
-    os.chdir(os.path.dirname(sys.argv[0]))
-    path = os.getcwd() + os.sep
-except OSError:
-    path = r''
+path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = path + label + '.net'
 netlist = PHSNetlist(netlist_filename)

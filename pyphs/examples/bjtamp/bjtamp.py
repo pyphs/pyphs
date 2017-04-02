@@ -11,15 +11,12 @@ Here, we build the PHS core asssociated with the
 from __future__ import absolute_import, division, print_function
 
 import os
-import sys
 from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
 
 
 label = 'bjtamp'
 
-os.chdir(os.path.dirname(sys.argv[0]))
-
-path = os.getcwd()
+path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = path + os.sep + label + '.net'
 

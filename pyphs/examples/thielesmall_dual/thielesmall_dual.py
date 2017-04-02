@@ -9,15 +9,11 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-import sys
 from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
-
 
 label = 'thielesmall_dual'
 
-os.chdir(os.path.dirname(sys.argv[0]))
-
-path = os.getcwd()
+path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = path + os.sep + label + '.net'
 
@@ -30,8 +26,9 @@ core = graph.buildCore()
 if __name__ == '__main__':
     config = {'fs': 48e3,
               'split': True,
-              'progressbar': True,
+              'pbar': True,
               'timer': True,
+              'path': path
               }
 
     simu = PHSSimulation(core, config=config)

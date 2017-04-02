@@ -15,8 +15,7 @@ from pyphs.misc.signals.analysis import transferFunction
 import matplotlib.pyplot as plt
 
 label = 'thielesmall'
-os.chdir(os.path.dirname(sys.argv[0]))
-path = os.getcwd()
+path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 netlist_filename = path + os.sep + label + '.net'
 netlist = PHSNetlist(netlist_filename)
 

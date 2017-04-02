@@ -9,6 +9,7 @@ PyPHS
 .. image:: https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg
     :target: https://www.travis-ci.org/afalaize/pyphs
 
+------------------
 
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/afalaize/pyphs

@@ -8,13 +8,14 @@ from __future__ import absolute_import, division, print_function
 
 import stopit
 import sympy
+from pyphs.config import TIMEOUT
 
 
 def timeout_simplify(expr):
-    @stopit.threading_timeoutable(default='not finished')
+    @stopit.threading_timeoutable(default=expr)
     def func():
         return sympy.simplify(expr)
-    return func(timeout=3.)
+    return func(timeout=TIMEOUT)
 
 
 def _simplify_expr(expr):

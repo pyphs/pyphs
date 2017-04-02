@@ -26,6 +26,14 @@ EPS = numpy.finfo(float).eps
 
 ###############################################################################
 
+# Below are the options for SYMBOLIC COMPUTATIONS
+
+# Define the simplification trial time before timeout and abord
+TIMEOUT = 10.
+
+
+###############################################################################
+
 # Below are the options for GRAPH ANALYSIS
 
 # label of datum node

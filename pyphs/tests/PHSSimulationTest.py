@@ -38,6 +38,8 @@ def simulation_rlc_with_split():
     simu.init(sequ=sequ(), nt=int(dur*simu.fs))
     simu.process()
     
+    return True
+    
 
 def simulation_rlc_without_split():
     # Define the simulation parameters
@@ -67,6 +69,8 @@ def simulation_rlc_without_split():
     simu.init(sequ=sequ(), nt=int(dur*simu.fs))
 
     simu.process()
+    
+    return True
     
     
 def simulation_rlc_plot():
@@ -98,4 +102,6 @@ def simulation_rlc_plot():
 
     simu.process()
     simu.data.plot_powerbal(mode='multi')
+    
+    return True
     

@@ -74,13 +74,13 @@ class TestCore2Latex(TestCase):
         self.assertTrue(TestCore2Tex())
 
         
-#class TesSimulation(TestCase):
+class TesSimulation(TestCase):
 #    def test_simulation_rlc_plot(self):
 #        self.assertTrue(simulation_rlc_plot())
-#        
-#    def test_simulation_rlc_with_split(self):
-#        self.assertTrue(simulation_rlc_with_split())
-#
-#    def test_simulation_rlc_without_split(self):
-#        self.assertTrue(simulation_rlc_without_split())
-#        
+        
+    def test_simulation_rlc_with_split(self):
+        self.assertTrue(simulation_rlc_with_split())
+
+    def test_simulation_rlc_without_split(self):
+        self.assertTrue(simulation_rlc_without_split())
+        

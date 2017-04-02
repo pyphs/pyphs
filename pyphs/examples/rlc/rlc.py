@@ -34,7 +34,7 @@ if __name__ == '__main__':
     config = {'fs': 48e3,               # Sample rate
               'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
-              'split': False,           # apply core.split_linear() beforehand
+              'split': True,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
               'numtol': 1e-16,          # Global numerical tolerance
               'path': None,             # Path to the results folder

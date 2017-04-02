@@ -28,7 +28,7 @@ install:
   - pip install .
 # command to run tests
 script:
-  - nosetests --with-coverage --exclude-dir="/pyphs/plots/" --exclude-dir="/pyphs/misc/"
+  - nosetests --with-coverage --cover-erase --exclude-dir="/pyphs/plots/" --exclude-dir="/pyphs/misc/"
 after_success:
   - codecov
   - coveralls

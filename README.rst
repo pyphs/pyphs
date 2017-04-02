@@ -103,12 +103,13 @@ To run the included tests::
 Configuration
 --------------
 
-After installation, it is recommanded to configure the `config.py </pyphs/config.py>`_ to your needs. The local path can be recovered with
+After installation, it is recommanded to configure the `config.py </pyphs/config.py>`_ to your needs. Particularily, this is where the local path to the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified (and then included in the generated C++ code).
+
+Your local `config.py </pyphs/config.py>`_ file is located at the root of the `pyphs` package, which can be recovered with:
     
     >>> import pyphs
     >>> help(pyph)
 
-Particularily, this is where the local path to the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified (and then included in the generated C++ code).
 
 Upgrade of existing installations
 ---------------------------------
@@ -163,7 +164,7 @@ The package has a very simple structure, divided into the following folders:
 `/pyphs/cpp </pyphs/cpp>`_
     C++ code generation
 `/pyphs/tests </pyphs/tests>`_
-  test programs (withe nose`)
+  test programs (withe `nose`)
 `/pyphs/plots </pyphs/plots>`_
     Plot tools
 `/pyphs/misc </pyphs/misc>`_

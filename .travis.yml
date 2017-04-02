@@ -4,6 +4,12 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+os:
+  - linux
+  - osx
+matrix:
+  allow_failures:
+    - os: osx
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the

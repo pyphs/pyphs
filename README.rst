@@ -8,7 +8,7 @@ PyPHS
 
 .. image:: https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg
     :target: https://www.travis-ci.org/afalaize/pyphs
-
+    
 
 A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
 
@@ -46,7 +46,7 @@ To install the ``pyphs`` package, you must have either Python 2.7 or Python
 3.4 or newer and the following packages installed:
 
 - `numpy <http://www.numpy.org>`_
-- `scipy <http://www.scipy.org>`_
+- `sympy <http://www.sympy.org/fr/>`_
 - `scipy <http://www.scipy.org>`_
 - `networkx <http://networkx.github.io/>`_
 - `stopit <https://pypi.python.org/pypi/stopit>`_
@@ -56,6 +56,8 @@ To install the ``pyphs`` package, you must have either Python 2.7 or Python
 Please refer to the `requirements.txt <requirements.txt>`_ file for the minimum
 required versions and make sure that these modules are up to date, otherwise it
 can result in unexpected errors or false computations!
+
+Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if available for faster numerical evaluation of symbolic functions.
 
 Install from package
 --------------------
@@ -125,25 +127,21 @@ Package structure
 
 The package has a very simple structure, divided into the following folders:
 
-`/core <core>`_
-  this folder includes example programs (i.e. executable algorithms)
 `/docs <docs>`_
   package documentation
-`/madmom <madmom>`_
-  the actual Python package
-`/madmom/audio <madmom/audio>`_
-  low level features (e.g. audio file handling, STFT)
-`/madmom/evaluation <madmom/evaluation>`_
-  evaluation code
-`/madmom/features <madmom/features>`_
-  higher level features (e.g. onsets, beats)
-`/madmom/ml <madmom/ml>`_
-  machine learning stuff (e.g. RNNs, HMMs)
-`/madmom/models <../../../madmom_models>`_
-  pre-trained model/data files (see the License section)
-`/madmom/utils <madmom/utils>`_
-  misc stuff (e.g. MIDI and general file handling)
-`/tests <tests>`_
+`/pyphs/tutorials </pyphs/tutorials>`_
+  this folder includes tutorials programs for the main classes
+`/pyphs/examples </pyphs/examples>`_
+  additional examples (executable programs)
+`/pyphs/core </pyphs/core>`_
+    define the core PHS structure class `PHSCore`
+`/pyphs/core </pyphs/numerics>`_
+    define the classes `PHSEval`, `PHSNumericalMethod` and `PHSNumericalCore` for the numerical evaluation of `PHSCore`
+`/pyphs/core </pyphs/graphs>`_
+    define the classes `PHSNetlist` and `PHSGraph`
+`/pyphs/core </pyphs/simulations>`_
+    define the classes `PHSSimulation`
+`/pyphs/tests </pyphs/tests>`_
   tests
   
 Configuration

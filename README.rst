@@ -1,13 +1,13 @@
 PyPHS
 ======
+.. image:: https://badge.fury.io/py/pyphs.svg
+    :target: https://badge.fury.io/py/pyphs
+
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/afalaize/pyphs
  
 .. image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg
     :target: https://www.travis-ci.org/afalaize/pyphs
-
-.. image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
-    :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
 
 .. image:: https://coveralls.io/repos/github/afalaize/pyphs/badge.svg?branch=master
     :target: https://coveralls.io/github/afalaize/pyphs
@@ -19,10 +19,10 @@ PyPHS
 .. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
    :target: https://landscape.io/github/afalaize/pyphs/master
    :alt: Health
-   
-.. image:: https://badge.fury.io/py/pyphs.svg
-    :target: https://badge.fury.io/py/pyphs
-    
+       
+.. image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
+    :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+
 A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
 
 It is developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 

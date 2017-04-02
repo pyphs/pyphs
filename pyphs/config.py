@@ -154,7 +154,7 @@ PBAR = False
 # to index imax, rendering one element out of the number decim
 LOAD_OPTS = {'imin': 0, 'imax': None, 'decim': 1}
 
-# Maximum number of implicit functions solvers
+# Maximum number of iterations for implicit functions solvers
 MAXIT = 100
 
 simulations = {'fs': FS,

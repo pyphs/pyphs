@@ -14,6 +14,7 @@ from .PHSGraphTests import graph, target_edges, target_M
 from .PHSLatexTest import TestCore2Tex
 import numpy as np
 
+
 class TestPHSNetlistInit(TestCase):
     def test_netlist_init_and_add_components(self):
         netlist = NetlistThieleSmallNL()
@@ -40,14 +41,22 @@ class TestPHSGraphBuildFromNetlist(TestCase):
                 if isinstance(arg1, dict):
                     for k in arg1.keys():
                         res.append(arg1 == arg2)
+                        if not res[-1]:
+                            print(arg1, arg2)
                 else:
                     res.append(arg1 == arg2)
+                    if not res[-1]:
+                        print(arg1, arg2)
         self.assertTrue(all(res))
 
 
 class TestPHSGraphBuildCore(TestCase):
     def test_graph_build_core(self):
         graph.buildCore()
+        graph.core.apply_connectors()
+        if not graph.core.x[0] == graph.core.symbols('xM'):
+            graph.core.move_storage(0, 1)
+            assert graph.core.x[0] == graph.core.symbols('xM')
         test_M = np.array(graph.core.M)-target_M
         results = (test_M == np.zeros(target_M.shape))
         self.assertTrue(all(list(results.flatten())))

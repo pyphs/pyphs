@@ -8,16 +8,16 @@
                                         % TeX will automatically convert eps --> pdf in pdflatex
 \usepackage{amssymb}
 %\date{\today}                              % Activate to display a given date or no date
-\title{Test core2tex}
+\title{test core2tex}
 %
 \usepackage{authblk}
 \usepackage{hyperref}
 %\renewcommand\Authands{ and }
 %
 %
-\author[1]{The \textsc{PyPHS}\footnote{\url{https://github.com/afalaize/pyphs}} development team}
+\author[1]{The \textsc{PyPHS}\footnote{\url{https://afalaize.github.io/pyphs/}} development team}
 %
-\affil[1]{Project-team S3\footnote{\url{http://s3.ircam.fr}}\\STMS, IRCAM-CNRS-UPMC (UMR 9912)\\1 Place Igor-Stravinsky, 75004 Paris, France}
+\affil[1]{Project-team S3AM\footnote{\url{https://www.ircam.fr/recherche/equipes-recherche/systemes-et-signaux-sonores-audioacoustique-instruments-s3am/}}\\STMS, IRCAM-CNRS-UPMC (UMR 9912)\\1 Place Igor-Stravinsky, 75004 Paris, France}
 %
 \begin{document}
 %
@@ -64,15 +64,15 @@ Output $ \mathbf{y} = \left(\begin{array}{c}y_{\mathrm{IN}}\end{array}\right) ; 
 %
 \section{Constitutive relations}
 %
-Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{K_{K0} x_{\mathrm{K}}}{2} \left(\frac{x_{\mathrm{K}}^{3}}{2} + x_{\mathrm{K}}\right) + \frac{0.5 x_{\mathrm{M}}^{2}}{M} + \frac{0.5 x_{\mathrm{L}}^{2}}{L} ; $ 
+Hamiltonian $ \mathtt{H}(\mathbf{x}) = \frac{K_{0}}{2} \cdot x_{\mathrm{K}} \cdot \left(\frac{K_{2}}{2} \cdot x_{\mathrm{K}}^{3} + x_{\mathrm{K}}\right) + \frac{0.5}{M} \cdot x_{\mathrm{M}}^{2} + \frac{0.5}{L} \cdot x_{\mathrm{L}}^{2} ; $ 
 %
 \\
 %
-Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0 x_{\mathrm{M}}}{M}\\\frac{1.0 x_{\mathrm{L}}}{L}\\\frac{K_{K0} x_{\mathrm{K}}}{2} \left(\frac{3 x_{\mathrm{K}}^{2}}{2} + 1\right) + \frac{K_{K0}}{2} \left(\frac{x_{\mathrm{K}}^{3}}{2} + x_{\mathrm{K}}\right)\end{array}\right) ; $ 
+Hamiltonian gradient $ \nabla \mathtt{H}(\mathbf{x}) = \left(\begin{array}{c}\frac{1.0}{M} \cdot x_{\mathrm{M}}\\\frac{1.0}{L} \cdot x_{\mathrm{L}}\\K_{0} \cdot x_{\mathrm{K}} \cdot \left(K_{2} \cdot x_{\mathrm{K}}^{2} + 1\right)\end{array}\right) ; $ 
 %
 \\
 %
-Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}R w_{\mathrm{R}}\\A w_{\mathrm{A}}\end{array}\right) ; $ 
+Dissipation function $ \mathbf{z}(\mathbf{w}) = \left(\begin{array}{c}R \cdot w_{\mathrm{R}}\\A \cdot w_{\mathrm{A}}\end{array}\right) ; $ 
 %
 \\
 %
@@ -93,15 +93,19 @@ Jacobian of dissipation function $ \mathcal{J}_{\mathbf{z}}(\mathbf{w}) = \left(
 \hline
 parameter & value (SI)
 \\ \hline
-A :& 1
+Bl :& 50
 \\
 R :& 1000.0
 \\
-M :& 0.1
+A :& 1
+\\
+K2 :& 1e+20
+\\
+K0 :& 5000.0
 \\
 L :& 0.05
 \\
-uIN :& None
+M :& 0.1
 \\
 \hline
 \end{tabular}
@@ -112,11 +116,11 @@ uIN :& None
 %
 
 %
-$ \mathbf{M} = \left(\begin{array}{cccccc}0 & - 1.0 G_{\alpha} & -1.0 & 0 & -1.0 & 0\\1.0 G_{\alpha} & 0 & 0 & -1.0 & 0 & 1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & -1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M} = \left(\begin{array}{cccccc}0 & 1.0 \cdot Bl & -1.0 & 0 & -1.0 & 0\\- 1.0 \cdot Bl & 0 & 0 & -1.0 & 0 & 1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & -1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{M_{xx}} = \left(\begin{array}{ccc}0 & - 1.0 G_{\alpha} & -1.0\\1.0 G_{\alpha} & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{M_{xx}} = \left(\begin{array}{ccc}0 & 1.0 \cdot Bl & -1.0\\- 1.0 \cdot Bl & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
@@ -154,11 +158,11 @@ $ \mathbf{M_{yy}} = \left(\begin{array}{c}0\end{array}\right) ; $
 %
 
 %
-$ \mathbf{J} = \left(\begin{array}{cccccc}0 & - 1.0 G_{\alpha} & -1.0 & 0 & -1.0 & 0\\1.0 G_{\alpha} & 0 & 0 & -1.0 & 0 & 1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & -1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{J} = \left(\begin{array}{cccccc}0 & 1.0 \cdot Bl & -1.0 & 0 & -1.0 & 0\\- 1.0 \cdot Bl & 0 & 0 & -1.0 & 0 & 1.0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & 1.0 & 0 & 0 & 0 & 0\\1.0 & 0 & 0 & 0 & 0 & 0\\0 & -1.0 & 0 & 0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %
-$ \mathbf{J_{xx}} = \left(\begin{array}{ccc}0 & - 1.0 G_{\alpha} & -1.0\\1.0 G_{\alpha} & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
+$ \mathbf{J_{xx}} = \left(\begin{array}{ccc}0 & 1.0 \cdot Bl & -1.0\\- 1.0 \cdot Bl & 0 & 0\\1.0 & 0 & 0\end{array}\right) ; $ 
 %
 \\
 %

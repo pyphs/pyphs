@@ -8,7 +8,7 @@ Affiliation:
 	Project-Team S3 (Sound Signals and Systems), Laboratory of Sciences and Technologies of Music and Sound (UMR 9912), IRCAM-CNRS-UPMC, 1 place Igor Stravinsky, F-75004 Paris
 
 contributors: 
-	Antoine Falaize, Thomas Hélie, Thu Jul 9 23:11:37 2015
+	Antoine Falaize, Thomas Hélie
 
 corresponding contributor: 
 	antoine.falaize@ircam.fr

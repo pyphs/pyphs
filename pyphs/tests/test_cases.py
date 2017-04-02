@@ -14,7 +14,8 @@ from .PHSGraphTests import graph, target_edges, target_M
 from .PHSLatexTest import TestCore2Tex
 from .PHSSimulationTest import (simulation_rlc_plot, 
                                 simulation_rlc_with_split,
-                                simulation_rlc_without_split)
+                                simulation_rlc_without_split,
+                                simulation_nlcore_full)
 import numpy as np
 
 
@@ -83,4 +84,8 @@ class TesSimulation(TestCase):
 
     def test_simulation_rlc_without_split(self):
         self.assertTrue(simulation_rlc_without_split())
+        
+    def test_simulation_nlcore_full(self):
+        self.assertTrue(simulation_nlcore_full())
+        
         

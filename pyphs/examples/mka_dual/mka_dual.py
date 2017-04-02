@@ -22,26 +22,24 @@ netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)
 core = graph.buildCore()
 
-tsig = 0.01
-fs = 48000.
+if __name__ == '__main__':
+    tsig = 0.01
+    fs = 48000.
 
-config = {'fs': 48e3,
-          'progressbar': True,
-          }
-simu = PHSSimulation(core, config)
+    config = {'fs': 48e3,
+              'progressbar': True,
+              }
+    simu = PHSSimulation(core, config)
 
-sig = signalgenerator(which='sin', f0=500., A=200., tsig=tsig, fs=fs)
+    sig = signalgenerator(which='sin', f0=500., A=200., tsig=tsig, fs=fs)
 
+    def sequ():
+        for u in sig():
+            yield np.array([u, ])
 
-def sequ():
-    for u in sig():
-        yield np.array([u, ])
+    nt = int(fs*tsig)
+    simu.init(sequ=sequ(), nt=nt)
 
+    simu.process()
 
-nt = int(fs*tsig)
-simu.init(sequ=sequ(), nt=nt)
-
-simu.process()
-
-simu.data.plot_powerbal()
-
+    simu.data.plot_powerbal()

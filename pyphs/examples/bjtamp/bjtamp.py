@@ -31,28 +31,25 @@ core = graph.buildCore()
 
 core.build_R()
 
-config = {'fs': 48e3,
-          'split': True,
-          'progressbar': True,
-          'timer': True,
-          }
+if __name__ == '__main__':
+    config = {'fs': 48e3,
+              'split': True,
+              'progressbar': True,
+              'timer': True,
+              }
 
-simu = PHSSimulation(core, config=config)
+    simu = PHSSimulation(core, config=config)
 
-dur = 0.01
+    dur = 0.01
 
-u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
 
+    def sequ():
+        for el in u():
+            yield (0, 1e-3*el, 9.)
 
-def sequ():
-    for el in u():
-        yield (0, 1e-3*el, 9.)
+    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
 
+    simu.process()
 
-simu.init(sequ=sequ(), nt=int(dur*simu.fs))
-
-
-simu.process()
-
-
-simu.data.plot_powerbal(mode='multi')
+    simu.data.plot_powerbal(mode='multi')

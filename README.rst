@@ -2,7 +2,13 @@ PyPHS
 ======
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/afalaize/pyphs
-    
+ 
+.. image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg
+    :target: https://www.travis-ci.org/afalaize/pyphs
+
+.. image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
+    :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+
 .. image:: https://coveralls.io/repos/github/afalaize/pyphs/badge.svg?branch=master
     :target: https://coveralls.io/github/afalaize/pyphs
 

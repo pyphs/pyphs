@@ -9,7 +9,12 @@ PyPHS
 .. image:: https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg
     :target: https://www.travis-ci.org/afalaize/pyphs
 
-------------------
+
+A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
+
+It is developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
+
+It was initially developed between 2012 and 2016 as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__, through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__.
 
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/afalaize/pyphs
@@ -28,38 +33,123 @@ PyPHS
    :target: https://landscape.io/github/afalaize/pyphs/master
    :alt: Health
        
-A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
-
-It is developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
-
-It was initially developed between 2012 and 2016 as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__, through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__.
-
 Installation
---------------
+==============
+It is possible to install ``pyphs`` from package (if you just want to use it) or source (if you plan to
+use it for development) by following the instructions below. Whichever variant
+you choose, please make sure that all prerequisites are installed.
 
-* From sources with `pip <https://pypi.python.org/pypi/pip/>`_:
+Prerequisites
+-------------
 
-	.. code:: 
-		
-		pip install pyphs
-	
-	
-* From a download of the `PyPHS <https://github.com/afalaize/pyphs/>`_ package, execute from the package folder that contains a `setup.py` file
+To install the ``pyphs`` package, you must have either Python 2.7 or Python
+3.4 or newer and the following packages installed:
 
-	- with `setuptools <https://setuptools.readthedocs.io/en/latest/>`_:
-	
-	.. code:: 
-		
-		python setup.py install
+- `numpy <http://www.numpy.org>`_
+- `scipy <http://www.scipy.org>`_
+- `scipy <http://www.scipy.org>`_
+- `networkx <http://networkx.github.io/>`_
+- `stopit <https://pypi.python.org/pypi/stopit>`_
+- `progressbar2 <https://pypi.python.org/pypi/progressbar2>`_
+- `nose <https://github.com/nose-devs/nose>`_ (to run the tests)
 
-	- with `pip <https://pypi.python.org/pypi/pip/>`_:
+Please refer to the `requirements.txt <requirements.txt>`_ file for the minimum
+required versions and make sure that these modules are up to date, otherwise it
+can result in unexpected errors or false computations!
 
-	.. code:: 
-		
-		pip install .
+Install from package
+--------------------
 
+The instructions given here should be used if you just want to install the
+package, e.g. to run the bundled programs or use some functionality for your
+own project. If you intend to change anything within the `pyphs` package,
+please follow the steps in the next section.
+
+The easiest way to install the package is via ``pip`` from the `PyPI (Python
+Package Index) <https://pypi.python.org/pypi>`_::
+
+    pip install pyphs
+
+This includes the latest code and should install all
+dependencies automatically. If this is not the case, each dependency can be install the same way with ``pip``.
+
+You might need higher privileges (use su or sudo) to install the package globally. Alternatively you can install the package locally
+(i.e. only for you) by adding the ``--user`` argument::
+
+    pip install --user pyphs
+
+Install from source
+-------------------
+
+If you plan to use the package as a developer, clone the Git repository::
+
+    git clone --recursive https://github.com/afalaize/pyphs.git
+
+Then you can simply install the package in development mode::
+
+    python setup.py develop --user
+
+To run the included tests::
+
+    python setup.py test
+
+Upgrade of existing installations
+---------------------------------
+
+To upgrade the package, please use the same mechanism (pip vs. source) as you
+did for installation. If you want to change from package to source, please
+uninstall the package first.
+
+Upgrade a package
+~~~~~~~~~~~~~~~~~
+
+Simply upgrade the package via pip::
+
+    pip install --upgrade pyphs [--user]
+
+If some of the provided programs or models changed (please refer to the
+CHANGELOG) you should first uninstall the package and then reinstall::
+
+    pip uninstall pyphs
+    pip install pyphs [--user]
+
+Upgrade from source
+~~~~~~~~~~~~~~~~~~~
+
+Simply pull the latest sources::
+
+    git pull
+
+Package structure
+-----------------
+
+The package has a very simple structure, divided into the following folders:
+
+`/core <core>`_
+  this folder includes example programs (i.e. executable algorithms)
+`/docs <docs>`_
+  package documentation
+`/madmom <madmom>`_
+  the actual Python package
+`/madmom/audio <madmom/audio>`_
+  low level features (e.g. audio file handling, STFT)
+`/madmom/evaluation <madmom/evaluation>`_
+  evaluation code
+`/madmom/features <madmom/features>`_
+  higher level features (e.g. onsets, beats)
+`/madmom/ml <madmom/ml>`_
+  machine learning stuff (e.g. RNNs, HMMs)
+`/madmom/models <../../../madmom_models>`_
+  pre-trained model/data files (see the License section)
+`/madmom/utils <madmom/utils>`_
+  misc stuff (e.g. MIDI and general file handling)
+`/tests <tests>`_
+  tests
+  
+Configuration
+==============
 
 Documentation
--------------
+==============
 
 * See the `website <https://afalaize.github.io/pyphs/>`__. 

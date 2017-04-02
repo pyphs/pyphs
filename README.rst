@@ -45,9 +45,10 @@ Prerequisites
 To install the ``pyphs`` package, you must have either Python 2.7 or Python
 3.4 or newer and the following packages installed:
 
-- `numpy <http://www.numpy.org>`_
 - `sympy <http://www.sympy.org/fr/>`_
+- `numpy <http://www.numpy.org>`_
 - `scipy <http://www.scipy.org>`_
+- _`matplotlib <http://matplotlib.org/>`_
 - `networkx <http://networkx.github.io/>`_
 - `stopit <https://pypi.python.org/pypi/stopit>`_
 - `progressbar2 <https://pypi.python.org/pypi/progressbar2>`_

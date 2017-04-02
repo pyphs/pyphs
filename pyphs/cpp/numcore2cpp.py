@@ -24,7 +24,7 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
     else:
         objlabel = objlabel.upper()
     if path is None:
-        path = os.getcwd()
+        path = os.getcwd() + os.sep + objlabel
     if eigen_path is None:
         eigen_path = config_eigen_path
     files = {}
@@ -225,8 +225,8 @@ def iterate(method, actions, res_label, step_label):
     string += "\nunsigned int iter_{0} = 0;".format(res_label)
     string += "\n_{0} = 1;".format(step_label)
     it = "(iter_{0}<{1})".format(res_label, method.config['maxit'])
-    res = "({0}()>{1})".format(res_label, method.config['numtol'])
-    step = "({0}()>{1})".format(step_label, method.config['numtol'])
+    res = "({0}()>{1})".format(res_label, method.config['eps'])
+    step = "({0}()>{1})".format(step_label, method.config['eps'])
     string += \
         "\nwhile ({0} & {1} & {2})".format(it, res, step) + '{'
     string += \

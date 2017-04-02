@@ -6,7 +6,7 @@ Created on Tue May 24 11:20:26 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from pyphs.config import standard_simulations
+from pyphs.config import simulations
 from pyphs.cpp.simu2cpp import simu2cpp
 from pyphs.numerics.method import PHSNumericalMethod
 from pyphs.numerics.numeric import PHSNumericalCore
@@ -45,7 +45,7 @@ class PHSSimulation:
         """
 
         # init config with standard configuration options
-        self.config = standard_simulations.copy()
+        self.config = simulations.copy()
 
         # update with provided opts
         if config is None:
@@ -61,8 +61,8 @@ class PHSSimulation:
         self.fs = 0
         self.it = list()
 
+        assert self.config['lang'] in ['c++', 'python']
         self.init_numericalcore()
-        assert self.config['language'] in ['c++', 'python']
 
 ###############################################################################
 
@@ -99,13 +99,13 @@ class PHSSimulation:
             tstart = time.time()
 
         # language is 'py' or 'cpp'
-        assert self.config['language'] in ('c++', 'python'),\
+        assert self.config['lang'] in ('c++', 'python'),\
             'language "{0!s}" unknown'.format(self.config['language'])
 
-        if self.config['language'] == 'c++':
+        if self.config['lang'] == 'c++':
             self.process_cpp()
 
-        elif self.config['language'] == 'python':
+        elif self.config['lang'] == 'python':
             self.process_py()
 
         if self.config['timer']:
@@ -118,7 +118,6 @@ class PHSSimulation:
             print('ratio compared to real-time: {0!s}'.format(format(
                 time_ratio, 'f')))
 
-
     def init_pb(self):
         pb_widgets = ['\n', 'Simulation: ',
                       progressbar.Percentage(), ' ',
@@ -126,7 +125,7 @@ class PHSSimulation:
                       progressbar.ETA()
                       ]
         self.pbar = progressbar.ProgressBar(widgets=pb_widgets,
-                                       maxval=self.data.config['nt'])
+                                            maxval=self.data.config['nt'])
         self.pbar.start()
 
     def update_pb(self):
@@ -143,9 +142,9 @@ class PHSSimulation:
         seq_p = data.p()
 
         files = open_files(self.config['path'] + os.sep + 'data',
-                           self.config['files_to_save'])
+                           self.config['files'])
 
-        if self.config['progressbar']:
+        if self.config['pbar']:
             self.init_pb()
 
         # init time step
@@ -154,9 +153,9 @@ class PHSSimulation:
             self.nums.update(u=np.array(u), p=np.array(p))
             dump_files(self.nums, files)
             self.n += 1
-            if self.config['progressbar']:
+            if self.config['pbar']:
                 self.update_pb()
-        if self.config['progressbar']:
+        if self.config['pbar']:
             self.close_pb()
 
         time.sleep(0.5)
@@ -178,7 +177,7 @@ class PHSSimulation:
                 pass
         else:
             # Replace generic term 'phobj_path' by actual object path
-            script = self.config['cpp_build_and_run_script']
+            script = self.config['script']
             path = self.config['path']
             if path is None:
                 path = os.getcwd()

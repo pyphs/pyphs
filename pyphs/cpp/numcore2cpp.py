@@ -11,8 +11,8 @@ from pyphs.cpp.preamble import str_preamble
 from pyphs.cpp.arguments import append_args
 from pyphs.cpp.functions import append_funcs
 from pyphs.cpp.operations import append_ops
-from pyphs.cpp.tools import indent, matrix_type, main_path, SEP, formatPath
-from pyphs.config import eigen_path as config_eigen_path
+from pyphs.cpp.tools import indent, matrix_type, SEP, formatPath
+from pyphs.config import EIGEN_PATH as config_eigen_path
 import os
 
 standard_config = {'path': os.getcwd()}

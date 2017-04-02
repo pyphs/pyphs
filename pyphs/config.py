@@ -134,14 +134,15 @@ SIMULATION_PATH = None
 # of the EIGEN_PATH and SCRIPT above.
 LANGUAGE = 'python'
 
-# Split the structure into explicit (up to a matrix inversion) and implicit parts
-# before the simulation. Then presolve (invert the matrix) for the explicit part 
+# Split the structure into explicit (up to a matrix inversion) and implicit
+# before the simulation. Then presolve (matrix inversion) for the explicit part
 # at runtime before the implicit function solver iterations.
 SPLIT = True
 
 # Names of the files to save in PATH/data.
 # Should be known elements of PHSNumericalCore
-# !!! for ploting with the PHSData object: FILES = ('x', 'dx', 'dxH', 'w', 'z', 'y')!!!
+# !!!    For ploting with the PHSData object, FILES must    !!!
+# !!!   contain at least ('x', 'dx', 'dxH', 'w', 'z', 'y')  !!!
 FILES = ('x', 'dx', 'dxH', 'w', 'z', 'y')
 
 # Display minimal timing informations
@@ -150,7 +151,7 @@ TIMER = False
 # Display a progressbar at runtime
 PBAR = False
 
-# Options for the data reader. The data are read from index imin 
+# Options for the data reader. The data are read from index imin
 # to index imax, rendering one element out of the number decim
 LOAD_OPTS = {'imin': 0, 'imax': None, 'decim': 1}
 
@@ -158,8 +159,8 @@ LOAD_OPTS = {'imin': 0, 'imax': None, 'decim': 1}
 MAXIT = 100
 
 simulations = {'fs': FS,
-               'grad': GRADIENT,         
-               'theta': THETA,                  
+               'grad': GRADIENT,
+               'theta': THETA,
                'path': SIMULATION_PATH,
                'lang': LANGUAGE,
                'timer': TIMER,
@@ -179,6 +180,6 @@ simulations = {'fs': FS,
 # Export format:
 plot_format = 'pdf'
 
-# Can be used to define commands for latex rendering in plot axis and lines labels:
+# Can be used to define commands for latex rendering
+# in plot axis and lines labels:
 latex_preamble = [' ', ]
-

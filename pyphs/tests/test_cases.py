@@ -12,25 +12,27 @@ from pyphs import PHSNetlist
 from .PHSNetlistTests import NetlistThieleSmallNL, target_netlist
 from .PHSGraphTests import graph, target_edges, target_M
 from .PHSLatexTest import TestCore2Tex
+from .PHSSimulationTest import (simulation_rlc_plot, 
+                                simulation_rlc_with_split,
+                                simulation_rlc_without_split)
 import numpy as np
 
 
-class TestPHSNetlistInit(TestCase):
-    def test_netlist_init_and_add_components(self):
-        netlist = NetlistThieleSmallNL()
-        print(netlist.netlist())
-        print(target_netlist)
-        self.assertTrue(netlist.netlist() == target_netlist)
-
-
-class TestPHSNetlistReadWrite(TestCase):
-    def test_netlist_write_and_read(self):
-        netlist = NetlistThieleSmallNL()
-        netlist.write()
-        filename = netlist.filename
-        netlist2 = PHSNetlist(filename, clear=False)
-        self.assertTrue(netlist2.netlist() == target_netlist)
-
+#class TestPHSNetlistInit(TestCase):
+#    def test_netlist_init_and_add_components(self):
+#        netlist = NetlistThieleSmallNL()
+#        self.assertTrue(netlist.netlist() == target_netlist)
+#
+#
+#class TestPHSNetlistReadWrite(TestCase):
+#    def test_netlist_write_and_read(self):
+#        netlist = NetlistThieleSmallNL()
+#        netlist.write()
+#        filename = netlist.filename
+#        netlist2 = PHSNetlist(filename, clear=False)
+#        self.assertTrue(netlist2.netlist() == target_netlist)
+#
+#
 
 class TestPHSGraphBuildFromNetlist(TestCase):
     def test_graph_build_from_netlist(self):
@@ -70,3 +72,15 @@ class TestPHSGraphBuildCore(TestCase):
 class TestCore2Latex(TestCase):
     def test_core_2_latex(self):
         self.assertTrue(TestCore2Tex())
+
+        
+#class TesSimulation(TestCase):
+#    def test_simulation_rlc_plot(self):
+#        self.assertTrue(simulation_rlc_plot())
+#        
+#    def test_simulation_rlc_with_split(self):
+#        self.assertTrue(simulation_rlc_with_split())
+#
+#    def test_simulation_rlc_without_split(self):
+#        self.assertTrue(simulation_rlc_without_split())
+#        

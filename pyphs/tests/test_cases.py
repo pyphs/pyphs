@@ -54,9 +54,12 @@ class TestPHSGraphBuildCore(TestCase):
     def test_graph_build_core(self):
         graph.buildCore()
         graph.core.apply_connectors()
-        if not graph.core.x[0] == graph.core.symbols('xM'):
-            graph.core.move_storage(0, 1)
-            assert graph.core.x[0] == graph.core.symbols('xM')
+        if not graph.core.x[:2] == graph.core.symbols(['xM', 'xL']):
+            graph.core.move_storage(0, graph.core.x.index(graph.core.symbols('xM')))
+            graph.core.move_storage(1, graph.core.x.index(graph.core.symbols('xL')))
+        if not graph.core.w[:2] == graph.core.symbols(['wR', 'wA']):
+            graph.core.move_dissipative(0, graph.core.w.index(graph.core.symbols('wR')))
+            graph.core.move_dissipative(1, graph.core.w.index(graph.core.symbols('wA')))
         test_M = np.array(graph.core.M)-target_M
         results = (test_M == np.zeros(target_M.shape))
         self.assertTrue(all(list(results.flatten())))

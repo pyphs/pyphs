@@ -4,9 +4,6 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-compiler:
-  - clang++
-  - g++
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
@@ -23,7 +20,11 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
+<<<<<<< HEAD
   - conda_deps='pip libgfortran cython numpy scipy networkx matplotlib nose sympy'
+=======
+  - conda_deps='pip libgfortran g++ cython numpy scipy networkx matplotlib nose sympy'
+>>>>>>> 2dc184e6bdf906ee7041bb1175600e227675cee2
   - conda create -q -n test-environment "python=$TRAVIS_PYTHON_VERSION" $conda_deps
   - source activate test-environment
   - pip_deps='stopit progressbar2 nose codecov coveralls'

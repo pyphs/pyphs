@@ -17,9 +17,9 @@ import matplotlib.pyplot as plt  # plot tools
 from pyphs import PHSSimulation
 
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
-from pyphs.tutorials.phscore import core
+#from pyphs.tutorials.phscore import core
 
-from pyphs import *; path = '/Users/Falaize/Desktop/rhodes.net'; rhodes = PHSGraph(netlist=path); core = rhodes.buildCore()
+from pyphs.examples.rhodes.rhodes import core
 
 core.apply_connectors()
 

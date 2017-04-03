@@ -91,28 +91,31 @@ components).
         file_ = open(self.filename, "r")
         with file_ as openfileobject:
             for line in openfileobject:
-                # get 'infos' (dic, comp and nodes) and parameters
-                infos, _, parameters = line.partition(':')
-                # get ‘dic.comp' and 'label nodes'
-                diccomp, _, labelnodes = infos.partition(' ')
-                dic, _, comp = diccomp.partition('.')
-                label, _, nodes = labelnodes.partition(' ')
-                self.dictionaries = list(self.dictionaries)+[dic, ]
-                self.components = list(self.components)+[comp, ]
-                self.labels = list(self.labels)+[label, ]
-                self.nodes = list(self.nodes)+[ast.literal_eval(nodes), ]
-                nb_pars = parameters.count('=')
-                pars = {}
-                for n in range(nb_pars):
-                    par, _, parameters = parameters.partition(';')
-                    par = par.replace(' ', '')
-                    key, _, value = par.partition('=')
-                    try:
-                        value = ast.literal_eval(value)
-                    except ValueError:
-                        pass
-                    pars.update({key: value})
-                self.arguments = list(self.arguments)+[pars, ]
+                if line.startswith('#'):
+                    pass
+                else:
+                    # get 'infos' (dic, comp and nodes) and parameters
+                    infos, _, parameters = line.partition(':')
+                    # get ‘dic.comp' and 'label nodes'
+                    diccomp, _, labelnodes = infos.partition(' ')
+                    dic, _, comp = diccomp.partition('.')
+                    label, _, nodes = labelnodes.partition(' ')
+                    self.dictionaries = list(self.dictionaries)+[dic, ]
+                    self.components = list(self.components)+[comp, ]
+                    self.labels = list(self.labels)+[label, ]
+                    self.nodes = list(self.nodes)+[ast.literal_eval(nodes), ]
+                    nb_pars = parameters.count('=')
+                    pars = {}
+                    for n in range(nb_pars):
+                        par, _, parameters = parameters.partition(';')
+                        par = par.replace(' ', '')
+                        key, _, value = par.partition('=')
+                        try:
+                            value = ast.literal_eval(value)
+                        except ValueError:
+                            pass
+                        pars.update({key: value})
+                    self.arguments = list(self.arguments)+[pars, ]
         file_.close()
 
     def netlist(self):

@@ -89,7 +89,7 @@ class PHSSimulation:
         self._core.M = self.nums.method.core.M
         setattr(self, 'data', PHSData(self._core, self.config))
         self.data.init_data(sequ, seqp, x0, nt)
-        self.nums.set_x(x0=x0)
+        self.nums.set_x(x0)
 
     def process(self):
         """

@@ -71,15 +71,18 @@ port-Hamiltonian systems.
         """
         from importlib import import_module
         for line in self.Netlist:
-            dic_name = 'pyphs.dictionary.' + line['dictionary']
-            dic = import_module(dic_name)
-            name = line['component'].lower()
-            klass = name[0].upper() + name[1:]
-            component = getattr(dic, klass)
-            component_graph = component(line['label'],
-                                        line['nodes'],
-                                        **line['arguments'])
-            self += component_graph
+            if line.startswith('#'):
+                pass
+            else:
+                dic_name = 'pyphs.dictionary.' + line['dictionary']
+                dic = import_module(dic_name)
+                name = line['component'].lower()
+                klass = name[0].upper() + name[1:]
+                component = getattr(dic, klass)
+                component_graph = component(line['label'],
+                                            line['nodes'],
+                                            **line['arguments'])
+                self += component_graph
 
     def plot(self, filename=None, ax=None):
         """

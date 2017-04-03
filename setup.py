@@ -95,6 +95,7 @@ setup(name='pyphs',
       license=__licence__,
       packages=find_packages(exclude=['docs', ]),
       zip_safe=False,
+      include_package_data=True,
       install_requires=[
           'numpy',
           'scipy',

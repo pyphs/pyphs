@@ -1,0 +1,8 @@
+0.1.9.8
+  - Include MANIFEST.in, AUTHORS, CHANCELOG.
+
+0.1.9.7
+  - Add continuous integration tools (Travis CI, Codecov, Coveral, Landscape).
+  - Add tests.
+  - Use of Theano for lambdifications.
+  

@@ -93,7 +93,7 @@ setup(name='pyphs',
       author=__author__,
       author_email=__author_email__,
       license=__licence__,
-      packages=find_packages(exclude=['plots', 'miscs']),
+      packages=find_packages(exclude=['docs', ]),
       zip_safe=False,
       include_package_data=True,
       install_requires=[

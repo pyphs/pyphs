@@ -490,15 +490,13 @@ unique PHScore.
         """
 
         all_alpha = list()
-        # recover connectors
+        # recover connectors and sort cy and cu
         for i, c in enumerate(self.connectors):
             all_alpha.append(c['alpha'])
-            if not self.cy[2*i] == c['y'][0]:
-                new_index = self.cy.index(c['y'][0])
-                self.move_connector(2*i, new_index)
-            if not self.cy[2*i+1] == c['y'][1]:
-                new_index = self.cy.index(c['y'][1])
-                self.move_connector(2*i+1, new_index)
+            i_primal = self.cy.index(c['y'][0])
+            self.move_connector(i_primal, 2*i)
+            i_dual = self.cy.index(c['y'][1])
+            self.move_connector(i_dual, 2*i+1)
 
         nxwy = self.dims.x() + self.dims.w() + self.dims.y()
 

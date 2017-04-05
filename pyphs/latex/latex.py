@@ -60,9 +60,28 @@ def docpreamble(title):
     return str_preamble + latex_authors + latex_affiliations
 
 
-def texdocument(content, title, filename=None):
+def texdocument(content, path, title=None, authors=None, affiliations=None):
     """
-    return latex code as plain string for global phs description
+Build a LaTeX document and save it to path.
+
+Parameters
+-----------
+
+content: str
+    LaTeX content of the document.
+
+path: str
+    Path to the generated .tex file.
+
+title: str or None
+    Document title. Default is None.
+
+authors:  list of str or None
+    List of authors. Default is None.
+
+affiliations: list of str or None
+    List of authors affiliations. If not None, must be the same length as list
+    of authors. Default is None.
     """
     str_tex = ""
     str_tex += docpreamble(title)

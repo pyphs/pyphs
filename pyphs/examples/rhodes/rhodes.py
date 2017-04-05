@@ -15,14 +15,15 @@ from pyphs import (netlist2core, PHSSimulation, signalgenerator,
 
 label = 'rhodes'
 
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+netlist_filename = here + os.sep + label + '.net'
 
-netlist_filename = path + os.sep + label + '.net'
 netlist = PHSNetlist(netlist_filename)
-graph = PHSGraph(netlist=netlist)
-core = netlist2core(netlist_filename)
 
-core.build_R()
+graph = PHSGraph(netlist=netlist)
+
+core = graph.buildCore()
+#core.build_R()
 
 if __name__ == '__main__':
     # Define the simulation parameters
@@ -53,4 +54,5 @@ if __name__ == '__main__':
 
     simu.process()
 
-    simu.data.plot_powerbal(mode='multi')
+    simu.data.wavwrite('y', 0, 'test_rhodes_2017.wav',
+             normalize=True, timefades=1e-3)

@@ -22,9 +22,9 @@ def parameters_JSV2016():
             # [#] Number of simulated eigen-modes
             'nk': 5,
             # [s] Decay for the eigenmodes of the beam
-            'alpha': 9e-3,
+            'alpha': 1e-2,
             # Coeficient for damping coefficient progression w.r.t wave number
-            'damping': 6.,
+            'damping': 0,
             # [N/m**2] Young modulus of the Beam (steel = 180*1e9)
             'E': 180*1e9,
             # [kg/m**3] Mass density (steel = 7750)
@@ -249,72 +249,76 @@ class Cantilever(PHSGraph):
         pars.update({'L': L})
         # [1/m] list of the nkmax first cantilever beam  modes with length L
         k, fk = waveNumbers(pars['nk'], L, pars['kappa'], pars['rho'])
-        # [1/m] list of the nk first modes below the Nyquist frequency fe/2
-        #k = k[(fk < pars['n']/2).nonzero()]
-        k = k[0, :pars['nk']]
-        # [Hz] list of the frequencies associated to the nk first modes
-        #fk = fk[(fk < pars['fs']/2).nonzero()]
-        fk = fk[0, :pars['nk']]
+
+        # truncate below the Nyquist frequency fe/2
+        # list of the nk first modes below the Nyquist frequency fe/2 [1/m]
+        # k = k[(fk < pars['n']/2).nonzero()]
+        # list of the nk first frequencies below the Nyquist frequency fe/2 [Hz]
+        # fk = fk[(fk < pars['fs']/2).nonzero()]
+
         # [#] number of simulated modes
-        nk = k.shape[0]
-        pars.update({'nk': nk,
-                     'kmodes': list(k),
-                     'fmodes': list(fk)})
+        pars.update({'kmodes': k[0],
+                     'fmodes': fk[0]})
         # [N/m**1] Modal damping coefficient
         a = pars['alpha']
         dp = pars['damping']
-        alphab = [a*10**(dp*el/(nk-1)) for el in range(nk)]
-        pars.update({'alphab': alphab})
+        pars.update({'alpha': a*10**(linspace(0, dp, pars['nk']))})
         # Spatial distributions
         # HAMMER
         # [m] position of the hammer
         zh = pars['wh']/2. + pars['zh']*(L-pars['wh'])
         pars.update({'zh': zh})
-        # definition of x
-        X = self.core.symbols(map(lambda e: 'qb_'+str(e+1),
-                                  range(nk)))
+        # definition of stiffnesses values
         ka = pars['kappa']
-        coeffs = ka*k.flatten()**4
-        for i, (x, c) in enumerate(zip(X, coeffs)):
+        coeffs = ka*(k.flatten()**4)
+        # definition of stiffnesses components
+        for i, c in enumerate(coeffs):
             stiffness = Stiffness(label+'K'+str(i),
                                   (datum, label+'M'+str(i)),
-                                  K=(label+'K'+str(i), 2*c))
+                                  K=(label+'K'+str(i), c))
             self += stiffness
-
-        X = self.core.symbols(map(lambda e: 'rhoDtqb_'+str(e+1), range(nk)))
-        coeffs = [pars['rho']**-1]*nk
-        for i, (x, c) in enumerate(zip(X, coeffs)):
+        # definition of masses values
+        coeffs = [pars['rho']]*pars['nk']
+        # definition of masses components
+        for i, c in enumerate(coeffs):
             mass = Mass(label+'M'+str(i),
                         (label+'M'+str(i), ),
-                        M=(label+'M'+str(i), 1./c))
+                        M=(label+'M'+str(i), c))
             self += mass
 
-        # definition of w
-        W = self.core.symbols(map(lambda e: 'Dtqb_'+str(e+1), range(nk)))
-        coeffs = list(alphab)
-        for i, (w, c) in enumerate(zip(W, coeffs)):
+        # definition of dampers components
+        coeffs = list(pars['alpha'])
+        # definition of dampers components
+        for i, c in enumerate(coeffs):
             damper = Damper(label+'A'+str(i),
                             (datum, label+'M'+str(i)),
                             A=(label+'A'+str(i), c))
             self += damper
-
         Omega = omega_const(pars)
-        A1 = nodes[0]
-        if nk == 1:
+
+        # transformers associated with the coefficients of modal projection
+        A1 = nodes[0]  # system node
+        # tail node for the serial connection of transformers primals
+        if pars['nk'] == 1:
             A2 = datum
         else:
             A2 = label+'T'+str(0)
+        # iterate over coefficients values
         for i, o in enumerate(Omega):
+
+            # define transfomer
             transfo = Transformer(label+'T'+str(i),
                                   (A1, A2,
                                   datum, label+'M'+str(i)),
                                   alpha=(label+'alpha'+str(i), (o)))
+            self += transfo
+
+            # update nodes
             A1 = label+'T'+str(i)
-            if i == nk-2:
+            if i == pars['nk']-2:
                 A2 = datum
             else:
                 A2 = label+'T'+str(i+1)
-            self += transfo
 
     @staticmethod
     def metadata():
@@ -322,8 +326,8 @@ class Cantilever(PHSGraph):
                 'arguments': {'f0': 440.,
                               'r': 1*1e-3,
                               'nk': 5,
-                              'alpha': 9e-3,
-                              'damping': 6.,
+                              'alpha': 1e-2,
+                              'damping': 0.,
                               'E': 180*1e9,
                               'm': 7750,
                               'zh': 0.15,

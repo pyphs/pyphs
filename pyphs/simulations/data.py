@@ -231,28 +231,23 @@ class PHSData:
 
         self.config['nt'] = nt
 
-    def wavwrite(self, name, index, fs_in, filename=None, path=None, gain=1,
-                 fs_out=None):
+    def wavwrite(self, name, index, path=None, gain=1,
+                 fs=None, normalize=False, timefades=0):
         """
         write phs.simulation.data.name[index] in the folder pointed by \
 phs.paths['wav'].
         """
-        if fs_out is None:
-            fs_out = fs_in
-        if filename is None:
-            filename = name
+        if fs is None:
+            fs = self.config['fs']
         if path is None:
-            path = os.getcwd()
-        if not os.path.exists(path):
-            os.makedirs(path)
+            path = self.config['path'] + os.sep + name + '.wav'
         data = getattr(self, name)
         sig = []
         for el in data():
             s = gain*el[index]
-            if abs(s) >= 1:
-                s = 0.
             sig.append(s)
-        wavwrite(sig, fs_in, path + os.sep + filename, fs_out=fs_out)
+        wavwrite(sig, self.config['fs'], path,
+                 fs_out=fs, normalize=normalize, timefades=timefades)
 
     def plot_powerbal(self, mode='single', opts=None, modeDtE='deltaH'):
         """

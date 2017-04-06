@@ -146,7 +146,7 @@ The package divided into the following folders:
 `/pyphs/dictionary </pyphs/dictionary>`_
   components (`PHSGraph`)
 `/pyphs/numerics </pyphs/numerics>`_
-    define the classes `PHSEval`, `PHSNumericalMethod` and `PHSNumericalCore` for the numerical evaluation of `PHSCore`
+    define the classes `PHSNumericalEval`, `PHSNumericalMethod` and `PHSNumericalCore` for the numerical evaluation of `PHSCore`
 `/pyphs/simulations </pyphs/simulations>`_
     define the classes `PHSSimulation` and `PHSData` for simulation
 `/pyphs/latex </pyphs/latex>`_

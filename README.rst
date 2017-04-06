@@ -171,6 +171,7 @@ Tutorials and examples
 -----------------------
 
 The package comes with a serie a tutorials for the use of the main functionalities (`definition </pyphs/tutorials/phscore.py>`_, `evaluation </pyphs/tutorials/phsnumericaleval.py>`_, and `simulation </pyphs/tutorials/phssimulation.py>`_ of a core PHS structure). More tutorials are to come. Additionally, you can see the `examples </pyphs/examples>`_ scripts. These files are located in the folder pointed by
+
     >>> import pyphs
     >>> help(pyphs)
 

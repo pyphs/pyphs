@@ -5,7 +5,6 @@ Created on Sun Mar  6 15:53:51 2016
 @author: Falaize
 """
 from __future__ import absolute_import, division, print_function
-
 import numpy
 
 try:

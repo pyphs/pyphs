@@ -93,10 +93,11 @@ affiliations: list of str or None
     for special_char in special_chars:
         latex_char = "\\" + special_char
         str_tex = str_tex.replace(special_char, latex_char)
-    if filename is not None:
-        file_ = open(filename, 'w')
+    if path is not None:
+        file_ = open(path, 'w')
         file_.write(str_tex)
         file_.close()
+    return str_tex
 
 
 def dic2table(labels, dic):

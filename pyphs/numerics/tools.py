@@ -89,7 +89,7 @@ def setarg_generator(nums, inds):
         inds = list()
 
     def set_func(array):
-        nums.args[inds] = array.flatten()
+        nums.args[inds] = array
 
     return set_func
 
@@ -164,7 +164,7 @@ def numpy_lambdify(args, expr):
                           expr,
                           dummify=False,
                           modules='numpy')
-    return lambda *args: func(*map(numpy.array, flatten(args)))
+    return lambda *args: func(*map(numpy.array, args))
 
 
 def lambdify(args, expr, subs=None, simplify=True, theano=False):

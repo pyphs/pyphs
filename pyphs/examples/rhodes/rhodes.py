@@ -25,7 +25,7 @@ graph = PHSGraph(netlist=netlist)
 
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
-# core.build_R()
+core.build_R()
 
 # ---------------------------  SIMULATION  ---------------------------------- #
 if __name__ == '__main__':
@@ -92,42 +92,16 @@ if __name__ == '__main__':
     # Proceed
     simu.process()
 
-    # The simulation results are stored on disk,
-    # and read with the simu.data object; see
-    # >>> dir(simu.data)
-    t = simu.data.t()       # generator of time vector values
-    x = simu.data.x()       # generator of vector x values at each time step
-    x1 = simu.data.x(0)     # generator of value for scalar x component 1
-
-    # recover data as lists
-    t_list = list(t)
-    x_list = list(x)
-    x1_list = list(x1)
-
-    # plot x_L(t)
-    plt.figure(1)
-    plt.plot(t_list, x1_list)
-    plt.show()
-
-    # phase plot
-    plt.figure(2)
-    plt.plot([ex[0] for ex in x_list], [ex[1] for ex in x_list])
-    plt.show()
-
-    # plot of several signals with the simu.data object
-    plt.figure(3)
+    plt.figure()
     x_symbs = core.symbols(['qfelt'])
-    plots = ([('u', 0), ] +
-             [('x', e) for e in map(core.x.index, x_symbs)] +
-             [('y', 0)])
+    plots = ([('u', 0), ]+
+             [('y', 0)] +
+             [('x', e) for e in map(core.x.index, x_symbs)] )
     load = {'imin': 0, 'imax': 1500, 'decim': 1}
     simu.data.plot(plots, load=load)
 
-    plt.figure(4)
-    simu.data.plot([('u', 0), ] + [('x', i) for i in range(core.dims.x())])
+    plt.figure()
+    simu.data.plot([('x', i) for i in range(core.dims.x())])
 
-    # power balance
-    plt.figure(5)
+    plt.figure()
     simu.data.plot_powerbal()
-    simu.data.plot([('u', 0), ] +
-                   [('x', e) for e in map(core.x.index, x_symbs)])

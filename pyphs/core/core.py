@@ -573,7 +573,7 @@ dissipation function z.
             w = (w, )
             z = (z, )
         self.w += list(w)
-        self.z += map(simplify, list(z))
+        self.z += list(map(simplify, list(z)))
 
     def add_ports(self, u, y):
         """

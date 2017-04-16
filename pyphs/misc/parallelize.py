@@ -17,10 +17,11 @@ try:
 except ImportError:
     pass
 
+
 def parallel_exec(funcs, args=None):
     """
     Parallel execution of each 'func' in 'funcs'.
-    
+
     Warning
     -------
     Should not be used since for instance yields slower computations...
@@ -61,7 +62,6 @@ def parallel_exec(funcs, args=None):
         """
         jobs.put((pos, func(*arg)))
 
-
     from multiprocessing import Process
 
     # multiprocessing.Queue() can lead to deadlock so it is not used.
@@ -75,26 +75,27 @@ def parallel_exec(funcs, args=None):
         jobs = Queue()
     # Build and start workers
     i = 0
-    workers = list()    
+    workers = list()
     for func, arg in zip(funcs, args):
         worker = Process(target=process_func, args=(func, arg, i, jobs))
         worker.daemon = True
         workers.append(worker)
         worker.start()
         i += 1
-        
+
     # Get process results from the output queue
     results = [jobs.get() for _ in range(nfuncs)]
 
     # Exit the completed processes
     for worker in workers:
         worker.join()
-        
+
     # Sort results
     results.sort()
     results = [r[1] for r in results]
 
     return results
+
 
 def parallel_map(func, args):
     """

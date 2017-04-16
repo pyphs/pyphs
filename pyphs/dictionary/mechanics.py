@@ -305,16 +305,10 @@ class Felt(PHSGraph):
         # parameters
         pars = ['L', 'K', 'A', 'B']
         L, K, A, B = symbols(pars)
-        # state  variable
-        x, w = symbols(["x"+label, "w"+label])
 
-        def ch(qh):
-            # JSV eq (7)
-            return sp.Piecewise((0, qh < 0), (qh/L, True))
-
-        xnl = sp.symbols(label+'q')
-        hnl = (L*K/(B+1))*ch(xnl)**(B+1)
-        hnl = hnl.subs(dicpars)
+        xnl = symbols('q'+label)
+        hnl = sp.Piecewise((0., xnl <= 0.), ((L*K/(B+1))*(xnl/L)**(B+1), True))
+        hnl = hnl.subs(dicpars).simplify()
         # edge data
         data = {'label': xnl,
                 'type': 'storage',
@@ -322,9 +316,9 @@ class Felt(PHSGraph):
                 'link': None}
         self.add_edges_from([(nodes[0], nodes[1], data), ])
         self.core.add_storages(xnl, hnl)
-        r = sp.simplify((A * L/B)*ch(xnl)**(B-1))  # JSV eq (13)
-        r = r.subs(dicpars)
-        wnl = sp.symbols(label+'Dtq')
+        r = sp.Piecewise((0., xnl <= 0.), ((A * L/B)*(xnl/L)**(B-1), True)) # JSV eq (13)
+        r = r.subs(dicpars).simplify()
+        wnl = symbols('dtq'+label)
         # edge data
         data = {'label': wnl,
                 'type': 'dissipative',

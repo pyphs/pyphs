@@ -18,7 +18,7 @@ def simu2cpp(simu, objlabel=None):
     if not os.path.exists(path):
         os.mkdir(path)
     numcore2cpp(simu.nums, objlabel=objlabel, path=path,
-                eigen_path=simu.config['eigen_path'])
+                eigen_path=simu.config['eigen'])
     filename = path + SEP + 'main.cpp'
     _file = open(filename, 'w')
     string = main(simu, objlabel)
@@ -123,7 +123,7 @@ def _str_initvecs(simu):
         dim = getattr(simu.nums, name[0])().shape[0]
         string += "\nvector<double> {0}Vector({1});".format(name, dim)
     string += "\n"
-    names = simu.config['files_to_save']
+    names = simu.config['files']
     for name in names:
         print(name)
         print(getattr(simu.nums, name)())
@@ -213,14 +213,16 @@ def _init_files(phs):
 
 
 def _str_instanciate(simu, objlabel):
-    string = """\n
-    // Get init data
-    for (unsigned int i=0; i<{0}; i++) """.format(simu.nums.x().shape[0]) + '{'
-    string = """
+    string = ""
+    dimx = simu.nums.x().shape[0]
+    if dimx > 0:
+        string += """\n
+    // Get state initialization data
+    for (unsigned int i=0; i<{0}; i++) """.format(dimx)
+        string += """{
         x0File >> x0Vector[i];
     }"""
-    string = """
-
+    string += """\n
     // Instance of PyPHS numerical core
     {0} {1}(x0Vector);""".format(objlabel.upper(), objlabel.lower())
     return string
@@ -276,7 +278,7 @@ def _str_process(simu, objlabel):
 
 def _gets(simu, objlabel):
     string = ''
-    names = simu.config['files_to_save']
+    names = simu.config['files']
     for name in names:
         val = getattr(simu.nums, name)()
         if len(val.shape) == 0:
@@ -294,7 +296,7 @@ for (unsigned int i = 0; i<{0}; i++)""".format(dim) + "{" + """
 
 def _close(simu):
     string = ''
-    names = simu.config['files_to_save']
+    names = simu.config['files']
     for name in names:
         string += "\n{0}File.close();".format(name)
     return string

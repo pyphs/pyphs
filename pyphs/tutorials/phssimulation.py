@@ -17,11 +17,9 @@ import matplotlib.pyplot as plt  # plot tools
 from pyphs import PHSSimulation
 
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
-#from pyphs.tutorials.phscore import core
+from pyphs.tutorials.phscore import core
 
-from pyphs.examples.rhodes.rhodes import core
-
-core.apply_connectors()
+#from pyphs.examples.rhodes.rhodes import core
 
 core.build_R()
 
@@ -35,9 +33,9 @@ config = {'fs': 48e3,           # Sample rate (Hz)
           'path': None,         # Path to the results folder
           'pbar': True,         # Display a progress bar
           'timer': False,       # Display minimal timing infos
-          'lang': 'python',     # Language in {'python', 'c++'}
-          'script': None,       # Call to C++ compiler and exec binary
-          'eigen': None,        # Path to Eigen C++ library
+          'lang': 'c++',     # Language in {'python', 'c++'}
+#          'script': None,       # Call to C++ compiler and exec binary
+#          'eigen': None,        # Path to Eigen C++ library
           # Options for the data reader. The data are read from index imin
           # to index imax, rendering one element out of the number decim
           'load': {'imin': 0, 'imax': None, 'decim': 1}
@@ -47,24 +45,23 @@ config = {'fs': 48e3,           # Sample rate (Hz)
 simu = PHSSimulation(core, config=config)
 
 # def simulation time
-tmax = 1.
+tmax = 2.
 nmax = int(tmax*simu.fs)
 t = [n/simu.fs for n in range(nmax)]
 nt = len(t)
 
-
 # def input signal
 def sig(tn, mode='impact'):
     freq = 1000.
-    amp = 1.
+    amp = 1000.
     if mode == 'sin':
         pi = numpy.pi
         sin = numpy.sin
         out = amp * sin(2*pi*freq*tn)
     elif mode == 'impact':
-        dur = 1*1e-3  # duration: 0.5ms
+        dur = 2*1e-3  # duration
         start = 10/config['fs']   # start at 1ms
-        out = amp if start <= tn < start + dur else 0.
+        out = -amp if start <= tn < start + dur else 0.
     elif mode == 'const':
         out = 1.
     return out
@@ -83,18 +80,20 @@ def sequ():
 
 # state initialization
 # !!! must be array with shape (core.dims.x(), )
-x0 = None
+x0 = numpy.array([0., ]*core.dims.x())
+x0[core.x.index(core.symbols('qfelt'))] = -0.05
 
 # Initialize the simulation
 simu.init(sequ=sequ(), x0=x0, nt=nt,
-          config={'load': {'imin': 0, 'imax': None, 'decim': 1}})
+          config={'load': {'imin': 0, 'imax': None, 'decim': 10}})
 # Proceed
 simu.process()
 
-# The simulation results are stored on disk, and read with the simu.data object
-t = simu.data.t()       # a generator of time value at each time step
-x = simu.data.x()       # a generator of value for vector x at each time step
-x1 = simu.data.x(0)     # a generator of value for scalar x component 1
+# The simulation results are stored on disk,
+# and read with the simu.data object
+t = simu.data.t()       # generator of time vector values
+x = simu.data.x()       # generator of vector x values at each time step
+x1 = simu.data.x(0)     # generator of value for scalar x component 1
 
 # recover data as lists
 t_list = list(t)
@@ -113,9 +112,12 @@ plt.show()
 
 # plot of several signals with the simu.data object
 plt.figure(3)
-x_symbs = core.symbols(['xbeamK0', 'xbeamK1', 'xbeamK2'])
+x_symbs = core.symbols(['qfelt'])
 simu.data.plot([('u', 0), ] + [('x', e) for e in map(core.x.index, x_symbs)] + [('y', 0)],
-                imax = None)
-
+                imax = 500)
+plt.figure(4)
+simu.data.plot([('u', 0),] + [('x', i) for i in range(core.dims.x())])
 # power balance
+plt.figure(5)
 simu.data.plot_powerbal()
+simu.data.plot([('u', 0),] + [('x', e) for e in map(core.x.index, x_symbs)])

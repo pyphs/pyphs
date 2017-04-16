@@ -14,7 +14,9 @@ from pyphs.config import TIMEOUT
 def timeout_simplify(expr):
     @stopit.threading_timeoutable(default=expr)
     def func():
-        return sympy.simplify(expr)
+#        return sympy.simplify(expr)
+        return sympy.factor(expr)
+#        return expr
     return func(timeout=TIMEOUT)
 
 

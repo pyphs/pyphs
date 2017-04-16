@@ -32,16 +32,23 @@ class PHSSimulation:
 
             keys and default values are
 
-                * 'language': 'python',
-                * 'fs': 48e3,
-                * 'numtol': EPS,
-                * 'maxit': 100,
-                * 'split': True
-                * 'solver': 'standard',
-                * 'timer': True,
-                * 'load_options': {'decim': 1,
-                                   'imin': 0,
-                                   'imax': None}
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+              'path': None,         # Path to the results folder
+              'pbar': True,         # Display a progress bar
+              'timer': False,       # Display minimal timing infos
+              'lang': 'c++',        # Language in {'python', 'c++'}
+              'script': None,       # Call to C++ compiler and exec binary
+              'eigen': None,        # Path to Eigen C++ library
+              # Options for the data reader. The data are read from index imin
+              # to index imax, rendering one element out of the number decim
+              'load': {'imin': None,
+                       'imax': None,
+                       'decim': None}
         """
 
         # init config with standard configuration options
@@ -88,9 +95,9 @@ class PHSSimulation:
         self.config.update(config)
         self._core.M = self.nums.method.core.M
         setattr(self, 'data', PHSData(self._core, self.config))
-        self.data.init_data(sequ, seqp, x0, nt)
         if x0 is None:
             x0 = np.zeros(self.nums.method.core.dims.x())
+        self.data.init_data(sequ, seqp, x0, nt)
         self.nums.set_x(x0)
 
     def process(self):

@@ -58,7 +58,9 @@ list or a generator. Got {0!s}'.format(type(sig))
 
     from struct import pack
     import wave
-    wv = wave.open(label+'.wav', 'w')
+    if not label.endswith('.wav'):
+        label += '.wav'
+    wv = wave.open(label, 'w')
     # nchannels, sampwidth, framerate, nframes, comptype, compname
     wv.setparams((1, 2, fs_out, 0, 'NONE', 'not compressed'))
     if isinstance(normalize, float):

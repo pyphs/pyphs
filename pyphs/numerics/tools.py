@@ -10,6 +10,7 @@ from pyphs.core.symbs_tools import simplify as simp
 from pyphs.core.symbs_tools import _assert_expr
 import numpy
 import sympy
+from sympy.utilities.iterables import flatten
 from sympy.printing.theanocode import theano_function
 import copy
 
@@ -148,7 +149,25 @@ class PHSNumericalOperation:
         return self.call[0](*args)
 
 
-def lambdify(args, expr, subs=None, simplify=True):
+def theano_lambdify(args, expr, vector_expr):
+    if vector_expr:
+        expr_lambda = theano_function(args, expr,
+                                      on_unused_input='ignore')
+    else:
+        expr_lambda = theano_function(args, [expr],
+                                      on_unused_input='ignore')
+    return expr_lambda
+
+
+def numpy_lambdify(args, expr):
+    func = sympy.lambdify(args,
+                          expr,
+                          dummify=False,
+                          modules='numpy')
+    return lambda *args: func(*map(numpy.array, flatten(args)))
+
+
+def lambdify(args, expr, subs=None, simplify=True, theano=False):
     """
     call to lambdify with chosen options
     """
@@ -164,18 +183,14 @@ def lambdify(args, expr, subs=None, simplify=True):
     expr = sympy.sympify(expr)
     # array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
 
-    try:
-        if vector_expr:
-            expr_lambda = theano_function(args, expr,
-                                          on_unused_input='ignore')
-        else:
-            expr_lambda = theano_function(args, [expr],
-                                          on_unused_input='ignore')
-    except:
-        expr_lambda = sympy.lambdify(args,
-                                     expr,
-                                     dummify=False,
-                                     modules='numpy')
+    if theano:
+        try:
+            expr_lambda = theano_lambdify(args, expr, vector_expr)
+        except:
+            expr_lambda = numpy_lambdify(args, expr)
+    else:
+        expr_lambda = numpy_lambdify(args, expr)
+
     return expr_lambda
 
 

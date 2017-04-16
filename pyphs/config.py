@@ -81,14 +81,31 @@ special_chars = ['#']
 # eigen_path = r'/roor/path/subpath/eigen', PyPHS will include the following in
 # the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
 # !!! This should be a raw string (especially for Windows user) !!!!
-EIGEN_PATH = r'eigen'
+EIGEN_PATH = r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen'
 
 # You can automatize the compilation and execution of the c++ files by giving a
 # shell script in "cpp_build_and_run_script" below. It is executed when the
 # option "langage='c++'"" is used for the simulations. You can use the keyword
 # 'simulation_path' to recover the path of the current PHobject (it is replaced
 # at execution)
-SCRIPT = None
+xcode_template_path = '/Users/Falaize/Documents/DEV/c++/xcode_template_pyphs'
+SCRIPT = """
+
+echo "Copy xcode template"
+mkdir simulation_path/xcode
+cp -r """ + xcode_template_path + """/* simulation_path/xcode
+
+echo "Copy cpp files"
+cp -r simulation_path/cpp/* simulation_path/xcode/xcode_template_pyphs/
+
+echo "Build release"
+xcodebuild -project simulation_path/xcode/xcode_template_pyphs.xcodeproj -alltargets \
+-configuration Release
+
+echo "Run"
+simulation_path/xcode/build/Release/xcode_template_pyphs
+
+"""
 
 # The following is an example which uses xcode on mac osx. First, generate the
 # c++ code for a dummy PortHamiltonianObject, Second, init an empty xcode

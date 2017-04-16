@@ -120,7 +120,7 @@ extern const double subs[1][""" + str(dim) + """];"""
 const double subs[1][""" + str(dim) + """] = {
     {"""
         for el in subs:
-            files['cpp'] += str(subs[el]) + ', '
+            files['cpp'] += str(float(subs[el])) + ', '
         files['cpp'] = files['cpp'][:-2] + """},
 };"""
 

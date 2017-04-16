@@ -12,7 +12,7 @@ import os
 
 
 def plot_powerbal(data, mode='single', DtE='DxhDtx', imin=0, imax=None,
-                  decim=1):
+                  decim=1, show=True):
     """
     Plot the power balance. mode is 'single' or 'multi' for single figure or \
 multifigure
@@ -43,7 +43,7 @@ multifigure
         datay.append(Psd)
         config.update({'unity': r'Power (W)',
                        'labels': [labdtE, r'$-$('+labPs+r'$+$'+labPd + r')']})
-        singleplot(datax, datay, **config)
+        singleplot(datax, datay, show=show, **config)
     else:
         assert mode == 'multi'
         from pyphs.plots.multiplots import multiplot
@@ -66,10 +66,10 @@ multifigure
                                   labPd,
                                   labPs,
                                   labdtE+r'$+$'+labPd+r'$+$'+labPs]})
-        multiplot(datax, datay, **config)
+        multiplot(datax, datay, show=show, **config)
 
 
-def plot(data, var_list, imin=0, imax=None, decim=1):
+def plot(data, var_list, imin=0, imax=None, decim=1, show=True):
     datax = [el for el in data.t(imin=imin, imax=imax, decim=decim)]
     datay = list()
     labels = list()
@@ -87,4 +87,4 @@ def plot(data, var_list, imin=0, imax=None, decim=1):
     plotopts = {'unitx': 'time $t$ (s)',
                 'unity': labels,
                 'filelabel': filelabel}
-    multiplot(datax, datay, **plotopts)
+    multiplot(datax, datay, show=show, **plotopts)

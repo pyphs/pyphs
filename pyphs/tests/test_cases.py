@@ -15,6 +15,9 @@ from .PHSLatexTest import TestCore2Tex
 from .PHSSimulationTest import (simulation_rlc_with_split,
                                 simulation_rlc_without_split,
                                 simulation_nlcore_full)
+from .PHSSimulationPlotsTest import (plot_rlc_with_split,
+                                     plot_power_balance_nlcore_with_split,
+                                     plot_power_balance_rlc_with_split)
 from .cppTest import cpp_nlcore_full
 from .DictionaryTest import dlc, bjt
 import numpy as np
@@ -105,3 +108,14 @@ class TestDico(TestCase):
 
     def test_dlc(self):
         self.assertTrue(dlc())
+
+
+class TestPlots(TestCase):
+    def test_plot_rlc_with_split(self):
+        self.assertTrue(plot_rlc_with_split())
+
+    def test_plot_power_balance_nlcore_with_split(self):
+        self.assertTrue(plot_power_balance_nlcore_with_split())
+
+    def test_plot_power_balance_rlc_with_split(self):
+        self.assertTrue(plot_power_balance_rlc_with_split())

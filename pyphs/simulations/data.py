@@ -562,22 +562,22 @@ pyphs.misc.signals.waves.wavwrite
         wavwrite(sig, self.config['fs'], path,
                  fs_out=fs, normalize=normalize, timefades=timefades)
 
-    def plot_powerbal(self, mode='single', DtE='deltaH', load=None):
+    def plot_powerbal(self, mode='single', DtE='deltaH', load=None, show=True):
         """
         Plot the power balance. mode is 'single' or 'multi' for single figure \
 or multifigure (default is 'single').
         """
         if load is None:
             load = self.config['load']
-        plot_powerbal(self, mode=mode, DtE=DtE, **load)
+        plot_powerbal(self, mode=mode, DtE=DtE, show=show, **load)
 
-    def plot(self, var_list, load=None):
+    def plot(self, var_list, load=None, show=True):
         """
         Plot each 'var'['ind'] in var_list = [(var1, ind1), (...)]
         """
         if load is None:
             load = self.config['load']
-        plot(self, var_list, **load)
+        plot(self, var_list, show=show, **load)
 
 ###########################################################################
 

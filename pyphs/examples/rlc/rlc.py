@@ -22,8 +22,6 @@ netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)
 core = netlist2core(netlist_filename)
 
-core.build_R()
-
 if __name__ == '__main__':
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate

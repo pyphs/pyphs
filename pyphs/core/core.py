@@ -641,12 +641,14 @@ varying parameter(s).
 ###############################################################################
 # Latex
 
-    def texwrite(self, filename=None, title=None):
-        if filename is None:
-            filename = 'core.tex'
+    def texwrite(self, path=None, title=None,
+                 authors=None, affiliations=None):
+        if path is None:
+            path = 'core.tex'
         if title is None:
             title = r'PyPHS Core'
-        texdocument(core2tex(self), title, filename=filename)
+        texdocument(core2tex(self), path, title=title,
+                    authors=authors, affiliations=affiliations)
 
 ###############################################################################
 ###############################################################################

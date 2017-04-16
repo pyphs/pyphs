@@ -16,5 +16,5 @@ def TestCore2Tex():
     graph = PHSGraph(netlist=netlist)
     core = graph.buildCore()
     content = core2tex(core)
-    texdocument(content, 'test core2tex', 'test_core2tex.tex')
+    texdocument(content, 'test_core2tex.tex', title='test core2tex')
     return True

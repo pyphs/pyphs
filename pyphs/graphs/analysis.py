@@ -196,9 +196,8 @@ define it as effort-controlled (0 column in lambda).
         """
         still_locked = False
         # for each row in block matrix extracted from the ic colums of Lambda
-        for n, row in enumerate(self.Lambda[:, self.ic_edges]):
+        for n, row in enumerate(self.Lambda[:, self.ic_edges].tolist()):
             # only if the node is overdeterminated
-            print('row : {}'.format(row))
             if sum(row) > 1:
                 col = self.Lambda[:, len(self.ec_edges)]  # first ic column
                 e = 0

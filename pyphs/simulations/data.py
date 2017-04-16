@@ -168,9 +168,8 @@ dtE_generator: generator
         if DtE == 'deltaH':
             H = lambdify(self.core.x, self.core.H.subs(self.core.subs))
             for x, dx in zip(self.x(**options), self.dx(**options)):
-                xpost = map(sum, zip(x, dx))
-                xpost = numpy.array(xpost)
-                x = numpy.array(x)
+                xpost = map(lambda tup: numpy.array(sum(tup)), zip(x, dx))
+                x = map(numpy.array, x)
                 yield (H(*xpost) - H(*x))*self.config['fs']
         elif DtE == 'DxhDtx':
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):

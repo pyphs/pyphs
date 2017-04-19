@@ -159,7 +159,7 @@ class PHSCore:
             for varj in core.dims.names:
                 Mij = getattr(core, 'M'+vari+varj)()
                 if all(dim > 0 for dim in Mij.shape):
-                    set_func = getattr(core1, 'set_M'+vari+varj)
+                    set_func = getattr(core, 'set_M'+vari+varj)
                     set_func(Mij)
 
         # Need build

@@ -471,8 +471,8 @@ unique PHScore.
         Description
         -----------
         The resulting connexion reads:
-            connector[u][1] = -connector[alpha] * connector[y][2]
-            connector[u][2] = connector[alpha] * connector[y][1]
+            * connector[u][0] = -connector[alpha] * connector[y][1]
+            * connector[u][1] = connector[alpha] * connector[y][0]
         """
         self.connectors += [connector, ]
         self.cu += list(connector['u'])

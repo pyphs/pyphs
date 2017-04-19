@@ -167,7 +167,7 @@ def numpy_lambdify(args, expr):
     return lambda *args: func(*map(numpy.array, args))
 
 
-def lambdify(args, expr, subs=None, simplify=True, theano=False):
+def lambdify(args, expr, subs=None, simplify=True, theano=True):
     """
     call to lambdify with chosen options
     """
@@ -181,7 +181,6 @@ def lambdify(args, expr, subs=None, simplify=True, theano=False):
     if simplify:
         expr = simp(expr)
     expr = sympy.sympify(expr)
-    # array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
 
     if theano:
         try:

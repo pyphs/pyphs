@@ -69,7 +69,37 @@ plot_powerbal:
                 return self._data_generator(name, ind=ind, imin=imin,
                                             imax=imax, decim=decim,
                                             postprocess=postprocess)
-            doc = doc_template.format(name)
+
+            doc_template = """
+{0}
+====
+
+Reader for simulation data {0} from file:\n{1}
+
+Parameters
+-----------
+ind: int or None, optional
+    Index for the returned value {0}[ind]. If None, the full vector is
+    returned (default).
+imin: int or None, optional
+    Starting index. If None, imin=0 (default).
+imax: int or None,
+    Stoping index. If None, imax=Inf (default).
+decim: int or None,
+    decimation factor
+
+Returns
+-------
+
+{0}_generator: generator
+    A python generator of value {0}[ind][i] for each time step i starting
+    from index imin to index imax with decimation factor decim (i.e. the value
+    is generated if i-imin % decim == 0).
+"""
+            filename = '{0}{1}data{1}{2}.txt'.format(self.config['path'],
+                                                     os.sep,
+                                                     name)
+            doc = doc_template.format(name, filename)
             setattr(data_generator, 'func_doc', doc)
             return data_generator
 
@@ -346,7 +376,8 @@ structure b = J dot a, i.e. a = (dxH, z, u).
 Parameters
 -----------
 ind: int or None, optional
-    Index for the returned value a[ind]. If None, the full vector is returned (default).
+    Index for the returned value a[ind]. If None, the full vector is
+    returned (default).
 imin: int or None, optional
     Starting index. If None, imin=0 (default).
 imax: int or None,
@@ -385,7 +416,8 @@ structure b = J dot a, i.e. b = (dtx, w, y).
 Parameters
 -----------
 ind: int or None, optional
-    Index for the returned value b[ind]. If None, the full vector is returned (default).
+    Index for the returned value b[ind]. If None, the full vector is
+    returned (default).
 imin: int or None, optional
     Starting index. If None, imin=0 (default).
 imax: int or None,
@@ -592,29 +624,3 @@ def scalar_product(list1, list2, weight_matrix=None):
         return numpy.einsum('i,i',
                             numpy.array(list1),
                             numpy.array(list2))
-
-doc_template = """
-{0}
-====
-
-Reader for simulation data {0}
-
-Parameters
------------
-ind: int or None, optional
-    Index for the returned value {0}[ind]. If None, the full vector is returned (default).
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor
-
-Returns
--------
-
-{0}_generator: generator
-    A python generator of value {0}[ind][i] for each time step i starting
-    from index imin to index imax with decimation factor decim (i.e. the value
-    is generated if i-imin % decim == 0).
-"""

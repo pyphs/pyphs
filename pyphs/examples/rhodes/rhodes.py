@@ -16,7 +16,8 @@ from pyphs import PHSSimulation, PHSNetlist, PHSGraph
 
 # ---------------------------  NETLIST  ------------------------------------- #
 label = 'rhodes'
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+this_script = os.path.realpath(__file__)
+here = this_script[:this_script.rfind(os.sep)]
 netlist_filename = here + os.sep + label + '.net'
 netlist = PHSNetlist(netlist_filename)
 
@@ -25,24 +26,25 @@ graph = PHSGraph(netlist=netlist)
 
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
-core.build_R()
 
 # ---------------------------  SIMULATION  ---------------------------------- #
 if __name__ == '__main__':
+
+    core.build_R()
 
     # Define the simulation parameters
     config = {'fs': 48e3,           # Sample rate (Hz)
               'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
               'theta': 0.,          # Theta-scheme for the structure
-              'split': False,       # split implicit from explicit part
+              'split': True,       # split implicit from explicit part
               'maxit': 10,          # Max number of iterations for NL solvers
               'eps': 1e-16,         # Global numerical tolerance
               'path': None,         # Path to the results folder
               'pbar': True,         # Display a progress bar
               'timer': False,       # Display minimal timing infos
-              'lang': 'c++',        # Language in {'python', 'c++'}
-#              'script': None,       # Call to C++ compiler and exec binary
-#              'eigen': None,        # Path to Eigen C++ library
+              'lang': 'python',        # Language in {'python', 'c++'}
+              'script': None,       # Call to C++ compiler and exec binary
+              'eigen': None,        # Path to Eigen C++ library
               # Options for the data reader. The data are read from index imin
               # to index imax, rendering one element out of the number decim
               'load': {'imin': None,
@@ -54,7 +56,7 @@ if __name__ == '__main__':
     simu = PHSSimulation(core, config=config)
 
     # def simulation time
-    tmax = 2.
+    tmax = .5
     nmax = int(tmax*simu.fs)
     t = [n/simu.fs for n in range(nmax)]
     nt = len(t)
@@ -94,9 +96,9 @@ if __name__ == '__main__':
 
     plt.figure()
     x_symbs = core.symbols(['qfelt'])
-    plots = ([('u', 0), ]+
+    plots = ([('u', 0), ] +
              [('y', 0)] +
-             [('x', e) for e in map(core.x.index, x_symbs)] )
+             [('x', e) for e in map(core.x.index, x_symbs)])
     load = {'imin': 0, 'imax': 1500, 'decim': 1}
     simu.data.plot(plots, load=load)
 

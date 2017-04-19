@@ -149,8 +149,9 @@ class PHSSimulation:
 
         # get generators of u and p
         data = self.data
-        seq_u = data.u()
-        seq_p = data.p()
+        load = {'imin': 0, 'imax': None, 'decim': 1}
+        seq_u = data.u(**load)
+        seq_p = data.p(**load)
 
         files = open_files(self.config['path'] + os.sep + 'data',
                            self.config['files'])
@@ -160,16 +161,26 @@ class PHSSimulation:
 
         # init time step
         self.n = 0
+        
+        # process
         for (u, p) in zip(seq_u, seq_p):
+        	# update numerics
             self.nums.update(u=np.array(u), p=np.array(p))
+            
+            # write to files
             dump_files(self.nums, files)
+            
             self.n += 1
+            
+            # update progressbar
             if self.config['pbar']:
                 self.update_pb()
+                
         if self.config['pbar']:
             self.close_pb()
 
-        time.sleep(0.5)
+        time.sleep(0.1)
+        
         close_files(files)
 
     def process_cpp(self):
@@ -187,7 +198,7 @@ class PHSSimulation:
             except SyntaxError:
                 pass
         else:
-            # Replace generic term 'phobj_path' by actual object path
+            # Replace generic term 'simulation_path' by actual object path
             script = self.config['script']
             path = self.config['path']
             if path is None:

@@ -117,7 +117,7 @@ class PHSCore:
 
     def __add__(core1, core2):
 
-        core = PHSCore()
+        core = PHSCore(label=core1.label)
 
         assert set(core1.symbs_names) == set(core2.symbs_names)
 
@@ -473,8 +473,8 @@ unique PHScore.
         Description
         -----------
         The resulting connexion reads:
-            * connector[u][0] = -connector[alpha] * connector[y][1]
-            * connector[u][1] = connector[alpha] * connector[y][0]
+            * connector[u][0] = connector[alpha] * connector[y][1]
+            * connector[u][1] = -connector[alpha] * connector[y][0]
         """
         self.connectors += [connector, ]
 

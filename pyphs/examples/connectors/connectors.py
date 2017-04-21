@@ -19,11 +19,11 @@ def netlist_path(label):
     return here + os.sep + label + '.net'
 
 label = 'phs1'
-
 # build simple PHSCores
 c1 = netlist2core(netlist_path(label))
 print('c1.M={}'.format(c1.M))
 
+label = 'phs2'
 c2 = netlist2core(netlist_path(label))
 print('c2.M={}'.format(c2.M))
 

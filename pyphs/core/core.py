@@ -15,9 +15,9 @@ from pyphs.core.dimensions import Dimensions
 from pyphs.core.indices import Indices
 from pyphs.core.symbs_tools import (_assert_expr, _assert_vec, free_symbols,
                                     simplify)
-from pyphs.core.struc_tools import reduce_linear_dissipations, \
-    split_linear, output_function, move_stor, move_diss, move_port, \
-    move_connector
+from pyphs.core.struc_tools import (reduce_linear_dissipations, split_linear,
+                                    output_function, move_stor, move_diss,
+                                    move_port, move_connector, port2connector)
 from pyphs.latex import texdocument, core2tex
 from pyphs.numerics.numeric import PHSNumericalEval
 
@@ -475,14 +475,15 @@ unique PHScore.
             * connector[u][1] = connector[alpha] * connector[y][0]
         """
         self.connectors += [connector, ]
-        self.cu += list(connector['u'])
-        self.cy += list(connector['y'])
-        for u in connector['u']:
-            if u in self.u:
-                self.u.remove(self.u.index(u))
-        for y in connector['y']:
+
+        # check that only 2 ports are involved
+        for i, y in enumerate(connector['y']):
             if y in self.y:
-                self.y.remove(self.y.index(y))
+                ind_y = self.y.index(y)
+                port2connector(self, ind_y)
+            else:
+                self.cu += [connector['u'][i]]
+                self.cy += [connector['y'][i]]
 
     def apply_connectors(self):
         """
@@ -498,13 +499,13 @@ unique PHScore.
             i_dual = self.cy.index(c['y'][1])
             self.move_connector(i_dual, 2*i+1)
 
-        nxwy = self.dims.x() + self.dims.w() + self.dims.y()
-
         switch_list = [alpha * sympy.Matrix([[0, -1], [1, 0]])
                        for alpha in all_alpha]
         Mswitch = sympy.diag(*switch_list)
 
+        nxwy = self.dims.x() + self.dims.w() + self.dims.y()
         M = self.M.copy()
+
         # Gain matrix
         G_connectors = sympy.Matrix(M[:nxwy, nxwy:])
         # Observation matrix

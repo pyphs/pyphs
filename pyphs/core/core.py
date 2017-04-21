@@ -117,7 +117,7 @@ class PHSCore:
 
     def __add__(core1, core2):
 
-        core = PHSCore()
+        core = PHSCore(label=core1.label)
 
         assert set(core1.symbs_names) == set(core2.symbs_names)
 
@@ -140,30 +140,32 @@ class PHSCore:
         for name in core1.symbs_names:
             attr1 = getattr(core1, name)
             attr2 = getattr(core2, name)
-            core1.setsymb(name, attr1 + attr2)
+            core.setsymb(name, attr1 + attr2)
 
         # Update subs disctionary
-        core1.subs.update(core2.subs)
+        core.subs = {}
+        core.subs.update(core1.subs)
+        core.subs.update(core2.subs)
 
         # Set Hamiltonian expression
-        core1.setexpr('H', core1.H + core2.H)
+        core.setexpr('H', core1.H + core2.H)
 
         # Concatenate lists of expressions
-        core1.setexpr('z', list(core1.z)+list(core2.z))
+        core.setexpr('z', list(core1.z)+list(core2.z))
 
-        core1.connectors += core2.connectors
+        core.connectors = core1.connectors + core2.connectors
 
         for vari in core.dims.names:
             for varj in core.dims.names:
                 Mij = getattr(core, 'M'+vari+varj)()
                 if all(dim > 0 for dim in Mij.shape):
-                    set_func = getattr(core1, 'set_M'+vari+varj)
+                    set_func = getattr(core, 'set_M'+vari+varj)
                     set_func(Mij)
 
         # Need build
-        core1._exprs_built = False
+        core._exprs_built = False
 
-        return core1
+        return core
 
     def __copy__(self):
         core = PHSCore()
@@ -471,8 +473,8 @@ unique PHScore.
         Description
         -----------
         The resulting connexion reads:
-            * connector[u][0] = -connector[alpha] * connector[y][1]
-            * connector[u][1] = connector[alpha] * connector[y][0]
+            * connector[u][0] = connector[alpha] * connector[y][1]
+            * connector[u][1] = -connector[alpha] * connector[y][0]
         """
         self.connectors += [connector, ]
 

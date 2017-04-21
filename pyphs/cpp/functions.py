@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 
 from sympy.printing import ccode
 from pyphs.cpp.tools import matrix_type, dereference, indent
-from pyphs.numerics.tools import _assert_expr
+from pyphs.core.symbs_tools import _assert_expr
 import sympy
 
 

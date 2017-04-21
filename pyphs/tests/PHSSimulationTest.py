@@ -16,12 +16,12 @@ import numpy                     # numerical tools
 from pyphs.tutorials.phscore import core as nlcore
 
 from pyphs.examples.rlc.rlc import core
-rlc = core.__deepcopy__()
 
 from pyphs import PHSSimulation, signalgenerator
 
 
 def simulation_rlc_with_split():
+    rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -53,6 +53,7 @@ def simulation_rlc_with_split():
 
 
 def simulation_rlc_without_split():
+    rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -85,6 +86,7 @@ def simulation_rlc_without_split():
 
 
 def simulation_rlc_plot():
+    rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}

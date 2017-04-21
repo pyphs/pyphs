@@ -7,7 +7,7 @@ Created on Tue Jun  7 18:57:18 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs.core.core import symbols
-from pyphs.numerics.tools import _assert_expr
+from pyphs.core.symbs_tools import _assert_expr
 
 
 class PHSArgument:

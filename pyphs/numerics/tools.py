@@ -7,10 +7,8 @@ Created on Fri Jun  3 11:26:41 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs.core.symbs_tools import simplify as simp
-from pyphs.core.symbs_tools import _assert_expr
 import numpy
 import sympy
-from sympy.utilities.iterables import flatten
 from sympy.printing.theanocode import theano_function
 import copy
 
@@ -41,7 +39,9 @@ def evalop_generator(nums, op):
     func = PHSNumericalOperation(op.operation, args)
 
     def eval_func():
+        print(func())
         return numpy.asarray(func())
+
     return eval_func
 
 
@@ -146,6 +146,7 @@ class PHSNumericalOperation:
                 args.append(el())
             else:
                 args.append(el)
+        print(args)
         return self.call[0](*args)
 
 

@@ -39,7 +39,6 @@ def evalop_generator(nums, op):
     func = PHSNumericalOperation(op.operation, args)
 
     def eval_func():
-        print(func())
         return numpy.asarray(func())
 
     return eval_func
@@ -146,7 +145,6 @@ class PHSNumericalOperation:
                 args.append(el())
             else:
                 args.append(el)
-        print(args)
         return self.call[0](*args)
 
 

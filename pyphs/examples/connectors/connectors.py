@@ -18,14 +18,9 @@ here = this_script[:this_script.rfind(os.sep)]
 def netlist_path(label):
     return here + os.sep + label + '.net'
 
-label = 'phs1'
 # build simple PHSCores
-c1 = netlist2core(netlist_path(label))
-print('c1.M={}'.format(c1.M))
-
-label = 'phs2'
-c2 = netlist2core(netlist_path(label))
-print('c2.M={}'.format(c2.M))
+c1 = netlist2core(netlist_path('phs1'))
+c2 = netlist2core(netlist_path('phs2'))
 
 # concatenate c1 and c2 into a new PHSCore
 c = c1 + c2

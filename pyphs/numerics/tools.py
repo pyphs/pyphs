@@ -12,13 +12,17 @@ import sympy
 from sympy.printing.theanocode import theano_function
 import copy
 
+
+def norm(x):
+    return numpy.sqrt(float(numpy.dot(x.flatten(), x.flatten())))
+
+
 NumericalOperationParser = {'add': numpy.add,
                             'prod': lambda a1, a2: a1*a2,
                             'dot': numpy.dot,
                             'inv': numpy.linalg.inv,
                             'div': numpy.divide,
-                            'norm': lambda x: numpy.sqrt(float(numpy.dot(x,
-                                                                         x))),
+                            'norm': norm,
                             'copy': lambda x: x,
                             'none': lambda: None,
                             }
@@ -38,9 +42,12 @@ def evalop_generator(nums, op):
             args.append(arg)
     func = PHSNumericalOperation(op.operation, args)
 
-    def eval_func():
-        return numpy.asarray(func())
-
+    if isinstance(func(), (int, float)):
+        def eval_func():
+            return func()
+    else:
+        def eval_func():
+            return numpy.asarray(func())
     return eval_func
 
 

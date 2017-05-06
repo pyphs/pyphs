@@ -19,8 +19,6 @@ from pyphs import PHSSimulation
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core
 
-#from pyphs.examples.rhodes.rhodes import core
-
 core.build_R()
 
 # Define the simulation parameters
@@ -33,7 +31,7 @@ config = {'fs': 48e3,           # Sample rate (Hz)
           'path': None,         # Path to the results folder
           'pbar': True,         # Display a progress bar
           'timer': False,       # Display minimal timing infos
-          'lang': 'c++',     # Language in {'python', 'c++'}
+          'lang': 'python',     # Language in {'python', 'c++'}
 #          'script': None,       # Call to C++ compiler and exec binary
 #          'eigen': None,        # Path to Eigen C++ library
           # Options for the data reader. The data are read from index imin
@@ -45,14 +43,14 @@ config = {'fs': 48e3,           # Sample rate (Hz)
 simu = PHSSimulation(core, config=config)
 
 # def simulation time
-tmax = 2.
+tmax = 1e-2
 nmax = int(tmax*simu.fs)
 t = [n/simu.fs for n in range(nmax)]
 nt = len(t)
 
 # def input signal
-def sig(tn, mode='impact'):
-    freq = 1000.
+def sig(tn, mode='sin'):
+    freq = 300.
     amp = 1000.
     if mode == 'sin':
         pi = numpy.pi
@@ -79,13 +77,12 @@ def sequ():
         yield numpy.array([u1, ])  # numpy.array([u1, u2, ...])
 
 # state initialization
-# !!! must be array with shape (core.dims.x(), )
+# !!! must be numpy array with shape (core.dims.x(), )
 x0 = numpy.array([0., ]*core.dims.x())
-x0[core.x.index(core.symbols('qfelt'))] = -0.05
 
 # Initialize the simulation
 simu.init(sequ=sequ(), x0=x0, nt=nt,
-          config={'load': {'imin': 0, 'imax': None, 'decim': 10}})
+          config={'load': {'imin': 0, 'imax': None, 'decim': 1}})
 # Proceed
 simu.process()
 
@@ -112,12 +109,22 @@ plt.show()
 
 # plot of several signals with the simu.data object
 plt.figure(3)
-x_symbs = core.symbols(['qfelt'])
-simu.data.plot([('u', 0), ] + [('x', e) for e in map(core.x.index, x_symbs)] + [('y', 0)],
-                imax = 500)
+x_symbs = core.symbols(['xL', 'xC'])
+simu.data.plot([('u', 0), ] +
+               [('x', e) for e in map(core.x.index, x_symbs)] +
+               [('y', 0)],
+               load={'imin': None,
+                     'imax': 500,
+                     'decim': None})
+
 plt.figure(4)
-simu.data.plot([('u', 0),] + [('x', i) for i in range(core.dims.x())])
+simu.data.plot([('u', 0), ] +
+               [('x', i) for i in range(core.dims.x())])
+
 # power balance
 plt.figure(5)
 simu.data.plot_powerbal()
-simu.data.plot([('u', 0),] + [('x', e) for e in map(core.x.index, x_symbs)])
+simu.data.plot([('u', 0), ] +
+               [('x', e) for e in map(core.x.index, x_symbs)])
+
+plt.show()

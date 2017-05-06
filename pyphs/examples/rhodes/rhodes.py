@@ -42,7 +42,7 @@ if __name__ == '__main__':
               'path': None,         # Path to the results folder
               'pbar': True,         # Display a progress bar
               'timer': False,       # Display minimal timing infos
-              'lang': 'python',        # Language in {'python', 'c++'}
+              'lang': 'c++',        # Language in {'python', 'c++'}
               'script': None,       # Call to C++ compiler and exec binary
               'eigen': None,        # Path to Eigen C++ library
               # Options for the data reader. The data are read from index imin

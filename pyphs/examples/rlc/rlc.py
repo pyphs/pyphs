@@ -25,17 +25,17 @@ core = netlist2core(netlist_filename)
 if __name__ == '__main__':
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
               'split': True,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
+              'eps': 1e-16,          # Global numerical tolerance
               'path': None,             # Path to the results folder
-              'progressbar': True,      # Display a progress bar
+              'pbar': True,      # Display a progress bar
               'timer': False,           # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # compile and exec binary
-              'eigen_path': None,       # path to Eigen library
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(core, config=config)
@@ -51,4 +51,4 @@ if __name__ == '__main__':
 
     simu.process()
 
-    simu.data.plot_powerbal(mode='multi')
+    simu.data.plot_powerbal(mode='single')

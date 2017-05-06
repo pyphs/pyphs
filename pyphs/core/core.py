@@ -99,6 +99,7 @@ class PHSCore:
             setattr(self, name+'l', lnl_accessors[0])
             setattr(self, name+'nl', lnl_accessors[1])
 
+
         for name in {'w', 'z'}:
             lnl_accessors = gen_lnl_accessors(name, 'w')
             setattr(self, name+'l', lnl_accessors[0])
@@ -206,14 +207,14 @@ class PHSCore:
     def dx(self):
         """
         Returns the symbols "dxi" associated with the differentials of the \
-state with symbol "xi" for each "xi" in state vector 'CorePHS.x'.
+state with symbol "xi" for each "xi" in state vector 'PHSCore.x'.
         """
         return [self.symbols('d'+str(x)) for x in self.x]
 
     def g(self):
         """
         Returns the symbols "gxi" associated with the gradient of the storage\
-function w.r.t the state "xi" for each "xi" in state vector 'CorePHS.x'.
+function w.r.t the state "xi" for each "xi" in state vector 'PHSCore.x'.
         """
         return [self.symbols('g'+str(x)) for x in self.x]
 
@@ -507,6 +508,9 @@ unique PHScore.
 
         nxwy = self.dims.x() + self.dims.w() + self.dims.y()
         M = self.M.copy()
+
+        assert self.Mcycy().is_zero, "Connectors must not be coupled:\n\
+Mcycy={}".format(self.Mcycy())
 
         # Gain matrix
         G_connectors = sympy.Matrix(M[:nxwy, nxwy:])

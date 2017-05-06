@@ -15,6 +15,7 @@ from .tools import (lambdify, find, getarg_generator, setarg_generator,
                     evalop_generator)
 from pyphs.config import simulations
 import numpy
+import copy
 
 
 class PHSNumericalCore:
@@ -48,12 +49,23 @@ class PHSNumericalCore:
         for name in self.names:
             if name.startswith('ud_') and not name[3:] in self.names:
                 self.names.append(name[3:])
-        # build numerical evaluation for functions and operations
-        for name in self.names:
+
+        def build_eval(name):
+            print('    Build numerical evaluation of {}'.format(name))
             if name in self.method.funcs_names:
                 self.build_func(name)
             elif name in self.method.ops_names:
+                deps = getattr(self.method, name + '_deps')
+                for dep in deps:
+                    if not hasattr(self, dep):
+                        build_eval(dep)
                 self.build_op(name)
+
+        # build numerical evaluation for functions and operations
+        names = copy.deepcopy(self.names)
+        for name in names:
+            if name not in ('exec', 'iter'):
+                build_eval(name)
 
     def build_arg(self, name):
         """
@@ -78,7 +90,7 @@ class PHSNumericalCore:
 
     def build_op(self, name):
         """
-        link and lambdify an operation for python simulation
+        link and lambdify operation
         """
         func = evalop_generator(self, getattr(self.method, name + '_op'))
         value = func()

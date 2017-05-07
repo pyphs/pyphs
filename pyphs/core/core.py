@@ -453,40 +453,52 @@ dissipative variables w are no more accessible.
 
 # Connectors
 
-    def add_connector(self, connector):
+    def add_connector(self, indices, alpha):
         """
-        Add a connector which describes the connection of two ports from a \
+Add a connector which describes the connection of two ports from a \
 unique PHScore.
 
-        Usage
-        ------
-        core.add_connector(connectors)
+Usage
+------
+core.add_connector(indices, alpha)
 
-        Parameter
-        ---------
-        connector: dict,
-            The key and values are:
+Parameters
+---------
+indices: tuple of int
+    The indices of the ports to be connected.
 
-            * 'u': list of sympy.symbols for inputs,
-            * 'y': list of sympy.symbols for outputs,
-            * 'alpha': sympy.Expr for gain.
+alpha: scalar quantity
+    Coefficient of the connection.
 
-        Description
-        -----------
-        The resulting connexion reads:
-            * connector[u][0] = connector[alpha] * connector[y][1]
-            * connector[u][1] = -connector[alpha] * connector[y][0]
+Description
+-----------
+The resulting connection reads:
+    * core.u[indices[0]] = alpha * core.y[indices[1]]
+    * core.u[indices[1]] = -alpha * core.y[indices[0]]
+
+Notice this method only stores a description of the connection. The
+connection will be effective after a call to the core.apply_connectors() \
+method.
         """
+        assert indices[0] != indices[1], 'Can not connect a port to itself: \
+indices={}.'.format(indices)
+        u = list()
+        y = list()
+        for i in indices:
+            assert i < self.dims.y(), 'Port index {} is not known. Can not \
+add the connector'.format(i)
+            u.append(self.u[i])
+            y.append(self.y[i])
+        connector = {'u': u,
+                     'y': y,
+                     'alpha': alpha}
         self.connectors += [connector, ]
-
-        # check that only 2 ports are involved
-        for i, y in enumerate(connector['y']):
-            if y in self.y:
-                ind_y = self.y.index(y)
-                port2connector(self, ind_y)
-            else:
-                self.cu += [connector['u'][i]]
-                self.cy += [connector['y'][i]]
+        sorted_indices = list(copy.deepcopy(indices))
+        sorted_indices.sort()
+        sorted_indices.reverse()
+        print(sorted_indices)
+        for n, i in enumerate(sorted_indices):
+            port2connector(self, i)
 
     def apply_connectors(self):
         """

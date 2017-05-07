@@ -30,10 +30,10 @@ class PHSConnector(PHSGraph):
                                     for el in (1, 2)])
         y1, y2 = self.core.symbols([nicevarlabel('y', label + str(el))
                                     for el in (1, 2)])
-        connector = {'u': (u1, u2), 'y': (y1, y2),
-                     'alpha': alpha}
         # add connector component
-        self.core.add_connector(connector)
+        ny = self.core.dims.y()
+        self.core.add_ports((u1, u2), (y1, y2))
+        self.core.add_connector((ny, ny+1), alpha)
         # update phs.Graph with edges
         edge1_data = {'type': 'connector',
                       'connector_type': connector_type,

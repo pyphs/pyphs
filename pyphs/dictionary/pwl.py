@@ -22,16 +22,29 @@ class Storage(PHSGraph):
 
         assert 'file' in kwargs, "pwl.storage component need 'file' argument"
         path = kwargs.pop('file')
-        data = np.vstack(map(np.array, data_generator(path)))
-        x_vals = data[0, :]
-        y_vals = data[1, :]
+        vals = np.vstack(map(np.array, data_generator(path)))
+        x_vals = vals[0, :]
+        h_vals = vals[1, :]
+
+        assert all(h_vals[np.nonzero(x_vals >= 0)] >= 0), 'All values h(x) for\
+ x>=0 must be non-negative (component {})'.format(label)
+
+        if kwargs['integ']:
+            assert all(h_vals[np.nonzero(x_vals < 0)] < 0), 'All values dxh(x)\
+ for x<0 must be negative (component {})'.format(label)
+        else:
+            assert all(h_vals[np.nonzero(x_vals < 0)] >= 0), 'All values h(x)\
+ for x<0 must be non-negative (component {})'.format(label)
+
+        assert h_vals[np.nonzero(x_vals == 0)] == 0, 'dxh(0) and h(0) must be \
+zero (component {})'.format(label)
 
         ctrl = kwargs.pop('ctrl')
 
         # state  variable
         x = symbols("x"+label)
         # storage funcion
-        h = pwl_func(x_vals, y_vals, x, **kwargs)
+        h = pwl_func(x_vals, h_vals, x, **kwargs)
 
         # edge data
         data = {'label': x,
@@ -63,6 +76,15 @@ class Dissipative(PHSGraph):
         data = np.vstack(map(np.array, data_generator(path)))
         w_vals = data[0, :]
         z_vals = data[1, :]
+
+        assert all(z_vals[np.nonzero(w_vals >= 0)] >= 0), 'All values z(w) for\
+ w>=0 must be non-negative (component {})'.format(label)
+
+        assert all(z_vals[np.nonzero(w_vals >= 0)] >= 0), 'All values z(w) for\
+ w<0 must be negative (component {})'.format(label)
+
+        assert all(z_vals[np.nonzero(w_vals == 0)] == 0), 'z(0) must be zero \
+(component {})'.format(label)
 
         ctrl = kwargs.pop('ctrl')
 

@@ -517,8 +517,10 @@ unique PHScore.
 
         try:
             iN_connectors = inverse(N_connectors, dosimplify=True)
+
             # Interconnection Matrix due to the connectors
             M_connectors = G_connectors*Mswitch*iN_connectors*O_connectors
+
             # Store new structure
             self.M = self.M[:nxwy, :nxwy] + M_connectors
 

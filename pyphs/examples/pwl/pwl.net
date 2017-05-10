@@ -1,2 +1,2 @@
-pwl.storage PWL_stor ('N1', 'N2'): integ=True; file='/Users/Falaize/Documents/DEV/python/pyphs/pyphs/examples/pwl/data.txt'; ctrl=e;
-pwl.dissipative PWL_diss ('#', 'N1'): file='/Users/Falaize/Documents/DEV/python/pyphs/pyphs/examples/pwl/data.txt'; ctrl=f;
+pwl.storage stor ('N1', 'N2'): integ=True; file='data.pwl'; ctrl=e;
+pwl.dissipative _diss ('#', 'N1'): file='data.pwl'; ctrl=f;

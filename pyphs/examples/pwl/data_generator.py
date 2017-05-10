@@ -34,7 +34,7 @@ netlist.add_line(netlist_line)
 
 netlist_line = {'dictionary': 'pwl',
                 'component': 'dissipative',
-                'label': '_diss',
+                'label': 'diss',
                 'arguments': {'file': repr(data_path),
                               'ctrl': 'f'},
                 'nodes': (datum, 'N1')}

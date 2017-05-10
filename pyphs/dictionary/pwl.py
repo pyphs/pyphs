@@ -89,7 +89,7 @@ class Dissipative(PHSGraph):
         ctrl = kwargs.pop('ctrl')
 
         # state  variable
-        w = symbols("x"+label)
+        w = symbols("w"+label)
         # storage funcion
         z = pwl_func(w_vals, z_vals, w, **kwargs)
 

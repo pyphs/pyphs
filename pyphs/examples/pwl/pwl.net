@@ -1,2 +1,2 @@
 pwl.storage stor ('N1', 'N2'): integ=True; file='data.pwl'; ctrl=e;
-pwl.dissipative _diss ('#', 'N1'): file='data.pwl'; ctrl=f;
+pwl.dissipative diss ('#', 'N1'): file='data.pwl'; ctrl=f;

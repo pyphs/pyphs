@@ -16,7 +16,8 @@ import sympy as sp
 
 label = 'PWL'
 netlist_path = os.path.join(os.getcwd(), 'pwl.net')
-
 graph = PHSGraph(netlist=netlist_path, label=label)
-sp.plot(graph.core.H, (graph.core.x[0], -10, 10))
-sp.plot(graph.core.z[0], (graph.core.w[0], -10, 10))
+
+if __name__ == '__main__':
+    sp.plot(graph.core.H, (graph.core.x[0], -10, 10))
+    sp.plot(graph.core.z[0], (graph.core.w[0], -10, 10))

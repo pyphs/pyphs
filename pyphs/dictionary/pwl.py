@@ -12,6 +12,7 @@ from pyphs.dictionary import edges
 from pyphs import PHSGraph
 from pyphs.misc.io import data_generator
 from pyphs.core.core import symbols
+from pyphs.core.symbs_tools import simplify as simplify_func
 
 
 class Storage(PHSGraph):
@@ -113,7 +114,7 @@ class Dissipative(PHSGraph):
 
 
 def pwl_func(X_lst, Y_lst, symbol=sp.symbols('x'),
-             integ=False, y0=0., intconst=0.):
+             integ=False, y0=0., intconst=0., simplify=True):
     """
 Returns a piecewise linear interpolation of the set (X_lst, Y_lst), based on
 the following explicit form a + b.x + sum(c_i*abs(x - X_i)), where i denote the
@@ -158,6 +159,8 @@ piecewise-linear analysis. IEEE Transactions on Circuits and Systems, \
     else:
         expr = a + b*x + sum(c*abs(x - X))
 
+    if simplify:
+        expr = simplify_func(expr)
     return expr
 
 if __name__ == '__main__':

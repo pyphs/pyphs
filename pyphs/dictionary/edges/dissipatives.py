@@ -101,6 +101,10 @@ keys of the kwargs arguments.
 
     """
     def __init__(self, label, edges, w, z, **kwargs):
+        if not hasattr(w, '__len__'):
+            w = [w, ]
+        if not hasattr(z, '__len__'):
+            z = [z, ]
         assert len(w) == len(z),\
             'len(z)={0!s} is not equal to len(w)={1!s}.'.format(len(z), len(w))
         # init PortHamiltonianObject

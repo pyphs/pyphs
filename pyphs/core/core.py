@@ -14,7 +14,7 @@ from pyphs.core.calculus import gradient, jacobian
 from pyphs.core.dimensions import Dimensions
 from pyphs.core.indices import Indices
 from pyphs.core.symbs_tools import (_assert_expr, _assert_vec, free_symbols,
-                                    simplify)
+                                    simplify, inverse)
 from pyphs.core.struc_tools import (reduce_linear_dissipations, split_linear,
                                     output_function, move_stor, move_diss,
                                     move_port, move_connector, port2connector)
@@ -514,29 +514,35 @@ add the connector'.format(i)
             i_dual = self.cy.index(c['y'][1])
             self.move_connector(i_dual, 2*i+1)
 
-        switch_list = [alpha * sympy.Matrix([[0, -1], [1, 0]])
-                       for alpha in all_alpha]
-        Mswitch = sympy.diag(*switch_list)
+        Mswitch_list = [alpha * sympy.Matrix([[0, -1],
+                                              [1, 0]])
+                        for alpha in all_alpha]
+        Mswitch = sympy.diag(*Mswitch_list)
 
         nxwy = self.dims.x() + self.dims.w() + self.dims.y()
-        M = self.M.copy()
-
-        assert self.Mcycy().is_zero, "Connectors must not be coupled:\n\
-Mcycy={}".format(self.Mcycy())
-
         # Gain matrix
-        G_connectors = sympy.Matrix(M[:nxwy, nxwy:])
+        G_connectors = sympy.Matrix(self.M[:nxwy, nxwy:])
         # Observation matrix
-        O_connectors = sympy.Matrix(M[nxwy:, :nxwy])
-        # Interconnection Matrix due to the connectors
-        M_connectors = G_connectors * Mswitch * O_connectors
-        # Store new structure
-        self.M = M[:nxwy, :nxwy] + M_connectors
+        O_connectors = sympy.Matrix(self.M[nxwy:, :nxwy])
 
-        # clean
-        self.cy = list()
-        self.cu = list()
-        self.connectors = list()
+        N_connectors = sympy.eye(self.dims.cy()) - self.Mcycy() * Mswitch
+
+        try:
+            iN_connectors = inverse(N_connectors, dosimplify=True)
+
+            # Interconnection Matrix due to the connectors
+            M_connectors = G_connectors*Mswitch*iN_connectors*O_connectors
+
+            # Store new structure
+            self.M = self.M[:nxwy, :nxwy] + M_connectors
+
+            # clean
+            self.cy = list()
+            self.cu = list()
+            self.connectors = list()
+
+        except ValueError:
+            raise Exception('Can not resolve the connection.\n\nABORD')
 
 ###############################################################################
 ###############################################################################

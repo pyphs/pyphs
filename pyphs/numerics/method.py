@@ -181,7 +181,7 @@ config: dic
 Output
 ------
 None:
-    In-place definition of the numerical functions within the core
+    In-place definition of the numerical functions within the PHSCore
     """
 
     # build the discrete evaluation for the gradient

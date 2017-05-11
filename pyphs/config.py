@@ -28,7 +28,7 @@ EPS = numpy.finfo(float).eps
 
 # Below are the options for SYMBOLIC COMPUTATIONS
 
-# Define the simplification trial time before timeout and abord
+# Simplification trial time before timeout and abord (expressed in second)
 TIMEOUT = 10.
 
 
@@ -57,19 +57,19 @@ affiliations = [r'Project-team S3AM\footnote{\url{https://www.ircam.fr/recherche
                 r'1 Place Igor-Stravinsky, 75004 Paris, France']
 
 # In equations:
-# generates “p/q” instead of “frac{p}{q}” when the denominator is simple enough
+# use “p/q” instead of “frac{p}{q}” when the denominator is simple enough
 fold_short_frac = False
 
-# The delimiter to wrap around matrices. Can be one of “[”, “(”
+# The delimiter to wrap around matrices, in {“[”, “(”}
 mat_delim = "("
 
-# Which matrix environment string to emit. “smallmatrix”, “matrix”, “array”
+# Which matrix environment string to use, in {“smallmatrix”, “matrix”, “array”}
 mat_str = 'array'
 
-# multiplication symbol: None, “ldot”, “dot”, or “times”
+# multiplication symbol, in {None, “ldot”, “dot”, “times”}
 mul_symbol = 'dot'
 
-# Special characters
+# Special characters to be ignored
 special_chars = ['#']
 
 ###############################################################################

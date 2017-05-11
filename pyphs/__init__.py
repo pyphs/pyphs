@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from .core.core import PHSCore
+from .core.core import PHSCore, symbols
 from .graphs.graph import PHSGraph
 from .graphs import netlist2core
 from .graphs.netlists import PHSNetlist
@@ -26,4 +26,4 @@ __all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
            'signalgenerator', 'PHSNumericalOperation', 'PHSNumericalMethod',
            'PHSNumericalCore', 'PHSNumericalEval',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
-           'numcore2cpp', 'simu2cpp', 'netlist2core']
+           'numcore2cpp', 'simu2cpp', 'netlist2core', 'symbols']

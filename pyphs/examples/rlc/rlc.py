@@ -51,4 +51,4 @@ if __name__ == '__main__':
 
     simu.process()
 
-    simu.data.plot_powerbal(mode='single')
+    simu.data.plot_powerbal(mode='multi')

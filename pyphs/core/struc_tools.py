@@ -24,7 +24,8 @@ def movematrixcols(matrix, indi, indf):
 
 
 def moveMcolnrow(core, indi, indf):
-    core.M = movesquarematrixcolnrow(core.M, indi, indf)
+    if not core.M.is_zero:
+        core.M = movesquarematrixcolnrow(core.M, indi, indf)
 
 
 def move_stor(core, indi, indf):

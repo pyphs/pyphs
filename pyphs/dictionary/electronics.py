@@ -115,7 +115,6 @@ class Inductor(PHSStorageLinear):
     def __init__(self, label, nodes, **kwargs):
         par_name = 'L'
         par_val = kwargs[par_name]
-        print('{}'.format(par_val))
         kwargs = {'name': par_name,
                   'value': par_val,
                   'inv_coeff': True,

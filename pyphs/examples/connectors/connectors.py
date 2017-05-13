@@ -18,15 +18,22 @@ here = this_script[:this_script.rfind(os.sep)]
 def netlist_path(label):
     return here + os.sep + label + '.net'
 
+def sort_outputs(core):
+    for i in range(core.dims.y()):
+        if not str(core.y[i]).endswith(str(i+1)):
+            core.move_port([str(y).endswith(str(i+1)) for y in core.y].index(True), i)
+    
 # build simple PHSCores
 c1 = netlist2core(netlist_path('phs1'))
+sort_outputs(c1)
 c2 = netlist2core(netlist_path('phs2'))
+sort_outputs(c2)
 
 # concatenate c1 and c2 into a new PHSCore
 c = c1 + c2
-
+c.pprint()
 # define the connection
-c.add_connector((c.y.index(c2.y[1]), c.y.index(c1.y[1])), 
+c.add_connector((c.y.index(c1.y[1]), c.y.index(c2.y[1])), 
                 alpha=1)
 
 # apply the connection
@@ -34,8 +41,8 @@ c.apply_connectors()
 
 # target structure matrix
 target = array([[0, -1, 1, 0],
-                [1, 0, 0, 1],
+                [1, 0, 0, -1],
                 [-1, 0, 0, 0],
-                [0, -1, 0, 0]])
+                [0, 1, 0, 0]])
 
-assert all(map(lambda x: not x, array(c.M - target).flatten()))
+assert all(map(lambda x: not x, array(c.M - target).flatten())), '{}\n\n{}'.format(c.M, target)

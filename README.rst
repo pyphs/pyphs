@@ -29,6 +29,6 @@ This is the development branch of the ``pyphs`` package.
   :target: https://www.quantifiedcode.com/app/project/0c1fbf5b44e94b4085a24c18a1895947
   :alt: issues   
 
-.. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
+.. image:: https://landscape.io/github/afalaize/pyphs/development/landscape.svg?style=flat
    :target: https://landscape.io/github/afalaize/pyphs/development
-   :alt: Health
+   :alt: Code Health

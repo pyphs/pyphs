@@ -7,19 +7,27 @@ Created on Fri Jun  3 11:26:41 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs.core.symbs_tools import simplify as simp
-from pyphs.core.symbs_tools import _assert_expr
 import numpy
 import sympy
 from sympy.printing.theanocode import theano_function
 import copy
+
+
+try:
+    import itertools.imap as map
+except ImportError:
+    pass
+
+def norm(x):
+    return numpy.sqrt(float(numpy.dot(x.flatten(), x.flatten())))
+
 
 NumericalOperationParser = {'add': numpy.add,
                             'prod': lambda a1, a2: a1*a2,
                             'dot': numpy.dot,
                             'inv': numpy.linalg.inv,
                             'div': numpy.divide,
-                            'norm': lambda x: numpy.sqrt(float(numpy.dot(x,
-                                                                         x))),
+                            'norm': norm,
                             'copy': lambda x: x,
                             'none': lambda: None,
                             }
@@ -39,8 +47,12 @@ def evalop_generator(nums, op):
             args.append(arg)
     func = PHSNumericalOperation(op.operation, args)
 
-    def eval_func():
-        return numpy.asarray(func())
+    if isinstance(func(), (int, float)):
+        def eval_func():
+            return func()
+    else:
+        def eval_func():
+            return numpy.asarray(func())
     return eval_func
 
 
@@ -88,7 +100,7 @@ def setarg_generator(nums, inds):
         inds = list()
 
     def set_func(array):
-        nums.args[inds] = array.flatten()
+        nums.args[inds] = array
 
     return set_func
 
@@ -148,7 +160,25 @@ class PHSNumericalOperation:
         return self.call[0](*args)
 
 
-def lambdify(args, expr, subs=None, simplify=True):
+def theano_lambdify(args, expr, vector_expr):
+    if vector_expr:
+        expr_lambda = theano_function(args, expr,
+                                      on_unused_input='ignore')
+    else:
+        expr_lambda = theano_function(args, [expr],
+                                      on_unused_input='ignore')
+    return expr_lambda
+
+
+def numpy_lambdify(args, expr):
+    func = sympy.lambdify(args,
+                          expr,
+                          dummify=False,
+                          modules='numpy')
+    return lambda *args: func(*map(numpy.array, args))
+
+
+def lambdify(args, expr, subs=None, simplify=True, theano=True):
     """
     call to lambdify with chosen options
     """
@@ -162,20 +192,15 @@ def lambdify(args, expr, subs=None, simplify=True):
     if simplify:
         expr = simp(expr)
     expr = sympy.sympify(expr)
-    # array2mat = [{'ImmutableMatrix': numpy.matrix}, 'numpy']
 
-    try:
-        if vector_expr:
-            expr_lambda = theano_function(args, expr,
-                                          on_unused_input='ignore')
-        else:
-            expr_lambda = theano_function(args, [expr],
-                                          on_unused_input='ignore')
-    except:
-        expr_lambda = sympy.lambdify(args,
-                                     expr,
-                                     dummify=False,
-                                     modules='numpy')
+    if theano:
+        try:
+            expr_lambda = theano_lambdify(args, expr, vector_expr)
+        except:
+            expr_lambda = numpy_lambdify(args, expr)
+    else:
+        expr_lambda = numpy_lambdify(args, expr)
+
     return expr_lambda
 
 

@@ -11,7 +11,7 @@ from pyphs.plots.fonts import globalfonts
 import numpy as np
 
 
-def spectrogram(datax, datay, **kwargs):
+def spectrogram(datax, datay, fs, **kwargs):
     """
     Plot spectrogramm of datay.
 
@@ -109,7 +109,7 @@ None).
         Width of line around markers (the default is 0.5).
 
     """
-    opts = standard
+    opts = standard.copy()
     opts.update(kwargs)
     if opts['axedef'] is None:
         opts['axedef'] = [.15, .15, .75, .75]
@@ -124,6 +124,12 @@ None).
         opts['labels'] = None
     if opts['log'] is None:
         opts['log'] = ''
+    if not 'dynamics' in opts.keys():
+        opts['dynamics'] = 80.
+    if not 'ylimits' in opts.keys():
+        opts['ylimits'] = (10, fs/2.)
+    if not 'xlimits' in opts.keys():
+        opts['xlimits'] = (datax[0], datax[-1])
 
     activate_latex(opts)
 
@@ -156,7 +162,7 @@ None).
 
     noverlap = int(opts['nfft']/2)
     Pxx, fbins, tbins, im = ax.specgram(np.array(y)/(opts['nfft']/2),
-                                        mode='psd', Fs=opts['fs'],
+                                        mode='psd', Fs=fs,
                                         NFFT=opts['nfft'], noverlap=noverlap,
                                         cmap=opts['colormap'])
     Pxx = Pxx/np.max(Pxx)
@@ -191,11 +197,8 @@ None).
     cbar_ax = fig.add_axes([0.87, 0.397, 0.01, 0.555])
     fig.colorbar(im, cax=cbar_ax, label='Magnitude (dB)')
 
-    from matplotlib.pyplot import show
-    show()
-
-
-def transferFunction(sigin, sigout, fs, nfft=None, filtering=None,
+    
+def transferFunction(sigin, sigout, fs, nfft=int(2e13), filtering=None,
                      limits=None):
     """
     Return frequencies and modulus of \

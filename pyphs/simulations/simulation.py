@@ -32,16 +32,23 @@ class PHSSimulation:
 
             keys and default values are
 
-                * 'language': 'python',
-                * 'fs': 48e3,
-                * 'numtol': EPS,
-                * 'maxit': 100,
-                * 'split': True
-                * 'solver': 'standard',
-                * 'timer': True,
-                * 'load_options': {'decim': 1,
-                                   'imin': 0,
-                                   'imax': None}
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+              'path': None,         # Path to the results folder
+              'pbar': True,         # Display a progress bar
+              'timer': False,       # Display minimal timing infos
+              'lang': 'c++',        # Language in {'python', 'c++'}
+              'script': None,       # Call to C++ compiler and exec binary
+              'eigen': None,        # Path to Eigen C++ library
+              # Options for the data reader. The data are read from index imin
+              # to index imax, rendering one element out of the number decim
+              'load': {'imin': None,
+                       'imax': None,
+                       'decim': None}
         """
 
         # init config with standard configuration options
@@ -88,13 +95,16 @@ class PHSSimulation:
         self.config.update(config)
         self._core.M = self.nums.method.core.M
         setattr(self, 'data', PHSData(self._core, self.config))
+        if x0 is None:
+            x0 = np.zeros(self.nums.method.core.dims.x())
         self.data.init_data(sequ, seqp, x0, nt)
-        self.init_numericalcore(x0=x0)
+        self.nums.set_x(x0)
 
     def process(self):
         """
         process simulation for all time steps
         """
+        print('Process...')
         if self.config['timer']:
             tstart = time.time()
 
@@ -117,6 +127,7 @@ class PHSSimulation:
             time_ratio = time_it*self.config['fs']
             print('ratio compared to real-time: {0!s}'.format(format(
                 time_ratio, 'f')))
+        print('Done')
 
     def init_pb(self):
         pb_widgets = ['\n', 'Simulation: ',
@@ -138,8 +149,9 @@ class PHSSimulation:
 
         # get generators of u and p
         data = self.data
-        seq_u = data.u()
-        seq_p = data.p()
+        load = {'imin': 0, 'imax': None, 'decim': 1}
+        seq_u = data.u(**load)
+        seq_p = data.p(**load)
 
         files = open_files(self.config['path'] + os.sep + 'data',
                            self.config['files'])
@@ -149,23 +161,33 @@ class PHSSimulation:
 
         # init time step
         self.n = 0
+        
+        # process
         for (u, p) in zip(seq_u, seq_p):
+        	# update numerics
             self.nums.update(u=np.array(u), p=np.array(p))
+            
+            # write to files
             dump_files(self.nums, files)
+            
             self.n += 1
+            
+            # update progressbar
             if self.config['pbar']:
                 self.update_pb()
+                
         if self.config['pbar']:
             self.close_pb()
 
-        time.sleep(0.5)
+        time.sleep(0.1)
+        
         close_files(files)
 
     def process_cpp(self):
 
         simu2cpp(self)
 
-        if self.config['cpp_build_and_run_script'] is None:
+        if self.config['script'] is None:
             print("\no==========================================================\
 ==o\n")
             print("Please, execute:\n" + self.config['path'] + os.sep + 'cpp' +
@@ -176,7 +198,7 @@ class PHSSimulation:
             except SyntaxError:
                 pass
         else:
-            # Replace generic term 'phobj_path' by actual object path
+            # Replace generic term 'simulation_path' by actual object path
             script = self.config['script']
             path = self.config['path']
             if path is None:

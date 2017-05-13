@@ -26,9 +26,13 @@ install:
   - pip_deps='stopit progressbar2 nose nose-exclude codecov coveralls'
   - pip install $pip_deps
   - pip install .
+before_script: # configure a headless display to test plot generation
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 10 # give xvfb some time to start
 # command to run tests
 script:
-  - nosetests --with-coverage --cover-erase --exclude-dir="/pyphs/plots/" --exclude-dir="/pyphs/misc/"
+  - nosetests --with-coverage --cover-erase
 after_success:
   - codecov
   - coveralls

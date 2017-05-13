@@ -7,6 +7,7 @@ Created on Tue Jun  7 18:57:18 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs.core.core import symbols
+from pyphs.core.symbs_tools import _assert_expr
 
 
 class PHSArgument:
@@ -32,9 +33,12 @@ def form(name, obj):
     if isinstance(obj, tuple):
         assert isinstance(obj[0], str), 'for tupple parameter, \
         first element should be a str, got {0!s}'.format(type(obj[0]))
-        assert isinstance(obj[1], (float, int)), 'for tupple parameter, \
-        second element should be numeric, got\
-{0!s}'.format(type(obj[1]))
+        try:
+            assert isinstance(obj[1], (float, int)), 'for tupple parameter, \
+                second element should be numeric, got\
+                {0!s}'.format(type(obj[1]))
+        except AssertionError:
+            _assert_expr(obj[1])
         string = obj[0]
         symb = symbols(string)
         sub = {symb: obj[1]}
@@ -49,6 +53,13 @@ def form(name, obj):
         symb = symbols(string)
         sub = {}
         par = symb
+    else:
+        _assert_expr(obj)
+        string = name
+        symb = symbols(string)
+        sub = {symb: obj}
+        par = None
+
     return symb, sub, par
 
 

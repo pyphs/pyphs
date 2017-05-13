@@ -9,7 +9,7 @@ from pyphs.plots.tools import (activate_latex, annotate, whichplot,
 from .fonts import globalfonts
 
 
-def singleplot(datax, datay, **kwargs):
+def singleplot(datax, datay, show=True, **kwargs):
     """
     Plot multiple y-axis and possible multiple curves in each. Result is saved\
  as a '.png' document.
@@ -193,5 +193,6 @@ None).
         from matplotlib.pyplot import savefig
         savefig(opts['filelabel'] + '.' + opts['format'])
 
-    from matplotlib.pyplot import show
-    show()
+    if show:
+        from matplotlib.pyplot import show as pltshow
+        pltshow()

@@ -12,6 +12,7 @@ from .analysis import GraphAnalysis
 from .build import buildCore
 from pyphs.core.core import PHSCore
 from pyphs.plots.graphs import plot
+from pyphs.graphs import PHSNetlist
 from .tools import serial_edges, parallel_edges
 from .exceptions import PHSUndefinedPotential
 from pyphs.config import datum
@@ -23,14 +24,19 @@ class PHSGraph(nx.MultiDiGraph):
 port-Hamiltonian systems.
     """
     def __init__(self, netlist=None, label=None):
-
+        if label is None:
+            l = ''
+        else:
+            l = label
+        print('Build graph {}...'.format(l))
         nx.MultiDiGraph.__init__(self)
         self.core = PHSCore()
         self._idpar = 0
         self._idser = 0
-        if label is not None:
-            self.label = label
+        self.label = label
         if netlist is not None:
+            if isinstance(netlist, str):
+                netlist = PHSNetlist(netlist)
             self.Netlist = netlist
             self.build_from_netlist()
 
@@ -45,6 +51,11 @@ port-Hamiltonian systems.
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
     def buildCore(self, verbose=False, plot=False, apply_connectors=True):
+        if self.label is None:
+            l = ''
+        else:
+            l = self.label
+        print('Build core {}...'.format(l))
         self.set_analysis(verbose=verbose, plot=plot)
         self.analysis.perform()
         buildCore(self)
@@ -100,7 +111,7 @@ port-Hamiltonian systems.
             for degree in self.degree_iter():
                 if degree[1] == 0:
                     nodes_to_remove.append(degree[0])
-                    
+
             for node in nodes_to_remove:
                 self.remove_node(node)
         return bool(len(se))

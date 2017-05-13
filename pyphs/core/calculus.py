@@ -9,7 +9,7 @@ from pyphs.core.symbs_tools import simplify, _assert_expr, _assert_vec
 import sympy
 
 
-def gradient(scalar_func, vars_, dosimplify=True):
+def gradient(scalar_func, vars_, dosimplify=False):
     """
     Symbolic computation here. Return the gradient of scalar function H
     w.r.t. vector variable x.
@@ -47,7 +47,7 @@ def gradient(scalar_func, vars_, dosimplify=True):
     return grad
 
 
-def hessian(scalar_func, vars_, dosimplify=True):
+def hessian(scalar_func, vars_, dosimplify=False):
     """
     Symbolic computation here. Return the hessian matrix of scalar function H
     w.r.t. vector variable x.
@@ -79,7 +79,7 @@ def hessian(scalar_func, vars_, dosimplify=True):
     return hess
 
 
-def jacobian(func, vars_, dosimplify=True):
+def jacobian(func, vars_, dosimplify=False):
     """
     Symbolic computation here. Return the jacobian matrix of vector function f
     w.r.t. vector variable x.

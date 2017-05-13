@@ -11,16 +11,18 @@ from __future__ import division
 
 # import of external packages
 import numpy                     # numerical tools
-import matplotlib.pyplot as plt  # plot tools
 
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core as nlcore
 
-from pyphs.examples.rlc.rlc import core as rlc
+from pyphs.examples.rlc.rlc import core
+
 from pyphs import PHSSimulation, signalgenerator
 
+from pyphs.cpp.simu2cpp import simu2cpp
 
 def simulation_rlc_with_split():
+    rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -50,8 +52,44 @@ def simulation_rlc_with_split():
 
     return True
 
+    
+def simulation_rlc_cpp():
+    rlc = core.__deepcopy__()
+    # Define the simulation parameters
+    config = {'fs': 48e3,               # Sample rate
+              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'theta': 0.5,             # theta-scheme for the structure
+              'split': True,           # apply core.split_linear() beforehand
+              'maxit': 10,              # Max iteration for NL solvers
+              'numtol': 1e-16,          # Global numerical tolerance
+              'path': None,             # Path to the results folder
+              'progressbar': True,      # Display a progress bar
+              'timer': True,           # Display minimal timing infos
+              'language': 'python',     # in {'python', 'c++'}
+              'cpp_build_and_run_script': None,  # compile and exec binary
+              'eigen_path': None,       # path to Eigen library
+              }
+
+    simu = PHSSimulation(rlc, config=config)
+
+    dur = 0.01
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+
+    def sequ():
+        for el in u():
+            yield (el, )
+
+    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+
+    simu2cpp(simu)
+
+    return True
+
+    
+
 
 def simulation_rlc_without_split():
+    rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -84,6 +122,7 @@ def simulation_rlc_without_split():
 
 
 def simulation_rlc_plot():
+    rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -119,18 +158,18 @@ def simulation_rlc_plot():
 def simulation_nlcore_full():
 
     # Define the simulation parameters
-    config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
-              'theta': 0.5,             # theta-scheme for the structure
-              'split': False,           # apply core.split_linear() beforehand
-              'maxit': 10,              # Max number of iterations for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
-              'path': None,             # Path to the folder to save the results
-              'progressbar': False,     # Display a progress bar
-              'timer': False,           # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # call to compiler and exec binary
-              'eigen_path': None,    # path to Eigen C++ linear algebra library
+    config = {'fs': 48e3,           # Sample rate
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'theta': 0.5,         # theta-scheme for the structure
+              'split': False,       # apply core.split_linear() beforehand
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+              'path': None,         # Path to the folder to save the results
+              'pbar': False,        # Display a progress bar
+              'timer': False,       # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,       # call to compiler and exec binary
+              'eigen': None,        # path to Eigen C++ linear algebra library
               }
 
     # Instantiate a pyphs.PHSSimulation object associated with a given core PHS
@@ -141,7 +180,6 @@ def simulation_nlcore_full():
     nmax = int(tmax*simu.fs)
     t = [n/simu.fs for n in range(nmax)]
     nt = len(t)
-
 
     # def input signal
     def sig(tn, mode='impact'):
@@ -158,7 +196,6 @@ def simulation_nlcore_full():
         elif mode == 'const':
             out = 1.
         return out
-
 
     # def generator for sequence of inputs to feed in the PHSSimulation object
     def sequ():
@@ -180,15 +217,5 @@ def simulation_nlcore_full():
 
     # Proceed
     simu.process()
-
-    # The simulation results are stored on disk, and read with the simu.data object
-    t = simu.data.t()       # a generator of time value at each time step
-    x = simu.data.x()       # a generator of value for vector x at each time step
-    x1 = simu.data.x(0)     # a generator of value for scalar x component 1
-
-    # recover data as lists
-    t_list = list(t)
-    x_list = list(x)
-    x1_list = list(x1)
 
     return True

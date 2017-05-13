@@ -24,7 +24,8 @@ def movematrixcols(matrix, indi, indf):
 
 
 def moveMcolnrow(core, indi, indf):
-    core.M = movesquarematrixcolnrow(core.M, indi, indf)
+    if not core.M.is_zero:
+        core.M = movesquarematrixcolnrow(core.M, indi, indf)
 
 
 def move_stor(core, indi, indf):
@@ -56,6 +57,42 @@ def move_connector(core, indi, indf):
     core.cy = [core.cy[el] for el in new_indices]
     moveMcolnrow(core, core.dims.x()+core.dims.w()+core.dims.y()+indi,
                  core.dims.x()+core.dims.w()+core.dims.y()+indf)
+
+
+def port2connector(core, i):
+    """
+==============
+port2connector
+==============
+
+Define the port i as a connector. That is, the port with index i is removed
+from the list of ports and is appended to the end of the list of connectors.
+
+Parameters
+----------
+
+core: PHSCore
+
+i: int
+    index of the port to be defined as a connector. The index value must
+    be in the range [0, ..., core.dims.y()]
+
+Output
+------
+
+No output (inplace change of the PHSCore)
+    """
+    moveMcolnrow(core, core.dims.x()+core.dims.w()+i, core.dims.tot())
+
+    # append port symbols to the list of connectors symbols
+    core.cu += [core.u[i], ]
+    core.cy += [core.y[i], ]
+
+    # remove symbols from the list of port symbols
+    for name in ['u', 'y']:
+        attr = getattr(core, name)
+        symb = attr[i]
+        attr.remove(symb)
 
 
 def split_monovariate(core):
@@ -154,20 +191,42 @@ def split_linear(core, criterion=None):
     core.setexpr('Zl', jacobian(core.zl(), core.wl()))
 
 
-def reduce_linear_dissipations(core):
+def _build_R(core):
+    """
+Integrates the linear dissipative elements in the interconnection by \
+redefining the structure matrix \
+:math:`\\mathbf{M}_{\\mathrm{new}}\\in\\mathbb{R}^{N\\times N}` \
+with \
+:math:`N=\\mathrm{dim}(\\mathbf{x})+\\mathrm{dim}(\\mathbf{w}_{\\mathtt{nl}})+\\mathrm{dim}(\\mathbf{y})+\\mathrm{dim}(\\mathbf{c_y})`: 
 
+.. math:: \\mathbf{M}_{\\mathrm{new}} = \\mathbf{M}_{\\mathtt{nlwl}}\\cdot\\mathbf{Z}_{\\mathtt{l}}\\cdot\\mathbf{D}_{\\mathtt{l}}\\cdot\\mathbf{M}_{\\mathtt{wlnl}} + \\mathbf{M}_{\\mathtt{nl}}
+
+where
+
+* :math:`\\mathbf{z}_{\\mathtt{l}}(\\mathbf{w}_{\\mathtt{l}})=\\mathbf{Z}_{\\mathtt{l}}\\cdot\\mathbf{w}_{\\mathtt{l}}`;
+* :math:`\\mathbf{D}_{\\mathtt{l}} = \\left(\\mathbf{I_d}-\\mathbf{M}_{\\mathtt{wlwl}}\\cdot\\mathbf{Z}_{\\mathtt{l}}\\right)^{-1}`,
+* :math:`\\mathbf{M}_{\\mathtt{wlnl}} = \\left(\\mathbf{M}_{\\mathtt{wlxl}}, \\mathbf{M}_{\\mathtt{wlxnl}}, \\mathbf{M}_{\\mathtt{wlwnl}}, \\mathbf{M}_{\\mathtt{wly}}, \\mathbf{M}_{\\mathtt{wlcy}}\\right)`,
+* :math:`\\mathbf{M}_{\\mathtt{nlwl}} = \\left(\\begin{array}{c}\\mathbf{M}_{\\mathtt{xlwl}} \\\\ \\mathbf{M}_{\\mathtt{xnlwl}}\\\\ \\mathbf{M}_{\\mathtt{wnlwl}}\\\\ \\mathbf{M}_{\\mathtt{ywl}}\\\\ \\mathbf{M}_{\\mathtt{cywl}}\\end{array}\\right)`.
+
+Warning
+-------
+The linear dissipative variables :code:`core.wl()` are not accessible \
+after this operation, and :code:`core.z()=core.znl()`.
+"""
     core.split_linear()
-    iDwl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
-    Dwl = iDwl.inv()
+    iDl = sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl
+    Dl = iDl.inv()
 
     Mwlnl = sympy.Matrix.hstack(core.Mwlxl(),
                                 core.Mwlxnl(),
                                 core.Mwlwnl(),
-                                core.Mwly())
+                                core.Mwly(),
+                                core.Mwlcy())
     Mnlwl = sympy.Matrix.vstack(core.Mxlwl(),
                                 core.Mxnlwl(),
                                 core.Mwnlwl(),
-                                core.Mywl())
+                                core.Mywl(),
+                                core.Mcywl())
 
     names = ('xl', 'xnl', 'wnl', 'y')
     mat = []
@@ -180,7 +239,7 @@ def reduce_linear_dissipations(core):
     core.w = core.w[core.dims.wl():]
     core.z = core.z[core.dims.wl():]
     core.dims._wl = 0
-    core.M = Mnlwl*core.Zl*Dwl*Mwlnl + Mnl
+    core.M = Mnlwl*core.Zl*Dl*Mwlnl + Mnl
 
 
 def output_function(core):

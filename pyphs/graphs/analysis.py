@@ -26,17 +26,18 @@ class GraphAnalysis:
         self.nodes = graph.nodes()
         self.edges = graph.edges(data=True)
         # Compute incidence Matrix
-        gamma = networkx.linalg.incidence_matrix(graph, oriented=True)
+        Gamma = networkx.linalg.incidence_matrix(graph, oriented=True)
         # we use the other convention for orientation encoding in Gamma
-        self.gamma = -numpy.matrix(gamma.todense())
+        self.Gamma = -numpy.matrix(Gamma.todense())
         # init lambda with adjacency matrix
-        self.lambd = numpy.abs(self.gamma)
+        self.Lambda = numpy.abs(self.Gamma)
         # get number of nodes and edges
         self.nn = len(self.nodes)
         self.ne = len(self.edges)
 
         def plot_analysis_self():
             plot_analysis(graph, self)
+
         self.plot = plot_analysis_self
         # init list of nodes for analysis
         self.ic_nodes = list(range(0, self.nn))
@@ -45,7 +46,7 @@ class GraphAnalysis:
             index_datum = self.nodes.index(datum)
             self.move_node(index_datum, 0)
             # force realizability for datum (no edge imposes the potential)
-            self.lambd[0, :] = 0
+            self.Lambda[0, :] = 0
             # exclude datum from analysis
             index_datum = self.nodes.index(datum)
             self.ic_nodes.pop(self.ic_nodes.index(index_datum))
@@ -66,10 +67,10 @@ class GraphAnalysis:
                 self.set_edge_ec(e)
             # check if flux-controlled
             elif e_data['ctrl'] is 'f':
-                if self.lambd[:, e].sum() == 1:
+                if self.Lambda[:, e].sum() == 1:
                     # edge 'e' imposes the potential on that node
                     # get node index
-                    n = list(numpy.array(self.lambd)[:, e]).index(1)
+                    n = list(numpy.array(self.Lambda)[:, e]).index(1)
                     # set node 'n' as determinate
                     if n in self.ic_nodes:
                         self.set_node_dc((n, e))
@@ -79,30 +80,29 @@ class GraphAnalysis:
 
             else:
                 i += 1
-
     def iterate_fc(self):
         """
-        method for realizability analysis
-        iteration over all the edges in phs.fc_edges
+Iteration over the list `graph.analysis.fc_edges` of a given graph.
+
         """
         for e in self.fc_edges:
             # assert the edge is not effort-controlled
-            assert self.lambd[:, e].sum() != 0,\
+            assert self.Lambda[:, e].sum() != 0,\
                 'flux-controlled edge {0!s} is effort-controlled'.format(
                 self.get_edge_data(e, 'label'))
             # test for single 1 in Lambda
-            if self.lambd[:, e].sum() == 1:
+            if self.Lambda[:, e].sum() == 1:
                 # edge 'e' imposes the potential on that node
                 # get node index
-                n = list(numpy.array(self.lambd)[:, e]).index(1)
+                n = list(numpy.array(self.Lambda)[:, e]).index(1)
                 # set node 'n' as determinate
                 if n in self.ic_nodes:
                     self.set_node_dc((n, e))
 
     def iterate_ic(self):
         """
-        method for 'realizability_analysis()'
-        iteration over all the edges in phs.ic_edges
+Iteration over the list `graph.analysis.ic_edges` of a given graph.
+
         """
         # the length and elements of phs.ic_edges change over iteration...
         # use a counter which is incremented only if the edge is moved to ec/fc
@@ -110,27 +110,28 @@ class GraphAnalysis:
         while i < len(self.ic_edges):
             e = self.ic_edges[i]
             # test for effort-controlled
-            if self.lambd[:, e].sum() == 0:
+            if self.Lambda[:, e].sum() == 0:
                 # moves edge at the begining of edge list, sets Lambda to 0
                 self.set_edge_ec(e)
+                # do not increment i since e moved a top of self.ic_edges
             else:
                 i += 1
 
     def iterate_nodes(self):
         """
-        method for 'realizability_analysis()'
-        iteration over all the edges in phs.ic_edges
+Iteration over the list `graph.analysis.ic_nodes` of indeterminate nodes.
+First, it is checked that the correponding row of matrix graph.analysis.la
         """
         # iterate over indeterminate nodes
         for n in self.ic_nodes:
             # assert the potential on node n can be defined
-            if self.lambd[n, :].sum() == 0:
+            if self.Lambda[n, :].sum() == 0:
                 raise PHSUndefinedPotential(self.nodes[n])
 
             # test for definite node
-            if self.lambd[n, :].sum() == 1:
+            if self.Lambda[n, :].sum() == 1:
                 # get index of the edge that imposes the potential on node n
-                e = self.lambd[n, :].tolist()[0].index(1)
+                e = self.Lambda[n, :].tolist()[0].index(1)
                 # assert the potential is not imposed by efort-controlled edge
                 assert e not in self.ec_edges, \
                     "potential on node {0!s} is imposed by effort-controlled \
@@ -140,14 +141,21 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
                     self.set_node_dc((n, e))
 
     def iteration(self):
+        """
+Execute an iteration over the lists:
+    * indeterminate nodes with `graph.analysis.iterate_nodes()`
+    * iterate on flux-controlled edges with  `graph.analysis.iterate_fc()`
+    * iterate on indeterminate edges with `graph.analysis.iterate_ic()`
+
+        """
         # init memory of lambda to: check for change or stop while loop
-        self.lambd_temp = numpy.ones(self.lambd.shape)
+        self.Lambda_temp = numpy.ones(self.Lambda.shape)
         # loop while Lambda is changed
-        while not isequal(self.lambd_temp, self.lambd):
+        while not isequal(self.Lambda_temp, self.Lambda):
             if self._verbose:
                 print('###################################\nLoop Start\n')
                 # save Lambda for comparison in while condition
-            self.lambd_temp = numpy.matrix(self.lambd, copy=True)
+            self.Lambda_temp = numpy.matrix(self.Lambda, copy=True)
             # iterate on indeterminate nodes
             self.iterate_nodes()
             # iterate on flux-controlled edges
@@ -160,15 +168,15 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
         while (len(self.ic_edges) + len(self.ic_nodes) > 0):
             self.iteration()
             # if locked, perform unlock
-            if isequal(self.lambd_temp, self.lambd) & \
+            if isequal(self.Lambda_temp, self.Lambda) & \
                     (len(self.ic_edges) + len(self.ic_nodes) > 0):
                 self.unlock()
         if self._plot:
             self.plot()
         try:
-            self.gamma_ec = self.gamma[1:, :len(self.ec_edges)]
-            self.gamma_fc = self.gamma[1:, len(self.ec_edges):]
-            self.igamma_fc = numpy.linalg.inv(self.gamma_fc)
+            self.Gamma_ec = self.Gamma[1:, :len(self.ec_edges)]
+            self.Gamma_fc = self.Gamma[1:, len(self.ec_edges):]
+            self.iGamma_fc = numpy.linalg.inv(self.Gamma_fc)
         except numpy.linalg.LinAlgError:
             raise ValueError("""
 !!! Realizability analysis did not succeed !!!\n
@@ -176,43 +184,47 @@ edge {1!s}".format(self.nodes[n], self.get_edge_data(e, 'label'))
 The elements have been divided in effort-controlled and flux-controlled, but \
 the incidence matrix associated with the flux-controlled part is not \
 invertible:
-gamma_fc=\n{0}
-""".format(self.gamma_fc))
+Gamma_fc=\n{0}
+""".format(self.Gamma_fc))
 
     def unlock(self):
         """
-        unlock realizability analysis in case of indetermination. Here, if \
-te columnss in lambda corresponding to two indeterminate control edges are \
-the same, we select the first edge and set it to \
-effort-controlled (0 in lambda).
+unlock realizability analysis in case of indetermination. Here, if the columns
+in lambda corresponding to two indeterminate control edges are the same, we
+select the first edge which is not a conector (transformer or gyrator) and
+define it as effort-controlled (0 column in lambda).
         """
-        flag = False
-        ic_lambd = self.lambd[:, self.ic_edges]
-        for n, row in enumerate(ic_lambd.tolist()):
+        still_locked = False
+        # for each row in block matrix extracted from the ic colums of Lambda
+        for n, row in enumerate(self.Lambda[:, self.ic_edges].tolist()):
+            # only if the node is overdeterminated
             if sum(row) > 1:
+                col = self.Lambda[:, len(self.ec_edges)]  # first ic column
                 e = 0
-                col = self.lambd[:, len(self.ec_edges) + e]
-                while row[e] != 1 and sum(col) != 1 and e < len(self.ic_edges):
+                while (row[e] != 1 and
+                       sum(col) != 1 and
+                       e < len(self.ic_edges)):
                     e += 1
-                    col = self.lambd[:, len(self.ec_edges) + e]
-                if not e == len(self.ic_edges):
-                    self.lambd[n, len(self.ec_edges) + e] = 0
+                    col = self.Lambda[:, len(self.ec_edges) + e]
+                if not e == (len(self.ic_edges) and not
+                             self.get_edge_data(e, 'type')):
+                    self.Lambda[n, len(self.ec_edges) + e] = 0
                     break
             if n == self.nn-1:
-                flag = True
-        if flag:
-            lambd_icfc = self.lambd[:, self.ic_edges[0]:]
+                still_locked = True
+        if still_locked:
+            lambd_icfc = self.Lambda[:, self.ic_edges[0]:]
             for n, row in enumerate(lambd_icfc.tolist()):
                 if sum(row) > 1:
                     e = 0
-                    col = self.lambd[:, len(self.ec_edges) + e]
+                    col = self.Lambda[:, len(self.ec_edges) + e]
                     while row[e] != 1 and \
                             sum(col) != 1 and \
                             e < len(self.ic_edges):
                         e += 1
-                        col = self.lambd[:, len(self.ec_edges) + e]
+                        col = self.Lambda[:, len(self.ec_edges) + e]
                     if not e == len(self.ic_edges):
-                        self.lambd[n, len(self.ec_edges) + e] = 0
+                        self.Lambda[n, len(self.ec_edges) + e] = 0
                         break
 
     def get_edges_data(self, key):
@@ -239,8 +251,8 @@ effort-controlled (0 in lambda).
         old_indices = list(range(self.nn))
         new_indices = myrange(self.nn, indi, indf)
         self.nodes = [self.nodes[n] for n in new_indices]
-        self.gamma = self.gamma[new_indices, :]
-        self.lambd = self.lambd[new_indices, :]
+        self.Gamma = self.Gamma[new_indices, :]
+        self.Lambda = self.Lambda[new_indices, :]
         for (old_i, new_i) in zip(old_indices, new_indices):
             self.ic_nodes[self.ic_nodes.index(old_i)] = new_i
 
@@ -249,18 +261,18 @@ effort-controlled (0 in lambda).
         move edge 'indi' to position 'indf' in
             - self.edges
             - self.Gamma
-            - self.lambd
+            - self.Lambda
         """
         old_indices = list(range(self.ne))
         new_indices = myrange(self.ne, indi, indf)
-        self.gamma = self.gamma[:, new_indices]
-        self.lambd = self.lambd[:, new_indices]
+        self.Gamma = self.Gamma[:, new_indices]
+        self.Lambda = self.Lambda[:, new_indices]
         self.edges = [self.edges[n] for n in new_indices]
         return old_indices, new_indices
 
     def set_edge_ec(self, e):
         """
-        move an edge from indeterminate to e_ctrl, and set self.lambd to 0
+        move an edge from indeterminate to e_ctrl, and set self.Lambda to 0
         """
         # get edge label
         e_label = self.get_edge_data(e, 'label')
@@ -281,7 +293,7 @@ effort-controlled (0 in lambda).
             self.ic_edges = indices[nec+1:]
             self.fc_edges = []
         # set corresponding Lambda elements to 0
-        self.lambd[:, 0] = 0
+        self.Lambda[:, 0] = 0
         # test for connector
         new_e = self.get_edges_data('label').index(e_label)
         if self.get_edge_data(new_e, 'type') is 'connector':
@@ -318,16 +330,16 @@ controlled node from node list
     def set_node_dc(self, args):
         """
         remove node 'n' from indeterminate nodes list, and check for a single \
-1 on row 'n' and column 'e' of 'self.lambd'
+1 on row 'n' and column 'e' of 'self.Lambda'
         """
         n, e = args
         if self._verbose:
             print('set_node_dc', self.nodes[n])
         # set other Lambda elements to 0
-        self.lambd[:, e] = 0
-        self.lambd[n, :] = 0
+        self.Lambda[:, e] = 0
+        self.Lambda[n, :] = 0
         # set node 'n' controlled by edge 'e'
-        self.lambd[n, e] = 1
+        self.Lambda[n, e] = 1
         if n in self.ic_nodes:
             # remove node from list of indeterminate nodes
             self.ic_nodes.remove(n)
@@ -343,26 +355,26 @@ controlled node from node list
             print('------------------------\n')
             print(label + '\n')
             print('sum(lambda)')
-            print(numpy.sum(self.lambd, axis=1).T)
+            print(numpy.sum(self.Lambda, axis=1).T)
             edges = self.get_edges_data('label')
             print('ic_nodes\n', [self.nodes[i] for i in self.ic_nodes])
             print('ic_edges\n', [edges[i] for i in self.ic_edges])
             print('ec_edges\n', [edges[i] for i in self.ec_edges])
             print('fc_edges\n', [edges[i] for i in self.fc_edges])
-            print(self.lambd)
+            print(self.Lambda)
             pause()
 
     def rowindexGamma(self, c):
         """
-        Return row indices of nonzero elements in column 'c' of 'self.gamma'
+        Return row indices of nonzero elements in column 'c' of 'self.Gamma'
         """
-        return get_ind_nonzeros_col(self.gamma, c)
+        return get_ind_nonzeros_col(self.Gamma, c)
 
     def colindexGamma(self, r):
         """
-        Return column indices of nonzero elements in row 'r' of 'self.gamma'
+        Return column indices of nonzero elements in row 'r' of 'self.Gamma'
         """
-        return get_ind_nonzeros_row(self.gamma, r)
+        return get_ind_nonzeros_row(self.Gamma, r)
 
     def link_connector(self, e, ctrl):
         """
@@ -433,3 +445,4 @@ compatible'.format(e_label, link_e_label)
         alpha = self.edges[e][2]['alpha']
         if alpha is not None:
             self.edges[e][2]['alpha'] = alpha**-1
+

@@ -1,0 +1,3 @@
+mechanics.mass M ('M',): M=('M', 0.01);
+mechanics.source S11 ('M', '#'): type=force;
+mechanics.source S12 ('#', 'M'): type=force;

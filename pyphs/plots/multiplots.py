@@ -171,7 +171,7 @@ subplots.
             if nplots > 1:
                 plotn = whichplot(opts['log'][n], axs[n])
             else:
-                whichplot(opts['log'][n], axs)
+                plotn = whichplot(opts['log'][n], axs)
             plotn(x, y, opts['linestyles'][0], label=opts['labels'][n],
                   linewidth=opts['linewidth'],
                   markeredgewidth=opts['markeredgewidth'],

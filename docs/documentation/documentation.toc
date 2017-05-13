@@ -1,0 +1,45 @@
+\select@language {french}
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}Installation}{1}{subsection.1.1}
+\contentsline {subsubsection}{\numberline {1.1.1}{Using \texttt {pip}}}{1}{subsubsection.1.1.1}
+\contentsline {subsubsection}{\numberline {1.1.2}{Using \texttt {setuptools}}}{1}{subsubsection.1.1.2}
+\contentsline {subsubsection}{\numberline {1.1.3}{Using \texttt {Anaconda} (Mac OSX only)}}{2}{subsubsection.1.1.3}
+\contentsline {subsection}{\numberline {1.2}The PHS formalism}{2}{subsection.1.2}
+\contentsline {section}{\numberline {2}Overview}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}The \texttt {symbs} module}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}The \texttt {exprs} module}{4}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}The \texttt {dims} module}{5}{subsection.2.3}
+\contentsline {section}{\numberline {3}Recall on Port-Hamiltonian Systems}{5}{section.3}
+\contentsline {subsection}{\numberline {3.1}\textsc {PHSCore}}{5}{subsection.3.1}
+\contentsline {subsubsection}{\numberline {3.1.1}Attributes}{5}{subsubsection.3.1.1}
+\contentsline {subsubsection}{\numberline {3.1.2}Methods}{6}{subsubsection.3.1.2}
+\contentsline {section}{\numberline {4}Finite dimensionnal dynamical network}{6}{section.4}
+\contentsline {subsection}{\numberline {4.1}\textsc {PHSNetlist}}{6}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}\textsc {PHSGraph}}{6}{subsection.4.2}
+\contentsline {section}{\numberline {5}Numerical Methods}{6}{section.5}
+\contentsline {subsection}{\numberline {5.1}PHSNumericalMethod}{6}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}PHSNumericalMethodStandard}{8}{subsection.5.2}
+\contentsline {section}{\numberline {A}Algorithms}{8}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}Graph analysis}{8}{subsection.A.1}
+\contentsline {subsection}{\numberline {A.2}Simulation methods}{8}{subsection.A.2}
+\contentsline {subsubsection}{\numberline {A.2.1}Split of the linear part from the nonlinear part}{8}{subsubsection.A.2.1}
+\contentsline {subsubsection}{\numberline {A.2.2}Presolve numerical nonlinear subsystem}{9}{subsubsection.A.2.2}
+\contentsline {subsubsection}{\numberline {A.2.3}Algorithm}{9}{subsubsection.A.2.3}
+\contentsline {paragraph}{Inputs}{9}{section*.2}
+\contentsline {paragraph}{Process}{10}{section*.3}
+\contentsline {subsection}{\numberline {A.3}Realizability solver}{10}{subsection.A.3}
+\contentsline {paragraph}{Serial}{10}{section*.4}
+\contentsline {paragraph}{parallel}{10}{section*.5}
+\contentsline {paragraph}{Realizable}{10}{section*.6}
+\contentsline {paragraph}{Non-Realizable}{10}{section*.7}
+\contentsline {paragraph}{Realizable}{11}{section*.8}
+\contentsline {paragraph}{Non-Realizable}{11}{section*.9}
+\contentsline {section}{\numberline {B}Connectors: Gyrators and Transformers}{11}{appendix.B}
+\contentsline {subsection}{\numberline {B.1}Gyrator}{11}{subsection.B.1}
+\contentsline {paragraph}{Constitutive relations}{11}{section*.10}
+\contentsline {subsection}{\numberline {B.2}Transformer}{11}{subsection.B.2}
+\contentsline {paragraph}{Constitutive relations}{11}{section*.11}
+\contentsline {section}{\numberline {C}Fractional calculus}{12}{appendix.C}
+\contentsline {subsection}{\numberline {C.1}Fractional integrator}{12}{subsection.C.1}
+\contentsline {subsection}{\numberline {C.2}Fractional differentiator}{12}{subsection.C.2}
+\contentsline {subsection}{\numberline {C.3}Finite order approximation}{13}{subsection.C.3}

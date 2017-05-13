@@ -37,15 +37,13 @@ It was initially developed between 2012 and 2016 as a part of the PhD project of
        
 Installation
 ==============
-It is possible to install ``pyphs`` from package (if you just want to use it) or source (if you plan to
-use it for development) by following the instructions below. Whichever variant
-you choose, please make sure that all prerequisites are installed.
+It is possible to install ``pyphs`` from package (if you just want to use it) or source (if you plan to use it for development). Whichever method you choose, make sure that all prerequisites are installed.
 
 Prerequisites
 -------------
 
-To install the ``pyphs`` package, you must have either Python 2.7 or Python
-3.4 or newer and the following packages installed:
+The ``pyphs`` package run on Python 2.7 and Python
+3.4 or newer, with the following packages installed:
 
 - `sympy <http://www.sympy.org/fr/>`_
 - `numpy <http://www.numpy.org>`_
@@ -57,12 +55,11 @@ To install the ``pyphs`` package, you must have either Python 2.7 or Python
 - `nose <https://github.com/nose-devs/nose>`_ (to run the tests)
 
 Please refer to the `requirements.txt <requirements.txt>`_ file for the minimum
-required versions and make sure that these modules are up to date, otherwise it
-can result in unexpected errors or false computations!
+required versions and make sure that these modules are up to date.
 
-Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if available for faster numerical evaluation of symbolic functions.
+Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if installed (for faster numerical evaluation of symbolic expressions).
 
-Finally, the generated `C++` code rely on the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ (see **Configuration** below).
+Finally, the generated `C++` code rely on the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ (see **Configuration** below). It is not needed for pure Python usage.
 
 Install from package
 --------------------
@@ -115,8 +112,7 @@ Upgrade of existing installations
 ---------------------------------
 
 To upgrade the package, please use the same mechanism (pip vs. source) as you
-did for installation. If you want to change from package to source, please
-uninstall the package first.
+did for installation. In each case, it is recommanded to uninstall the package first.
 
 Upgrade a package
 ~~~~~~~~~~~~~~~~~
@@ -124,12 +120,6 @@ Upgrade a package
 Simply upgrade the package via pip::
 
     pip install --upgrade pyphs [--user]
-
-If some of the provided programs or models changed (please refer to the
-CHANGELOG) you should first uninstall the package and then reinstall::
-
-    pip uninstall pyphs
-    pip install pyphs [--user]
 
 Upgrade from source
 ~~~~~~~~~~~~~~~~~~~
@@ -141,7 +131,7 @@ Simply pull the latest sources::
 Package structure
 -----------------
 
-The package has a very simple structure, divided into the following folders:
+The package divided into the following folders:
 
 `/docs <docs>`_
   package documentation
@@ -156,7 +146,7 @@ The package has a very simple structure, divided into the following folders:
 `/pyphs/dictionary </pyphs/dictionary>`_
   components (`PHSGraph`)
 `/pyphs/numerics </pyphs/numerics>`_
-    define the classes `PHSEval`, `PHSNumericalMethod` and `PHSNumericalCore` for the numerical evaluation of `PHSCore`
+    define the classes `PHSNumericalEval`, `PHSNumericalMethod` and `PHSNumericalCore` for the numerical evaluation of `PHSCore`
 `/pyphs/simulations </pyphs/simulations>`_
     define the classes `PHSSimulation` and `PHSData` for simulation
 `/pyphs/latex </pyphs/latex>`_
@@ -173,4 +163,22 @@ The package has a very simple structure, divided into the following folders:
 Documentation
 ==============
 
-* See the `website <https://afalaize.github.io/pyphs/>`__. 
+Implemented methods
+--------------------
+The package began as an implementation of the methods proposed in the reference [1]_, in which the port-Hamiltonian formalism, the graph analaysis and the numerical method are exposed. This is worth to read before using the `pyphs` package. 
+
+Tutorials and examples
+-----------------------
+
+The package comes with a serie of tutorials for the use of the main functionalities (`definition </pyphs/tutorials/phscore.py>`_, `evaluation </pyphs/tutorials/phsnumericaleval.py>`_, and `simulation </pyphs/tutorials/phssimulation.py>`_ of a core PHS structure). More tutorials are to come. Additionally, you can see the `examples </pyphs/examples>`_ scripts. Both the *tutorials* and the *examples* folders are located at your package root, which can be recovered in Python interpreter with:
+
+    >>> import pyphs
+    >>> help(pyphs)
+
+The `website <https://afalaize.github.io/pyphs/>`_ contains additional materials.
+
+
+Reference
+=========
+
+.. [1] Falaize, A., & Hélie, T. (2016). `Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach <https://hal.archives-ouvertes.fr/hal-01390501>`_. Applied Sciences, 6(10), 273.

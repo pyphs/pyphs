@@ -15,7 +15,8 @@ import os
 import sympy as sp
 
 label = 'PWL'
-netlist_path = os.path.join(os.getcwd(), 'pwl.net')
+path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+netlist_path = os.path.join(path, 'pwl.net')
 graph = PHSGraph(netlist=netlist_path, label=label)
 core = graph.buildCore()
     

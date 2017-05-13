@@ -21,14 +21,12 @@ It was initially developed between 2012 and 2016 as a part of the PhD project of
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/afalaize/pyphs
  
-.. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku?svg=true
-	:target: https://ci.appveyor.com/project/afalaize/pyphs
 
 .. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/master?svg=true
 	:target: https://ci.appveyor.com/project/afalaize/pyphs
 
-.. image:: https://coveralls.io/repos/github/afalaize/pyphs/badge.svg?branch=master
-    :target: https://coveralls.io/github/afalaize/pyphs?branch=master
+.. image:: https://codecov.io/gh/afalaize/pyphs/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/afalaize/pyphs
 
 .. image:: https://www.quantifiedcode.com/api/v1/project/0c1fbf5b44e94b4085a24c18a1895947/badge.svg?branch=master
   :target: https://www.quantifiedcode.com/app/project/0c1fbf5b44e94b4085a24c18a1895947

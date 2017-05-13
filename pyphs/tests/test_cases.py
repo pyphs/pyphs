@@ -19,7 +19,6 @@ from .PHSSimulationPlotsTest import (plot_rlc_with_split,
                                      plot_power_balance_nlcore_with_split,
                                      plot_power_balance_rlc_with_split)
 from .cppTest import cpp_nlcore_full
-from .DictionaryTest import dlc, bjt
 import numpy as np
 
 
@@ -101,14 +100,11 @@ class TestCpp(TestCase):
         self.assertTrue(cpp_nlcore_full())
 
 
-class TestDico(TestCase):
+class TestExamples(TestCase):
 
-    def test_bjt(self):
-        self.assertTrue(bjt())
-
-    def test_dlc(self):
-        self.assertTrue(dlc())
-
+    def test_import_examples(self):
+        import pyphs.examples as pyphs_examples
+        self.assertTrue(True)
 
 class TestPlots(TestCase):
     def test_plot_rlc_with_split(self):

@@ -26,12 +26,8 @@ c2 = netlist2core(netlist_path('phs2'))
 c = c1 + c2
 
 # define the connection
-connector = {'u': (c2.u[1], c1.u[1]),
-             'y': (c2.y[1], c1.y[1]),
-             'alpha': 1.}
-
-# add the connector to the PHSCore
-c.add_connector(connector)
+c.add_connector((c.y.index(c2.y[1]), c.y.index(c1.y[1])), 
+                alpha=1)
 
 # apply the connection
 c.apply_connectors()

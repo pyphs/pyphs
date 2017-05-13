@@ -122,7 +122,6 @@ components).
                                 value = ast.literal_eval(value)
                             except ValueError:
                                 pass
-                        print(value)
                         pars.update({key: value})
                     self.arguments = list(self.arguments)+[pars, ]
         file_.close()

@@ -180,5 +180,4 @@ The `website <https://afalaize.github.io/pyphs/>`_ contains additional materials
 
 Reference
 =========
-
 .. [1] Falaize, A., & Hélie, T. (2016). `Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach <https://hal.archives-ouvertes.fr/hal-01390501>`_. Applied Sciences, 6(10), 273.

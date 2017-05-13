@@ -10,6 +10,9 @@ Created on Sun Apr 16 20:24:57 2017
 from __future__ import division
 
 from pyphs import PHSSimulation, signalgenerator
+from pyphs.misc.signals.analysis import transferFunction, spectrogram
+from pyphs.misc.signals.processing import lowpass
+import numpy as np
 
 
 def plot_power_balance_rlc_with_split():
@@ -137,3 +140,12 @@ def plot_rlc_with_split():
                    [('dxH', i) for i in range(dims.x())], show=False)
 
     return True
+    
+    
+def TranferFunction():
+    sig1 = np.random.rand(int(1e4))
+    sig2 = lowpass(sig1, 0.1)
+    f, TF = transferFunction(sig1, sig2, 100)
+    spectrogram(sig1, sig2, fs=100)
+    return True
+    

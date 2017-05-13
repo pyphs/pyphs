@@ -10,14 +10,17 @@ from __future__ import absolute_import, division, print_function
 from unittest import TestCase
 from pyphs import PHSNetlist
 from .PHSNetlistTests import NetlistThieleSmallNL, target_netlist
-from .PHSGraphTests import graph, target_edges, target_M, split_sp
+from .PHSGraphTests import (graph, target_edges, target_M, split_sp, 
+                            plot_Graph, plot_GraphAnalysis)
 from .PHSLatexTest import TestCore2Tex
 from .PHSSimulationTest import (simulation_rlc_with_split,
                                 simulation_rlc_without_split,
-                                simulation_nlcore_full)
+                                simulation_nlcore_full,
+                                simulation_rlc_cpp)
 from .PHSSimulationPlotsTest import (plot_rlc_with_split,
                                      plot_power_balance_nlcore_with_split,
-                                     plot_power_balance_rlc_with_split)
+                                     plot_power_balance_rlc_with_split,
+                                     TranferFunction)
 from .cppTest import cpp_nlcore_full
 import numpy as np
 
@@ -77,6 +80,13 @@ class TestPHSGraph(TestCase):
     def test_split_sp(self):
         self.assertTrue(split_sp())
 
+    def test_plot_Graph(self):
+        self.assertTrue(plot_Graph())
+
+    def test_plot_GraphAnalysis(self):
+        self.assertTrue(plot_GraphAnalysis())
+
+        
 
 class TestCore2Latex(TestCase):
     def test_core_2_latex(self):
@@ -93,6 +103,9 @@ class TestSimulation(TestCase):
 
     def test_simulation_nlcore_full(self):
         self.assertTrue(simulation_nlcore_full())
+        
+    def test_simulation_rlc_cpp(self):
+        self.assertTrue(simulation_rlc_cpp())
 
 
 class TestCpp(TestCase):
@@ -103,7 +116,20 @@ class TestCpp(TestCase):
 class TestExamples(TestCase):
 
     def test_import_examples(self):
-        import pyphs.examples as pyphs_examples
+        from pyphs.examples.bjtamp.bjtamp import core as bjtamp_core
+        from pyphs.examples.connectors.connectors import core as connectors_core
+        from pyphs.examples.dlc.dlc import core as dlc_core
+        from pyphs.examples.fractional_derivator_ec.fractional_derivator_ec import core as fractional_derivator_ec_core
+        from pyphs.examples.fractional_derivator_fc.fractional_derivator_fc import core as fractional_derivator_fc_core
+        from pyphs.examples.fractional_integrator_ec.fractional_integrator_ec import core as fractional_integrator_ec_core
+        from pyphs.examples.fractional_integrator_fc.fractional_integrator_fc import core as fractional_integrator_fc_core
+        from pyphs.examples.mka.mka import core as mka_core
+        from pyphs.examples.mka_dual.mka_dual import core as mka_dual_core
+        from pyphs.examples.pwl.pwl import core as pwl_core
+        from pyphs.examples.rhodes.rhodes import core as rhodes_core
+        from pyphs.examples.rlc.rlc import core as rlc_core
+        from pyphs.examples.thielesmall.thielesmall import core as thielesmall_core
+        from pyphs.examples.thielesmall_dual.thielesmall_dual import core as thielesmall_dual_core
         self.assertTrue(True)
 
 class TestPlots(TestCase):
@@ -115,3 +141,7 @@ class TestPlots(TestCase):
 
     def test_plot_power_balance_rlc_with_split(self):
         self.assertTrue(plot_power_balance_rlc_with_split())
+
+    def test_Transfer_function(self):
+        self.assertTrue(TranferFunction())
+        

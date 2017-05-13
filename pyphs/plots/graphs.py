@@ -163,7 +163,6 @@ def plot(graph, filename=None, ax=None, layout=None):
     ax.axes.get_xaxis().set_visible(False)
     ax.axes.get_yaxis().set_visible(False)
 
-    plt.show()
     if filename is not None:
         if not filename[-4:] == '.' + plot_format:
             filename += '.' + plot_format
@@ -208,7 +207,7 @@ def plot_analysis(graph, analysis):
             elif edge[-1]['label'] in fc_edges_labels:
                     i = analysis.fc_edges[fc_edges_labels.index(
                             edge[-1]['label'])]
-                    col = analysis.lambd[:, i]
+                    col = analysis.Lambda[:, i]
                     if sum(col) > 1:
                         edges_copy.append(edge)
                         edges_colors.append('storage')
@@ -237,4 +236,3 @@ def plot_analysis(graph, analysis):
     plt.tight_layout()
     ax.axes.get_xaxis().set_visible(False)
     ax.axes.get_yaxis().set_visible(False)
-    plt.show()

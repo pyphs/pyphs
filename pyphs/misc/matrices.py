@@ -13,7 +13,7 @@ def isequal(M1, M2):
     """
     return not (M1-M2).any()
 
-
+    
 def get_ind_nonzeros_col(Mat, col):
     col2line = np.transpose(Mat[:, col])
     line2list = col2line.tolist()[0]
@@ -26,3 +26,4 @@ def get_ind_nonzeros_row(Mat, row):
     row2list = row.tolist()[0]
     nonzeros = np.nonzero(row2list)[0]
     return list(nonzeros)
+    

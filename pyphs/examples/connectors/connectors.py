@@ -30,14 +30,13 @@ c2 = netlist2core(netlist_path('phs2'))
 sort_outputs(c2)
 
 # concatenate c1 and c2 into a new PHSCore
-c = c1 + c2
-c.pprint()
+core = c1 + c2
 # define the connection
-c.add_connector((c.y.index(c1.y[1]), c.y.index(c2.y[1])), 
+core.add_connector((core.y.index(c1.y[1]), core.y.index(c2.y[1])), 
                 alpha=1)
 
 # apply the connection
-c.apply_connectors()
+core.apply_connectors()
 
 # target structure matrix
 target = array([[0, -1, 1, 0],
@@ -45,4 +44,4 @@ target = array([[0, -1, 1, 0],
                 [-1, 0, 0, 0],
                 [0, 1, 0, 0]])
 
-assert all(map(lambda x: not x, array(c.M - target).flatten())), '{}\n\n{}'.format(c.M, target)
+assert all(map(lambda x: not x, array(core.M - target).flatten())), '{}\n\n{}'.format(core.M, target)

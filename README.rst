@@ -1,6 +1,7 @@
 PyPHS (DEV)
 ===========
 This is the development branch of the ``pyphs`` package.
+
 .. image:: https://badge.fury.io/py/pyphs.svg
     :target: https://badge.fury.io/py/pyphs
 
@@ -12,6 +13,8 @@ This is the development branch of the ``pyphs`` package.
     
 .. image:: https://img.shields.io/badge/documentation-website-blue.svg
     :target: https://afalaize.github.io/pyphs/
+
+----------------------------
 
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=development
     :target: https://www.travis-ci.org/afalaize/pyphs

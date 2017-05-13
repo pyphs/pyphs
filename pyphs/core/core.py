@@ -622,7 +622,6 @@ add the connector'.format(i)
         sorted_indices = list(copy.deepcopy(indices))
         sorted_indices.sort()
         sorted_indices.reverse()
-        print(sorted_indices)
         for n, i in enumerate(sorted_indices):
             port2connector(self, i)
 

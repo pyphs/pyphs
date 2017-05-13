@@ -19,12 +19,12 @@ from pyphs.config import EPS
 class Fracintec(PHSGraph):
     """
 Effort-controlled fractional integrator:
-.. math:: f(s) = p \\, s^(-beta)  \\, e(s)
+.. math:: f(s) = p \\, s^{-\\beta}  \\, e(s)
 
 Usage
 -----
 
-.. code:: fraccalc.Fracintec label ('n1','n2'): p=1; beta=0.5; NbPoles=10; \
+.. code:: fraccalc.fracintec label ('n1','n2'): p=1; beta=0.5; NbPoles=10; \
 PolesMinMax=(-10,10); NbFreqPoints=200; FreqsMinMax=(1, 48e3); \
 DoPlot=False;
     """
@@ -86,12 +86,12 @@ DoPlot=False;
 class Fracintfc(PHSGraph):
     """ 
 Flux-controlled fractional integrator:
-.. math:: e(s) = p \\, s^(-beta)  \\, f(s)
+.. math:: e(s) = p \\, s^{-\\beta}  \\, f(s)
 
 Usage
 -----
 
-.. code:: fraccalc.Fracintfc label ('n1','n2'): p=1; beta=0.5; NbPoles=10; \
+.. code:: fraccalc.fracintfc label ('n1','n2'): p=1; beta=0.5; NbPoles=10; \
 PolesMinMax=(-10,10); NbFreqPoints=200; FreqsMinMax=(1, 48e3); \
 DoPlot=False;
     """

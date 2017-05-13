@@ -15,18 +15,26 @@ from pyphs.config import EPS
 
 from ..edges import PHSDissipativeLinear, PHSStorageLinear
 from pyphs.dictionary.connectors import Transformer
+from pyphs.graphs import datum
 
 
 # ======================================================================= #
 
 
 class Fracderec(PHSGraph):
-    """ Fractional Effort Controlled springpot element
-    usgae: FracDerEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles]
+    """ 
+Effort-controlled fractional integrator:
+.. math:: f(s) = p \\, s^alpha  \\, e(s)
 
+Usage
+-----
+
+.. code:: fraccalc.fracderec label ('n1','n2'): p=1; alpha=0.5; NbPoles=10; \
+PolesMinMax=(-10,10); NbFreqPoints=200; FreqsMinMax=(1, 48e3); \
+DoPlot=False;
     """
     def __init__(self, label, nodes, **kwargs):
-        PHSGraph.__init__(self, label)
+        PHSGraph.__init__(self, label=label)
         if 'p' not in kwargs:
             p = 1
         else:
@@ -37,32 +45,36 @@ class Fracderec(PHSGraph):
         else:
             alpha = kwargs.pop('alpha')
 
-        diagRmu, diagQmu = fractionalDifferenciatorWeights(p, alpha, **kwargs)
+        diagR, diagQ = fractionalDifferenciatorWeights(p, alpha, **kwargs)
 
         # Truncation of poles with null Q
-        nbPoles = diagRmu.__len__()
+        nbPoles = diagR.__len__()
 
-        datum = self.graph.netlist.datum
+        Ndeb, Nend = nodes
         for n in range(nbPoles):
 
-            Rn = diagRmu[n]**(-1)  # here, diagRmu[n] is a conductance (e-ctrl)
-            Ndeb = nodes[0]
-            N1 = 'N'+label+str(n)+"_2"
-            self += PHSDissipativeLinear(label+'R'+str(n),
-                                         (Ndeb, N1),
-                                         coeff=Rn)
+            Rn = diagR[n]  # here, diagR[n] is a conductance (e-ctrl)
 
-            Qn = diagQmu[n]
+            N1 = 'N'+label+str(n)+"_1"
             N2 = 'N'+label+str(n)+"_2"
+            self += PHSDissipativeLinear(label+'R'+str(n),
+                                         (N1, Ndeb),
+                                         inv_coeff=True,
+                                         coeff=Rn,
+                                         ctrl='e')
+            
+            
+            
+            Qn = diagQ[n]
             self += PHSStorageLinear(label+'Q'+str(n),
                                      (N2, datum),
-                                     coeff=Qn,
-                                     inv_coeff=True)
+                                     value=Qn,
+                                     ctrl='f',
+                                     inv_coeff=False)
 
-            Nend = nodes[1]
             self += Transformer(label+'alpha'+str(n),
                                 (N1, Nend, N2, datum),
-                                alpha=diagRmu[n]**-1)
+                                alpha=Rn**-1)
     @staticmethod
     def metadata():
         return {'nodes': ('N1', 'N2'),
@@ -78,12 +90,19 @@ class Fracderec(PHSGraph):
 
 
 class Fracderfc(PHSGraph):
-    """ Fractional Flux Controlled storage element
-    usgae: FracIntEffortCtrl label ['n1','n2'] [rAlphaMag, alphaMag ,NbPoles, \
-(fmin, fmax)]
+    """ 
+Flux-controlled fractional integrator:
+.. math:: e(s) = p \\, s^alpha  \\, f(s)
+
+Usage
+-----
+
+.. code:: fraccalc.fracderfc label ('n1','n2'): p=1; alpha=0.5; NbPoles=10; \
+PolesMinMax=(-10,10); NbFreqPoints=200; FreqsMinMax=(1, 48e3); \
+DoPlot=False;
     """
     def __init__(self, label, nodes, **kwargs):
-        PHSGraph.__init__(self, label)
+        PHSGraph.__init__(self, label=label)
         if 'p' not in kwargs:
             p = 1
         else:
@@ -94,32 +113,38 @@ class Fracderfc(PHSGraph):
         else:
             alpha = kwargs.pop('alpha')
 
-        diagRmu, diagQmu = fractionalDifferenciatorWeights(p, alpha, **kwargs)
+        diagR, diagQ = fractionalDifferenciatorWeights(p, alpha, **kwargs)
 
         # Truncation of poles with null Q
-        nbPoles = diagRmu.__len__()
+        nbPoles = diagR.__len__()
 
-        datum = self.graph.netlist.datum
+        Ndeb, Nend = nodes
+        N1 = Ndeb
         for n in range(nbPoles):
-
-            Rn = diagRmu[n]  # here, diagRmu[n] is a res (flux-controlled)
-            Ndeb = nodes[0]
-            N1 = 'N'+label+str(n)+"_2"
+            if n < nbPoles-1:
+                N2 = 'N'+label+str(n)+"_1"
+            else:
+                N2 = Nend
+            Rn = diagR[n]  # here, diagR[n] is a res (flux-controlled)            
             self += PHSDissipativeLinear(label+'R'+str(n),
-                                         (Ndeb, N1),
-                                         coeff=Rn)
+                                         (N2, N1),
+                                         ctrl='f',
+                                         coeff=Rn,
+                                         inv_coef=False)
 
-            Qn = diagQmu[n]
-            N2 = 'N'+label+str(n)+"_2"
+            Qn = diagQ[n]
+            N3 = 'N'+label+str(n)+"_2"
             self += PHSStorageLinear(label+'Q'+str(n),
-                                     (N2, datum),
-                                     coeff=Qn,
-                                     inv_coeff=True)
+                                     (N3, datum),
+                                     value=Qn,
+                                     inv_coeff=False,
+                                     ctrl='e')
 
             Nend = nodes[1]
             self += Transformer(label+'alpha'+str(n),
-                                (Ndeb, Nend, N2, datum),
-                                alpha=diagRmu[n]**-1)
+                                (N1, N2, N3, datum),
+                                alpha=Rn)
+            N1 = N2
     @staticmethod
     def metadata():
         return {'nodes': ('N1', 'N2'),
@@ -209,7 +234,7 @@ def fractionalDifferenciatorWeights(p, alpha, NbPoles=20,
         faxis = w12[(wmin < w12) & (w12 < wmax)]/(2*np.pi)
         v1 = 20*np.log10(np.abs(T[(wmin < w12) & (w12 < wmax)]))
         v2 = 20*np.log10(np.abs(TOpt[(wmin < w12) & (w12 < wmax)]))
-        v3 = map(lambda x, y: x-y, v1, v2)
+        v3 = list(map(lambda x, y: x-y, v1, v2))
         semilogx(faxis, v1, label='Target')
         semilogx(faxis, v2, label='Approx')
         ylabel('Transfert (dB)')

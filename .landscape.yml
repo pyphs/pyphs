@@ -1,0 +1,16 @@
+doc-warnings: true
+test-warnings: false
+strictness: veryhigh
+max-line-length: 120
+uses:
+  - django
+  - celery
+  - flask
+autodetect: true
+requirements:
+  - requirements.txt
+ignore-paths:
+  - docs
+python-targets:
+  - 2
+  - 3

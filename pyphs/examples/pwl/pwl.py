@@ -13,11 +13,15 @@ Uncomment below to regenerate the netlist.
 from pyphs import PHSGraph
 import os
 import sympy as sp
+from pyphs.examples.pwl.data_generator import (netlist_name, 
+                                               generate_data, 
+                                               generate_netlist)
 
-label = 'PWL'
+generate_data()
+generate_netlist()
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-netlist_path = os.path.join(path, 'pwl.net')
-graph = PHSGraph(netlist=netlist_path, label=label)
+netlist_path = os.path.join(path, netlist_name + '.net')
+graph = PHSGraph(netlist=netlist_path, label=netlist_name)
 core = graph.buildCore()
     
 if __name__ == '__main__':

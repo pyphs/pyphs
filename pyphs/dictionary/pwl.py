@@ -114,13 +114,12 @@ class Dissipative(PHSGraph):
 
         
                                 
-def pwl_func(X_lst, Y_lst, symbol=symbols('x'),
-             integ=False, y0=0., intconst=0., simplify=True):
+def pwl_func(X_lst, Y_lst, symbol=sp.symbols('x'),
+             integ=False, y0=0., intconst=0.):
     """
 Returns a piecewise linear interpolation of the set (X_lst, Y_lst), based on
 the following explicit form a + b.x + sum(c_i*abs(x - X_i)), where i denote the
 ith component of the list and a, b and c are defined in [Chua and Ying, eq (2)].
-
 [Chua and Ying, eq (2)] : Chua, L., & Ying, R. (1983). Canonical \
 piecewise-linear analysis. IEEE Transactions on Circuits and Systems, \
 30(3), 125-140.
@@ -128,96 +127,37 @@ piecewise-linear analysis. IEEE Transactions on Circuits and Systems, \
 
     # Numerical values
     assert len(X_lst) == len(Y_lst), "X and Y must have the same length"
-    
     X = np.array(X_lst)
     Y = np.array(Y_lst)
-    
-    # Add a value at 0 index
-    if 0. not in X:
-        X = np.insert(X, len(X)//2, 0.)
-        Y = np.insert(Y, len(Y)//2, y0)  
-    
+
     # State sympy symbol
     x = symbol
-    
-    # Checking symmetry
-    Y_dissym = Y[len(Y)//2::-1] + Y[len(Y)//2:] 
-    X_half = X[len(X)//2:]
-    
-    if all(Y_dissym < np.spacing(1000)):
-        expr = sym_pwl_func(X_half, Y[len(Y)//2:], x, integ, y0, intconst, simplify)
 
-        
-    else:
-        Y_sym = -Y[len(X)//2::-1]
-        X_half = X[len(X)//2:]
-        
-        # Computation of the symmetric part
-        
-        expr_sym = sym_pwl_func(X_half, Y_sym, x, integ, y0, intconst, simplify)
-        
-        #Computation of the dissymetric part
-        
-        # Insert 0 value to force Y_dissym(X<0) = 0
-        X_half = np.insert(X_half,0, -1.)
-        Y_dissym = np.insert(Y_dissym, 0, 0.)        
-        
-        # in [Chua and Ying, fig. 1], indices for x and y = f(x) range from 1 to P
-        P = len(X_half)
-        # delta_x[i] = x[x+1] - x[i] for i in [1, ..., P-1]Y
-        delta_x = np.diff(X_half)
-        # delta_f[i] = f(x[x+1]) - f(x[i]) for i in [1, ..., P-1]
-        delta_y = np.diff(Y_dissym)
-        # m[i] = delta_y[i]/delta_x[i]
-        m = delta_y/delta_x
-        # m <= (m[0], m, m[P-2]
-        m = np.concatenate((m[np.newaxis, 0], m, m[np.newaxis, -1]))
-        # in [Chua and Ying, eq (2.2)]: 0.5*(m[0] + m[-1])
-        b = 0.5*(m[0] + m[-1])
-        # in [Chua and Ying, eq (2.3)]: c[i] = 0.5*(m[i] - m[i-1]) for i in [1, ... P]
-        c = 0.5*(m[1:] - m[:P])
-        # in [Chua and Ying, eq (2.3)]: a = f(0) - sum_i(c[i]*abs(x[i]))
-        # here we force f(0) = y0
-        a = y0 - np.sum(c*np.abs(X_half))
-        
-        if integ:
-            # integral of a + b.x + sum(c[i]*abs(x - X[i]))
-                expr_dissym = (intconst + a*x + (b/2)*x**2 
-                + sum(c*0.5*abs(x - X_half)*(x - X_half)) +
-                sum(c*0.5*abs(X_half)*X_half))
-        else:
-            expr_dissym = a + b*x + sum(c*abs(x - X_half))
-        
-        # The total expression is the sum of the symmetric and dissymetric part
-        expr = expr_sym + expr_dissym
-    
-    if simplify:
-        expr = simplify_func(expr)
-    return expr
-    
-def sym_pwl_func(X, Y, symbol=symbols('x'),
-             integ=False, y0=0., intconst=0., simplify=True):         
-    
-    x = symbol
+    # in [Chua and Ying, fig. 1], indices for x and y = f(x) range from 1 to P
     P = len(X)
+    # delta_x[i] = x[x+1] - x[i] for i in [1, ..., P-1]
     delta_x = np.diff(X)
+    # delta_f[i] = f(x[x+1]) - f(x[i]) for i in [1, ..., P-1]
     delta_y = np.diff(Y)
+    # m[i] = delta_y[i]/delta_x[i]
     m = delta_y/delta_x
+    # m <= (m[0], m, m[P-2]
     m = np.concatenate((m[np.newaxis, 0], m, m[np.newaxis, -1]))
-
-    # Here m[0] = m[-1], then b = m[-1]
-    b = m[-1]
+    # in [Chua and Ying, eq (2.2)]: 0.5*(m[0] + m[-1])
+    b = 0.5*(m[0] + m[-1])
+    # in [Chua and Ying, eq (2.3)]: c[i] = 0.5*(m[i] - m[i-1]) for i in [1, ... P]
     c = 0.5*(m[1:] - m[:P])
-    # Here, sum_i(c[i]*abs(x[i])) = 0, then a = y0
-    a = y0 
-    
+    # in [Chua and Ying, eq (2.3)]: a = f(0) - sum_i(c[i]*abs(x[i]))
+    # here we force f(0) = y0
+    a = y0 - np.sum(c*np.abs(X))
+
     if integ:
-        # integral of a + b.x + sum(c[i]*(abs(x - X[i]) - abs(x + X)))
-        expr = (intconst + a*x + 0.5*b*x**2 
-        + sum(c*0.5*(abs(x - X)*(x - X) - abs(x + X)*(x + X))) 
-        + sum(c*(abs(X)*X)))
-    
+        # integral of a + b.x + sum(c[i]*abs(x - X[i]))
+        expr = (intconst + a*x + (b/2)*x**2 +
+                sum(c*0.5*abs(x - X)*(x - X)) +
+                sum(c*0.5*abs(X)*X))
     else:
-        expr = a + b*x +sum(c*(abs(x - X) - abs(x + X)))
-    
+        expr = a + b*x + sum(c*abs(x - X))
+
     return expr
+    

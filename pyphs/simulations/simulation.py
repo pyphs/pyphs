@@ -11,7 +11,7 @@ from pyphs.cpp.simu2cpp import simu2cpp
 from pyphs.numerics.method import PHSNumericalMethod
 from pyphs.numerics.numeric import PHSNumericalCore
 from .data import PHSData
-from pyphs.misc.io import open_files, close_files, dump_files
+from pyphs.misc.io import open_files, close_files, dump_files, with_files
 import subprocess
 import progressbar
 import time
@@ -153,35 +153,37 @@ class PHSSimulation:
         seq_u = data.u(**load)
         seq_p = data.p(**load)
 
-        files = open_files(self.config['path'] + os.sep + 'data',
-                           self.config['files'])
-
-        if self.config['pbar']:
-            self.init_pb()
-
-        # init time step
-        self.n = 0
+        path = os.path.join(self.config['path'], 'data')
+        list_of_files = list(self.config['files'])
         
-        # process
-        for (u, p) in zip(seq_u, seq_p):
-        	# update numerics
-            self.nums.update(u=np.array(u), p=np.array(p))
-            
-            # write to files
-            dump_files(self.nums, files)
-            
-            self.n += 1
-            
-            # update progressbar
+        def process(files):
             if self.config['pbar']:
-                self.update_pb()
+                self.init_pb()
+    
+            # init time step
+            self.n = 0
+            
+            # process
+            for (u, p) in zip(seq_u, seq_p):
+            	# update numerics
+                self.nums.update(u=np.array(u), p=np.array(p))
                 
-        if self.config['pbar']:
-            self.close_pb()
-
-        time.sleep(0.1)
-        
-        close_files(files)
+                # write to files
+                dump_files(self.nums, files)
+                
+                self.n += 1
+                
+                # update progressbar
+                if self.config['pbar']:
+                    self.update_pb()
+                    
+            if self.config['pbar']:
+                self.close_pb()
+    
+            time.sleep(0.1)
+            
+        with_files(path, list_of_files, process)
+        # close_files(files)
 
     def process_cpp(self):
 

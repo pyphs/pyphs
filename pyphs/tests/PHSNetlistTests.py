@@ -11,17 +11,23 @@ from __future__ import absolute_import, division, print_function
 import os
 from pyphs import PHSNetlist
 from pyphs.config import datum as config_datum
+
 config_datum = "'"+config_datum+"'"
 
 
-def NetlistThieleSmallNL(label='TSnl', clear=True,
+label = 'TSnl'
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+path = os.path.join(here, label + '.net')
+
+
+def NetlistThieleSmallNL(clear=True,
                          R=1e3, L=5e-2, Bl=50, M=0.1, K=5e3, A=1):
     """
     Write the netlist for a nonlinear version of the thieleSmall modeling of \
     loudspeakers.
     """
 
-    netlist = PHSNetlist(os.getcwd() + os.sep + label + '.net', clear=clear)
+    netlist = PHSNetlist(path, clear=clear)
 
     datum = netlist.datum
 
@@ -86,5 +92,9 @@ def NetlistThieleSmallNL(label='TSnl', clear=True,
     netlist.write()
 
     return netlist
-netlist = NetlistThieleSmallNL()
-target_netlist = "electronics.source IN ('A', "+config_datum+"): type=voltage;\nelectronics.resistor R ('A', 'B'): R=('R', 1000.0);\nelectronics.inductor L ('B', 'C'): L=('L', 0.05);\nconnectors.gyrator G ('C', "+config_datum+", 'D', "+config_datum+"): alpha=('Bl', 50);\nmechanics_dual.mass M ('D', 'E'): M=('M', 0.1);\nmechanics_dual.springcubic K ('E', 'F'): K2=('K2', 1e+20); K0=('K0', 5000.0);\nmechanics_dual.damper A ('F', "+config_datum+"): A=('A', 1);"
+
+def test_netslist():
+    netlist = NetlistThieleSmallNL()
+    target_netlist = "electronics.source IN ('A', " + config_datum + "): type=voltage;\nelectronics.resistor R ('A', 'B'): R=('R', 1000.0);\nelectronics.inductor L ('B', 'C'): L=('L', 0.05);\nconnectors.gyrator G ('C', "+config_datum+", 'D', "+config_datum+"): alpha=('Bl', 50);\nmechanics_dual.mass M ('D', 'E'): M=('M', 0.1);\nmechanics_dual.springcubic K ('E', 'F'): K2=('K2', 1e+20); K0=('K0', 5000.0);\nmechanics_dual.damper A ('F', "+config_datum+"): A=('A', 1);"
+    os.remove(path)
+    return netlist.netlist() == target_netlist

@@ -7,7 +7,7 @@ Created on Mon Jun 13 09:29:31 2016
 _maxVol = 2**15-1.0  # maximum amplitude
 
 
-def wavread(filename, fs=None, normalize=False):
+def wavread(path, fs=None, normalize=False):
     """
     read a '.wav' file and return sample rate with data
     Parameters
@@ -28,14 +28,14 @@ def wavread(filename, fs=None, normalize=False):
         Data read from wav file
     """
     from scipy.io import wavfile
-    fs, sig = wavfile.read(filename)
+    fs, sig = wavfile.read(path)
     sig = sig.astype(float)
     for i, el in enumerate(sig):
         sig[i] = el/_maxVol
     return fs, sig
 
 
-def wavwrite(sig, fs_sig, label, fs_out=None, normalize=None, timefades=0):
+def wavwrite(sig, fs_sig, path, fs_out=None, normalize=None, timefades=0):
     from scipy.signal import resample
     import types
 
@@ -58,9 +58,9 @@ list or a generator. Got {0!s}'.format(type(sig))
 
     from struct import pack
     import wave
-    if not label.endswith('.wav'):
-        label += '.wav'
-    wv = wave.open(label, 'w')
+    if not path.endswith('.wav'):
+        path += '.wav'
+    wv = wave.open(path, 'w')
     # nchannels, sampwidth, framerate, nframes, comptype, compname
     wv.setparams((1, 2, fs_out, 0, 'NONE', 'not compressed'))
     if isinstance(normalize, float):

@@ -13,11 +13,19 @@ from __future__ import division
 from pyphs.tutorials.phscore import core as nlcore
 
 from pyphs import PHSNumericalMethod, PHSNumericalCore, numcore2cpp
+import os
+import shutil
+
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 
 def cpp_nlcore_full():
     method = PHSNumericalMethod(nlcore)
     nums = PHSNumericalCore(method)
-    numcore2cpp(nums)
 
+    label = 'test'
+    path = os.path.join(here, label)
+
+    numcore2cpp(nums, objlabel=label, path=path)
+    shutil.rmtree(path)
     return True

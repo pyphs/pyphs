@@ -6,6 +6,7 @@ Created on Sat May 21 16:24:12 2016
 """
 from __future__ import absolute_import, division, print_function
 
+import sympy.physics.units as pu
 import sympy
 from .tools import symbols, nicevarlabel
 from pyphs.config import GMIN
@@ -15,6 +16,12 @@ from .edges import (PHSPort,
 
 __all__ = ['Source', 'Capacitor', 'Inductor', 'Resistor',
            'Potentiometer', 'Diode', 'Bjt', 'Triode']
+
+
+units = {'f': pu.amperes,
+         'e': pu.volts,
+         'q': pu.coulombs,
+         'p': pu.webers,}
 
 
 class Source(PHSPort):

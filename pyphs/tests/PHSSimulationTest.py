@@ -94,7 +94,6 @@ def simulation_rlc_cpp():
 
 
 
-
 def simulation_rlc_without_split():
     rlc = core.__deepcopy__()
     # Define the simulation parameters
@@ -129,6 +128,74 @@ def simulation_rlc_without_split():
     return True
 
 
+def simulation_rlc_without_split_trapez():
+    rlc = core.__deepcopy__()
+    # Define the simulation parameters
+    config = {'fs': 48e3,               # Sample rate
+              'grad': 'trapez',    # in {'discret', 'theta', 'trapez'}
+              'theta': 0.5,             # theta-scheme for the structure
+              'split': False,           # apply core.split_linear() beforehand
+              'maxit': 10,              # Max iteration for NL solvers
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
+              }
+
+    simu = PHSSimulation(rlc, config=config)
+
+    dur = 0.01
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+
+    def sequ():
+        for el in u():
+            yield (el, )
+
+    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+
+    simu.process()
+
+    shutil.rmtree(path)
+    return True
+
+    
+def simulation_rlc_without_split_theta():
+    rlc = core.__deepcopy__()
+    # Define the simulation parameters
+    config = {'fs': 48e3,               # Sample rate
+              'grad': 'theta',    # in {'discret', 'theta', 'trapez'}
+              'theta': 0.5,             # theta-scheme for the structure
+              'split': False,           # apply core.split_linear() beforehand
+              'maxit': 10,              # Max iteration for NL solvers
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
+              }
+
+    simu = PHSSimulation(rlc, config=config)
+
+    dur = 0.01
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+
+    def sequ():
+        for el in u():
+            yield (el, )
+
+    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+
+    simu.process()
+
+    shutil.rmtree(path)
+    return True
+
+    
 def simulation_rlc_plot():
     rlc = core.__deepcopy__()
     # Define the simulation parameters

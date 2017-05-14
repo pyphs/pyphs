@@ -69,9 +69,7 @@ list or a generator. Got {0!s}'.format(type(sig))
         scale = max([abs(el) for el in sig])
     else:
         scale = 1.
-    wvData = []
     for i in range(0, sig.__len__()):
         data = int(_maxVol*sig[i]/scale)
-        wvData += pack('h', data)
-    wv.writeframes(''.join(wvData))
+        wv.writeframes(pack('h', data))
     wv.close()

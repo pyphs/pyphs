@@ -15,6 +15,8 @@ from .PHSGraphTests import (graph, target_edges, target_M, split_sp,
 from .PHSLatexTest import TestCore2Tex
 from .PHSSimulationTest import (simulation_rlc_with_split,
                                 simulation_rlc_without_split,
+                                simulation_rlc_without_split_theta,
+                                simulation_rlc_without_split_trapez,
                                 simulation_nlcore_full,
                                 simulation_rlc_cpp)
 from .PHSSimulationPlotsTest import (plot_rlc_with_split,
@@ -89,6 +91,12 @@ class TestSimulation(TestCase):
 
     def test_simulation_rlc_without_split(self):
         self.assertTrue(simulation_rlc_without_split())
+
+    def test_simulation_rlc_without_split_theta(self):
+        self.assertTrue(simulation_rlc_without_split_theta())
+
+    def test_simulation_rlc_without_split_trapez(self):
+        self.assertTrue(simulation_rlc_without_split_trapez())
 
     def test_simulation_nlcore_full(self):
         self.assertTrue(simulation_nlcore_full())

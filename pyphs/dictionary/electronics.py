@@ -18,12 +18,12 @@ __all__ = ['Source', 'Capacitor', 'Inductor', 'Resistor',
            'Potentiometer', 'Diode', 'Bjt', 'Triode']
 
 
-units = {'f': pu.amperes,
-         'e': pu.volts,
-         'q': pu.coulombs,
-         'p': pu.webers,}
-
-
+#units = {'f': pu.amperes,
+#         'e': pu.volts,
+#         'q': pu.coulombs,
+#         'p': pu.webers,}
+#
+#
 class Source(PHSPort):
     """
     Voltage or current source
@@ -63,6 +63,7 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         elif type_ == 'current':
             ctrl = 'e'
         kwargs.update({'ctrl': ctrl})
+#        kwargs.update({'units': units})
         PHSPort.__init__(self, label, nodes, **kwargs)
 
     @staticmethod

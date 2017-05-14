@@ -11,7 +11,7 @@ from pyphs.numerics.tools import lambdify
 from pyphs.dictionary import edges
 from pyphs import PHSGraph
 from pyphs.misc.io import data_generator
-from pyphs.core.core import symbols
+from pyphs.dictionary.tools import symbols
 from pyphs.core.symbs_tools import simplify as simplify_func
 
 

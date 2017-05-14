@@ -150,9 +150,6 @@ storage and dissipative parts.
         # Dictionary for numerical substitution of all sympy.symbols
         self.subs = dict()
 
-        # sympy.symbols method with special assumptions
-        self.symbols = symbols
-
 ###############################################################################
 
     def __add__(core1, core2):
@@ -835,13 +832,13 @@ varying parameter(s).
 ###############################################################################
 ###############################################################################
 ###############################################################################
-# Latex
-
-def symbols(obj):
-    """
-    Sympy 'symbols' function with real-valued assertion
-    """
-    return sympy.symbols(obj, real=True)
+# SYMBOLS
+    @staticmethod
+    def symbols(obj):
+        """
+        Sympy 'symbols' function with real-valued assertion
+        """
+        return sympy.symbols(obj, real=True)
 
 ###############################################################################
 

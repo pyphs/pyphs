@@ -6,8 +6,10 @@ Created on Tue Jun  7 18:57:18 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs.core.core import symbols
+from pyphs.core.core import PHSCore
 from pyphs.core.symbs_tools import _assert_expr
+
+symbols = PHSCore.symbols
 
 
 class PHSArgument:
@@ -40,23 +42,23 @@ def form(name, obj):
         except AssertionError:
             _assert_expr(obj[1])
         string = obj[0]
-        symb = symbols(string)
+        symb = PHSCore.symbols(string)
         sub = {symb: obj[1]}
         par = None
     elif isinstance(obj, (float, int)):
         string = name
-        symb = symbols(string)
+        symb = PHSCore.symbols(string)
         sub = {symb: obj}
         par = None
     elif isinstance(obj, str):
         string = obj
-        symb = symbols(string)
+        symb = PHSCore.symbols(string)
         sub = {}
         par = symb
     else:
         _assert_expr(obj)
         string = name
-        symb = symbols(string)
+        symb = PHSCore.symbols(string)
         sub = {symb: obj}
         par = None
 
@@ -73,7 +75,7 @@ for parameters in component expression 'dicpars' and for parameters in phs \
     subs = {}
     for key in kwargs.keys():
         symb, sub, par = form(graph.label + '_' + str(key), kwargs[key])
-        dicpars.update({symbols(key): symb})
+        dicpars.update({PHSCore.symbols(key): symb})
         subs.update(sub)
         if par is not None:
             graph.core.add_parameters(par)

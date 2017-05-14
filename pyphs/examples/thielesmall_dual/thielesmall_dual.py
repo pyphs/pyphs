@@ -24,31 +24,32 @@ graph = PHSGraph(netlist=netlist)
 core = graph.buildCore()
 
 if __name__ == '__main__':
-    config = {'fs': 48e3,
-              'split': True,
-              'pbar': True,
-              'timer': True,
-              'path': path
-              }
-
-    simu = PHSSimulation(core, config=config)
-
-    dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
-
-    def sequ():
-        for el in u():
-            yield (el, )
-
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
-
-    simu.process()
-
-    simu.data.plot_powerbal(mode='multi')
-
-    simu.data.plot([('u', 0),
-                    ('x', 1),
-                    ('x', 0),
-                    ('dtx', 0),
-                    ('dxH', 2),
-                    ('y', 0)])
+#    config = {'fs': 48e3,
+#              'split': True,
+#              'pbar': True,
+#              'timer': True,
+#              'path': path
+#              }
+#
+#    simu = PHSSimulation(core, config=config)
+#
+#    dur = 0.01
+#    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+#
+#    def sequ():
+#        for el in u():
+#            yield (el, )
+#
+#    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+#
+#    simu.process()
+#
+#    simu.data.plot_powerbal(mode='multi')
+#
+#    simu.data.plot([('u', 0),
+#                    ('x', 1),
+#                    ('x', 0),
+#                    ('dtx', 0),
+#                    ('dxH', 2),
+#                    ('y', 0)])
+    pass

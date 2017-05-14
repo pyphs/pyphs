@@ -36,6 +36,19 @@ def close_files(files):
             _file.close()
 
 
+def with_files(path, files_to_open, process, files={}):
+    """
+open the files in files_to_open into folder path and execute process(files)
+    """
+    name = files_to_open.pop()
+    with open(os.path.join(path, name + '.txt'), 'w') as files[name]:
+        if len(files_to_open) == 0:
+            process(files)
+            return files
+        else:
+            with_files(path, files_to_open, process, files=files)
+            
+
 def dump_files(nums, files):
     for key in files:
         _file = files[key]

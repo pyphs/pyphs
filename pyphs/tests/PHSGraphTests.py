@@ -9,15 +9,16 @@ Created on Tue Dec 27 15:14:26 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs import PHSGraph
-from pyphs.tests.data import NetlistThieleSmallNL
+from pyphs.tests.PHSNetlistTests import NetlistThieleSmallNL, path
+import os
 from pyphs.config import datum as config_datum
 import numpy as np
+
 
 netlist = NetlistThieleSmallNL()
 graph = PHSGraph(netlist=netlist)
 
 symbols = graph.core.symbols
-
 
 target_edges = [('A', config_datum,
                  {'ctrl': 'f',
@@ -74,18 +75,23 @@ target_M = np.array([
                     [1.0, 0, 0, 0, 0, 0],
                     [0, -1.0, 0, 0, 0, 0]])
 
+os.remove(path)
 
 def split_sp():
     netlist = NetlistThieleSmallNL()
     graph = PHSGraph(netlist=netlist)
     graph.split_sp()
     return True
-    
+    os.remove(path)
+
+
 def plot_Graph():
     netlist = NetlistThieleSmallNL()
     graph = PHSGraph(netlist=netlist)
     graph.plot()
     return True
+    os.remove(path)
+
 
 def plot_GraphAnalysis():
     netlist = NetlistThieleSmallNL()
@@ -93,4 +99,4 @@ def plot_GraphAnalysis():
     graph.buildCore()
     graph.analysis.plot()
     return True
-        
+    os.remove(path)

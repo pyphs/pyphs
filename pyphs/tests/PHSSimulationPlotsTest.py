@@ -13,22 +13,27 @@ from pyphs import PHSSimulation, signalgenerator
 from pyphs.misc.signals.analysis import transferFunction, spectrogram
 from pyphs.misc.signals.processing import lowpass
 import numpy as np
+import os
+import shutil
+
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+path = os.path.join(here, 'simu')
 
 
 def plot_power_balance_rlc_with_split():
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
-              'split': True,           # apply core.split_linear() beforehand
+              'split': False,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
-              'path': None,             # Path to the results folder
-              'progressbar': True,      # Display a progress bar
-              'timer': True,           # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # compile and exec binary
-              'eigen_path': None,       # path to Eigen library
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
               }
 
     # retrieve the pyphs.PHSCore of a linear RLC from the examples
@@ -51,24 +56,26 @@ def plot_power_balance_rlc_with_split():
     simu.data.plot_powerbal(mode='single', show=False)
     simu.data.plot_powerbal(mode='multi', show=False)
 
+    shutil.rmtree(path)
     return True
 
 
 def plot_power_balance_nlcore_with_split():
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
               'split': True,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
-              'path': None,             # Path to the results folder
-              'progressbar': True,      # Display a progress bar
-              'timer': True,           # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # compile and exec binary
-              'eigen_path': None,       # path to Eigen library
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
               }
+
 
     # retrieve the pyphs.PHSCore of a nonlinear RLC from
     # the tutorial on PHSCore
@@ -89,23 +96,24 @@ def plot_power_balance_nlcore_with_split():
     simu.data.plot_powerbal(mode='single', show=False)
     simu.data.plot_powerbal(mode='multi', show=False)
 
+    shutil.rmtree(path)
     return True
 
 
 def plot_rlc_with_split():
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
               'split': False,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
-              'path': None,             # Path to the results folder
-              'progressbar': True,      # Display a progress bar
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # compile and exec binary
-              'eigen_path': None,       # path to Eigen library
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
               }
 
     # retrieve the pyphs.PHSCore of a linear RLC from the examples
@@ -139,13 +147,13 @@ def plot_rlc_with_split():
     simu.data.plot([('dtx', i) for i in range(dims.x())] +
                    [('dxH', i) for i in range(dims.x())], show=False)
 
+    shutil.rmtree(path)
     return True
-    
-    
+
+
 def TranferFunction():
     sig1 = np.random.rand(int(1e4))
     sig2 = lowpass(sig1, 0.1)
     f, TF = transferFunction(sig1, sig2, 100)
     spectrogram(sig1, sig2, fs=100)
     return True
-    

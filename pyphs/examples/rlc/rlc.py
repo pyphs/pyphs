@@ -11,19 +11,21 @@ from __future__ import absolute_import, division, print_function
 import os
 from pyphs import (netlist2core, PHSSimulation, signalgenerator,
                    PHSNetlist, PHSGraph)
+import shutil
+
 
 
 label = 'rlc'
 
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
-netlist_filename = path + os.sep + label + '.net'
+netlist_filename = os.path.join(here,label + '.net')
 netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)
 core = netlist2core(netlist_filename)
 
 if __name__ == '__main__':
-    # Define the simulation parameters
+#    # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
@@ -52,3 +54,8 @@ if __name__ == '__main__':
     simu.process()
 
     simu.data.plot_powerbal(mode='multi')
+
+    # clean: delete folders 'data' and 'figures'
+    shutil.rmtree(os.path.join(here, 'data'))
+    shutil.rmtree(os.path.join(here, 'figures'))
+    pass

@@ -199,14 +199,13 @@ Accordingly, the structure matrices are split as
 %
 \subsection{The \texttt{PHSCore} class}
 %
-This class implement the PHS structure (\ref{eq:
+This class implements the PHS structure (\ref{eq:PHS}) and several manipulation methods.
 %
 \begin{python}
-# import of (pre-installed) pyphs package:
 import pyphs
 
-# instantiate the PortHamiltonianObject:
-phs = pyphs.PortHamiltonianObject(label='mylabel')
+# instantiate the Port-Hamiltonian object:
+core = pyphs.PHSCore(label='mylabel')
 \end{python}
 %
 \subsection{The \texttt{symbs} module} Container for all the \textsc{SymPy} symbolic variables (\pythoninline{sympy.Symbol}). 

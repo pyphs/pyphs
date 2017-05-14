@@ -20,23 +20,28 @@ from pyphs.examples.rlc.rlc import core
 from pyphs import PHSSimulation, signalgenerator
 
 from pyphs.cpp.simu2cpp import simu2cpp
+import os
+import shutil
+
+
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+path = os.path.join(here, 'simu')
+
 
 def simulation_rlc_with_split():
     rlc = core.__deepcopy__()
-    # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
               'split': True,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
-              'path': None,             # Path to the results folder
-              'progressbar': True,      # Display a progress bar
-              'timer': True,           # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # compile and exec binary
-              'eigen_path': None,       # path to Eigen library
-              }
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,}       # path to Eigen library
 
     simu = PHSSimulation(rlc, config=config)
 
@@ -50,24 +55,25 @@ def simulation_rlc_with_split():
     simu.init(sequ=sequ(), nt=int(dur*simu.fs))
     simu.process()
 
+    shutil.rmtree(path)
     return True
 
-    
+
 def simulation_rlc_cpp():
     rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
               'split': True,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
-              'path': None,             # Path to the results folder
-              'progressbar': True,      # Display a progress bar
-              'timer': True,           # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # compile and exec binary
-              'eigen_path': None,       # path to Eigen library
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(rlc, config=config)
@@ -83,26 +89,26 @@ def simulation_rlc_cpp():
 
     simu2cpp(simu)
 
+    shutil.rmtree(path)
     return True
 
-    
 
 
 def simulation_rlc_without_split():
     rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
               'split': False,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
-              'path': None,             # Path to the results folder
-              'progressbar': True,      # Display a progress bar
-              'timer': True,           # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # compile and exec binary
-              'eigen_path': None,       # path to Eigen library
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(rlc, config=config)
@@ -118,24 +124,93 @@ def simulation_rlc_without_split():
 
     simu.process()
 
+    shutil.rmtree(path)
     return True
 
 
+def simulation_rlc_without_split_trapez():
+    rlc = core.__deepcopy__()
+    # Define the simulation parameters
+    config = {'fs': 48e3,               # Sample rate
+              'grad': 'trapez',    # in {'discret', 'theta', 'trapez'}
+              'theta': 0.5,             # theta-scheme for the structure
+              'split': False,           # apply core.split_linear() beforehand
+              'maxit': 10,              # Max iteration for NL solvers
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
+              }
+
+    simu = PHSSimulation(rlc, config=config)
+
+    dur = 0.01
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+
+    def sequ():
+        for el in u():
+            yield (el, )
+
+    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+
+    simu.process()
+
+    shutil.rmtree(path)
+    return True
+
+    
+def simulation_rlc_without_split_theta():
+    rlc = core.__deepcopy__()
+    # Define the simulation parameters
+    config = {'fs': 48e3,               # Sample rate
+              'grad': 'theta',    # in {'discret', 'theta', 'trapez'}
+              'theta': 0.5,             # theta-scheme for the structure
+              'split': False,           # apply core.split_linear() beforehand
+              'maxit': 10,              # Max iteration for NL solvers
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
+              }
+
+    simu = PHSSimulation(rlc, config=config)
+
+    dur = 0.01
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+
+    def sequ():
+        for el in u():
+            yield (el, )
+
+    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+
+    simu.process()
+
+    shutil.rmtree(path)
+    return True
+
+    
 def simulation_rlc_plot():
     rlc = core.__deepcopy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'gradient': 'discret',    # in {'discret', 'theta', 'trapez'}
+              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,             # theta-scheme for the structure
               'split': False,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'numtol': 1e-16,          # Global numerical tolerance
-              'path': None,             # Path to the results folder
-              'progressbar': True,      # Display a progress bar
-              'timer': True,           # Display minimal timing infos
-              'language': 'python',     # in {'python', 'c++'}
-              'cpp_build_and_run_script': None,  # compile and exec binary
-              'eigen_path': None,       # path to Eigen library
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
+              'lang': 'python',     # in {'python', 'c++'}
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(rlc, config=config)
@@ -152,25 +227,27 @@ def simulation_rlc_plot():
     simu.process()
     simu.data.plot_powerbal(mode='multi')
 
+    shutil.rmtree(path)
     return True
 
 
 def simulation_nlcore_full():
 
     # Define the simulation parameters
-    config = {'fs': 48e3,           # Sample rate
+    config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
-              'theta': 0.5,         # theta-scheme for the structure
-              'split': False,       # apply core.split_linear() beforehand
-              'maxit': 10,          # Max number of iterations for NL solvers
-              'eps': 1e-16,         # Global numerical tolerance
-              'path': None,         # Path to the folder to save the results
-              'pbar': False,        # Display a progress bar
-              'timer': False,       # Display minimal timing infos
+              'theta': 0.5,             # theta-scheme for the structure
+              'split': False,           # apply core.split_linear() beforehand
+              'maxit': 10,              # Max iteration for NL solvers
+              'eps': 1e-16,          # Global numerical tolerance
+              'path': path,             # Path to the results folder
+              'pbar': True,      # Display a progress bar
+              'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,       # call to compiler and exec binary
-              'eigen': None,        # path to Eigen C++ linear algebra library
+              'script': None,  # compile and exec binary
+              'eigen': None,       # path to Eigen library
               }
+
 
     # Instantiate a pyphs.PHSSimulation object associated with a given core PHS
     simu = PHSSimulation(nlcore, config=config)
@@ -218,4 +295,5 @@ def simulation_nlcore_full():
     # Proceed
     simu.process()
 
+    shutil.rmtree(path)
     return True

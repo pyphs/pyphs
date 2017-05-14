@@ -24,6 +24,7 @@ class PHSGraph(nx.MultiDiGraph):
 port-Hamiltonian systems.
     """
     def __init__(self, netlist=None, label=None):
+        self.datum = datum
         if label is None:
             l = ''
         else:

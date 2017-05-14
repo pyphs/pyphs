@@ -6,7 +6,7 @@ from .connectors import PHSConnector
 from .port import PHSPort
 from .dissipatives import PHSDissipativeLinear, PHSDissipativeNonLinear
 from .storages import PHSStorageLinear, PHSStorageNonLinear
-
+from .observers import Observerabs
 __all__ = ['PHSConnector', 'PHSPort',
            'PHSDissipativeLinear', 'PHSDissipativeNonLinear',
-           'PHSStorageLinear', 'PHSStorageNonLinear']
+           'PHSStorageLinear', 'PHSStorageNonLinear', 'Observerabs']

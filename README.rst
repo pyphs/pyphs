@@ -18,8 +18,14 @@ This is the development branch of the ``pyphs`` package.
 
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=development
     :target: https://www.travis-ci.org/afalaize/pyphs
+<<<<<<< HEAD
 
 .. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/development?svg=true
+=======
+ 
+
+.. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/master?svg=true
+>>>>>>> master
 	:target: https://ci.appveyor.com/project/afalaize/pyphs
 
 .. image:: https://codecov.io/gh/afalaize/pyphs/branch/master/graph/badge.svg

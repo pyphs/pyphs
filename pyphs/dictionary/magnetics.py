@@ -10,7 +10,7 @@ import sympy as sp
 from .edges import (PHSPort,
                     PHSDissipativeLinear, PHSStorageLinear,
                     PHSStorageNonLinear)
-from pyphs.core.core import symbols
+from pyphs.dictionary.tools import symbols
 
 __all__ = ['Source', 'Capacitor', 'Resistor', 'Capacitorsat']
 

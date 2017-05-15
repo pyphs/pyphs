@@ -7,7 +7,7 @@ Created on Tue Jun  7 19:14:24 2016
 
 from pyphs import PHSGraph
 from pyphs.config import datum
-from pyphs.core.core import symbols
+from pyphs.dictionary.tools import symbols
 from pyphs.dictionary.tools import nicevarlabel
 
 
@@ -53,6 +53,13 @@ class PHSPort(PHSGraph):
         # define symbols
         u, y = symbols((nicevarlabel('u', label),
                         nicevarlabel('y', label)))
+        if 'units' in parameters.keys():
+            if parameters['ctrl'] == 'e':
+                u = u*parameters['units']['e']
+                y = y*parameters['units']['f']
+            elif parameters['ctrl'] == 'f':
+                u = u*parameters['units']['f']
+                y = y*parameters['units']['e']
         # add port to phs
         self.core.add_ports([u], [y])
         # check edge control type (dual of input control type in values[0])

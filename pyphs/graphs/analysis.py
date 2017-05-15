@@ -10,11 +10,8 @@ import networkx
 import numpy
 from pyphs.misc.tools import myrange, pause
 from pyphs.config import datum
-from pyphs.misc.matrices import get_ind_nonzeros_col, get_ind_nonzeros_row, \
-    isequal
 from pyphs.plots.graphs import plot_analysis
-from .exceptions import PHSEffortCtrlIsFluxCtrl, PHSFluxCtrlIsEffortCtrl, \
-                        PHSUndefinedPotential
+from .exceptions import PHSUndefinedPotential
 
 
 class GraphAnalysis:
@@ -80,6 +77,7 @@ class GraphAnalysis:
 
             else:
                 i += 1
+
     def iterate_fc(self):
         """
 Iteration over the list `graph.analysis.fc_edges` of a given graph.
@@ -364,18 +362,6 @@ controlled node from node list
             print(self.Lambda)
             pause()
 
-    def rowindexGamma(self, c):
-        """
-        Return row indices of nonzero elements in column 'c' of 'self.Gamma'
-        """
-        return get_ind_nonzeros_col(self.Gamma, c)
-
-    def colindexGamma(self, r):
-        """
-        Return column indices of nonzero elements in row 'r' of 'self.Gamma'
-        """
-        return get_ind_nonzeros_row(self.Gamma, r)
-
     def link_connector(self, e, ctrl):
         """
         link realizability for connectors. the edge e has 'realizability', \
@@ -446,3 +432,9 @@ compatible'.format(e_label, link_e_label)
         if alpha is not None:
             self.edges[e][2]['alpha'] = alpha**-1
 
+
+def isequal(M1, M2):
+    """
+    Test M1==M2 with M1 and M2 of type sympy.Matrix or numpy.matrix
+    """
+    return not (M1-M2).any()

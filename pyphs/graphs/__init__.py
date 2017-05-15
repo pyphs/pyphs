@@ -1,6 +1,8 @@
 
 from .netlists import PHSNetlist
-from .graph import PHSGraph
+from .graph import PHSGraph, datum
+
+__all__ = ['PHSNetlist', 'PHSGraph', 'datum']
 
 
 def netlist2core(netlist):

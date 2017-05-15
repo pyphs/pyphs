@@ -7,6 +7,7 @@ Created on Mon Jun 27 13:12:43 2016
 
 from __future__ import absolute_import, division, print_function
 from .multiplots import multiplot
+from .singleplots import singleplot
 from pyphs.latex.tools import nice_label
 import os
 
@@ -70,7 +71,8 @@ multifigure
 
 
 def plot(data, var_list, imin=0, imax=None, decim=1, show=True):
-    datax = [el for el in data.t(imin=imin, imax=imax, decim=decim)]
+    # Absci
+    datax = list(data.t(imin=imin, imax=imax, decim=decim))
     datay = list()
     labels = list()
     path = data.config['path'] + os.sep + 'figures'
@@ -87,4 +89,7 @@ def plot(data, var_list, imin=0, imax=None, decim=1, show=True):
     plotopts = {'unitx': 'time $t$ (s)',
                 'unity': labels,
                 'filelabel': filelabel}
-    multiplot(datax, datay, show=show, **plotopts)
+    if len(datay) > 1:
+        multiplot(datax, datay, show=show, **plotopts)
+    else:
+        singleplot(datax, datay, show=show, **plotopts)

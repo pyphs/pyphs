@@ -14,5 +14,8 @@ from . import connectors
 from . import mechanics_dual
 from . import magnetics
 from . import beams
+from . import pwl
+from . import fraccalc
+
 __all__ = ['electronics', 'mechanics', 'magnetics', 'connectors', 'beams',
-           'mechanics_dual']
+           'mechanics_dual', 'pwl', 'fraccalc']

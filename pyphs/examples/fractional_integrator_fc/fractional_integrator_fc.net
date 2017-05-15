@@ -1,0 +1,2 @@
+fraccalc.Fracintfc Lfrac ('#','n1'): p=5; beta=0.5; NbPoles=20; PolesMinMax=(-5,10); NbFreqPoints=200; FreqsMinMax=(10, 48e3); DoPlot=False;
+electronics.source port ('n1', '#'): type='current'

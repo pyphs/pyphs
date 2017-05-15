@@ -6,6 +6,24 @@ Created on Wed Jun  8 18:57:05 2016
 """
 
 
+names = ['zero', 'const', 'sin', 'cos', 'noise', 'step', 'sweep']
+parameters = {'which': 'sin',
+              'tsig': 1.,
+              'ncycles': 1,
+              'tdeb': 0,
+              'tend': 0,
+              'fs': int(48e3),
+              'A': 1.,
+              'A1': 0.,
+              'f0': 10.,
+              'f1': 100.,
+              'cycle_ratio': 1.,
+              'attack_ratio': 0.,
+              'decay_ratio': 0.,
+              'ramp_on': False,
+              'bkgrd_noise': 0.}
+
+
 def sine(n, fs, f0, A=1., f1=None, A1=1.):
     """
     Build a generator that yields a sine wave.
@@ -151,9 +169,7 @@ def sweep_cosine(n, fs, f0, f1, A=1., kwargs=None):
         yield A*chirp(t, f0=f0, f1=f1, t1=T, **kwargs)
 
 
-def signalgenerator(which='sin', tsig=1.,  ncycles=1, tdeb=0., tend=0.,
-                    fs=int(1e3), A=1., A1=0., f0=10., f1=100., cycle_ratio=1.,
-                    attack_ratio=0., decay_ratio=0., ramp_on=False, bkgrd_noise=0., kwargs=None):
+def signalgenerator(**kwargs):
     """
     Return a generator that yields variety of signals.
 
@@ -223,6 +239,83 @@ to PWM.
     s : float
         signal value
     """
+    parameters = kwargs.copy()
+    if 'which' in parameters.keys():
+        which = parameters.pop('which')
+        assert which in names, 'Unknown synthesis method {0!s}.'.format(which)
+    else:
+        which = 'sin'
+
+    if 'tsig' in parameters.keys():
+        tsig = parameters.pop('tsig')
+    else:
+        tsig = 1.
+
+    if 'ncycles' in parameters.keys():
+        ncycles = parameters.pop('ncycles')
+    else:
+        ncycles = 1
+
+    if 'tdeb' in parameters.keys():
+        tdeb = parameters.pop('tdeb')
+    else:
+        tdeb = 0.
+
+    if 'tend' in parameters.keys():
+        tend = parameters.pop('tend')
+    else:
+        tend = 0.
+
+    if 'fs' in parameters.keys():
+        fs = parameters.pop('fs')
+    else:
+        fs = int(1e3)
+
+    if 'A' in parameters.keys():
+        A = parameters.pop('A')
+    else:
+        A = 1.
+
+    if 'A1' in parameters.keys():
+        A1 = parameters.pop('A1')
+    else:
+        A1 = 0.
+
+    if 'f0' in parameters.keys():
+        f0 = parameters.pop('f0')
+    else:
+        f0 = 10.
+
+    if 'f1' in parameters.keys():
+        f1 = parameters.pop('f1')
+    else:
+        f1 = 100.
+
+    if 'cycle_ratio' in parameters.keys():
+        cycle_ratio = parameters.pop('cycle_ratio')
+    else:
+        cycle_ratio = 1.
+
+    if 'attack_ratio' in parameters.keys():
+        attack_ratio = parameters.pop('attack_ratio')
+    else:
+        attack_ratio = 0.
+
+    if 'decay_ratio' in parameters.keys():
+        decay_ratio = parameters.pop('decay_ratio')
+    else:
+        decay_ratio = 0.
+
+    if 'ramp_on' in parameters.keys():
+        ramp_on = parameters.pop('ramp_on')
+    else:
+        ramp_on = False
+
+    if 'bkgrd_noise' in parameters.keys():
+        bkgrd_noise = parameters.pop('bkgrd_noise')
+    else:
+        bkgrd_noise = 0.
+
     nsig = int(tsig*fs)
     ndeb = int(tdeb*fs)
     nend = int(tend*fs)
@@ -230,9 +323,6 @@ to PWM.
     noff = nsig - non
 
     na, nd = int(attack_ratio*non), int(decay_ratio*non)
-
-    if kwargs is None:
-        kwargs = {}
 
     def clamp_signal(x, xmin, xmax):
         clamp_below = max((x, xmin))
@@ -258,7 +348,7 @@ to PWM.
         for c in range(ncycles):
             if which == 'zero':
                 Sig = constant(non, 0.)
-            if which == 'const':
+            elif which == 'const':
                 Sig = constant(non, A)
             elif which == 'sin':
                 Sig = sine(non, fs, f0=f0, f1=f1, A=A, A1=A1)
@@ -269,9 +359,9 @@ to PWM.
             elif which == 'step':
                 Sig = constant(non, A)
             elif which == 'sweep':
-                Sig = sweep_cosine(non, fs, f0, f1, A, kwargs)
+                Sig = sweep_cosine(non, fs, f0, f1, A, parameters)
             else:
-                print('{0!s} unknown.'.format(which))
+                print('Unknown synthesis method {0!s}.'.format(which))
                 raise NameError
             i = 0
             for v in Sig:
@@ -282,38 +372,3 @@ to PWM.
         for i in range(nend):
             yield background_noise()
     return generator
-
-
-names = ['zero', 'const', 'sin', 'cos', 'noise', 'step', 'sweep']
-parameters = {'which': 'sin',
-              'tsig': 1.,
-              'ncycles': 1,
-              'tdeb': 0,
-              'tend': 0,
-              'fs': int(48e3),
-              'A': 1.,
-              'A1': 0.,
-              'f0': 10.,
-              'f1': 100.,
-              'cycle_ratio': 1.,
-              'attack_ratio': 0.,
-              'decay_ratio': 0.,
-              'ramp_on': False,
-              'bkgrd_noise': 0.}
-
-
-if __name__ is '__main__':
-    fs = 100
-    f0 = 1.
-    Dur = 5.
-    nt = int(Dur*fs)
-    f1 = 10
-    s = [el for el in signalgenerator(which='sweep', tsig=Dur, noisy=0.01,
-                                      fs=fs, f0=f0, f1=f1, A=2, A1=-90)()]
-    from waves import wavwrite
-    wavwrite(s, fs, 'sweep', normalize=True)
-    from matplotlib.pyplot import specgram, cm
-    specgram(s, NFFT=2**10, cmap=cm.bone_r)
-    from pyphs.plots.singleplots import singleplot
-    t = [el/float(fs) for el in range(nt)]
-    singleplot(t, (s, ))

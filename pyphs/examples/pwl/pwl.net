@@ -1,0 +1,3 @@
+pwl.storage stor ('N1', 'N2'): ctrl=e; file='/Users/Falaize/Documents/DEV/python/pyphs/pyphs/examples/pwl/data.pwl'; integ=True;
+pwl.dissipative diss ('#', 'N1'): ctrl=f; file='/Users/Falaize/Documents/DEV/python/pyphs/pyphs/examples/pwl/data.pwl';
+electronics.source IN ('#', 'N2'): ctrl=f; type=voltage;

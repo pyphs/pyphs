@@ -19,11 +19,11 @@ __licence__ = \
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2017"
-__version__ = '0.1.9.7.3'
+__version__ = '0.1.9.8'
 __author_email__ = 'antoine.falaize@ircam.fr'
 
 __all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
            'signalgenerator', 'PHSNumericalOperation', 'PHSNumericalMethod',
            'PHSNumericalCore', 'PHSNumericalEval',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
-           'numcore2cpp', 'simu2cpp', 'netlist2core']
+           'numcore2cpp', 'simu2cpp', 'netlist2core', 'symbols']

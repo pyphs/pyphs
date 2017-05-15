@@ -59,28 +59,6 @@ def myrange(N, indi, indf):
     return lis
 
 
-def splitlist(lis, len_out):
-    """
-    Split the 'lis' in a list1 of lists2 with max(len(lists2))='len_out'
-    """
-    lis.reverse()
-    lis_out = list()
-    while lis:
-        temp = list()
-        for _ in range(len_out):
-            try:
-                temp.append(lis.pop())
-            except IndexError:
-                pass
-        lis_out.append(temp)
-    return lis_out
-
-
-def matrix2list(mat):
-    assert 1 in mat.shape
-    return [e[0, 0] for e in mat]
-
-
 def decimate(it, nd=10):
     """
     Return first then each 'nd' elements from iterable 'it'.

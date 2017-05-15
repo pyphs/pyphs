@@ -17,6 +17,11 @@ from pyphs.config import simulations
 from pyphs.core.discrete_calculus import (discrete_gradient, gradient_theta,
                                           gradient_trapez)
 
+try:
+    import itertools.imap as map
+except ImportError:
+    pass
+
 
 class PHSNumericalMethod:
     """
@@ -181,7 +186,7 @@ config: dic
 Output
 ------
 None:
-    In-place definition of the numerical functions within the core
+    In-place definition of the numerical functions within the PHSCore
     """
 
     # build the discrete evaluation for the gradient
@@ -363,8 +368,9 @@ def set_getters_G(core):
                 F = geteval(core, 'tempF')
                 vl = geteval(core, 'vl')
                 JacFl = jacobian(F, vl)
-                return map(simplify, list(regularize_dims(sp.Matrix(F)) -
-                                          matvecprod(JacFl, sp.Matrix(vl))))
+                G = map(simplify, list(regularize_dims(sp.Matrix(F)) -
+                                       matvecprod(JacFl, sp.Matrix(vl))))
+                return list(G)
         else:
             def func():
                 Fa = geteval(core, 'tempF'+a)

@@ -92,14 +92,18 @@ components).
         with file_ as openfileobject:
             for line in openfileobject:
                 if line.startswith('#'):
+                    print('pass "{}"'.format(line[:-1]))
                     pass
                 else:
+                    print('read "{}"'.format(line[:-1]))
                     # get 'infos' (dic, comp and nodes) and parameters
                     infos, _, parameters = line.partition(':')
                     # get ‘dic.comp' and 'label nodes'
-                    diccomp, _, labelnodes = infos.partition(' ')
+                    si = infos.split()
+                    diccomp = si.pop(0)
+                    label = si.pop(0)
+                    nodes = ''.join(si)
                     dic, _, comp = diccomp.partition('.')
-                    label, _, nodes = labelnodes.partition(' ')
                     self.dictionaries = list(self.dictionaries)+[dic, ]
                     self.components = list(self.components)+[comp, ]
                     self.labels = list(self.labels)+[label, ]
@@ -110,10 +114,14 @@ components).
                         par, _, parameters = parameters.partition(';')
                         par = par.replace(' ', '')
                         key, _, value = par.partition('=')
-                        try:
-                            value = ast.literal_eval(value)
-                        except ValueError:
-                            pass
+                        if value.startswith('('):
+                            value = value[1:-1].split(',')
+                            value = tuple(map(eval, value))
+                        else:                            
+                            try:
+                                value = ast.literal_eval(value)
+                            except ValueError:
+                                pass
                         pars.update({key: value})
                     self.arguments = list(self.arguments)+[pars, ]
         file_.close()

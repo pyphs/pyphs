@@ -13,6 +13,12 @@ from sympy.printing.theanocode import theano_function
 import copy
 
 
+
+try:
+    import itertools.imap as map
+except ImportError:
+    pass
+
 def norm(x):
     return numpy.sqrt(float(numpy.dot(x.flatten(), x.flatten())))
 
@@ -177,6 +183,8 @@ def lambdify(args, expr, subs=None, simplify=True, theano=True):
     """
     call to lambdify with chosen options
     """
+#    from pyphs.core.core import PHSCore
+#    args = list(map(lambda a: PHSCore.symbols(str(a)), list(copy.copy(args))))
     vector_expr = hasattr(expr, 'index')
     if subs is not None:
         if vector_expr:

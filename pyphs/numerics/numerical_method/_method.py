@@ -178,7 +178,7 @@ class PHSCoreMethod(PHSCore):
 
     def args(self):
         return (self.x + self.dx() + self.w + self.u +
-                self.p + self.observers.keys())
+                self.p + list(self.observers.keys()))
 
     def init_args(self):
         needed = self.update_actions_deps()

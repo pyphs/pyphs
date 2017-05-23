@@ -9,154 +9,192 @@ from __future__ import absolute_import, division, print_function
 
 import sympy
 import copy
-from pyphs.core.misc_tools import geteval
-from pyphs.core.calculus import gradient, jacobian
-from pyphs.core.dimensions import Dimensions
-from pyphs.core.indices import Indices
-from pyphs.core.symbs_tools import (_assert_expr, _assert_vec, free_symbols,
-                                    simplify, inverse)
-from pyphs.core.struc_tools import (_build_R, split_linear,
-                                    output_function, move_stor, move_diss,
-                                    move_port, move_connector, port2connector)
-from pyphs.latex import texdocument, core2tex
-from pyphs.numerics.numeric import PHSNumericalEval
+
+from ..misc.tools import geteval
+
+# Structure methods
+from .structure.R import build_R
+from .structure.splits import linear_nonlinear
+from .structure.output import output_function as output
+from .structure.moves import move_stor, move_diss, move_port, move_connector
+from .structure.connectors import port2connector
+
+from .maths import gradient, jacobian, inverse
+from .structure.dimensions import Dimensions
+from .structure.indices import Indices
+from .tools import types, free_symbols, simplify, substitute_core
+
+from ..latex import texdocument, core2tex
 
 
 class PHSCore:
     """
-This is the base class for the core *Port-Hamiltonian Systems* structure
-in PyPHS.
+    This is the base class for the core *Port-Hamiltonian Systems* structure
+    in PyPHS.
     """
 
-    _dxH = None
+    # =====================================================================
+    # Retrieve structure methods
+
+    build_R = build_R
+    linear_nonlinear = linear_nonlinear
+    output = output
+
+    move_storage = move_stor
+    move_dissipative = move_diss
+    move_port = move_port
+    move_connector = move_connector
 
     def __init__(self, label=None):
         """
-        Constructor for PHSCore objects.
+        Constructor for the Core Port-Hamiltonian structure object of pyphs.
 
         Parameter
         ----------
 
         label: None or string
-            An optional label object (default is None).
+            An optional label string used e.g. for plots (default is None).
+
+        Returns
+        -------
+
+        core : PHSCore
+            A Core Port-Hamiltonian structure object.
         """
 
         # Init label
         self.label = label
 
-        # init lists of symbols
-        self.symbs_names = set()
-        for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
-            self.setsymb(name, list())
+        # =====================================================================
 
-        # Ordered list of symbols of variables considered as arguments
+        # assertions for sympy symbols
+        self.assertions = {'real': True}
+
+        # Ordered list of variables considered as the systems's arguments
         self.args_names = ('x', 'dx', 'w', 'u', 'p')
 
-        # init expressions (and lists of expressions)
+        self.attrstocopy = {('dims', '_xl'), ('dims', '_wl'),
+                       'connectors', 'force_wnl', 'subs', 'M', '_dxH',
+                       'symbs_names', 'exprs_names', 'observers'}
+
+        # Names for matrix structures
+        self.struc_names = ['M', 'J', 'R']
+
+        # =====================================================================
+
+        # Gradient of core.H. If None, core.dxH() returns gradient(core.H, core.x).
+        self._dxH = None
+
+        # names for lists of symbols (x, w, ...)
+        self.symbs_names = set()
+
+        # Expressions names
         self.exprs_names = set()
-        self.setexpr('H', sympy.sympify(0))
-        self.setexpr('z', list())
+
+        # Init structure
+        self.M = sympy.zeros(0)
+
+        # List of connectors
+        self.connectors = list()
+
+        # Dictionary of substitution {symbol: value}
+        self.subs = dict()
+
+        # Dictionary of observers {symbol: value}
+        self.observers = dict()
+
+        # List of dissipative variable symbols to be ignored in self.build_R
+        self.force_wnl = list()
+
+        # =====================================================================
 
         # init tools
         self.dims = Dimensions(self)
         self.inds = Indices(self)
 
-        # Structure
-        self.struc_names = ['M', 'J', 'R']
-        self.M = sympy.zeros(0)
-        self._struc_build_get_mat = \
-            lambda mat, name: _build_get_mat(self, mat, name)
-        self._struc_build_set_mat = \
-            lambda mat, name: _build_set_mat(self, mat, name)
-        self._struc_getset()
-        self.connectors = list()
+        # init lists of symbols
 
+        for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
+            self.setsymb(name, types.vector_types[0]())
+
+        # init functions
+        self.setexpr('H', sympy.sympify(0))
+        self.setexpr('z', types.vector_types[0]())
+
+        # Coefficient matrices for linear parts
         self.setexpr('Q', sympy.zeros(0, 0))
-
-        # number of linear components
-        setattr(self.dims, '_xl', 0)
-
         self.setexpr('Zl', sympy.zeros(0, 0))
 
-        # number of linear components
-        setattr(self.dims, '_wl', 0)
-
-        names = ('xl', 'xnl', 'wl', 'wnl', 'y', 'cy')
-        self.inds._set_inds(names, self)
+        # init tools
+        self.dims = Dimensions(self)
+        self.inds = Indices(self)
 
         # get() and set() for structure matrices
-        self._struc_getset(dims_names=names)
-
-        def gen_lnl_accessors(name='dxH', dim_label='x'):
-            "Generator of functions to access the linear and nonlinear parts"
-            def l_accessor():
-                dim = getattr(self.dims, dim_label+'l')()
-                return geteval(self, name)[:dim]
-            l_accessor.__doc__ = """
-=====
-{0}l
-=====
-Accessor to the linear part of vector {0}. 
-
-Return
-------
-{0}l: list of sympy expressions
-    Linear part of core.{0}. This is a shorcut for \
-:code:`core.{0}[:core.dims.{1}l()]`.
-    
-See also
---------
-:code:`PHSCore.split_linear()` to split the system into linear and nonlinear 
-storage and dissipative parts.
-            """.format(name, dim_label)
-            def nl_accessor():
-                dim = getattr(self.dims, dim_label+'l')()
-                return geteval(self, name)[dim:]
-            nl_accessor.__doc__ = """
-=====
-{0}l
-=====
-Accessor to the nonlinear part of vector {0}. 
-
-Return
-------
-{0}l: list of sympy expressions
-    Nonlinear part of core.{0}. This is a shorcut for \
-:code:`core.{0}[core.dims.{1}l():]`.
-    
-See also
---------
-:code:`PHSCore.split_linear()` to split the system into linear and nonlinear 
-storage and dissipative parts.
-            """.format(name, dim_label)
-            return (l_accessor, nl_accessor)
-        
+        names = ('x', 'w', 'y', 'cy', 'xl', 'xnl', 'wl', 'wnl')
+        self._struc_getset(names)
 
         # build accessors for nonlinear and linear parts
         for name in {'x', 'dx', 'dxH'}:
-            lnl_accessors = gen_lnl_accessors(name, 'x')
+            lnl_accessors = self._gen_lnl_accessors(name, 'x')
             setattr(self, name+'l', lnl_accessors[0])
             setattr(self, name+'nl', lnl_accessors[1])
-
-
         for name in {'w', 'z'}:
-            lnl_accessors = gen_lnl_accessors(name, 'w')
+            lnl_accessors = self._gen_lnl_accessors(name, 'w')
             setattr(self, name+'l', lnl_accessors[0])
             setattr(self, name+'nl', lnl_accessors[1])
 
-        # Attributes to copy when calling the __copy__ method
-        self.attrstocopy = {'label', 'subs', 'connectors'}
+    # =========================================================================
 
-        # Dictionary for numerical substitution of all sympy.symbols
-        self.subs = dict()
+    def __copy__(self):
+        core = PHSCore(label=None)
+        for name in (list(set().union(
+                          self.attrstocopy,
+                          self.exprs_names,
+                          self.symbs_names))):
+            if isinstance(name, str):
+                source = self
+                target = core
+                attr_name = name
+            else:
+                source = getattr(self, name[0])
+                target = getattr(core, name[0])
+                attr_name = name[1]
+            attr = getattr(source, attr_name)
+            setattr(target, attr_name, copy.copy(attr))
+        core.label = 'copy' if self.label is None else self.label + '_copy'
+        return core
 
-###############################################################################
+    def __deepcopy__(self, memo=None):
+        core = PHSCore(label=None)
+        for name in (list(set().union(
+                          self.attrstocopy,
+                          self.exprs_names,
+                          self.symbs_names))):
+            if isinstance(name, str):
+                source = self
+                target = core
+                attr_name = name
+            else:
+                source = getattr(self, name[0])
+                target = getattr(core, name[0])
+                attr_name = name[1]
+            attr = getattr(source, attr_name)
+            setattr(target, attr_name, copy.deepcopy(attr, memo))
+        core.label = 'copy' if core.label is None else core.label + '_copy'
+        return core
+
+    # =========================================================================
 
     def __add__(core1, core2):
+        """
+        Add core1 and core2 and return a new core.
+
+        Every vectors are concatenated and structure matrices with same labels
+        are diagonally stacked into a big (square) structure matrix.
+        """
+        assert set(core1.symbs_names) == set(core2.symbs_names)
 
         core = PHSCore(label=core1.label)
-
-        assert set(core1.symbs_names) == set(core2.symbs_names)
 
         # Concatenate lists of symbols
         for name in core1.symbs_names:
@@ -188,9 +226,10 @@ storage and dissipative parts.
         core.setexpr('H', core1.H + core2.H)
 
         # Concatenate lists of expressions
-        core.setexpr('z', list(core1.z)+list(core2.z))
+        core.setexpr('z', core1.z + core2.z)
 
         core.connectors = core1.connectors + core2.connectors
+        core.force_wnl = core1.force_wnl + core2.force_wnl
 
         for vari in core.dims.names:
             for varj in core.dims.names:
@@ -199,80 +238,114 @@ storage and dissipative parts.
                     set_func = getattr(core, 'set_M'+vari+varj)
                     set_func(Mij)
 
-        # Need build
-        core._exprs_built = False
-
         return core
+    # =========================================================================
 
-    def __copy__(self):
-        core = PHSCore()
-        for name in (list(set().union(
-                          self.attrstocopy,
-                          self.exprs_names,
-                          self.symbs_names)) +
-                     ['M']):
-            attr = getattr(self, name)
-            setattr(core, name, copy.copy(attr))
-        core.dims._xl = copy.copy(self.dims._xl)
-        core.dims._wl = copy.copy(self.dims._wl)
-        return core
-
-    def __deepcopy__(self, memo=None):
-        core = PHSCore()
-        for name in (list(set().union(
-                          self.attrstocopy,
-                          self.exprs_names,
-                          self.symbs_names)) +
-                     ['M']):
-            attr = getattr(self, name)
-            setattr(core, name, copy.deepcopy(attr, memo))
-        core.dims._xl = copy.copy(self.dims._xl)
-        core.dims._wl = copy.copy(self.dims._wl)
-        return core
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-# SYMBOLS
-
-###############################################################################
-###############################################################################
-###############################################################################
+    # SYMBOLS
 
     def dx(self):
         """
-        Returns the symbols "dxi" associated with the differentials of the \
-state with symbol "xi" for each "xi" in state vector 'PHSCore.x'.
+        dx
+        **
+
+        Returns the symbols "dxi" associated with the differentials of the
+        state with symbol "xi" for each "xi" in state vector 'PHSCore.x'. It
+        is used in the numerical methods as the state increment
+        :code:`x[n+1]=x[n]+dx[n]`.
         """
         return [self.symbols('d'+str(x)) for x in self.x]
 
     def g(self):
         """
-        Returns the symbols "gxi" associated with the gradient of the storage\
-function w.r.t the state "xi" for each "xi" in state vector 'PHSCore.x'.
+        g
+        *
+
+        Returns the symbols "gxi" associated with the gradient of the storage
+        function w.r.t the state "xi" for each "xi" in state vector
+        'PHSCore.x'. It is used in the numerical methods as replacement symbols
+        for the discrete evaluation of Hamiltonian's gradient in the structure
+        matrix and dissipation function z.
         """
         return [self.symbols('g'+str(x)) for x in self.x]
 
+    def setsymb(self, name, symbs):
+        """
+        If name attribute does not exist, it is created with contents symbs
+        and name is added to symbs_names. Else, attribute name is overwritten
+        by symbs.
+        """
+        if name not in self.symbs_names:
+            self.symbs_names.add(name)
+        setattr(self, name, symbs)
+
+    def allsymbs(self):
+        """
+        Returns all the symbols in the lists with names from
+        'CorePHS.symbs_names'.
+        """
+        symbs = set()
+        for name in self.symbs_names:
+            this_name_symbs = getattr(self, name)
+            for symb in this_name_symbs:
+                symbs.add(symb)
+        for k in self.subs:
+            try:
+                symbs.add(free_symbols(self.subs[k]))
+                symbs.add(free_symbols(k))
+            except:
+                pass
+        return symbs
+
+    # =========================================================================
+
+    # EXPRESSIONS
+
+    def setexpr(self, name, expr):
+        """
+        setexpr
+        *******
+
+        Add the sympy expression 'expr' to the object under argument 'name',
+        and add 'name' to the set of expressions names 'core.exprs_names'.
+        """
+        if name not in self.exprs_names:
+            self.exprs_names.add(name)
+        setattr(self, name, expr)
+
+    def freesymbols(self):
+        """
+        freesymbols
+        ***********
+
+        Retrun a set of freesymbols in all exprs referenced in
+        'PHSCore.exprs_names'.
+        """
+        symbs = set()
+        for name in self.exprs_names:
+            expr = geteval(self, name)
+            symbs.union(free_symbols(expr))
+        symbs.union(free_symbols(self.M))
+        return symbs
+
     def dxH(self):
         """
-===
-dxH
-===
-Gradient of storage function \
-:math:`\\mathtt{dxH}_i = \\frac{\\partial \\mathrm H}{\\partial x_i}`.
+        dxH
+        ***
 
-Return
-------
-dxH: list of sympy expressions
-    If core._dxH is None, this is a shortcut for \
-:code:`[core.H.diff(xi) for xi in core.x]`. Else, returns \
-:code:`core._dxH` (as an example, :code:`PHSNumericalMethod.core.dxH()` \
-returns the discrete gradient expression).
+        Gradient of storage function \
+        :math:`\\mathtt{dxH}_i = \\frac{\\partial \\mathrm H}{\\partial x_i}`.
 
-See also
----------
-:code:`pyphs.core.calculus.gradient`
+        Return
+        ------
+        dxH: list of sympy expressions
+            If core._dxH is None, this is a shortcut for
+            :code:`[core.H.diff(xi) for xi in core.x]`. Else, returns
+            :code:`core._dxH` (as an example, :code:`PHSCoreMethod.dxH()`
+            returns the discrete gradient expression).
+
+        See also
+        ---------
+        :code:`pyphs.core.calculus.gradient`
         """
         if self._dxH is None:
             return gradient(self.H, self.x)
@@ -281,327 +354,156 @@ See also
 
     def jacz(self):
         """
-Return the jacobian of dissipative function 
-:math:`\left[\\mathcal{J}_{\\mathbf z}\right]_{i,j}(\\mathbf w)=\\frac{\partial z_i}{\partial w_j}(\\mathbf w)`.
+        jacz
+        ***
+        Return the jacobian of dissipative function
+        :math:`\left[\\mathcal{J}_{\\mathbf z}\right]_{i,j}(\\mathbf w)=\\frac{\partial z_i}{\partial w_j}(\\mathbf w)`.
         """
         return jacobian(self.z, self.w)
 
-    def output(self):
-        """
-Return the expression for output \
-:math:`\\mathbf y=\\mathbf M_{\\mathtt{yx}}\\cdot \\nabla \mathrm H + \\mathbf M_{\\mathtt{yw}}\\cdot \\mathbf z+ \\mathbf M_{\\mathtt{yy}}\\cdot \\mathbf u+ \\mathbf M_{\\mathtt{ycy}}\\cdot \\mathbf{c_u}`.
-        """
-        return output_function(self)
+    # =========================================================================
 
-    def args(self):
-        """
-====
-args
-====
-
-Return list of symbols associated with quantities that are considered as
-the arguments of the system exppressions. This quantities are:
-* the state :code:`core.x`,
-* the state variation :code:`core.dx()`,
-* the static variable :code:`core.w`,
-* the input :code:`core.u`, and
-* the parameter :code:`core.p`.
-
-Return
-------
-args: list of sympy symbols
-    This is a shorcut for :code:`core.x+core.dx()+core.w+core.u+core.p`.
-        """
-        # names of arguments for functions evaluation
-        args = []
-        for name in self.args_names:
-            symbs = geteval(self, name)
-            args += symbs
-        return args
-
-    def setsymb(self, name, list_symbs):
-        """
-        Creates an attribute to the class: \
-a list of symbols "name" (eg "x", "w" or "y") and add "name" to \
-'CorePHS._symbols'.
-        """
-        if name not in self.symbs_names:
-            self.symbs_names.add(name)
-        setattr(self, name, list_symbs)
-
-    def symbs_all(self):
-        """
-        Returns all the symbols in the lists with names from \
-'CorePHS._symbols'.
-        """
-        symbs = set()
-        for name in self.symbs_names:
-            this_name_symbs = getattr(self, name)
-            for symb in this_name_symbs:
-                symbs.add(symb)
-        return symbs
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-# EXPRESSIONS
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-    def setexpr(self, name, expr):
-        """
-        Add the sympy expression 'expr' to the 'CorePHS' module, with \
-argument 'name', and add 'name' to the set of expressions names \
-'CorePHS.exprs_names'.
-        """
-        if name not in self.exprs_names:
-            self.exprs_names.add(name)
-        if name is 'H':
-            expr = sympy.sympify(expr)
-        setattr(self, name, expr)
-
-    def freesymbols(self):
-        """
-Retrun a set of freesymbols in all exprs referenced in 'PHSCore.exprs_names'
-        """
-        symbs = set()
-        for name in self.exprs_names:
-            attr = getattr(self, name)
-            symbs.union(free_symbols(attr))
-        return symbs
-
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-# STRUCTURE
-
-###############################################################################
-###############################################################################
-###############################################################################
+    # STRUCTURE
 
     def init_M(self):
         """
-======
-init_M
-======
+        init_M
+        ******
 
-Init the structure matrix \
-:code:`core.M = sympy.zeros(core.dims.tot(), core.dims.tot())`.
+        Init the structure matrix \
+        :code:`core.M = sympy.zeros(core.dims.tot(), core.dims.tot())`.
         """
         self.M = sympy.zeros(self.dims.tot())
 
-    def _struc_getset(self, dims_names=None):
-        """
-        define atttributes set and get for all structure matrices
-        """
-        for part in ['M', 'R', 'J']:
-            if dims_names is None:
-                dims_names = self.dims.names
-            for vari in dims_names:
-                for varj in dims_names:
-                    self._struc_setblock(part, part+vari+varj, (vari, varj))
-
-    def _struc_setblock(self, part, name, dims_names):
-        "effectively adds get and set attributes"
-        self.struc_names = list(set(self.struc_names).union(set([name, ])))
-        setattr(self,
-                name, self._struc_build_get_mat(dims_names, part))
-        setattr(self,
-                'set_'+name, self._struc_build_set_mat(dims_names, part))
-
     def J(self):
         """
-=
-J
-=
+        =
+        J
+        =
 
-Return the skew-symetric part of structure matrix \
-:math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the \
-conservative interconnection.
+        Return the skew-symetric part of structure matrix \
+        :math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the \
+        conservative interconnection.
 
-Return
-------
+        Return
+        ------
 
-J: sympy Matrix
-    :math:`\\mathbf{J} = \\frac{1}{2}(\\mathbf{M} - \\mathbf{M}^\intercal)`
+        J: sympy Matrix
+            :math:`\\mathbf{J} = \\frac{1}{2}(\\mathbf{M} - \\mathbf{M}^\intercal)`
         """
         return (self.M - self.M.T)/2.
 
     def R(self):
         """
-=
-R
-=
+        =
+        R
+        =
 
-Return the symetric part of structure matrix \
-:math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the \
-resistive interconnection.
+        Return the symetric part of structure matrix \
+        :math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the \
+        resistive interconnection.
 
-Return
-------
+        Return
+        ------
 
-R: sympy Matrix
-    :math:`\\mathbf{R} = -\\frac{1}{2}(\\mathbf{M} + \\mathbf{M}^\intercal)`
+        R: sympy Matrix
+            :math:`\\mathbf{R} = -\\frac{1}{2}(\\mathbf{M} + \\mathbf{M}^\intercal)`
         """
         return -(self.M + self.M.T)/2.
 
-    build_R = _build_R
+    # =========================================================================
 
-    split_linear = split_linear
+    # LABELS
 
-    def labels(self):
+    def labels(self, i=None):
         """
-Return a list of the system's equations labels wich are by convention \
-:code:`(x, w, y, cy)`. Every symbols (:code:`core.x`, ...) are converted \
-to strings.
+        Return a list of the system's equations labels wich are by convention
+        :code:`(x, w, y, cy)`. Every symbols (:code:`core.x`, ...) are
+        converted to strings.
+
+        Parameter
+        ---------
+
+        i : None or int
+            If None, every symbols are returned, else the label with index i is
+            returned (default is None).
         """
-        labels = list(self.x) + \
-            list(self.w) + \
-            list(self.y) + \
-            list(self.cy)
-        return [str(el) for el in labels]
+        labels = sum([self.x, self.w, self.y, self.cy])
+        if i is None:
+            return [str(el) for el in labels]
+        else:
+            return str(labels[i])
 
-    def get_label(self, n):
+    # =========================================================================
+
+    def substitute(self, **kwargs):
         """
-        Return label of edge n
+        substitute
+        **********
+
+        Apply substitutions to every expressions.
+
+        Keyword arguments
+        -----------------
+
+        subs : dictionary or None
+            A dictionary with entries in the format :code:`{s: v}` with
+            :code:`s` the sympy symbol to substitute by value :code:`v`, which
+            value can be a numerical value (:code:`float, int`), a new sympy
+            symbol or a sympy expression. Default is None.
+
+        selfall : bool
+            If True, every substitutions in the dictionary :code:`PHSCore.subs`
+             are applied and the dictionary is reinitialized to :code:`{}`.
+             Default is False.
+
+        selfexprs : bool
+            If True, only substitutions in the dictionary :code:`PHSCore.subs`
+            that are not numerical values are applied.
+
+        simplify : bool
+            If True, every expressions are simplified after substitution.
+            The default is True
+
+        subsofsubs : bool
+            If True, the substitution dictionary substitutes itself
+            recursively. Default is True.
         """
-        return self.labels[n]
+        substitute_core(self, **kwargs)
 
-###########################################################################
-###########################################################################
+    # =========================================================================
 
-    def build_evals(self):
-        """
-===========
-build_evals
-===========
-
-Instantiate a :code:`pyphs.PHSNumericalEval` object in :code:`core.evals` \
-with numerical evaluation of every :code:`core` expressions through sympy \
-lambdification. It is not dynamic so it must be re-build at any change in \
-the :code:`core` expressions.
-
-See also
----------
-:code:`pyphs.numerics.numeric.PHSNumericalEval` class and \
-:code:`pyphs.numerics.tools.lambdify` function.
-"""
-
-        self.evals = PHSNumericalEval(self)
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-# apply_subs
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-    def apply_subs(self, subs=None, selfsubs=False):
-        """
-==========
-apply_subs
-==========
-
-Apply substitutions to every expressions.
-
-Parameters
------------
-subs: dictionary or None
-    A dictionary with entries in the format :code:`{s: v}` with \
-:code:`s` the sympy symbol to substitute by value :code:`v`, which value \
-can be a numerical value (:code:`float, int`), a new sympy symbol or a \
-sympy expression. Default is None.
-
-selfsubs: bool
-    If True, every the substitutions in the dictionary :code:`PHSCore.subs`\
- are applied and the dictionary is reinitialized to :code:`{}`. Default is \
-False.
-        """
-        if subs is None:
-            subs = {}
-        if selfsubs:
-            subs.update(self.subs)
-        for name in self.symbs_names:
-            attr = getattr(self, name)
-            attr = list(attr)
-            for i, a in enumerate(attr):
-                try:
-                    attr[i] = a.subs(subs)
-                except AttributeError:
-                    pass
-            setattr(self, name, attr)
-        for name in self.exprs_names.union(['_dxH']):
-            attr = getattr(self, name)
-            if hasattr(attr, "shape"):
-                ni, nj = attr.shape
-                for i in range(ni):
-                    for j in range(nj):
-                        attr[i, j] = attr[i, j].subs(subs)
-            elif hasattr(attr, "__len__"):
-                attr = list(attr)
-                for i, at in enumerate(attr):
-                    attr[i] = at.subs(subs)
-            else:
-                try:
-                    attr = attr.subs(subs)
-                except:
-                    # print('Warning: subs did not apply for {}'.format(name))
-                    pass
-
-            setattr(self, name, attr)
-        self.M = self.M.subs(subs)
-
-        self.subs.update(subs)
-        for k in subs.keys():
-            try:
-                self.subs.pop(k)
-            except KeyError:
-                pass
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-# Connectors
+    # Connectors
 
     def add_connector(self, indices, alpha):
         """
-=============
-add_connector
-=============
+        add_connector
+        *************
 
-Add a connector which describes the connection of two ports from a \
-unique PHScore.
+        Add a connector which describes the connection of two ports from a \
+        unique PHScore.
 
-Usage
-------
-core.add_connector(indices, alpha)
+        Usage
+        ------
+        core.add_connector(indices, alpha)
 
-Parameters
----------
-indices: tuple of int
-    The indices of the two ports to be connected.
+        Parameters
+        ----------
+        indices: tuple of int
+            The indices of the two ports to be connected.
 
-alpha: scalar quantity
-    Coefficient of the connection.
+        alpha: scalar quantity
+            Coefficient of the connection.
 
-Description
------------
-The resulting connection reads:
-    * :code:`core.u[indices[0]] = alpha * core.y[indices[1]]`,
-    * :code:`core.u[indices[1]] = -alpha * core.y[indices[0]]`.
+        Description
+        -----------
+        The resulting connection reads:
+            * :code:`core.u[indices[0]] = alpha * core.y[indices[1]]`,
+            * :code:`core.u[indices[1]] = -alpha * core.y[indices[0]]`.
 
-Notice this method only stores a description of the connection in the \
-:code:`core.connectors` argument. The connection will be effective only \
-after a call to the :code:`core.apply_connectors()` method.
+        Notice this method only stores a description of the connection in the
+        :code:`core.connectors` argument. The connection will be effective only
+        after calling the method :code:`core.apply_connectors()`.
         """
         assert indices[0] != indices[1], 'Can not connect a port to itself: \
 indices={}.'.format(indices)
@@ -624,11 +526,11 @@ add the connector'.format(i)
 
     def apply_connectors(self):
         """
-Effectively connect inputs and outputs defined in core.connectors.
+        Effectively connect inputs and outputs defined in core.connectors.
 
-See also
---------
-See help of method :code:`core.add_connector` for details.
+        See also
+        --------
+        See help of method :code:`core.add_connector` for details.
         """
 
         all_alpha = list()
@@ -670,142 +572,165 @@ See help of method :code:`core.add_connector` for details.
         except ValueError:
             raise Exception('Can not resolve the connection.\n\nABORD')
 
-###############################################################################
-###############################################################################
-###############################################################################
+    # =========================================================================
 
-
-# ADD COMPONENTS
-
-###############################################################################
-###############################################################################
-###############################################################################
+    # ADD COMPONENTS
 
     def add_storages(self, x, H):
         """
-Add storage components with state :math:`\\mathbf{x}` and energy \
-:math:`\\mathrm{H}(\\mathbf{x}) \geq 0`.
+        Add storage components with state :math:`\\mathbf{x}` and energy \
+        :math:`\\mathrm{H}(\\mathbf{x}) \geq 0`.
 
-* State :math:`\\mathbf{x}` is appended to the current list of \
-states symbols :code:`core.x`,
-* Expression :math:`\\mathrm{H}` is added to the current expression \
-of the Hamiltonian :code:`core.H`.
+        * State :math:`\\mathbf{x}` is appended to the current list of \
+        states symbols :code:`core.x`,
+        * Expression :math:`\\mathrm{H}` is added to the current expression \
+        of the Hamiltonian :code:`core.H`.
 
-Parameters
-----------
+        Parameters
+        ----------
 
-x: one or several pyphs.symbols
-    State symbols. Can be a single symbol or a list of symbols.
-    
-H: sympy.Expr
-    Must be a valid storage function with respect to the state \
-:math:`\\mathbf{x}` with :math:`\\nabla^2\\mahtrm H(\\mathbf{x}) \succeq 0`.
-"""
-        try:
-            hasattr(x, 'index')
-            x = _assert_vec(x)
-        except:
-            _assert_expr(x)
-            x = (x, )
-        self.x += list(x)
+        x: one or several pyphs.symbols
+            State symbols. Can be a single symbol or a list of symbols.
+
+        H: sympy.Expr
+            Must be a valid storage function with respect to the state
+            :math:`\\mathbf{x}` with :math:`\\nabla^2\\mahtrm H(\\mathbf{x}) \\succeq 0`.
+        """
+        if isinstance(x, types.scalar_types):
+            x = [x, ]
+        elif isinstance(x, types.vector_types):
+            pass
+        else:
+            x_types = types.scalar_types+types.vector_types
+            raise TypeError('Type of x should be one of {}'.format(x_types))
+        types.scalar_test(H)
+        self.x += x
         self.H += H
         self.H.simplify()
 
     def add_dissipations(self, w, z):
         """
-Add dissipative components with variable :math:`\\mathbf{w}` and \
-dissipative function :math:`\\mathrm{z}(\\mathbf{w})`.
+        Add dissipative components with variable :math:`\\mathbf{w}` and \
+        dissipative function :math:`\\mathrm{z}(\\mathbf{w})`.
 
-* Variable :math:`\\mathbf{w}` is appended to the current list of \
-variables symbols :code:`core.w`,
-* Expression :math:`\\mathrm{z}` is appended to the current list of \
-dissipative functions :code:`core.z`.
+        * Variable :math:`\\mathbf{w}` is appended to the current list of \
+        variables symbols :code:`core.w`,
+        * Expression :math:`\\mathrm{z}` is appended to the current list of \
+        dissipative functions :code:`core.z`.
 
-Parameters
-----------
+        Parameters
+        ----------
 
-w: one or several pyphs.symbols
-    Variable symbols. Can be a single symbol or a list of symbols.
-    
-z: one or several sympy.Expr
-    Must be a valid dissipative function with respect to the variable \
-:math:`\\mathbf{w}` with :math:`\\nabla\\mahtrm z(\\mathbf{w}) \succeq 0`.
-"""
-        try:
-            w = _assert_vec(w)
-            z = _assert_vec(z)
-            assert len(w) == len(z), 'w and z should have same dimension.'
-        except:
-            _assert_expr(w)
-            _assert_expr(w)
-            w = (w, )
-            z = (z, )
-        self.w += list(w)
-        self.z += list(map(simplify, list(z)))
+        w: one or several pyphs.symbols
+            Variable symbols. Can be a single symbol or a list of symbols.
+
+        z: one or several sympy.Expr
+            Must be a valid dissipative function with respect to the variable
+        :math:`\\mathbf{w}` with :math:`\\nabla\\mahtrm z(\\mathbf{w}) \succeq 0`.
+        """
+        if isinstance(w, types.vector_types):
+            types.vector_test(z)
+        elif isinstance(w, types.scalar_types):
+            types.scalar_test(z)
+            w = [w, ]
+            z = [z, ]
+            w_types = types.scalar_types+types.vector_types
+        else:
+            raise TypeError('Type of w and z should be one of {}'.format(w_types))
+        assert len(w) == len(z), 'w and z should have same dimension.'
+        self.w += w
+        self.z += simplify(z)
 
     def add_ports(self, u, y):
         """
-Add one or several ports with input u and output y.
+        Add one or several ports with input :math:`{\\mathbf{u}}` and output
+        :math:`{\\mathbf{y}}`.
 
-Parameters
-----------
+        * Input :math:`\\mathbf{y}` is appended to the current list of input
+        symbols :code:`core.u`,
+        * ouput {\\mathbf{y}} is appended to the current list of ouputs
+        :code:`core.y`.
 
-u : str, symbol, or list of
-y : str, symbol, or list of
+        Parameters
+        ----------
+
+        u : one or several pyphs.symbols
+            Inputs symbols. Can be a single symbol or a list of symbols.
+
+        y : one or several sympy.Expr
+            Outputs symbols. Can be a single symbol or a list of symbols.
         """
-        if hasattr(u, '__len__'):
-            u = _assert_vec(u)
-            y = _assert_vec(y)
-            assert len(u) == len(y), 'u and y should have same dimension.'
-        else:
-            _assert_expr(u)
-            _assert_expr(y)
-            u = (u, )
-            y = (y, )
-        self.u += list(u)
-        self.y += list(y)
+        try:
+            types.vector_test(u)
+            types.vector_test(y)
+        except:
+            types.scalar_test(u)
+            types.scalar_test(y)
+            u = [u, ]
+            y = [y, ]
+        assert len(u) == len(y), 'u and y should have same dimension.'
+        self.u += u
+        self.y += y
 
     def add_parameters(self, p):
         """
-        Add a continuously varying parameter.
-
-        Usage
-        -----
-        core.add_parameters(p)
+        Add one or several parameters :math:`{\\mathbf{p}}`, which is
+        appended to the current list of parameters symbols :code:`core.p`.
 
         Parameter
         ----------
-        p: sympy.Symbol or list of sympy.Symbol
-            Single symbol or list of symbol associated with continuously \
-varying parameter(s).
+
+        p : one or several pyphs.symbols
+            Parameters symbols. Can be a single symbol or a list of symbols.
         """
         try:
-            hasattr(p, '__len__')
-            p = _assert_vec(p)
+            types.vector_test(p)
         except:
-            _assert_expr(p)
-            p = (p, )
-        self.p += list(p)
+            types.scalar_test(p)
+            p = [p, ]
+        self.p += p
 
-###############################################################################
-###############################################################################
-###############################################################################
+    def add_observer(self, obs):
+        """
+        add_observer
+        *************
 
-    move_storage = move_stor
+        Add a dictionary of oservers
+        Parameter
+        ---------
+        obs: dict
+            Observers are couple {symb: expr}. They are evaluated during
+            simulation at the begining of each time step.
+        """
+        self.observers.append(obs)
 
-    move_dissipative = move_diss
+    # =========================================================================
 
-    move_port = move_port
-
-    move_connector = move_connector
-
-###############################################################################
-###############################################################################
-###############################################################################
-# Latex
+    # Latex
 
     def texwrite(self, path=None, title=None,
                  authors=None, affiliations=None):
+        """
+        Write the port Hamiltonian Structure to a LaTeX file.
+
+        Parameters
+        ----------
+
+        path : str
+            Path to the file to write. If file does not exist, it is create,
+            else it is overwritten. If None, the file 'core.tex' is created
+            into current wirking directory (default).
+
+        title : str
+            LaTeX document title. If None, it is set to 'PyPHS Core' (default).
+
+        authors : list of str
+            List of authors. Default is None.
+
+        affiliations : list of str
+            List of affiliations for authors. It must have the same length
+            as authors arguments. Default is None.
+        """
         if path is None:
             path = 'core.tex'
         if title is None:
@@ -813,107 +738,218 @@ varying parameter(s).
         texdocument(core2tex(self), path, title=title,
                     authors=authors, affiliations=affiliations)
 
+    # =========================================================================
+
+    # Printings
+
     def pprint(self, **settings):
+        """
+        Print the PHS structure :math:`\\mathbf{b} = \\mathbf{M} \\cdot \\mathbf{a}`
+        using sympy's pretty printings.
+
+        Parameters
+        ----------
+
+        settings : dic
+            Parameters for sympy.pprint function.
+
+        See Also
+        --------
+
+        sympy.pprint
+
+        """
+
         sympy.init_printing()
-        
-        b = sympy.Matrix(self.dx() + 
-                         self.w + 
-                         self.y + 
+
+        b = sympy.Matrix(self.dx() +
+                         self.w +
+                         self.y +
                          self.cy)
-        
-        a = sympy.Matrix(self.g() + 
-                         self.symbols(['z'+str(w)[1:] for w in self.w]) + 
-                         self.u + 
+
+        a = sympy.Matrix(self.g() +
+                         self.symbols(['z'+str(w)[1:] for w in self.w]) +
+                         self.u +
                          self.cu)
-        
+
         sympy.pprint([b, self.M, a], **settings)
-    
 
-###############################################################################
-###############################################################################
-###############################################################################
-# SYMBOLS
+    # =========================================================================
+
+    def _struc_getset(self, dims_names=None):
+        """
+        define atttributes set and get for all structure matrices
+        """
+        for part in ['M', 'R', 'J']:
+            if dims_names is None:
+                dims_names = self.dims.names
+            for vari in dims_names:
+                for varj in dims_names:
+                    self._struc_setblock(part, part+vari+varj, (vari, varj))
+
+    def _struc_setblock(self, part, name, dims_names):
+        "effectively adds get and set attributes"
+        self.struc_names = list(set(self.struc_names).union(set([name, ])))
+        setattr(self,
+                name, self._struc_build_get_mat(dims_names, part))
+        setattr(self,
+                'set_'+name, self._struc_build_set_mat(dims_names, part))
+
+    def _struc_build_get_mat(self, mat, name):
+        """
+        Add an accessor to a given matrix.
+
+        Parameters
+        ----------
+
+        mat : ('matr', ('m', 'n'))
+            with matr the matrix argument to define and 'x' and 'y' the
+            variables that corresponds to block of core.name
+        """
+        return self._build_get_mat(mat, name)
+
+    def _struc_build_set_mat(self, mat, name):
+        """
+        Add an accessor to a given matrix.
+
+        Parameters
+        ----------
+
+        mat : ('matr', ('m', 'n'))
+            with matr the matrix argument to define and 'x' and 'y' the
+            variables that corresponds to block of core.name
+        """
+        return self._build_set_mat(mat, name)
+
+    def _build_get_mat(self, dims_names, name):
+        """
+        mat is ('matrix, ('m', 'n')) with matrix the matrix argument to define
+        and 'x' and 'y' the variables that corresponds to blocks of core.name
+        """
+
+        def get_mat():
+            namei, namej = dims_names
+            debi, endi = getattr(self.inds, namei)()
+            debj, endj = getattr(self.inds, namej)()
+            return geteval(self, name)[debi:endi, debj:endj]
+        get_mat.__doc__ = """
+        =====
+        {0}{1}{2}
+        =====
+        Accessor to the submatrix :code:`core.{0}{1}{2}` with shape \
+        :code:`[core.dims.{1}(), core.dims.{2}()]`.
+        """.format(name, dims_names[0], dims_names[1])
+        return get_mat
+
+
+    def _build_set_mat(self, dims_names, name):
+        """
+        mat is ('matr', ('m', 'n')) with matr the matrix argument to define
+        and 'x' and 'y' the variables that corresponds to block of core.name
+        """
+        def set_mat(mat):
+            vari, varj = dims_names
+            if self.M.shape[0] != self.dims.tot():
+                self.M = sympy.zeros(self.dims.tot())
+            if name == 'J':
+                Jab = sympy.Matrix(mat)
+                Rab = getattr(self, 'R'+vari + varj)()
+                Rba = getattr(self, 'R'+varj + vari)()
+                Mab = Jab - Rab
+                Mba = -Jab.T - Rba
+            if name == 'R':
+                Jab = getattr(self, 'J'+vari + varj)()
+                Jba = getattr(self, 'J'+varj + vari)()
+                R = sympy.Matrix(mat)
+                Mab = Jab - R
+                Mba = Jba - R.T
+            if name == 'M':
+                Mab = sympy.Matrix(mat)
+                Mba = getattr(self, 'M'+varj + vari)()
+            debi, endi = getattr(self.inds, vari)()
+            debj, endj = getattr(self.inds, varj)()
+            self.M[debi:endi, debj:endj] = sympy.Matrix(Mab)
+            if vari != varj:
+                self.M[debj:endj, debi:endi] = sympy.Matrix(Mba)
+        set_mat.__doc__ = """
+        =========
+        set_{0}{1}{2}
+        =========
+        Mutator for the submatrix :code:`core.{0}{1}{2}` with shape \
+        :code:`[core.dims.{1}(), core.dims.{2}()]`.
+
+        Parameter
+        ---------
+        mat: matrix like
+            Can be a list of core.dims.{1}() lists of core.dims.{2}() elements, or\
+         numpy array or sympy Matrix with shape \
+        :code:`[core.dims{1}(), core.dims{2}()]`.
+
+        Remark
+        ------
+
+        The skew-symmetry/symmetry of :code:`core.J`/:code:`core.R` are preserved \
+        by the automatic replacement of matrix :code:`core.{0}{2}{1}` with the \
+        transpose of :code:`core.{0}{1}{2}` and appropriate sign.
+        """.format(name, dims_names[0], dims_names[1])
+
+        return set_mat
+
+
+    # =============================================================================
+
+    def _gen_lnl_accessors(self, name='dxH', dim_label='x'):
+        "Generator of functions to access the linear and nonlinear parts"
+
+        def l_accessor():
+            dim = getattr(self.dims, dim_label+'l')()
+            return geteval(self, name)[:dim]
+        l_accessor.__doc__ = """
+    =====
+    {0}l
+    =====
+    Accessor to the linear part of vector {0}.
+
+    Return
+    ------
+    {0}l: list of sympy expressions
+        Linear part of core.{0}. This is a shorcut for \
+    :code:`core.{0}[:core.dims.{1}l()]`.
+
+    See also
+    --------
+    :code:`PHSCore.split_linear()` to split the system into linear and nonlinear
+    storage and dissipative parts.
+        """.format(name, dim_label)
+
+        def nl_accessor():
+            dim = getattr(self.dims, dim_label+'l')()
+            return geteval(self, name)[dim:]
+        nl_accessor.__doc__ = """
+    =====
+    {0}l
+    =====
+    Accessor to the nonlinear part of vector {0}.
+
+    Return
+    ------
+    {0}l: list of sympy expressions
+        Nonlinear part of core.{0}. This is a shorcut for \
+    :code:`core.{0}[core.dims.{1}l():]`.
+
+    See also
+    --------
+    :code:`PHSCore.split_linear()` to split the system into linear and nonlinear
+    storage and dissipative parts.
+        """.format(name, dim_label)
+        return (l_accessor, nl_accessor)
+    # =========================================================================
+
+    # SYMBOLS
     @staticmethod
-    def symbols(obj):
+    def symbols(obj, *args, **kwargs):
         """
-        Sympy 'symbols' function with real-valued assertion
+        sympy.symbols function with PHSCore.assertions.
         """
-        return sympy.symbols(obj, real=True)
-
-###############################################################################
-
-
-def _build_get_mat(core, dims_names, name):
-    """
-    mat is ('matrix, ('m', 'n')) with matrix the matrix argument to define \
-and 'x' and 'y' the variables that corresponds to block of struct.name
-    """
-    namei, namej = dims_names
-
-    def get_mat():
-        debi, endi = getattr(core.inds, namei)()
-        debj, endj = getattr(core.inds, namej)()
-        return geteval(core, name)[debi:endi, debj:endj]
-    get_mat.__doc__ = """
-=====
-{0}{1}{2}
-=====
-Accessor to the submatrix :code:`core.{0}{1}{2}` with shape \
-:code:`[core.dims.{1}(), core.dims.{2}()]`.
-    """.format(name, dims_names[0], dims_names[1])
-    return get_mat
-
-
-def _build_set_mat(core, dims_names, name):
-    """
-    mat is ('matr', ('m', 'n')) with matr the matrix argument to define \
-and 'x' and 'y' the variables that corresponds to block of struct.name
-    """
-    vari, varj = dims_names
-
-    def set_mat(mat):
-        if core.M.shape[0] != core.dims.tot():
-            core.M = sympy.zeros(core.dims.tot())
-        if name == 'J':
-            Jab = sympy.Matrix(mat)
-            Rab = getattr(core, 'R'+vari + varj)()
-            Rba = getattr(core, 'R'+varj + vari)()
-            Mab = Jab - Rab
-            Mba = -Jab.T - Rba
-        if name == 'R':
-            Jab = getattr(core, 'J'+vari + varj)()
-            Jba = getattr(core, 'J'+varj + vari)()
-            R = sympy.Matrix(mat)
-            Mab = Jab - R
-            Mba = Jba - R.T
-        if name == 'M':
-            Mab = sympy.Matrix(mat)
-            Mba = getattr(core, 'M'+varj + vari)()
-        debi, endi = getattr(core.inds, vari)()
-        debj, endj = getattr(core.inds, varj)()
-        core.M[debi:endi, debj:endj] = sympy.Matrix(Mab)
-        if vari != varj:
-            core.M[debj:endj, debi:endi] = sympy.Matrix(Mba)
-    set_mat.__doc__ = """
-=========
-set_{0}{1}{2}
-=========
-Mutator for the submatrix :code:`core.{0}{1}{2}` with shape \
-:code:`[core.dims.{1}(), core.dims.{2}()]`.
-
-Parameter
----------
-mat: matrix like 
-    Can be a list of core.dims.{1}() lists of core.dims.{2}() elements, or\
- numpy array or sympy Matrix with shape \
-:code:`[core.dims{1}(), core.dims{2}()]`.
-
-Remark
-------
-
-The skew-symmetry/symmetry of :code:`core.J`/:code:`core.R` are preserved \
-by the automatic replacement of matrix :code:`core.{0}{2}{1}` with the \
-transpose of :code:`core.{0}{1}{2}` and appropriate sign.
-    """.format(name, dims_names[0], dims_names[1])
-
-    return set_mat
+        kwargs.update(PHSCore().assertions)
+        return sympy.symbols(obj, *args, **kwargs)

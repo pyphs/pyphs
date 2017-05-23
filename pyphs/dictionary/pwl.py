@@ -7,12 +7,10 @@ Created on Thu May  4 18:59:02 2017
 
 import numpy as np
 import sympy as sp
-from pyphs.numerics.tools import lambdify
 from pyphs.dictionary import edges
 from pyphs import PHSGraph
 from pyphs.misc.io import data_generator
 from pyphs.dictionary.tools import symbols
-from pyphs.core.symbs_tools import simplify as simplify_func
 
 
 class Storage(PHSGraph):
@@ -112,8 +110,7 @@ class Dissipative(PHSGraph):
         return {'nodes': ('N1', 'N2'),
                 'arguments': {}}
 
-        
-                                
+
 def pwl_func(X_lst, Y_lst, symbol=sp.symbols('x'),
              integ=False, y0=0., intconst=0.):
     """
@@ -160,4 +157,3 @@ piecewise-linear analysis. IEEE Transactions on Circuits and Systems, \
         expr = a + b*x + sum(c*abs(x - X))
 
     return expr
-    

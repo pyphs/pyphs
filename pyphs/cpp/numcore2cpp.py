@@ -70,7 +70,7 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
         _file = open(filename, 'w')
         _file.write(string)
         _file.close()
-    data_files = data(nums.method.core.subs, objlabel)
+    data_files = data(nums.method.subs, objlabel)
     for e in exts:
         string = data_files[e]
         filename = path + os.sep + 'data.{0}'.format(e)
@@ -86,7 +86,7 @@ def append_parameters(method, files):
     title = "\n\n// Parameters\n"
     files['h']['private'] += title
     files['h']['private'] += '\nconst unsigned int subs_ref = 0;' + '\n'
-    for i, sub in enumerate(method.core.subs):
+    for i, sub in enumerate(method.subs):
         files['h']['private'] += \
             '\nconst double * {0} = & subs[subs_ref][{1}];'.format(str(sub), i)
 
@@ -150,7 +150,7 @@ def append_constructor(objlabel, files):
 
 def append_constructor_init_matrix(method, objlabel, files):
     title = "\n\n// Constructor with matrix state initalization\n\n"
-    mtype = matrix_type(method.core.dims.x(), 1)
+    mtype = matrix_type(method.dims.x(), 1)
     files['h']['public'] += "{0}{1}({2} &);".format(title, objlabel, mtype)
     files['cpp']['public'] += title
     string = '{0}::{0}({1} & x0)'.format(objlabel, mtype) + '{\n'

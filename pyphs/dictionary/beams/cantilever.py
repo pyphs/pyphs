@@ -79,7 +79,7 @@ def omega_point(kmodes, L, z):
     d = km*L*(-2 + cos(2*km*L))
     f = km*L*cosh(2*km*L)
     b = (d + f - cosh(km*L)*c)/km
-    return a/sqrt(b)
+    return (a/sqrt(b)).evalf()
 
 
 def beamLength(f0, r, m, E):
@@ -310,7 +310,7 @@ class Cantilever(PHSGraph):
             transfo = Transformer(label+'T'+str(i),
                                   (A1, A2,
                                   datum, label+'M'+str(i)),
-                                  alpha=(label+'alpha'+str(i), (o)))
+                                  alpha=(label+'alpha'+str(i), o.evalf()))
             self += transfo
 
             # update nodes

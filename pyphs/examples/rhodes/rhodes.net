@@ -2,5 +2,5 @@ mechanics.source input ('nMass', '#'): type=force;
 mechanics.mass mass ('nMass',): M=('M', 0.2);
 mechanics.felt felt ('nBeam', 'nMass'): A=('A', 100.0); K=('K', 500000.0); B=('B', 2.5); L=('L', 0.015);
 beams.cantilever beam ('nBeam',): f0=55.0; zh=0.15; r=0.001; E=1.8e+11; damping=1; alpha=1e-2; m=7750; nk=5; wh=0.015;
-transducers.Pickup pickup ('nBeam', '#', 'nPick'): Ccoil=330*1e-7; Ncoil=100.; Rb=1e-3; Rp=1e-3; H0=1.; Lh=1e-3; Lv=5e-4;
+transducers.Pickup pickup ('nBeam', '#', 'nPick'): Ccoil=330e-7; Ncoil=100.; Rb=1e-3; Rp=1e-3; H0=1.; Lh=1e-3; Lv=5e-4;
 electronics.source out ('#', 'nPick'): type=voltage;

@@ -31,8 +31,8 @@ def _append_args_pointers(method, files):
     title = "\n\n// Arguments\n"
     files['h']['private'] += title
     files['h']['private'] += \
-        '\n{0} args;\n'.format(matrix_type(len(method.args), 1))
-    for i, arg in enumerate(method.args):
+        '\n{0} args;\n'.format(matrix_type(len(method.args()), 1))
+    for i, arg in enumerate(method.args()):
         files['h']['private'] += \
             '\ndouble * {0} = & args({1}, 0);'.format(str(arg), i)
 

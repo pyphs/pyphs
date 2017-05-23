@@ -17,7 +17,7 @@ import numpy  # numerical tools
 import matplotlib.pyplot as plt  # plot tools
 
 # load the pyphs.PHSNumericalEval class in the current namespace
-from pyphs import PHSCore, PHSNumericalMethod, PHSNumericalCore
+from pyphs import PHSCore, PHSCoreMethod, PHSNumericalCore
 
 # instantiate a pyphs.PHSCore object
 core = PHSCore()
@@ -46,30 +46,30 @@ subs = {L: L_value,
         C: C_value}
 core.subs.update(subs)
 
-core.split_linear()
+core.linear_nonlinear()
 # instantiate a pyphs.PHSNumericalEval object associated with a pyphs.PHSCore
-method = PHSNumericalMethod(core)
+method = PHSCoreMethod(core)
 
 # Explicit Euler update:
 # dx = Mxx*dxH(x) + Mxy*u
 # x = x + dx
 
 # Mxx * dxH
-op_MxxDotdxH = method.operation('dot', ('Mxx', 'dxH'))
+op_MxxDotdxH = method.Operation('dot', ('Mxx', 'dxH'))
 
 # Mxy * u
-op_MxyDotU = method.operation('dot', ('Mxy', 'u'))
+op_MxyDotU = method.Operation('dot', ('Mxy', 'u'))
 
 # Mxx * dxH + Mxy * u
-op_MxxDotX_add_MxyDotU = method.operation('add', (op_MxxDotdxH, op_MxyDotU))
+op_MxxDotX_add_MxyDotU = method.Operation('add', (op_MxxDotdxH, op_MxyDotU))
 
 # dx = (Mxx * dxH + Mxy * u)/fs
-op_update_dx = method.operation('div', (op_MxxDotX_add_MxyDotU, 'fs'))
-method.setoperation('ud_dx', op_update_dx)
+op_update_dx = method.Operation('div', (op_MxxDotX_add_MxyDotU, 'fs'))
+method.setOperation('ud_dx', op_update_dx)
 
 # x += dx
-op_update_x = method.operation('add', ('x', 'dx'))
-method.setoperation('ud_x', op_update_x)
+op_update_x = method.Operation('add', ('x', 'dx'))
+method.setOperation('ud_x', op_update_x)
 
 # clear standard update:
 method.update_actions = list()

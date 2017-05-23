@@ -7,34 +7,33 @@ Created on Sun May 14 16:12:19 2017
 """
 from pyphs import PHSGraph
 from ..connectors import Gyrator
-from ..mechanics import Stiffness
 from ..magnetics import Source, Capacitor
-from ..edges import Observerabs
+from ..edges import Nodeobs
 from ..tools import mappars
 __all__ = ['Pickup']
 
 
 def parameters_JSV2016():
-    pars = { 
-            # Inductance of the pickup [Henries] 
-            'Ccoil':3.30*1e-5, 
+    pars = {
+            # Inductance of the pickup [Henries]
+            'Ccoil': 3.30*1e-5,
             # Nb of pickup coil wire turns
-            'Ncoil':100.,
+            'Ncoil': 100.,
             # Magnetic material radius
-            'Rb':1e-3,
+            'Rb': 1e-3,
             # Pickup coil radius
-            'Rp':1e-3,
+            'Rp': 1e-3,
             # Magnetomotive force of the magnet
-            'H0':-1.,
+            'H0': -1.,
             # [m] horizontal position of the pick-up w.r.t the beam at rest
-            'Lh': 1.5*1e-3, 
+            'Lh': 1.5*1e-3,
             # [m] vertical position of the pick-up w.r.t the beam at rest
-            'Lv': 5e-4, 
+            'Lv': 5e-4,
     }
 
     return pars
 
-    
+
 class Pickup(PHSGraph):
     """
 ======
@@ -49,7 +48,7 @@ label: str
     Pickup label.
 
 nodes : (MEC, N1, N2)
-    Nodes for connection    
+    Nodes for connection
     * MEC is a mechanical node,
     * EL1, EL2 are electrical nodes.
 
@@ -68,32 +67,27 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
 
         pars = parameters_JSV2016()
         pars.update(kwargs)
-        Ccoil = pars.pop('Ccoil')
-        Ncoil = pars.pop('Ncoil')
+        Ccoil = float(pars.pop('Ccoil'))
+        Ncoil = float(pars.pop('Ncoil'))
+        H0 = float(pars.pop('H0'))
         dicpars, subs = mappars(self, **pars)
         print(dicpars)
         print(subs)
         self.core.subs.update(subs)
         # parameters
-        pars = ['Rb', 'Rp', 'H0', 'Lh', 'Lv']
-        Rb, Rp, H0, Lh, Lv = self.core.symbols(pars)
+        pars = ['Rb', 'Rp', 'Lh', 'Lv']
+        Rb, Rp, Lh, Lv = self.core.symbols(pars)
 
         MECA, ELEC1, ELEC2 = nodes
-        
-        
-        observer = Observerabs(label+'obs', (MECA, ))
-        self += observer
-
-        q = observer.core.x[0]
-        dtq = observer.core.w[0]
-
         NMagnet = 'N' + label + 'Magnet'
         NCcoil = 'N' + label + 'Ccoil'
 
         self += Source(label+'Magnet',
                        (self.datum, NMagnet),
-                       **{'type': 'mmf'},
-                       const=pars['H0'])
+                       **{'type': 'mmf',
+#                          'const': H0,
+                          })
+
         def f(q, dtq):
             """
             cf JSV Rhodes eq (25)
@@ -103,8 +97,13 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
             f1 = (q - Rp + Lv)**2 + Lh**2
             f2 = (q + Rp + Lv)**2 + Lh**2
             return 2*Rb**2*dmu*Rp*((f1-2*Lh**2)/f1**2 - (f2-2*Lh**2)/f2**2)*dtq
-        falpha = f(q, dtq).subs(dicpars)
-        print('falpha: {}'.format(falpha))
+
+        observer = Nodeobs(label+'obs', (MECA, ))
+        self += observer
+        q = observer.core.x[0]
+        dtq = observer.core.w[0]
+
+        falpha = f(q, dtq).simplify().subs(dicpars)
         self += Gyrator(label+'MecToMag',
                         (self.datum, NMagnet, self.datum, NCcoil),
                         alpha=(label+'f', falpha))
@@ -114,16 +113,16 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
         self += Gyrator(label+'MagToElec',
                         (self.datum, NCcoil, ELEC1, ELEC2),
                         alpha=(label+'Ncoil', Ncoil))
+
     @staticmethod
     def metadata():
         return {'nodes': ('MECA', 'ELEC1', 'ELEC2'),
-                'arguments': {'Lp':330*1e-9,
-                              'Ncoil':100.,
-                              'murel':700.,
-                              'Rb':1e-3,
-                              'Rp':1e-3,
-                              'H0':-1.,
-                              'Lh':1.5*1e-3, 
-                              'Lv':5e-4,}
-                              }
-                              
+                'arguments': {'Lp': 330*1e-9,
+                              'Ncoil': 100.,
+                              'murel': 700.,
+                              'Rb': 1e-3,
+                              'Rp': 1e-3,
+                              'H0': -1.,
+                              'Lh': 1.5*1e-3,
+                              'Lv': 5e-4, }
+                }

@@ -6,7 +6,10 @@ Created on Sat Mar  5 13:53:43 2016
 """
 import numpy
 from datetime import datetime
+from ..core.tools import types
 
+
+# =========================================================================== #
 
 def get_date():
     " Return current date and time "
@@ -15,12 +18,19 @@ def get_date():
     return now.strftime(dt_format)
 
 
+# =========================================================================== #
+
 def pause():
+    """
+Pause compatible with Python 2 and Python 3, wait for user to press return.
+    """
     try:
         raw_input()
     except NameError:
         input()
 
+
+# =========================================================================== #
 
 def geteval(obj, attr):
     """
@@ -34,16 +44,22 @@ else return value.
         return elt
 
 
-def norm(lis):
-    """
-    return the norm of a vector given as a list
-    """
-    return numpy.sqrt(numpy.matrix(lis)*numpy.matrix(lis).T)[0, 0]
+# =========================================================================== #
 
+def norm(vec):
+    """
+Return the norm of a vector.
+    """
+    assertions.vector(vec)
+    a = numpy.array(vec)
+    return numpy.sqrt(numpy.einsum('i,i', a, a))
+
+
+# =========================================================================== #
 
 def myrange(N, indi, indf):
     """
-    return 'range(N)' with index 'indi' at position 'indf'
+Return 'range(N)' with index 'indi' at position 'indf'
     """
     lis = list(range(N))
     if indi < indf:
@@ -58,6 +74,8 @@ def myrange(N, indi, indf):
         lis = deb + eli + end
     return lis
 
+
+# =========================================================================== #
 
 def decimate(it, nd=10):
     """
@@ -90,6 +108,8 @@ def decimate(it, nd=10):
     return l
 
 
+# =========================================================================== #
+
 def remove_duplicates(lis):
     """
     Remove duplicate entries from a given list, preserving ordering.
@@ -101,7 +121,19 @@ def remove_duplicates(lis):
     return out_list
 
 
+# =========================================================================== #
+
 def get_strings(obj, remove=None):
+    """
+Get strings in obj recursively.
+
+Example
+-------
+>>> from pyphs.misc.tools import get_strings
+>>> l = ['jkl', ['llm', ['o']], 'r', ['k', ['l']]]
+>>> get_strings(l)
+['jkl', 'llm', 'o', 'r', 'k', 'l']
+    """
     if remove is None:
         remove = list()
     strings = []
@@ -112,3 +144,22 @@ def get_strings(obj, remove=None):
         if obj not in remove:
             strings.append(obj)
     return strings
+
+
+# =========================================================================== #
+
+def find(symbs, allsymbs):
+    """
+Sort elements in symbs according to allsymbs to form and return (args, inds)
+with list of ordered arguments as args and corresponding list of indices in
+allsymbs as inds.
+    """
+    args = []
+    inds = []
+    n = 0
+    for symb in allsymbs:
+        if symb in symbs:
+            args.append(symb)
+            inds.append(n)
+        n += 1
+    return tuple(args), tuple(inds)

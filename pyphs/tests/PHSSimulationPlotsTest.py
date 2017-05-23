@@ -44,13 +44,13 @@ def plot_power_balance_rlc_with_split():
     simu = PHSSimulation(rlc_, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
     simu.data.plot_powerbal(mode='single', show=False)
@@ -84,13 +84,13 @@ def plot_power_balance_nlcore_with_split():
     simu = PHSSimulation(nlcore, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
     simu.data.plot_powerbal(mode='single', show=False)
@@ -125,19 +125,19 @@ def plot_rlc_with_split():
     simu = PHSSimulation(rlc, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
-    print(simu.nums.method.core.w)
-    print(simu.nums.method.core.z)
+    print(simu.nums.method.w)
+    print(simu.nums.method.z)
 
-    dims = simu.nums.method.core.dims
+    dims = simu.nums.method.dims
     # plot u, y
     simu.data.plot([('u', i) for i in range(dims.y())] +
                    [('y', i) for i in range(dims.y())], show=False)

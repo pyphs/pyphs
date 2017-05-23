@@ -8,10 +8,9 @@ Created on Tue May 24 11:20:26 2016
 from __future__ import absolute_import, division, print_function
 from pyphs.config import simulations
 from pyphs.cpp.simu2cpp import simu2cpp
-from pyphs.numerics.method import PHSNumericalMethod
-from pyphs.numerics.numeric import PHSNumericalCore
+from pyphs.numerics import PHSNumericalCore
 from .data import PHSData
-from pyphs.misc.io import open_files, close_files, dump_files, with_files
+from pyphs.misc.io import dump_files, with_files
 import subprocess
 import progressbar
 import time
@@ -65,24 +64,13 @@ class PHSSimulation:
         # store PHSCore
         setattr(self, '_core', core.__deepcopy__())
 
-        self.fs = 0
-        self.it = list()
-
         assert self.config['lang'] in ['c++', 'python']
         self.init_numericalcore()
 
 ###############################################################################
 
-    def init_numericalmethod(self):
-        if not self.fs == self.config['fs']:
-            Method = PHSNumericalMethod
-            self.method = Method(self._core, config=self.config)
-            self.fs = self.config['fs']
-
     def init_numericalcore(self, x0=None):
-        self.init_numericalmethod()
-        setattr(self, 'nums', PHSNumericalCore(self.method,
-                                               config=self.config))
+        setattr(self, 'nums', PHSNumericalCore(self._core, config=self.config))
         if x0 is not None:
             x0 = np.array(x0)
             assert len(x0.shape) == 1, \
@@ -93,10 +81,9 @@ class PHSSimulation:
         if config is None:
             config = {}
         self.config.update(config)
-        self._core.M = self.nums.method.core.M
-        setattr(self, 'data', PHSData(self._core, self.config))
+        setattr(self, 'data', PHSData(self.nums.method, self.config))
         if x0 is None:
-            x0 = np.zeros(self.nums.method.core.dims.x())
+            x0 = np.zeros(self.nums.method.dims.x())
         self.data.init_data(sequ, seqp, x0, nt)
         self.nums.set_x(x0)
 
@@ -155,33 +142,33 @@ class PHSSimulation:
 
         path = os.path.join(self.config['path'], 'data')
         list_of_files = list(self.config['files'])
-        
+
         def process(files):
             if self.config['pbar']:
                 self.init_pb()
-    
+
             # init time step
             self.n = 0
-            
+
             # process
             for (u, p) in zip(seq_u, seq_p):
-            	# update numerics
-                self.nums.update(u=np.array(u), p=np.array(p))
-                
+                # update numerics
+                self.nums.update(u=u, p=p)
+
                 # write to files
                 dump_files(self.nums, files)
-                
+
                 self.n += 1
-                
+
                 # update progressbar
                 if self.config['pbar']:
                     self.update_pb()
-                    
+
             if self.config['pbar']:
                 self.close_pb()
-    
+
             time.sleep(0.1)
-            
+
         with_files(path, list_of_files, process)
         # close_files(files)
 

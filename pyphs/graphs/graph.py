@@ -38,15 +38,10 @@ port-Hamiltonian systems.
         if netlist is not None:
             if isinstance(netlist, str):
                 netlist = PHSNetlist(netlist)
+            elif not isinstance(netlist, PHSNetlist):
+                raise TypeError('Can not understand netlist type {}'.format(type(netlist)))
             self.Netlist = netlist
             self.build_from_netlist()
-
-    def __add__(graph1, graph2):
-        if hasattr(graph1, 'Netlist') and hasattr(graph2, 'Netlist'):
-            graph1.Netlist += graph2.Netlist
-        graph1.core += graph2.core
-        graph1.add_edges_from(graph2.edges(data=True))
-        return graph1
 
     def set_analysis(self, verbose=False, plot=False):
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
@@ -150,6 +145,13 @@ port-Hamiltonian systems.
             change_s = self.split_serial()
             change_p = self.split_parallel()
             flag = any((change_s, change_p))
+
+    def __add__(graph1, graph2):
+        if hasattr(graph1, 'Netlist') and hasattr(graph2, 'Netlist'):
+            graph1.Netlist += graph2.Netlist
+        graph1.core += graph2.core
+        graph1.add_edges_from(graph2.edges(data=True))
+        return graph1
 
     @staticmethod
     def iter_analysis(graph):

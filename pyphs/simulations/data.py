@@ -11,8 +11,7 @@ from pyphs.misc.signals.waves import wavwrite
 from pyphs.plots.data import plot, plot_powerbal
 import os
 import numpy
-from pyphs.numerics.tools import lambdify
-from pyphs.numerics.numeric import PHSNumericalEval
+from pyphs.numerics.tools import lambdify, PHSNumericalEval
 
 
 try:
@@ -198,8 +197,7 @@ dtE_generator: generator
         if DtE == 'deltaH':
             H = lambdify(self.core.x, self.core.H.subs(self.core.subs))
             for x, dx in zip(self.x(**options), self.dx(**options)):
-                xpost = map(lambda tup: numpy.array(sum(tup)), zip(x, dx))
-                x = map(numpy.array, x)
+                xpost = map(lambda tup: numpy.sum(tup), zip(x, dx))
                 yield (H(*xpost) - H(*x))*self.config['fs']
         elif DtE == 'DxhDtx':
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):

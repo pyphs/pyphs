@@ -8,8 +8,8 @@ Created on Sat Dec 31 12:56:16 2016
 from __future__ import absolute_import, division, print_function
 
 from sympy.printing import ccode
-from pyphs.cpp.tools import matrix_type, dereference, indent
-from pyphs.core.symbs_tools import _assert_expr
+from .tools import matrix_type, dereference, indent
+from ..core.tools import types
 import sympy
 
 
@@ -28,15 +28,13 @@ def append_funcs(nums, files, objlabel):
 def _append_funcs_defs(nums, files):
     title = "\n\n// Functions Results Definitions\n"
     files['h']['private'] += title
-    for name in nums.names:
+    for name in nums.method.update_actions_deps():
         if name in nums.method.funcs_names:
             expr = getattr(nums.method, name + '_expr')
-            try:
-                _assert_expr(expr)
+            if isinstance(expr, types.scalar_types):
                 files['h']['private'] += '\ndouble _{0};'.format(name)
-            except AssertionError:
-                mat = sympy.Matrix(getattr(nums.method, name + '_expr'))
-                mtype = matrix_type(mat.shape[0], mat.shape[1])
+            else:
+                mtype = matrix_type(*sympy.Matrix(expr).shape)
                 files['h']['private'] += '\n{0} _{1};'.format(mtype, name)
 
 
@@ -47,13 +45,12 @@ def _append_funcs_get(nums, files, objlabel):
     title = "\n\n// Functions Results Accessors\n"
     files['h']['public'] += title
     files['cpp']['public'] += title
-    for name in nums.names:
+    for name in nums.method.update_actions_deps():
         if name in nums.method.funcs_names:
             expr = getattr(nums.method, name + '_expr')
-            try:
-                _assert_expr(expr)
+            if isinstance(expr, types.scalar_types):
                 h, cpp = _str_scal_func_get(name, objlabel)
-            except AssertionError:
+            else:
                 h, cpp = _str_mat_func_get(nums.method, name, objlabel)
             files['h']['public'] += h
             files['cpp']['public'] += cpp
@@ -63,12 +60,12 @@ def _append_funcs_get_vector(nums, files, objlabel):
     title = "\n\n// Functions Results Accessors\n"
     files['h']['public'] += title
     files['cpp']['public'] += title
-    for name in nums.names:
+    for name in nums.method.update_actions_deps():
         if name in nums.method.funcs_names:
             expr = getattr(nums.method, name + '_expr')
-            try:
-                _assert_expr(expr)
-            except AssertionError:
+            if isinstance(expr, types.scalar_types):
+                pass
+            else:
                 getvec = _str_mat_func_get_vector(nums.method, name, objlabel)
                 h = getvec[0]
                 cpp = getvec[1]
@@ -116,13 +113,12 @@ def _append_funcs_updates(nums, files, objlabel):
     title = "\n\n// Functions Results Updates\n"
     files['h']['private'] += title
     files['cpp']['private'] += title
-    for name in nums.names:
+    for name in nums.method.update_actions_deps():
         if name in nums.method.funcs_names:
             expr = getattr(nums.method, name + '_expr')
-            try:
-                _assert_expr(expr)
+            if isinstance(expr, types.scalar_types):
                 h, cpp = _str_scal_func_update(nums.method, name, objlabel)
-            except AssertionError:
+            else:
                 h, cpp = _str_mat_func_update(nums.method, name, objlabel)
 
             files['h']['private'] += h
@@ -137,7 +133,7 @@ def _str_mat_func_update(method, name, objlabel):
         for m in range(mat.shape[0]):
             expr = mat[m, n]
             symbs = expr.free_symbols
-            if any(symb in method.args for symb in symbs):
+            if any(symb in method.args() for symb in symbs):
                 c = ccode(expr, dereference=dereference(method))
                 update_cpp += '\n_{0}({1}, {2}) = {3};'.format(name, m, n, c)
     update_cpp += '\n};'
@@ -162,13 +158,12 @@ def _str_scal_func_update(method, name, objlabel):
 def _append_funcs_data(nums, files, objlabel):
     title = "\n\n// Functions Results Initialisation Data"
     files['cpp']['data'] += title
-    for name in nums.names:
+    for name in nums.method.update_actions_deps():
         if name in nums.method.funcs_names:
             expr = getattr(nums.method, name + '_expr')
-            try:
-                _assert_expr(expr)
+            if isinstance(expr, types.scalar_types):
                 h = _str_scal_func_init_data(nums.method, name)
-            except AssertionError:
+            else:
                 h = _str_mat_func_init_data(nums.method, name)
             files['cpp']['data'] += '\n' + h
 
@@ -181,7 +176,7 @@ def _str_mat_func_init_data(method, name):
         for m in range(mat.shape[0]):
             expr = mat[m, n]
             symbs = expr.free_symbols
-            if any(symb in method.args for symb in symbs):
+            if any(symb in method.args() for symb in symbs):
                 init_data += "0, "
                 crop = True
             else:
@@ -212,13 +207,12 @@ def _str_scal_func_init_data(method, name):
 def _append_funcs_init(nums, files, objlabel):
     title = "\n\n// Functions Results Initialisation\n"
     files['cpp']['init'] += title
-    for name in nums.names:
+    for name in nums.method.update_actions_deps():
         if name in nums.method.funcs_names:
             expr = getattr(nums.method, name + '_expr')
-            try:
-                _assert_expr(expr)
+            if isinstance(expr, types.scalar_types):
                 cpp = _str_scal_func_init_cpp(name)
-            except AssertionError:
+            else:
                 cpp = _str_mat_func_init_cpp(nums.method, name)
             files['cpp']['init'] += cpp
 

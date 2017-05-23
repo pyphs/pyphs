@@ -44,14 +44,15 @@ simu = PHSSimulation(core, config=config)
 
 # def simulation time
 tmax = 1e-2
-nmax = int(tmax*simu.fs)
-t = [n/simu.fs for n in range(nmax)]
+nmax = int(tmax*simu.config['fs'])
+t = [n/simu.config['fs'] for n in range(nmax)]
 nt = len(t)
+
 
 # def input signal
 def sig(tn, mode='sin'):
     freq = 300.
-    amp = 1000.
+    amp = 1.
     if mode == 'sin':
         pi = numpy.pi
         sin = numpy.sin

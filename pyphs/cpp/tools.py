@@ -30,7 +30,7 @@ Return a formated string associated with the path in simu.config['path']
 
 
 def dereference(method):
-    return method.core.args() + [k for k in method.core.subs]
+    return method.args() + [k for k in method.subs]
 
 
 def matrix_type(dim1, dim2):

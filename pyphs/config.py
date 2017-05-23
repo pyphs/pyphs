@@ -7,6 +7,7 @@ Created on Sat May 21 10:57:32 2016
 
 import numpy
 
+
 ###############################################################################
 
 # Below are the options for the DICTIONARY
@@ -23,10 +24,18 @@ GMIN = 1e-12
 # Define the numerical tolerance such that |x|<EPS <=> x ~ 0
 EPS = numpy.finfo(float).eps
 
+# Define the data type (defualt is float 32bi)
+DTYPE = numpy.finfo(float).dtype.type
 
 ###############################################################################
 
 # Below are the options for SYMBOLIC COMPUTATIONS
+
+# Simplification method for sympy expressions:
+# -'simplify' tries a lot of simplifications and select the best w.r.t
+#   a "length" criterion (slow).
+# - 'factor' tries to factorise expressions (recommanded)
+SIMPLIFY = 'factor'
 
 # Simplification trial time before timeout and abord (expressed in second)
 TIMEOUT = 10.

@@ -16,6 +16,13 @@ from pyphs.core.tools import simplify as simp
 
 from ._types import DTYPE
 
+try:
+    import theano
+    got_theano = True
+except ImportError:
+    got_theano = False
+
+
 
 def theano_lambdify(args, expr):
     """
@@ -128,7 +135,7 @@ f : callable
         raise AttributeError('Missing free_symbols {}'.format(missing_symbols))
 
     # Choose method
-    if theano:  # theano
+    if theano and got_theano:  # theano
         return theano_lambdify(args, expr)
     else:       # numpy
         return numpy_lambdify(args, expr)

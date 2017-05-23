@@ -33,7 +33,7 @@ if  __name__ == '__main__':
               'path': None,             # Path to the results folder
               'pbar': False,      # Display a progress bar
               'timer': False,           # Display minimal timing infos
-              'lang': 'c++',     # in {'python', 'c++'}
+              'lang': 'python',     # in {'python', 'c++'}
 #              'script': None,  # compile and exec binary
 #              'eigen': None,       # path to Eigen library
               }

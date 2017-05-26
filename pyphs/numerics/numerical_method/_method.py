@@ -12,8 +12,8 @@ import sympy as sp
 from pyphs.core.maths import matvecprod, jacobian, sumvecs
 from pyphs.core.tools import free_symbols, simplify
 from pyphs.config import (GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER,
-                          FILES, EPS, MAXIT, SPLIT, EIGEN_PATH, SCRIPT,
-                          LOAD_OPTS, PBAR, FS, simulations)
+                          FILES, EPS, MAXIT, SPLIT, EIGEN_PATH,
+                          LOAD_OPTS, PBAR, FS, FS_SYMBS, simulations)
 from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
 from pyphs import PHSCore
 from ..tools import PHSNumericalOperation
@@ -49,7 +49,6 @@ class PHSCoreMethod(PHSCore):
                       'maxit': {},
                       'split': {},
                       'eigen': {},
-                      'script': {},
                       'load': {}
 
 
@@ -59,14 +58,14 @@ class PHSCoreMethod(PHSCore):
             If None, core.args() is used (the default is None).
 
         """.format(FS, GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER, PBAR,
-                   FILES, EPS, int(MAXIT), SPLIT, EIGEN_PATH, SCRIPT,
+                   FILES, EPS, int(MAXIT), SPLIT, EIGEN_PATH,
                    LOAD_OPTS)
 
         print('Build numerical method...')
 
         print('    Init PHSCoreMethod...')
         # INIT PHSCore object
-        PHSCore.__init__(self, label=core.label)
+        PHSCore.__init__(self, label=core.label+'_method')
         # Copy core content
         for name in (list(set().union(
                           core.attrstocopy,
@@ -82,11 +81,6 @@ class PHSCoreMethod(PHSCore):
                 attr_name = name[1]
             attr = getattr(source, attr_name)
             setattr(target, attr_name, copy.deepcopy(attr))
-
-        if self.label is None:
-            self.label = 'CoreMethod'
-        else:
-            self.label = self.label + '_CoreMethod'
 
         # replace every expressions in subs
         self.substitute(selfexprs=True)
@@ -119,7 +113,7 @@ class PHSCoreMethod(PHSCore):
         self.update_actions = list()
 
         # set sample rate as a symbol...
-        self.fs = self.symbols('f_s')
+        self.fs = self.symbols(FS_SYMBS)
 
         # ...  with associated parameter...
         if self.config['fs'] is None:
@@ -174,18 +168,18 @@ class PHSCoreMethod(PHSCore):
         for name in names:
             if name.startswith('ud_') and not name[3:] in names:
                 names.append(name[3:])
-        return names + ['dx', 'w', 'u', 'p', 'o']
+        return names + ['dx', 'w', 'u', 'p']
 
     def args(self):
         return (self.x + self.dx() + self.w + self.u +
-                self.p + list(self.observers.keys()))
+                self.p + self.o())
 
     def init_args(self):
         needed = self.update_actions_deps()
 
         def names_lnl(s):
             return [s, s+'l', s+'nl']
-        for n in ['x', 'dx', 'w', 'u', 'p', 'v']:
+        for n in ['x', 'dx', 'w', 'u', 'p', 'v', 'o']:
             for name in names_lnl(n):
                 if name in needed:
                     try:
@@ -195,7 +189,7 @@ class PHSCoreMethod(PHSCore):
 
     def setarg(self, name):
         print('        Build {}'.format(name))
-        expr = simplify(geteval(self, name))
+        expr = geteval(self, name)
         # retrieve expr symbols
         symbs = free_symbols(expr)
         # retrieve ordered symbols (args) and indices in self.args
@@ -478,6 +472,13 @@ def set_update_x(method):
     method.preimplicit.append(('x', 'ud_x'))
 
 
+def set_update_observers(method):
+    # update the value of 'o' with the evaluation of 'ud_o'
+    method.setexpr('ud_o', [method.observers[k] for k in method.o()])
+    # add execaction to the update queue
+    method.preimplicit.append(('o', 'ud_o'))
+
+
 def set_update_vl(method):
 
     ijactempFll = method.Operation('inv', ('jactempFll', ))
@@ -572,6 +573,7 @@ def set_execactions(method):
     method.postimplicit = list()
 
     set_update_x(method)
+    set_update_observers(method)
 
     if method.dims.l() > 0:
         set_update_vl(method)

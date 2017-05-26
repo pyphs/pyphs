@@ -22,9 +22,11 @@ from .structure.connectors import port2connector
 from .maths import gradient, jacobian, inverse
 from .structure.dimensions import Dimensions
 from .structure.indices import Indices
-from .tools import types, free_symbols, simplify, substitute_core
+from .tools import types, free_symbols, sympify, substitute_core
 
-from ..latex import texdocument, core2tex
+from ..misc.latex import texdocument, core2tex
+
+from collections import OrderedDict
 
 
 class PHSCore:
@@ -63,6 +65,8 @@ class PHSCore:
         """
 
         # Init label
+        if label is None:
+            label = 'phs'
         self.label = label
 
         # =====================================================================
@@ -74,15 +78,15 @@ class PHSCore:
         self.args_names = ('x', 'dx', 'w', 'u', 'p')
 
         self.attrstocopy = {('dims', '_xl'), ('dims', '_wl'),
-                       'connectors', 'force_wnl', 'subs', 'M', '_dxH',
-                       'symbs_names', 'exprs_names', 'observers'}
+                            'connectors', 'force_wnl', 'subs', 'M', '_dxH',
+                            'symbs_names', 'exprs_names', 'observers'}
 
         # Names for matrix structures
         self.struc_names = ['M', 'J', 'R']
 
         # =====================================================================
 
-        # Gradient of core.H. If None, core.dxH() returns gradient(core.H, core.x).
+        # Returned by core.dxH(). If None, returns gradient(core.H, core.x).
         self._dxH = None
 
         # names for lists of symbols (x, w, ...)
@@ -97,11 +101,11 @@ class PHSCore:
         # List of connectors
         self.connectors = list()
 
-        # Dictionary of substitution {symbol: value}
+        # UNORDERED Dictionary of substitution {symbol: value}
         self.subs = dict()
 
-        # Dictionary of observers {symbol: value}
-        self.observers = dict()
+        # ORDERED Dictionary of observers {symbol: expr}
+        self.observers = OrderedDict()
 
         # List of dissipative variable symbols to be ignored in self.build_R
         self.force_wnl = list()
@@ -118,7 +122,7 @@ class PHSCore:
             self.setsymb(name, types.vector_types[0]())
 
         # init functions
-        self.setexpr('H', sympy.sympify(0))
+        self.setexpr('H', sympify(0))
         self.setexpr('z', types.vector_types[0]())
 
         # Coefficient matrices for linear parts
@@ -161,7 +165,7 @@ class PHSCore:
                 attr_name = name[1]
             attr = getattr(source, attr_name)
             setattr(target, attr_name, copy.copy(attr))
-        core.label = 'copy' if self.label is None else self.label + '_copy'
+        core.label = copy.copy(self.label)
         return core
 
     def __deepcopy__(self, memo=None):
@@ -180,7 +184,7 @@ class PHSCore:
                 attr_name = name[1]
             attr = getattr(source, attr_name)
             setattr(target, attr_name, copy.deepcopy(attr, memo))
-        core.label = 'copy' if core.label is None else core.label + '_copy'
+        core.label = copy.copy(self.label)
         return core
 
     # =========================================================================
@@ -221,6 +225,10 @@ class PHSCore:
         core.subs = {}
         core.subs.update(core1.subs)
         core.subs.update(core2.subs)
+
+        # Update observers dictionary
+        core.observers.update(core1.observers)
+        core.observers.update(core2.observers)
 
         # Set Hamiltonian expression
         core.setexpr('H', core1.H + core2.H)
@@ -267,6 +275,18 @@ class PHSCore:
         matrix and dissipation function z.
         """
         return [self.symbols('g'+str(x)) for x in self.x]
+
+    def o(self):
+        """
+        o
+        *
+
+        Returns the symbols "oi" associated with the i-th keyof dictionary
+        'PHSCore.observers'. It is used in the numerical methods as replacement symbols
+        for the discrete evaluation of observers in the structure
+        matrix and dissipation function z.
+        """
+        return list(self.observers.keys())
 
     def setsymb(self, name, symbs):
         """
@@ -556,7 +576,7 @@ add the connector'.format(i)
         N_connectors = sympy.eye(self.dims.cy()) - self.Mcycy() * Mswitch
 
         try:
-            iN_connectors = inverse(N_connectors, dosimplify=True)
+            iN_connectors = inverse(N_connectors, dosimplify=False)
 
             # Interconnection Matrix due to the connectors
             M_connectors = G_connectors*Mswitch*iN_connectors*O_connectors
@@ -606,7 +626,6 @@ add the connector'.format(i)
         types.scalar_test(H)
         self.x += x
         self.H += H
-        self.H.simplify()
 
     def add_dissipations(self, w, z):
         """
@@ -639,7 +658,7 @@ add the connector'.format(i)
             raise TypeError('Type of w and z should be one of {}'.format(w_types))
         assert len(w) == len(z), 'w and z should have same dimension.'
         self.w += w
-        self.z += simplify(z)
+        self.z += z
 
     def add_ports(self, u, y):
         """

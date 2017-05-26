@@ -7,7 +7,7 @@ Created on Fri Mar  4 00:24:35 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs.config import authors, affiliations, special_chars
-from pyphs.latex.tools import cr
+from .tools import cr
 
 
 def docpreamble(title):

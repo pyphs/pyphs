@@ -82,7 +82,7 @@ def sequ():
 x0 = numpy.array([0., ]*core.dims.x())
 
 # Initialize the simulation
-simu.init(sequ=sequ(), x0=x0, nt=nt,
+simu.init(u=sequ(), x0=x0, nt=nt,
           config={'load': {'imin': 0, 'imax': None, 'decim': 1}})
 # Proceed
 simu.process()

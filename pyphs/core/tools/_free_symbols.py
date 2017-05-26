@@ -47,7 +47,7 @@ Return a set of the free symbols in expression.
 expr must be a sympy.Expr
     """
     types.scalar_test(expr)
-    symbs = sympy.sympify(expr).free_symbols
+    symbs = expr.free_symbols
     return symbs
 
 

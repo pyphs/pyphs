@@ -8,11 +8,11 @@ from .graphs import netlist2core
 from .graphs.netlists import PHSNetlist
 from .numerics import (PHSCoreMethod, PHSNumericalCore,
                        PHSNumericalEval, PHSNumericalOperation)
-from .simulations.simulation import PHSSimulation
+from .numerics.simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
-from .latex import core2tex, netlist2tex, graphplot2tex, texdocument
-from .cpp.numcore2cpp import numcore2cpp
-from .cpp.simu2cpp import simu2cpp
+from .misc.latex import core2tex, netlist2tex, graphplot2tex, texdocument
+from .numerics.cpp.numcore2cpp import numcore2cpp
+from .numerics.cpp.simu2cpp import simu2cpp
 
 __licence__ = \
     "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"

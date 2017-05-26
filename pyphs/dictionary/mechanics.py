@@ -308,7 +308,7 @@ class Felt(PHSGraph):
 
         xnl = symbols('q'+label)
         hnl = sp.Piecewise((0., xnl <= 0.), ((L*K/(B+1))*(xnl/L)**(B+1), True))
-        hnl = hnl.subs(dicpars).simplify()
+        hnl = hnl.subs(dicpars)
         # edge data
         data = {'label': xnl,
                 'type': 'storage',
@@ -317,7 +317,7 @@ class Felt(PHSGraph):
         self.add_edges_from([(nodes[0], nodes[1], data), ])
         self.core.add_storages(xnl, hnl)
         r = sp.Piecewise((0., xnl <= 0.), ((A * L/B)*(xnl/L)**(B-1), True)) # JSV eq (13)
-        r = r.subs(dicpars).simplify()
+        r = r.subs(dicpars)
         wnl = symbols('dtq'+label)
         # edge data
         data = {'label': wnl,

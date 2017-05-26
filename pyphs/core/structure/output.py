@@ -44,7 +44,6 @@ y: list
             Vyw = sympy.zeros(core.dims.y(), 1)
 
         out = list(Vyx + Vyw + Vyu)
-        out = simplify(out)
 
     else:
         out = sympy.Matrix(list(list()))

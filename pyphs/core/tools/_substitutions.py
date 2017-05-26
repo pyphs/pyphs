@@ -156,7 +156,7 @@ def substitute(expr, subs=None):
 # =========================================================================
 
 def substitute_core(core, subs=None, selfall=False, selfexprs=False,
-                    simplify=True, subsofsubs=True):
+                    simplify=False):
     """
     substitute_core
     ***************
@@ -183,8 +183,6 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
     simplify : bool
         If True, every expressions are simplified after substitution (default).
 
-    subsofsubs : bool
-        If True, the substitution dictionary applies to itself beforehand.
     """
 
     # init substitution dic
@@ -193,6 +191,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
 
     # append self subs dic
     if selfall:
+        substitute_core(core, selfexprs=True)
         subs.update(core.subs)
     # append only exprs in core subs dic
     elif selfexprs:
@@ -211,7 +210,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
         expr = getattr(core, name)
         keys = free_symbols(expr).intersection(set(subs.keys()))
         # recast the elements of the substitution dictionary as sympy objects
-        subs_e = dict(map(lambda k, v: (k, sympify(v)),
+        subs_e = dict(map(lambda k, v: (k, v),
                           keys, [subs[k] for k in keys]))
         if expr is None or callable(expr):
             pass

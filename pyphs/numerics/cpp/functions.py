@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 
 from sympy.printing import ccode
 from .tools import matrix_type, dereference, indent
-from ..core.tools import types
+from pyphs.core.tools import types
 import sympy
 
 
@@ -177,11 +177,11 @@ def _str_mat_func_init_data(method, name):
             expr = mat[m, n]
             symbs = expr.free_symbols
             if any(symb in method.args() for symb in symbs):
-                init_data += "0, "
+                init_data += "0., "
                 crop = True
             else:
                 c = ccode(expr, dereference=dereference(method))
-                init_data += '{0}, '.format(c)
+                init_data += 'float({0}), '.format(c)
                 crop = True
     if crop:
         init_data = init_data[:-2]
@@ -197,7 +197,7 @@ def _str_scal_func_init_data(method, name):
         init_data += "0.;"
     else:
         c = ccode(expr, dereference=dereference(method))
-        init_data += '{0};'.format(c)
+        init_data += '{};'.format(c)
     return init_data
 
 

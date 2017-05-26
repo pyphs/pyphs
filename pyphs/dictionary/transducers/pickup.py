@@ -8,7 +8,7 @@ Created on Sun May 14 16:12:19 2017
 from pyphs import PHSGraph
 from ..connectors import Gyrator
 from ..magnetics import Source, Capacitor
-from ..edges import Nodeobs
+from ..edges import PHSObserverec
 from ..tools import mappars
 __all__ = ['Pickup']
 
@@ -69,16 +69,17 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
         pars.update(kwargs)
         Ccoil = float(pars.pop('Ccoil'))
         Ncoil = float(pars.pop('Ncoil'))
-        H0 = float(pars.pop('H0'))
+
+        # remove H0
+        pars.pop('H0')
         dicpars, subs = mappars(self, **pars)
-        print(dicpars)
-        print(subs)
-        self.core.subs.update(subs)
+
         # parameters
         pars = ['Rb', 'Rp', 'Lh', 'Lv']
         Rb, Rp, Lh, Lv = self.core.symbols(pars)
 
-        MECA, ELEC1, ELEC2 = nodes
+        # nodes
+        MASS, ELEC1, ELEC2 = nodes
         NMagnet = 'N' + label + 'Magnet'
         NCcoil = 'N' + label + 'Ccoil'
 
@@ -87,6 +88,10 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
                        **{'type': 'mmf',
 #                          'const': H0,
                           })
+
+        MASS_obs = PHSObserverec(label+'OBS', (self.datum, MASS))
+        self += MASS_obs
+        q, dtq = MASS_obs.core.o()
 
         def f(q, dtq):
             """
@@ -98,14 +103,9 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
             f2 = (q + Rp + Lv)**2 + Lh**2
             return 2*Rb**2*dmu*Rp*((f1-2*Lh**2)/f1**2 - (f2-2*Lh**2)/f2**2)*dtq
 
-        observer = Nodeobs(label+'obs', (MECA, ))
-        self += observer
-        q = observer.core.x[0]
-        dtq = observer.core.w[0]
-
-        falpha = f(q, dtq).simplify().subs(dicpars)
+        falpha = (f(q, dtq)**-1).subs(dicpars)
         self += Gyrator(label+'MecToMag',
-                        (self.datum, NMagnet, self.datum, NCcoil),
+                        (self.datum, NCcoil, self.datum, NMagnet),
                         alpha=(label+'f', falpha))
         self += Capacitor(label+'Ccoil',
                           (self.datum, NCcoil),
@@ -113,6 +113,7 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
         self += Gyrator(label+'MagToElec',
                         (self.datum, NCcoil, ELEC1, ELEC2),
                         alpha=(label+'Ncoil', Ncoil))
+        self.core.subs.update(subs)
 
     @staticmethod
     def metadata():

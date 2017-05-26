@@ -45,7 +45,7 @@ if __name__ == '__main__':
         for el in u():
             yield (0, 1e-3*el, 9.)
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
 

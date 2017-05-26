@@ -27,6 +27,8 @@ EPS = numpy.finfo(float).eps
 # Define the data type (defualt is float 32bi)
 DTYPE = numpy.finfo(float).dtype.type
 
+# Symbol for sample rate in symbolic numerical scheme PHSCoreMethod
+FS_SYMBS = 'F_S'
 ###############################################################################
 
 # Below are the options for SYMBOLIC COMPUTATIONS
@@ -92,58 +94,7 @@ special_chars = ['#']
 # !!! This should be a raw string (especially for Windows user) !!!!
 EIGEN_PATH = r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen'
 
-# You can automatize the compilation and execution of the c++ files by giving a
-# shell script in "cpp_build_and_run_script" below. It is executed when the
-# option "langage='c++'"" is used for the simulations. You can use the keyword
-# 'simulation_path' to recover the path of the current PHobject (it is replaced
-# at execution)
-xcode_template_path = '/Users/Falaize/Documents/DEV/c++/xcode_template_pyphs'
-SCRIPT = """
-
-echo "Copy xcode template"
-mkdir simulation_path/xcode
-cp -r """ + xcode_template_path + """/* simulation_path/xcode
-
-echo "Copy cpp files"
-cp -r simulation_path/cpp/* simulation_path/xcode/xcode_template_pyphs/
-
-echo "Build release"
-xcodebuild -project simulation_path/xcode/xcode_template_pyphs.xcodeproj -alltargets \
--configuration Release
-
-echo "Run"
-simulation_path/xcode/build/Release/xcode_template_pyphs
-
-"""
-
-# The following is an example which uses xcode on mac osx. First, generate the
-# c++ code for a dummy PortHamiltonianObject, Second, init an empty xcode
-# project named "xcode_template_pyphs" Third, associate the dummmy pyphs c++
-# files to that xcode project (this is to create the structure), and choose
-# the compilation options to your liking and save. Finally, uncomment the
-# following and inform the path to your template:
-#
-# XCODE_PATH = '/Users/.../xcode_template_pyphs'
-#
-# SCRIPT = """
-#
-# echo "Copy the xcode template project in the current 'simulation_path'"
-# mkdir simulation_path/xcode
-# cp -r """ + XCODE_PATH + """/* simulation_path/xcode
-#
-# echo "Copy the cpp files in the xcode template project"
-# cp -r simulation_path/cpp/* simulation_path/xcode/xcode_template_pyphs/
-#
-# echo "Build the xcode template project for release"
-# xcodebuild -project simulation_path/xcode/xcode_template_pyphs.xcodeproj \
-# -alltargets -configuration Release
-#
-# echo "Execute the xcode template project"
-# simulation_path/xcode/build/Release/xcode_template_pyphs
-#
-# """
-
-###############################################################################
+ ###############################################################################
 
 # Below are the options for SIMULATIONS
 
@@ -162,6 +113,9 @@ THETA = 0.5
 # Path to save the simulation results. If None, the current
 # working directory is used.
 SIMULATION_PATH = None
+
+# Activate the use of theano for numerical evaluations.
+THEANO = False
 
 # Simulation language in {'python', 'c++'}
 # Notice the 'c++' option need an appropriate configuration
@@ -204,8 +158,8 @@ simulations = {'fs': FS,
                'maxit': int(MAXIT),
                'split': SPLIT,
                'eigen': EIGEN_PATH,
-               'script': SCRIPT,
-               'load': LOAD_OPTS}
+               'load': LOAD_OPTS,
+               'theano': THEANO}
 
 ###############################################################################
 

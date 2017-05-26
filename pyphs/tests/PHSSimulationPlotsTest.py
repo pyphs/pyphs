@@ -50,7 +50,7 @@ def plot_power_balance_rlc_with_split():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
     simu.data.plot_powerbal(mode='single', show=False)
@@ -90,7 +90,7 @@ def plot_power_balance_nlcore_with_split():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
     simu.data.plot_powerbal(mode='single', show=False)
@@ -131,7 +131,7 @@ def plot_rlc_with_split():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
     print(simu.nums.method.w)

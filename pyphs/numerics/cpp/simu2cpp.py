@@ -5,25 +5,52 @@ Created on Tue Jun 28 14:31:08 2016
 @author: Falaize
 """
 
-from pyphs.cpp.numcore2cpp import numcore2cpp
 from .tools import indent, main_path, SEP
 from .preamble import str_preamble
+from .cmake import cmake_write
 import os
 
 
-def simu2cpp(simu, objlabel=None):
-    if objlabel is None:
-        objlabel = 'core'.upper()
-    path = main_path(simu) + SEP + 'cpp'
-    if not os.path.exists(path):
-        os.mkdir(path)
-    numcore2cpp(simu.nums, objlabel=objlabel, path=path,
-                eigen_path=simu.config['eigen'])
-    filename = path + SEP + 'main.cpp'
+def simu2cpp(simu):
+    objlabel = simu.nums.label
+    path = simu.cpp_path
+    src_path = simu.src_path
+
+    # Generate simu.cpp
+    filename = os.path.join(src_path, 'simu.cpp')
     _file = open(filename, 'w')
-    string = main(simu, objlabel)
-    _file.write(string)
+    _file.write(main(simu, objlabel.upper()))
     _file.close()
+
+    # Generate CMakeLists.txt
+    cmake_write(objlabel, path)
+
+    # Generate bash script
+    simu.bash_script_path = os.path.join(path, '{}.sh'.format(objlabel))
+    f = open(simu.bash_script_path, 'w')
+    f.write(bash_script_template(path, objlabel.lower()))
+    f.close()
+
+    # give execution rights on the bash script
+    simu._system_call('chmod +x {}'.format(simu.bash_script_path))
+
+
+def bash_script_template(path, label):
+    return """
+echo "chg dir to {0}"
+cd {0}
+
+echo "Make build"
+cmake . -Bbuild
+
+echo "Binary build"
+cmake --build build -- -j3
+
+echo "exec .{1}bin{1}{2}"
+.{1}bin{1}{2}
+        """.format(path,
+                   os.path.sep,
+                   label)
 
 
 def main(simu, objlabel):

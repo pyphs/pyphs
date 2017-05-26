@@ -32,7 +32,7 @@ Safe dot product of a matrix whith shape (m, n) and a vector (list)
     m, n = mat.shape
     assert l == n
     if l == 0:
-        res = [sympy.sympify(0.), ]*m
+        res = sympy.zeros(1, m).tolist()[0]
     else:
         res = mat.dot(vec)
         if m == 1:

@@ -34,6 +34,7 @@ if  __name__ == '__main__':
               'pbar': False,      # Display a progress bar
               'timer': False,           # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
+              'theano': True
 #              'script': None,  # compile and exec binary
 #              'eigen': None,       # path to Eigen library
               }
@@ -47,7 +48,7 @@ if  __name__ == '__main__':
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
 

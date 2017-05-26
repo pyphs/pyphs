@@ -8,9 +8,9 @@ from __future__ import absolute_import, division, print_function
 
 import networkx
 import numpy
-from pyphs.misc.tools import myrange, pause
-from pyphs.config import datum
-from pyphs.plots.graphs import plot_analysis
+from ..misc.tools import myrange, pause
+from ..config import datum
+from ..misc.plots.graphs import plot_analysis
 from .exceptions import PHSUndefinedPotential
 
 

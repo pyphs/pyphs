@@ -10,18 +10,19 @@ import sympy
 from sympy.printing.theanocode import theano_function
 
 import numpy
+import copy
 
 from pyphs.core.tools import types, free_symbols, substitute
 from pyphs.core.tools import simplify as simp
 
 from ._types import DTYPE
 
+# Test for theano installed
 try:
-    import theano
+    from theano import tensor as T
     got_theano = True
 except ImportError:
     got_theano = False
-
 
 
 def theano_lambdify(args, expr):
@@ -48,6 +49,7 @@ Lambdify expression expr w.r.t arguments args using theano.
         def getslice(f):
             return numpy.asarray(f, dtype=DTYPE)
 
+    # theano does not accept sympy numbers as output...
     expr_lambda = theano_function(args, expr, **theano_opts)
 
     return lambda *args: getslice(expr_lambda(*args))
@@ -74,7 +76,7 @@ Lambdify expression expr w.r.t arguments args using numpy.
     return lambda *args: getslice(expr_lambda(*args))
 
 
-def lambdify(args, expr, subs=None, simplify=True, theano=True):
+def lambdify(args, expr, subs=None, simplify=False, theano=True):
     """
 lambdify
 ********
@@ -115,6 +117,8 @@ Return
 f : callable
     Fast evaluation of expr provided len(args) numerical values.
     """
+    # Avoid side effects of simplifications and substitutions
+    expr = copy.copy(expr)
 
     # Check for types
     types.is_known_test(expr)
@@ -132,7 +136,7 @@ f : callable
 
     missing_symbols = free_symbols(expr).difference(args)
     if not len(missing_symbols) == 0:
-        raise AttributeError('Missing free_symbols {}'.format(missing_symbols))
+        raise AttributeError('Missing free symbols {}'.format(missing_symbols))
 
     # Choose method
     if theano and got_theano:  # theano

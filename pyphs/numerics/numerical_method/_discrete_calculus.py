@@ -49,13 +49,13 @@ def discrete_gradient(H, x, dx, numtol=EPS):
     dxHd = []
     for i in range(nx):
         Hpost = H.subs(x[i], x[i] + dx[i])
-        dxh = simplify((Hpost - H)/dx[i])
-        dxh0 = simplify(H.diff(x[i]).doit())
+        dxh = (Hpost - H)/dx[i]
+        dxh0 = H.diff(x[i]).doit()
         dxhi = sympy.Piecewise((dxh, dx[i] < -numtol),
                                (dxh0, dx[i] < numtol),
                                (dxh, True))
         dxHd.append(dxhi)
-    return simplify(dxHd)
+    return dxHd
 
 
 def gradient_theta(H, x, dx, theta=0.):
@@ -98,7 +98,7 @@ def gradient_theta(H, x, dx, theta=0.):
         subs[xi] = xi+theta*dxi
     for i, dxh in enumerate(dxHd):
         dxHd[i] = dxh.subs(subs)
-    return simplify(dxHd)
+    return dxHd
 
 
 def gradient_trapez(H, x, dx):
@@ -141,4 +141,4 @@ def gradient_trapez(H, x, dx):
         subs[xi] = xi+dxi
     for i, dxh in enumerate(dxHd):
         dxHd[i] = 0.5*(dxh + dxh.subs(subs))
-    return simplify(dxHd)
+    return dxHd

@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 
 from pyphs.misc.io import data_generator, write_data
 from pyphs.misc.signals.waves import wavwrite
-from pyphs.plots.data import plot, plot_powerbal
+from pyphs.misc.plots.data import plot, plot_powerbal
 import os
 import numpy
 from pyphs.numerics.tools import lambdify, PHSNumericalEval
@@ -195,7 +195,8 @@ dtE_generator: generator
                    'decim': options['decim'] if decim is None else decim}
 
         if DtE == 'deltaH':
-            H = lambdify(self.core.x, self.core.H.subs(self.core.subs))
+            H = lambdify(self.core.x, self.core.H.subs(self.core.subs),
+                         theano=self.config['theano'])
             for x, dx in zip(self.x(**options), self.dx(**options)):
                 xpost = map(lambda tup: numpy.sum(tup), zip(x, dx))
                 yield (H(*xpost) - H(*x))*self.config['fs']
@@ -234,10 +235,11 @@ pd_generator: generator
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
 
-        expr_R = self.core.R().subs(self.core.subs)
+        expr_R = self.core.R().subs(self.core.subs).simplify()
         R, _, R_inds = PHSNumericalEval._expr_to_numerics(expr_R,
                                                           self.core.args(),
-                                                          True)
+                                                          True,
+                                                          theano=self.config['theano'])
         for w, z, a, b, args in zip(self.w(**options),
                                     self.z(**options),
                                     self.a(**options),
@@ -540,7 +542,7 @@ No output
         self._build_generators()
 
     def wavwrite(self, name, index, path=None, gain=1.,
-                 fs=None, normalize=False, timefades=0.):
+                 fs=None, normalize=True, timefades=0.):
         """
 ========
 wavwrite
@@ -582,12 +584,11 @@ pyphs.misc.signals.waves.wavwrite
         if fs is None:
             fs = self.config['fs']
         if path is None:
-            path = self.config['path'] + os.sep + name
-        data = getattr(self, name)
-        sig = []
-        for el in data():
-            s = gain*el[index]
-            sig.append(s)
+            path = self.config['path'] + os.sep + name + str(index)
+        args = {'ind': index,
+                'imin': 0, 'imax': None, 'decim': 1,
+                'postprocess': lambda e: gain*e}
+        sig = getattr(self, name)(**args)
         wavwrite(sig, self.config['fs'], path,
                  fs_out=fs, normalize=normalize, timefades=timefades)
 

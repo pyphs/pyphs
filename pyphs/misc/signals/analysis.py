@@ -5,9 +5,9 @@ Created on Wed Jun  8 18:56:56 2016
 @author: Falaize
 """
 from .processing import lowpass
-from pyphs.plots.tools import (activate_latex, annotate, setticks, dec,
+from pyphs.misc.plots.tools import (activate_latex, annotate, setticks, dec,
                                standard)
-from pyphs.plots.fonts import globalfonts
+from pyphs.misc.plots.fonts import globalfonts
 import numpy as np
 
 

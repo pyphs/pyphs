@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jan 14 11:50:23 2017
+Created on Wed May 24 23:01:21 2017
 
 @author: Falaize
 """
@@ -11,26 +11,25 @@ from __future__ import absolute_import, division, print_function
 import os
 import numpy
 import matplotlib.pyplot as plt
-from pyphs import PHSSimulation, PHSNetlist, PHSGraph
-from pyphs.misc.signals.waves import wavwrite
-
+from pyphs import PHSSimulation, PHSNetlist, PHSGraph, signalgenerator
+from pyphs.misc.tools import interleave
 
 # ---------------------------  NETLIST  ------------------------------------- #
-label = 'rhodes'
+label = 'pickup'
 this_script = os.path.realpath(__file__)
 here = this_script[:this_script.rfind(os.sep)]
 netlist_filename = here + os.sep + label + '.net'
 netlist = PHSNetlist(netlist_filename)
 
 # ---------------------------  GRAPH  --------------------------------------- #
-graph = PHSGraph(netlist=netlist)
+graph = PHSGraph(netlist=netlist, label=label)
 
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
 
 # ---------------------------  SIMULATION  ---------------------------------- #
 if __name__ == '__main__':
-
+#
     core.build_R()
 
     # Define the simulation parameters
@@ -53,53 +52,57 @@ if __name__ == '__main__':
 
     # Instanciate PHSSimulation class
     simu = PHSSimulation(core, config=config)
-
     def ordering(name, *args):
         def get_index(e):
             symb = simu.nums.method.symbols(e)
             return getattr(simu.nums.method, name).index(symb)
         return list(map(get_index, args))
 
-    order = ordering('y', 'yout', 'ypickupMagnet')
+    order = ordering('y', 'yPMagnet', 'yOUT', 'yIN')
 
     # def simulation time
-    tmax = 5
+    tmax = .1
     nmax = int(tmax*simu.config['fs'])
     t = [n/simu.config['fs'] for n in range(nmax)]
     nt = len(t)
-    vin_max = 100  # [m/s] Maximal initial velocity of the hammer
-    sig = list()
-    for vin in numpy.linspace(0, vin_max, 6)[1:]:
-        t0 = 1e-2  # [s] time between init of velocity and impact
-        qh0 = -vin*t0  # [m] Hammer's initial position w.r.t the beam at rest
-        # def generator for sequence of inputs to feed in the PHSSimulation object
-        def sequ():
-            """
-            generator of input sequence for PHSSimulation
-            """
-            for tn in t:
-                # numpy.array([u1, u2, ...])
-                yield numpy.array([[0., 1.][i] for i in order])
 
-        # state initialization
-        # !!! must be array with shape (core.dims.x(), )
-        x0 = numpy.array([0., ]*core.dims.x())
-        core_simu = simu.nums.method
-        x0[core_simu.x.index(core.symbols('qfelt'))] = qh0
-        x0[core_simu.x.index(core.symbols('xmass'))] = vin
+    # def input signal (impulse force)
+    def sig_impulse(tn):
+        # onset time
+        start = 10./config['fs']
+        # duration
+        dur = 0.5e-2
+        # amplitude
+        amp = 100.
+        return amp if start <= tn < start + dur else 0.
 
-        # Initialize the simulation
-        simu.init(u=sequ(), x0=x0, nt=nt)
+    # def generator for sequence of inputs to feed in the PHSSimulation object
+    def sequ():
+        """
+        generator of input sequence for PHSSimulation
+        """
+        for un in signalgenerator(which='sin', tsig=tmax, fs=simu.config['fs'],
+                                  A=0.5, f0=100., ramp_on=True)():
+            # !!! must be array with shape (core.dims.u(), )
+            yield numpy.array(list(map(lambda i: [1., 0., un][i], order)))  # numpy.array([u1, u2, ...])
 
-        # Proceed
-        simu.process()
+    # Initialize the simulation
+    simu.init(u=sequ(), nt=nt)
 
-        wave_path = os.path.join(here, 'ypickup_{}={}'.format('vin', str(vin)))
-        simu.data.wavwrite('y', order[1], path=wave_path)
+    # Proceed
+    simu.process()
 
-        sig += list(simu.data.y(order[1], decim=1))
-        simu.data.plot([('x', 0), ('dtx', 0), ('y', 1)], load={'imin':100, 'imax':1000})
+    plt.figure()
+    x_symbs = core.x
+    plots = ([('u', order[2]), ] +
+             interleave([('x', e) for e in map(core.x.index, x_symbs)],
+                        [('dx', e) for e in map(core.x.index, x_symbs)]) +
+             [('y', order[1])])
+    simu.data.plot(plots)
 
-        pass
+    plt.figure()
+    simu.data.plot([('x', i) for i in range(core.dims.x())])
 
-    wavwrite(sig, simu.config['fs'], 'ypickup', normalize=True)
+    plt.figure()
+    simu.data.plot_powerbal()
+    pass

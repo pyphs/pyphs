@@ -40,7 +40,7 @@ if __name__ == '__main__':
 #            yield np.array([u, ])
 #
 #    nt = int(fs*tsig)
-#    simu.init(sequ=sequ(), nt=nt)
+#    simu.init(u=sequ(), nt=nt)
 #
 #    simu.process()
 #

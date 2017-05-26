@@ -36,7 +36,7 @@ class PHSNumericalCore(object):
         config: dict or None
             A dictionary of simulation parameters. If None, the standard
             pyphs.config.simulations is used (the default is None):
-            config = {'fs': FS,
+            config = {'fs': {},
                       'grad': {},
                       'theta': {},
                       'path': {},
@@ -61,6 +61,7 @@ class PHSNumericalCore(object):
 
         mums : PHSNumericalCore
         """
+        self.label = core.label
 
         # Manage configuration
         self.config = simulations.copy()  # init with standard
@@ -242,7 +243,8 @@ def evalfunc_generator(nums, name):
     expr = getattr(nums.method, name + '_expr')
     args = getattr(nums.method, name + '_args')
     inds = getattr(nums.method, name + '_inds')
-    func = lambdify(args, expr, subs=nums.method.subs)
+    func = lambdify(args, expr, subs=nums.method.subs, 
+                    theano=nums.config['theano'])
 
     if len(inds) > 0:
         inds = numpy.array(inds)

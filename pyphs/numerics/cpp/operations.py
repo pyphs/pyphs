@@ -8,7 +8,7 @@ Created on Sat Dec 31 14:37:48 2016
 
 from __future__ import absolute_import, division, print_function
 
-from pyphs.cpp.tools import matrix_type, indent
+from .tools import matrix_type, indent
 import numpy
 
 

@@ -163,3 +163,12 @@ allsymbs as inds.
             inds.append(n)
         n += 1
     return tuple(args), tuple(inds)
+
+
+# =========================================================================== #
+
+def interleave(l1, l2):
+    """
+    Interleave the elements in lists l1 and l2 (same length).
+    """
+    return [val for pair in zip(l1, l2) for val in pair]

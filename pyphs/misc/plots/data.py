@@ -8,7 +8,7 @@ Created on Mon Jun 27 13:12:43 2016
 from __future__ import absolute_import, division, print_function
 from .multiplots import multiplot
 from .singleplots import singleplot
-from pyphs.latex.tools import nice_label
+from ..latex.tools import nice_label
 import os
 
 
@@ -34,7 +34,6 @@ multifigure
     datax = [el for el in data.t(imin=imin, imax=imax, decim=decim)]
 
     if mode == 'single':
-        from pyphs.plots.singleplots import singleplot
         datay = list()
         datay.append([el for el in data.dtE(imin=imin, imax=imax,
                                             decim=decim, DtE=DtE)])
@@ -47,7 +46,6 @@ multifigure
         singleplot(datax, datay, show=show, **config)
     else:
         assert mode == 'multi'
-        from pyphs.plots.multiplots import multiplot
         datay = list()
         datay.append([el for el in data.dtE(imin=imin, imax=imax,
                                             decim=decim, DtE=DtE)])

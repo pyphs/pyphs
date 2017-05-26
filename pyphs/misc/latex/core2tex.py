@@ -7,8 +7,8 @@ Created on Fri Dec 30 14:53:41 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs.latex.tools import obj2tex, cr
-from pyphs.latex.latex import dic2table
+from .tools import obj2tex, cr
+from .latex import dic2table
 
 
 def symbol_names(core):

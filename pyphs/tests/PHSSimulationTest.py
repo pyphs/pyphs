@@ -19,7 +19,7 @@ from pyphs.examples.rlc.rlc import core
 
 from pyphs import PHSSimulation, signalgenerator
 
-from pyphs.cpp.simu2cpp import simu2cpp
+from pyphs.numerics.cpp.simu2cpp import simu2cpp
 import os
 import shutil
 
@@ -53,7 +53,7 @@ def simulation_rlc_with_split():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
     shutil.rmtree(path)
@@ -70,9 +70,9 @@ def simulation_rlc_cpp():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
-              'lang': 'python',     # in {'python', 'c++'}
+              'lang': 'c++',     # in {'python', 'c++'}
               'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
@@ -86,8 +86,7 @@ def simulation_rlc_cpp():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
-
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu2cpp(simu)
 
     shutil.rmtree(path)
@@ -105,7 +104,7 @@ def simulation_rlc_without_split():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
               'script': None,  # compile and exec binary
@@ -121,7 +120,7 @@ def simulation_rlc_without_split():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
 
@@ -139,7 +138,7 @@ def simulation_rlc_without_split_trapez():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
               'script': None,  # compile and exec binary
@@ -155,7 +154,7 @@ def simulation_rlc_without_split_trapez():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
 
@@ -173,7 +172,7 @@ def simulation_rlc_without_split_theta():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
               'script': None,  # compile and exec binary
@@ -189,7 +188,7 @@ def simulation_rlc_without_split_theta():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
 
@@ -207,7 +206,7 @@ def simulation_rlc_plot():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
               'script': None,  # compile and exec binary
@@ -223,7 +222,7 @@ def simulation_rlc_plot():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
     simu.data.plot_powerbal(mode='multi')
@@ -242,7 +241,7 @@ def simulation_nlcore_full():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
               'script': None,  # compile and exec binary
@@ -291,7 +290,7 @@ def simulation_nlcore_full():
     x0 = (0., 0.)
 
     # Initialize the simulation
-    simu.init(sequ=sequ(), x0=x0, nt=nt)
+    simu.init(u=sequ(), x0=x0, nt=nt)
 
     # Proceed
     simu.process()

@@ -7,11 +7,11 @@ Created on Tue Jun 28 13:47:47 2016
 
 from __future__ import absolute_import, division, print_function
 
-from pyphs.cpp.preamble import str_preamble
-from pyphs.cpp.arguments import append_args
-from pyphs.cpp.functions import append_funcs
-from pyphs.cpp.operations import append_ops
-from pyphs.cpp.tools import indent, matrix_type, SEP, formatPath
+from .preamble import str_preamble
+from .arguments import append_args
+from .functions import append_funcs
+from .operations import append_ops
+from .tools import indent, matrix_type, SEP, formatPath
 from pyphs.config import EIGEN_PATH as config_eigen_path
 import os
 

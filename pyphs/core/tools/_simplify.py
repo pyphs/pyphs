@@ -215,8 +215,7 @@ expr_simp: dict
     for k in expr.keys():
         new_k = timeout_simplify(k, **kwargs)
         new_v = timeout_simplify(expr[k], **kwargs)
-        finished = not(any(ek == 'not finished' for ek in new_k) or
-                       any(ev == 'not finished' for ev in new_v))
+        finished = not(new_k == 'not finished' or new_v == 'not finished')
         if finished:
             expr[new_k] = new_v
     return expr if finished else 'not finished'

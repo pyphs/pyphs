@@ -32,7 +32,7 @@ class PHSNumericalEval(object):
         for k in subs.keys():
             if not isinstance(subs[k], (int, float)):
                 try:
-                    subs[k] = subs[k].subs(subs).simplify()
+                    subs[k] = subs[k].subs(subs)
                 except AttributeError:
                     pass
         # for each function, subs, stores func args, args_inds and lambda func
@@ -52,7 +52,7 @@ class PHSNumericalEval(object):
             setattr(self, name+'_inds', inds)
 
     @staticmethod
-    def _expr_to_numerics(expr, allargs, vectorize):
+    def _expr_to_numerics(expr, allargs, vectorize, **kwargs):
         """
         get symbols in expr, and return lambdified evaluation, \
 arguments symbols and arguments position in list of all arguments
@@ -60,7 +60,7 @@ arguments symbols and arguments position in list of all arguments
         symbs = free_symbols(expr)
         args, inds = find(symbs, allargs)  # args are symbs reorganized
         if vectorize:
-            func = numpy.vectorize(lambdify(args, expr))
+            func = numpy.vectorize(lambdify(args, expr, **kwargs))
         else:
-            func = lambdify(args, expr)
+            func = lambdify(args, expr, *args)
         return func, args, inds

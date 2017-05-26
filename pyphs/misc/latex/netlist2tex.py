@@ -7,8 +7,8 @@ Created on Fri Dec 30 14:59:51 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs.latex.tools import cr
-from pyphs.latex.latex import dic2array
+from .tools import cr
+from .latex import dic2array
 
 
 def netlist2tex(netlist):

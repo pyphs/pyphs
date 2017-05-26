@@ -7,7 +7,7 @@ Created on Sat Dec 31 12:03:17 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs.cpp.tools import indent, matrix_type
+from .tools import indent, matrix_type
 
 
 def append_args(method, files, objlabel):

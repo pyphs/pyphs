@@ -56,7 +56,7 @@ def plot_power_balance_rlc_with_split():
     simu.data.plot_powerbal(mode='single', show=False)
     simu.data.plot_powerbal(mode='multi', show=False)
 
-    if not os.name.lower().startswith('win'):
+    if not os.name.lower().startswith('nt'):
         shutil.rmtree(path)
     return True
 
@@ -97,7 +97,7 @@ def plot_power_balance_nlcore_with_split():
     simu.data.plot_powerbal(mode='single', show=False)
     simu.data.plot_powerbal(mode='multi', show=False)
 
-    if not os.name.lower().startswith('win'):
+    if not os.name.lower().startswith('nt'):
         shutil.rmtree(path)
     return True
 
@@ -149,7 +149,7 @@ def plot_rlc_with_split():
     simu.data.plot([('dtx', i) for i in range(dims.x())] +
                    [('dxH', i) for i in range(dims.x())], show=False)
 
-    if not os.name.lower().startswith('win'):
+    if not os.name.lower().startswith('nt'):
         shutil.rmtree(path)
     return True
 

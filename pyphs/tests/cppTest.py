@@ -26,6 +26,6 @@ def cpp_nlcore_full():
     path = os.path.join(here, label)
 
     numcore2cpp(nums, objlabel=label, path=path)
-    if not os.name.lower().startswith('win'):
+    if not os.name.lower().startswith('nt'):
         shutil.rmtree(path)
     return True

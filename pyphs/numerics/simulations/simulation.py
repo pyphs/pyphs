@@ -62,6 +62,9 @@ class PHSSimulation:
 
         if self.config['path'] is None:
             self.config['path'] = os.getcwd()
+        
+        if not os.path.exists(self.config['path']):
+            os.mkdir(self.config['path'])
 
         # store PHSCore
         setattr(self, '_core', core.__deepcopy__())

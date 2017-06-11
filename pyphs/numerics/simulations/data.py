@@ -13,7 +13,7 @@ import os
 import numpy
 from pyphs.numerics.tools import lambdify
 from pyphs.misc.tools import find
-from pyphs.core.tools import free_symbols
+from pyphs.core.tools import free_symbols, substitute
 
 try:
     import itertools.izip as zip
@@ -196,13 +196,27 @@ dtE_generator: generator
                    'decim': options['decim'] if decim is None else decim}
 
         if DtE == 'deltaH':
-            H = lambdify(self.core.x, self.core.H.subs(self.core.subs),
-                         theano=self.config['theano'])
-            for x, dx in zip(self.x(**options), self.dx(**options)):
-                xpost = map(lambda tup: numpy.sum(tup), zip(x, dx))
-                xpost = numpy.array(xpost)
-                x = numpy.array(x)
-                yield (H(*xpost) - H(*x))*self.config['fs']
+            H_expr = self.core.H.subs(self.core.subs)
+            H_symbs = free_symbols(H_expr)
+            H_args, H_inds = find(H_symbs, self.core.args())
+            H = lambdify(H_args, H_expr, theano=self.config['theano'])
+            H_args = lambdify(self.core.args(), H_args,
+                              theano=self.config['theano'])
+
+            Hpost_expr = self.core.H.subs(self.core.subs)
+            subs = {}
+            for x, dx in zip(self.core.x, self.core.dx()):
+                subs.update({x: x+dx})
+            Hpost_expr = Hpost_expr.subs(subs)
+            Hpost_symbs = free_symbols(Hpost_expr)
+            Hpost_args, Hpost_inds = find(Hpost_symbs, self.core.args())
+            Hpost = lambdify(Hpost_args, Hpost_expr,
+                             theano=self.config['theano'])
+            Hpost_args = lambdify(self.core.args(), Hpost_args,
+                                  theano=self.config['theano'])
+
+            for arg in self.args(**options):
+                yield (Hpost(*Hpost_args(*arg)) - H(*H_args(*arg)))*self.config['fs']
         elif DtE == 'DxhDtx':
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
                 yield scalar_product(dtx, dxh)

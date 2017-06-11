@@ -73,8 +73,6 @@ def simulation_rlc_cpp():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'c++',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
-              'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(rlc, config=config)

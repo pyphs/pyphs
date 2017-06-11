@@ -10,6 +10,7 @@ from .edges import (PHSPort,
                     PHSDissipativeLinear,
                     PHSStorageLinear, PHSStorageNonLinear)
 from pyphs.dictionary.tools import symbols, mappars
+from pyphs.dictionary.connectors import Transformer
 from pyphs.graphs.netlists import datum
 from pyphs import PHSGraph
 import sympy as sp
@@ -288,7 +289,7 @@ class Felt(PHSGraph):
     kwargs : dictionary with following "key: value"
 
         * 'L': [m] Height of the felt at rest (1.5cm),
-        * 'K': [N/m] Stiffness of the felt (5e5),
+        * 'F': [N] Elastic characteristic force (13.8),
         * 'A': [N.s/m] Felt damping coefficient (1e2),
         * 'B': [d.u] Hysteresis coefficient for the felt (2.5),
 
@@ -297,26 +298,28 @@ class Felt(PHSGraph):
         PHSGraph.__init__(self, label=label)
         dic = {'A': 1e2,  # [N.s/m] Felt damping coefficient
                'B': 2.5,  # [#] Hysteresis coefficient for the felt
-               'K': 5e5,  # [N/m] Stiffness of the felt
+               'F': 13.8,  # [N/m] Elastic characteristic force
                'L': 1.5*1e-2,  # [m] Height of the felt at rest
                }
         dic.update(kwargs)
         dicpars, subs = mappars(self, **dic)
         # parameters
-        pars = ['L', 'K', 'A', 'B']
-        L, K, A, B = symbols(pars)
+        pars = ['L', 'F', 'A', 'B']
+        L, F, A, B = symbols(pars)
 
+        N1, N2 = nodes
         xnl = symbols('q'+label)
-        hnl = sp.Piecewise((0., xnl <= 0.), ((L*K/(B+1))*(xnl/L)**(B+1), True))
+        hnl = sp.Piecewise((0., xnl <= 0.), ((L*F/(B+1))*(xnl/L)**(B+1), True))
         hnl = hnl.subs(dicpars)
         # edge data
         data = {'label': xnl,
                 'type': 'storage',
                 'ctrl': 'e',
                 'link': None}
-        self.add_edges_from([(nodes[0], nodes[1], data), ])
+        self.add_edges_from([(N1, N2, data), ])
         self.core.add_storages(xnl, hnl)
-        r = sp.Piecewise((0., xnl <= 0.), ((A * L/B)*(xnl/L)**(B-1), True)) # JSV eq (13)
+
+        r = sp.Piecewise((0., xnl <= 0.), ((A * L/B)*(xnl/L)**(B-1), True))
         r = r.subs(dicpars)
         wnl = symbols('dtq'+label)
         # edge data
@@ -324,8 +327,9 @@ class Felt(PHSGraph):
                 'type': 'dissipative',
                 'ctrl': 'e',
                 'link': None}
-        self.add_edges_from([(nodes[0], nodes[1], data), ])
+        self.add_edges_from([(N1, N2, data), ])
         self.core.add_dissipations(wnl, r*wnl)
+
         self.core.subs.update(subs)
 
     @staticmethod

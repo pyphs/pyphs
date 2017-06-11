@@ -21,9 +21,11 @@ def cmake_write(project_name, path):
     path : str
         Path to the directory where the build shall be made.
     """
-    f = open(os.path.join(path, 'CMakeLists.txt'), 'w')
+    filepath = os.path.join(path, 'CMakeLists.txt')
+    f = open(filepath, 'w+')
     f.write(_template(project_name))
     f.close()
+    return filepath
 
 
 def _template(project_name):
@@ -52,8 +54,8 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(SOURCE_FILES
     src/core.cpp
     src/core.h
-    src/data.cpp
-    src/data.h
+    src/parameters.cpp
+    src/parameters.h
     src/simu.cpp)
 
 # Set executable with same name as the project

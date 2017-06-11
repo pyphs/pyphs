@@ -82,7 +82,7 @@ class PHSSimulation:
 
 ###############################################################################
 
-    def init(self, nt=None, u=None, p=None, x0=None):
+    def init(self, nt=None, u=None, p=None, x0=None, dx0=None, w0=None):
         """
     init
     ****
@@ -118,8 +118,12 @@ class PHSSimulation:
         if x0 is None:
             x0 = np.zeros(self.nums.method.dims.x())
         self.nums.set_x(x0)
-        dx0 = np.zeros(self.nums.method.dims.x())
+        if dx0 is None:
+            dx0 = np.zeros(self.nums.method.dims.x())
         self.nums.set_dx(dx0)
+        if w0 is None:
+            w0 = np.zeros(self.nums.method.dims.w())
+        self.nums.set_w(w0)
         self.data.init_data(u, p, x0, nt)
 
     def process(self):
@@ -223,17 +227,88 @@ class PHSSimulation:
         # build simu.cpp
         simu2cpp(self)
 
+        # go to build folder
+        os.chdir(self.cpp_path)
+
         # execute the bash script
-        self._system_call('{}'.format(self.bash_script_path))
+        self.system_call('./run.sh')
 
     @staticmethod
-    def _system_call(cmd):
-        if sys.platform.startswith('win'):
-            shell = True
+    def system_call(cmd):
+        """
+        Execute a system command.
+
+        Parameter
+        ---------
+
+        cmd : list
+            List of arguments.
+
+        Example
+        -------
+        Change directory with
+        cmd = ['cd', './my/folder']
+        system_call(cmd)
+        """
+        system_call(cmd)
+
+    @staticmethod
+    def execute_bash(text):
+        """
+        Execute a bash script, ignoring lines starting with #
+
+        Parameter
+        ---------
+
+        text : str
+            Bash script content. Execution of each line iteratively.
+        """
+        execute_bash(text)
+
+
+def system_call(cmd):
+    """
+    Execute a system command.
+
+    Parameter
+    ---------
+
+    cmd : list
+        List of arguments.
+
+    Example
+    -------
+
+    Change directory with
+
+    >>> cmd = ['cd', './my/folder']
+    >>> system_call(cmd)
+
+    """
+    if sys.platform.startswith('win'):
+        shell = True
+    else:
+        shell = True
+    print(cmd)
+    p = subprocess.Popen(cmd, shell=shell,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    for line in iter(p.stdout.readline, b''):
+        print(line.decode()),
+
+
+def execute_bash(text):
+    """
+    Execute a bash script, ignoring lines starting with #
+
+    Parameter
+    ---------
+
+    text : str
+        Bash script content. Execution of each line iteratively.
+    """
+    for line in text.splitlines():
+        if line.startswith('#') or len(line) == 0:
+            pass
         else:
-            shell = True
-        p = subprocess.Popen(cmd, shell=shell,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT)
-        for line in iter(p.stdout.readline, b''):
-            print(line.decode()),
+            system_call(line.split())

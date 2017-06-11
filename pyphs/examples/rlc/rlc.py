@@ -20,7 +20,8 @@ netlist_filename = os.path.join(here, label + '.net')
 core = netlist2core(netlist_filename)
 simu = PHSSimulation(core)
 
-if  __name__ == '__main__':
+
+if __name__ == '__main__':
     # Define the simulation parameters
     core.build_R()
 
@@ -33,10 +34,8 @@ if  __name__ == '__main__':
               'path': None,             # Path to the results folder
               'pbar': False,      # Display a progress bar
               'timer': False,           # Display minimal timing infos
-              'lang': 'python',     # in {'python', 'c++'}
-              'theano': True
-#              'script': None,  # compile and exec binary
-#              'eigen': None,       # path to Eigen library
+              'lang': 'c++',     # in {'python', 'c++'}
+              'theano': False
               }
 
     simu = PHSSimulation(core, config=config)
@@ -57,4 +56,8 @@ if  __name__ == '__main__':
     # clean: delete folders 'data' and 'figures'
     shutil.rmtree(os.path.join(here, 'data'))
     shutil.rmtree(os.path.join(here, 'figures'))
+    try:
+        shutil.rmtree(os.path.join(here, 'rlc'))
+    except:
+        pass
     pass

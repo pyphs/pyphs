@@ -11,8 +11,9 @@ from pyphs.misc.signals.waves import wavwrite
 from pyphs.misc.plots.data import plot, plot_powerbal
 import os
 import numpy
-from pyphs.numerics.tools import lambdify, PHSNumericalEval
-
+from pyphs.numerics.tools import lambdify
+from pyphs.misc.tools import find
+from pyphs.core.tools import free_symbols
 
 try:
     import itertools.izip as zip
@@ -199,6 +200,8 @@ dtE_generator: generator
                          theano=self.config['theano'])
             for x, dx in zip(self.x(**options), self.dx(**options)):
                 xpost = map(lambda tup: numpy.sum(tup), zip(x, dx))
+                xpost = numpy.array(xpost)
+                x = numpy.array(x)
                 yield (H(*xpost) - H(*x))*self.config['fs']
         elif DtE == 'DxhDtx':
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
@@ -235,22 +238,24 @@ pd_generator: generator
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
 
-        expr_R = self.core.R().subs(self.core.subs).simplify()
-        R, _, R_inds = PHSNumericalEval._expr_to_numerics(expr_R,
-                                                          self.core.args(),
-                                                          True,
-                                                          theano=self.config['theano'])
+        R_expr = self.core.R().subs(self.core.subs)
+
+        R_symbs = free_symbols(R_expr)
+
+        R_args, R_inds = find(R_symbs, self.core.args())
+
+        R = lambdify(R_args, R_expr, theano=self.config['theano'])
+        R_args = lambdify(self.core.args(), R_args,
+                          theano=self.config['theano'])
         for w, z, a, b, args in zip(self.w(**options),
                                     self.z(**options),
                                     self.a(**options),
                                     self.b(**options),
                                     self.args(**options)):
-            R_args = [args[i] for i in R_inds]
-            R_args = map(numpy.array, R_args)
             yield scalar_product(w, z) + \
                 scalar_product(a,
                                a,
-                               R(*R_args))
+                               R(*R_args(*args)))
 
     def ps(self, imin=None, imax=None, decim=None):
         """
@@ -601,13 +606,32 @@ or multifigure (default is 'single').
             load = self.config['load']
         plot_powerbal(self, mode=mode, DtE=DtE, show=show, **load)
 
-    def plot(self, var_list, load=None, show=True):
+    def plot(self, vars, load=None, show=True, label=None):
         """
-        Plot each 'var'['ind'] in var_list = [(var1, ind1), (...)]
+        Plot simulation data
+
+        Parameters
+        ----------
+
+        vars : list
+            List of variables to plot. Elements can be a single string name or
+            a tuples of strings (name, index). For each string element, every
+            indices of variable name are ploted. For each tuple element, the
+            element index of variable name is ploted.
+
+        load : dict
+            dictionary of signal load options, with keys
+                * 'imin': starting index,
+                * 'imax': stoping index,
+                * 'decim': decimation factor.
+
+        show : bool
+            Acivate the call to matplotlib.pyplot.show
+
         """
         if load is None:
             load = self.config['load']
-        plot(self, var_list, show=show, **load)
+        plot(self, vars, show=show, label=label, **load)
 
 ###########################################################################
 

@@ -5,7 +5,7 @@ Created on Tue Jun 28 14:31:08 2016
 @author: Falaize
 """
 
-from .tools import indent, main_path, SEP
+from .tools import indent, main_path, SEP, make_executable
 from .preamble import str_preamble
 from .cmake import cmake_write
 import os
@@ -18,39 +18,44 @@ def simu2cpp(simu):
 
     # Generate simu.cpp
     filename = os.path.join(src_path, 'simu.cpp')
-    _file = open(filename, 'w')
+    _file = open(filename, 'w+')
     _file.write(main(simu, objlabel.upper()))
     _file.close()
 
     # Generate CMakeLists.txt
-    cmake_write(objlabel, path)
+    simu.cmakelists_path = cmake_write(objlabel, path)
+
+    # Define bash script
+    simu.run_script_path = os.path.join(path, 'run.sh')
+    simu.run_script = bash_script_template(path, objlabel.lower(),
+                                           simu.config['cmake'])
 
     # Generate bash script
-    simu.bash_script_path = os.path.join(path, '{}.sh'.format(objlabel))
-    f = open(simu.bash_script_path, 'w')
-    f.write(bash_script_template(path, objlabel.lower()))
+    f = open(simu.run_script_path, 'w+')
+    f.write(simu.run_script)
     f.close()
+    make_executable(simu.run_script_path)
+    make_executable(simu.cmakelists_path)
 
-    # give execution rights on the bash script
-    simu._system_call('chmod +x {}'.format(simu.bash_script_path))
 
+def bash_script_template(path, label, cmakepath):
+    return """#!/bin/sh
 
-def bash_script_template(path, label):
-    return """
-echo "chg dir to {0}"
+# chg dir to app dir
 cd {0}
 
-echo "Make build"
-cmake . -Bbuild
+# CMake Build
+{3} . -Bbuild
 
-echo "Binary build"
-cmake --build build -- -j3
+# Binary Build
+{3} --build build -- -j3
 
-echo "exec .{1}bin{1}{2}"
+# Binary Exec
 .{1}bin{1}{2}
+
         """.format(path,
                    os.path.sep,
-                   label)
+                   label, cmakepath)
 
 
 def main(simu, objlabel):
@@ -152,8 +157,6 @@ def _str_initvecs(simu):
     string += "\n"
     names = simu.config['files']
     for name in names:
-        print(name)
-        print(getattr(simu.nums, name)())
         val = getattr(simu.nums, name)()
         if len(val.shape) == 0:
             dim = 1

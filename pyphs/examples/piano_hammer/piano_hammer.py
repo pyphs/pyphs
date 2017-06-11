@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jan 14 11:50:23 2017
+Created on Sun Jun 11 11:17:07 2017
 
 @author: Falaize
 """
@@ -12,21 +12,22 @@ import os
 import numpy
 import matplotlib.pyplot as plt
 from pyphs import PHSSimulation, PHSNetlist, PHSGraph
-from pyphs.misc.signals.waves import wavwrite
-
 
 # ---------------------------  NETLIST  ------------------------------------- #
-label = 'rhodes'
+label = 'piano_hammer'
 this_script = os.path.realpath(__file__)
 here = this_script[:this_script.rfind(os.sep)]
 netlist_filename = here + os.sep + label + '.net'
 netlist = PHSNetlist(netlist_filename)
 
+
 # ---------------------------  GRAPH  --------------------------------------- #
 graph = PHSGraph(netlist=netlist)
 
+
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
+
 
 # ---------------------------  SIMULATION  ---------------------------------- #
 if __name__ == '__main__':
@@ -60,10 +61,10 @@ if __name__ == '__main__':
             return getattr(simu.nums.method, name).index(symb)
         return list(map(get_index, args))
 
-    order = ordering('y', 'yOutput', 'yPickupMagnet')
+    order = ordering('y', 'ycontact')
 
     # def simulation time
-    tmax = 5
+    tmax = 1e-1
     nmax = int(tmax*simu.config['fs'])
     t = [n/simu.config['fs'] for n in range(nmax)]
     nt = len(t)
@@ -71,37 +72,43 @@ if __name__ == '__main__':
     sig = list()
 
     # ---------------------------  LOOP  --------------------------------
+    # def generator for sequence of inputs to feed in the PHSSimulation object
+    def sequ():
+        """
+        generator of input sequence for PHSSimulation
+        """
+        for tn in t:
+            # numpy.array([u1, u2, ...])
+            yield numpy.array([[0., 1.][i] for i in order])
 
-    for v_hammer in [1., ]:  # numpy.linspace(1, 10, 10)[0:]:
+    # state initialization
+    # !!! must be array with shape (core.dims.x(), )
+    x0 = numpy.array([0., ]*core.dims.x())
 
-        # def generator for sequence of inputs to feed in the PHSSimulation
-        def sequ():
-            """
-            generator of input sequence for PHSSimulation
-            """
-            for tn in t:
-                # numpy.array([u1, u2, ...])
-                yield numpy.array([[0., 1.][i] for i in order])
+    # shortcut to core method
+    core_simu = simu.nums.method
 
-        # state initialization
-        # !!! must be array with shape (core.dims.x(), )
-        x0 = numpy.array([0., ]*core.dims.x())
+    plt.close('all')
 
-        # shortcut to core method
-        core_simu = simu.nums.method
+    def velocities(vmax):
+        """
+        return a list of 5 equally spaced velocities between 0 and vmax
+        """
+        return numpy.linspace(0, vmax, 6)[1:]
 
+    vmax = 1.
+    for v_hammer in velocities(vmax):
         # Init Hammer velocity
         # v_hammer = 1  # Hammer velocity (m/s)
         symbol_hammer_mass = core.symbols('Mhammer')
         m_hammer = core.subs[symbol_hammer_mass]  # Hammer mass (kg)
         # Set mass momentum (N.s)
-        ixHammerMass = core_simu.x.index(core.symbols('xHammerMass'))
-        x0[ixHammerMass] = v_hammer * m_hammer
+        x0[core_simu.x.index(core.symbols('xmass'))] = v_hammer * m_hammer
 
         tinit = 2e-2  # [s] time between init of velocity and impact
         qh0 = -v_hammer*tinit  # [m] Hammer's initial position w.r.t contact
-        iqHammerFelt = core_simu.x.index(core.symbols('qHammerFelt'))
-        x0[iqHammerFelt] = qh0  # (m)
+        iqfelt = core_simu.x.index(core.symbols('qfelt'))
+        x0[iqfelt] = qh0  # (m)
 
         # Initialize the simulation
         simu.init(u=sequ(), x0=x0, nt=nt)
@@ -109,16 +116,17 @@ if __name__ == '__main__':
         # Proceed
         simu.process()
 
-        wave_path = os.path.join(here, 'PickupOut_{}={}'.format('vHammer',
-                                                                str(v_hammer)))
-        simu.data.wavwrite('y', order[1], path=wave_path)
+        q = numpy.array(list(simu.data.x(iqfelt)))
+        y = numpy.array(list(simu.data.y(0)))
 
-        sig += list(simu.data.y(order[1], decim=1))
-        simu.data.plot([('x', 0), ('dtx', 0), ('y', order[0])],
-                       load={'imin': 0, 'imax': 2500}, label=str(v_hammer))
+        indices = numpy.nonzero(q >= 0)
+        q = numpy.array(q)[indices]
+        y = numpy.array(y)[indices]
 
-        pass
-
-    wavwrite(sig, simu.config['fs'],
-             os.path.join(here, 'PickupOut'),
-             normalize=True)
+        plt.plot(q, y, label=r'$v_0=%.1f$ m.s$^{-1}$' % v_hammer)
+        plt.grid('on')
+        plt.grid(which='minor')
+        plt.xlabel('Felt crush (m)')
+        plt.ylabel('Contact force (N)')
+        plt.legend(fontsize=15)
+        plt.title('Felt force-compression characteristic')

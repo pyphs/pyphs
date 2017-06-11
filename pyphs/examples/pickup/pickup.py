@@ -82,7 +82,7 @@ if __name__ == '__main__':
         generator of input sequence for PHSSimulation
         """
         for un in signalgenerator(which='sin', tsig=tmax, fs=simu.config['fs'],
-                                  A=0.5, f0=100., ramp_on=True)():
+                                  A=10, f0=100., ramp_on=True)():
             # !!! must be array with shape (core.dims.u(), )
             yield numpy.array(list(map(lambda i: [1., 0., un][i], order)))  # numpy.array([u1, u2, ...])
 
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     x_symbs = core.x
     plots = ([('u', order[2]), ] +
              interleave([('x', e) for e in map(core.x.index, x_symbs)],
-                        [('dx', e) for e in map(core.x.index, x_symbs)]) +
+                        [('dtx', e) for e in map(core.x.index, x_symbs)]) +
              [('y', order[1])])
     simu.data.plot(plots)
 

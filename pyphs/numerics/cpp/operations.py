@@ -176,7 +176,6 @@ def _append_ops_data(nums, files, objlabel):
     files['cpp']['data'] += title
     for name in nums.method.ops_names:
         attr = getattr(nums, name)()
-        print('{} : {}'.format(name, len(attr.shape)))
         if len(attr.shape) > 0:
             h = _str_mat_op_init_data(nums, name)
         else:

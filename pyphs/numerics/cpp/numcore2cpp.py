@@ -19,6 +19,7 @@ standard_config = {'path': os.getcwd()}
 
 
 def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
+    print('Generate C++ code...')
     if objlabel is None:
         objlabel = 'phscore'.upper()
     else:
@@ -49,65 +50,77 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
     files['h']['closing'] += "\n}"+";\n\n#endif /* {0}_H */\n".format(objlabel)
     files['h']['private'] += '\nprivate:'
     files['h']['public'] += '\npublic:'
+    print('    Build parameters...')
     append_parameters(nums.method, files)
+    print('    Build update...')
     append_update(nums.method, files, objlabel)
+    print('    Build arguments...')
     append_args(nums.method, files, objlabel)
+    print('    Build functions...')
     append_funcs(nums, files, objlabel)
+    print('    Build operations...')
     append_ops(nums, files, objlabel)
+    print('    Build initialisation...')
     append_init(objlabel, files)
+    print('    Build constructors...')
     append_constructor(objlabel, files)
     append_constructor_init_vector(objlabel, files)
     append_constructor_init_matrix(nums.method, objlabel, files)
+    print('    Build destructor...')
     append_destructuor(objlabel, files)
     for e in exts:
+        filename = path + os.sep + 'core.{0}'.format(e)
+        print('    Write {}...'.format(filename))
+
         string = files[e]['starting']
         string += '\n\n// PUBLIC'
         string += indent(files[e]['public'])
         string += '\n\n\n// PRIVATE'
         string += indent(files[e]['private'])
         string += files[e]['closing']
-        filename = path + os.sep + 'core.{0}'.format(e)
+
         _file = open(filename, 'w')
         _file.write(string)
         _file.close()
-    data_files = data(nums.method.subs, objlabel)
+
+        parameters_files = parameters(nums.method.subs, objlabel)
     for e in exts:
-        string = data_files[e]
-        filename = path + os.sep + 'data.{0}'.format(e)
+        filename = path + os.sep + 'parameters.{0}'.format(e)
+        print('    Write {}'.format(filename))
+        string = parameters_files[e]
         _file = open(filename, 'w')
         _file.write(string)
         _file.close()
 
 
 ###############################################################################
-# DATA
+# parameters
 
 def append_parameters(method, files):
-    title = "\n\n// Parameters\n"
-    files['h']['private'] += title
+    files['h']['private'] += "\n\n// Parameters\n"
     files['h']['private'] += '\nconst unsigned int subs_ref = 0;' + '\n'
     for i, sub in enumerate(method.subs):
         files['h']['private'] += \
             '\nconst double * {0} = & subs[subs_ref][{1}];'.format(str(sub), i)
 
 
-def data(subs, objlabel):
+def parameters(subs, objlabel):
     files = {'h': str_preamble(objlabel),
              'cpp': str_preamble(objlabel)}
     files['h'] += """
-#ifndef DATA_H
-#define DATA_H"""
+#ifndef PARAMETERS_H
+#define PARAMETERS_H"""
     _append_include(files)
     _append_subs(subs, files)
     files['h'] += """\n
-#endif /* defined(DATA_H) */
+#endif /* defined(PARAMETERS_H) */
 """
     return files
 
 
 def _append_include(files):
     files['cpp'] += """
-# include "data.h"\
+# include "parameters.h"\
 """
 
 
@@ -116,6 +129,11 @@ def _append_subs(subs, files):
     if dim > 0:
         files['h'] += """\n
 extern const double subs[1][""" + str(dim) + """];"""
+        files['cpp'] += """\n
+// Correspondance is
+"""
+        for i, k in enumerate(subs):
+            files['cpp'] += '// subs[i][{}] = {}\n'.format(i, k)
         files['cpp'] += """\n
 const double subs[1][""" + str(dim) + """] = {
     {"""
@@ -196,7 +214,7 @@ def _str_includes(eigen_path):
 #include "vector"
 #include "math.h"
 
-# include "data.h"\n
+# include "parameters.h"\n
 """
     string_h += include_Eigen(eigen_path)
     return string_h, string_c

@@ -9,6 +9,12 @@ from __future__ import absolute_import, division, print_function
 import os
 
 
+def make_executable(path):
+    """
+    """
+    os.chmod(path, 0b111101101)
+
+
 def formatPath(path):
     r"""
 return a string representation of the path with:

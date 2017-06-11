@@ -14,11 +14,17 @@ import sympy
 
 
 def append_funcs(nums, files, objlabel):
+    print('        Definitions...')
     _append_funcs_defs(nums, files)
+    print('        Accessors (matrix)...')
     _append_funcs_get(nums, files, objlabel)
+    print('        Accessors (vector)...')
     _append_funcs_get_vector(nums, files, objlabel)
+    print('        Update...')
     _append_funcs_updates(nums, files, objlabel)
+    print('        Data...')
     _append_funcs_data(nums, files, objlabel)
+    print('        Initialisation...')
     _append_funcs_init(nums, files, objlabel)
 
 
@@ -114,6 +120,7 @@ def _append_funcs_updates(nums, files, objlabel):
     files['h']['private'] += title
     files['cpp']['private'] += title
     for name in nums.method.update_actions_deps():
+        print('            Build {}...'.format(name))
         if name in nums.method.funcs_names:
             expr = getattr(nums.method, name + '_expr')
             if isinstance(expr, types.scalar_types):

@@ -68,26 +68,78 @@ multifigure
         multiplot(datax, datay, show=show, **config)
 
 
-def plot(data, var_list, imin=0, imax=None, decim=1, show=True):
-    # Absci
+def plot(data, vars, imin=0, imax=None, decim=1, show=True, label=None):
+    """
+    Plot simulation data
+
+    Parameters
+    ----------
+
+    data : PHSData
+        Simulation data.
+
+    vars : list
+        List of variables to plot. Elements can be a single string name or a
+        tuples of strings (name, index). For each string element, every indices
+        of variable name are ploted. For each tuple element, the element index
+        of variable name is ploted.
+
+    imin, imax : starting and toping indices
+
+    decim : decimation integer > 0
+
+    show : bool
+        Activate matplotlib.pyplot.show().
+
+    label : str
+        Plot label.
+    """
+
+    if label is None:
+        label = data.core.label
+
     datax = list(data.t(imin=imin, imax=imax, decim=decim))
     datay = list()
     labels = list()
+
     path = data.config['path'] + os.sep + 'figures'
     if not os.path.exists(path):
         os.makedirs(path)
-    filelabel = path + os.sep
-    for tup in var_list:
-        generator = getattr(data, tup[0])
-        sig = [el for el in generator(ind=tup[1], imin=imin,
+    filelabel = path + os.sep + label
+
+    def append_sig(name, index):
+        generator = getattr(data, name)
+        sig = [el for el in generator(ind=index, imin=imin,
                                       imax=imax, decim=decim)]
         datay.append(sig)
-        labels.append(nice_label(data.core, tup))
-        filelabel += '_'+tup[0]+str(tup[1])
+        labels.append(nice_label(data.core, (name, index)))
+    dimsmap = {'x': 'x',
+               'dx': 'x',
+               'dtx': 'x',
+               'dxH': 'x',
+               'w': 'w',
+               'z': 'w',
+               'u': 'y',
+               'y': 'y'
+               }
+    for var in vars:
+        if isinstance(var, (tuple, list)):
+            append_sig(*var)
+            filelabel += '_'+var[0]+str(var[1])
+        elif isinstance(var, str):
+            dim = dimsmap[var]
+            for i in range(getattr(data.core.dims, dim)()):
+                append_sig(var, i)
+                filelabel += '_'+var+str(i)
+        else:
+            raise TypeError('variable {} not understood'.format(var))
+
     plotopts = {'unitx': 'time $t$ (s)',
                 'unity': labels,
                 'filelabel': filelabel}
+
     if len(datay) > 1:
         multiplot(datax, datay, show=show, **plotopts)
+
     else:
         singleplot(datax, datay, show=show, **plotopts)

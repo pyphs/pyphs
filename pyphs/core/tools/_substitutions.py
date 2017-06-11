@@ -120,7 +120,7 @@ def substitute_dict(expr, subs):
 
 # =========================================================================
 
-def substitute(expr, subs=None):
+def substitute(expr, subs):
     """
     Select and apply appropriate substitution method based on expr type.
 

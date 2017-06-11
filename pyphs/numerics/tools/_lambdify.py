@@ -94,19 +94,16 @@ args : list of sympy.Symbols
 expr : sympy.Expr, list of sympy.Expr, or sympy.Matrix.
     Symbolic expression to lambdify.
 
-subs: dict
+subs: dict (optional)
     If all the symbols in :code:`expr` are not in :code:`args`, the remaining
     numerical values for replacements must be provided in this dictionary, with
     :code:`subs={symb1: val1, ...}` with :code`symb1` a symbol and :code`val1`
     the numerical value (float or int).
 
-simplify : bool
-    If True, expression is simplified before lambdification (default is True).
+simplify : bool (optional)
+    If True, expression is simplified before lambdification (default is False).
 
-sympify : bool
-    If True, expression is sympified before lambdification (default is True).
-
-theano : bool
+theano : bool (optional)
     If True, expression is compiled with theano. Then it's a compromise between
     the time for compiling C code vs. the acceleration of numerical evaluation.
     The default is True.
@@ -138,8 +135,8 @@ f : callable
     if not len(missing_symbols) == 0:
         raise AttributeError('Missing free symbols {}'.format(missing_symbols))
 
-    # Choose method
-    if theano and got_theano:  # theano
+    # Choose backend (theano or numpy)
+    if theano and got_theano:
         return theano_lambdify(args, expr)
-    else:       # numpy
+    else:
         return numpy_lambdify(args, expr)

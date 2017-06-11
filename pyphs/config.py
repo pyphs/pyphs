@@ -89,10 +89,14 @@ special_chars = ['#']
 
 # We use the Eigen C++ library for matrix algebra in the generated c++ code.
 # Inform below the path to your local eigen library, e.g. if you provide
-# eigen_path = r'/roor/path/subpath/eigen', PyPHS will include the following in
+# EIGEN_PATH = r'/roor/path/subpath/eigen', PyPHS will include the following in
 # the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
 # !!! This should be a raw string (especially for Windows user) !!!!
 EIGEN_PATH = r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen'
+
+# We use the CMAKE build system to build the generated c++ sources. Below is
+# the path to cmake executable (as returned e.g. on UNIX by `which cmake`).
+CMAKE_PATH = r'/opt/local/bin/cmake'
 
  ###############################################################################
 
@@ -158,6 +162,7 @@ simulations = {'fs': FS,
                'maxit': int(MAXIT),
                'split': SPLIT,
                'eigen': EIGEN_PATH,
+               'cmake': CMAKE_PATH,
                'load': LOAD_OPTS,
                'theano': THEANO}
 

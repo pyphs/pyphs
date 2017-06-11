@@ -101,7 +101,8 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
             dmu = 1
             f1 = (q - Rp + Lv)**2 + Lh**2
             f2 = (q + Rp + Lv)**2 + Lh**2
-            return 2*Rb**2*dmu*Rp*((f1-2*Lh**2)/f1**2 - (f2-2*Lh**2)/f2**2)*dtq
+            return 2*Rb**2*dmu*Rp*((f1-2*Lh**2)/f1**2 -
+                                   (f2-2*Lh**2)/f2**2) * dtq
 
         falpha = (f(q, dtq)**-1).subs(dicpars)
         self += Gyrator(label+'MecToMag',
@@ -122,7 +123,7 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
                               'Ncoil': 100.,
                               'murel': 700.,
                               'Rb': 1e-3,
-                              'Rp': 1e-3,
+                              'Rp': 1e-2,
                               'H0': -1.,
                               'Lh': 1.5*1e-3,
                               'Lv': 5e-4, }

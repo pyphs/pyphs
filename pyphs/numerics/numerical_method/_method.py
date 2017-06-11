@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import sympy as sp
 from pyphs.core.maths import matvecprod, jacobian, sumvecs
-from pyphs.core.tools import free_symbols, simplify
+from pyphs.core.tools import free_symbols
 from pyphs.config import (GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER,
                           FILES, EPS, MAXIT, SPLIT, EIGEN_PATH,
                           LOAD_OPTS, PBAR, FS, FS_SYMBS, simulations)
@@ -20,6 +20,8 @@ from ..tools import PHSNumericalOperation
 from ._discrete_calculus import (discrete_gradient, gradient_theta,
                                  gradient_trapez)
 import copy
+
+import time
 
 class PHSCoreMethod(PHSCore):
     """
@@ -62,10 +64,12 @@ class PHSCoreMethod(PHSCore):
                    LOAD_OPTS)
 
         print('Build numerical method...')
-
+        tstart = time.time()
         print('    Init PHSCoreMethod...')
         # INIT PHSCore object
         PHSCore.__init__(self, label=core.label+'_method')
+        print('init core : {}'.format(time.time()-tstart))
+        tstart = time.time()
         # Copy core content
         for name in (list(set().union(
                           core.attrstocopy,
@@ -81,9 +85,13 @@ class PHSCoreMethod(PHSCore):
                 attr_name = name[1]
             attr = getattr(source, attr_name)
             setattr(target, attr_name, copy.deepcopy(attr))
+        print('copy core : {}'.format(time.time()-tstart))
+        tstart = time.time()
 
         # replace every expressions in subs
         self.substitute(selfexprs=True)
+        print('substitute : {}'.format(time.time()-tstart))
+        tstart = time.time()
 
         # ------------- CLASSES ------------- #
 
@@ -126,34 +134,56 @@ class PHSCoreMethod(PHSCore):
             print('    Split Linear/Nonlinear...')
             self.linear_nonlinear()
 
+        print('misc : {}'.format(time.time()-tstart))
+        tstart = time.time()
         print('    Build numerical structure...')
         # build the discrete evaluation for the gradient
         build_gradient_evaluation(self)
+        print('grad: {}'.format(time.time()-tstart))
+        tstart = time.time()
         # build the discrete evaluation for the structure
         build_structure_evaluation(self)
+        print('struc: {}'.format(time.time()-tstart))
+        tstart = time.time()
         # build method updates
         set_structure(self)
+        print('all: {}'.format(time.time()-tstart))
+        tstart = time.time()
 
         if self.config['split']:
             print('    Split Implicit/Resolved...')
             # Split implicit equations from explicit equations
             self.explicit_implicit()
+            print('split: {}'.format(time.time()-tstart))
+            tstart = time.time()
             print('    Re-Build numerical structure...')
             # build the discrete evaluation for the gradient
             build_gradient_evaluation(self)
+            print('grad: {}'.format(time.time()-tstart))
+            tstart = time.time()
             # build the discrete evaluation for the structure
             build_structure_evaluation(self)
+            print('struc: {}'.format(time.time()-tstart))
+            tstart = time.time()
             # build method updates
             set_structure(self)
+            print('all: {}'.format(time.time()-tstart))
+            tstart = time.time()
 
         print('    Init update actions...')
         set_execactions(self)
+        print('execations: {}'.format(time.time()-tstart))
+        tstart = time.time()
 
         print('    Init arguments...')
         self.init_args()
+        print('args: {}'.format(time.time()-tstart))
+        tstart = time.time()
 
         print('    Init functions...')
         self.init_funcs()
+        print('funcs: {}'.format(time.time()-tstart))
+        tstart = time.time()
 
     def update_actions_deps(self):
         """

@@ -56,7 +56,8 @@ def simulation_rlc_with_split():
     simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('win'):
+        shutil.rmtree(path)
     return True
 
 
@@ -87,7 +88,8 @@ def simulation_rlc_cpp():
     simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu2cpp(simu)
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('win'):
+        shutil.rmtree(path)
     return True
 
 
@@ -122,7 +124,8 @@ def simulation_rlc_without_split():
 
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('win'):
+        shutil.rmtree(path)
     return True
 
 
@@ -156,7 +159,8 @@ def simulation_rlc_without_split_trapez():
 
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('win'):
+        shutil.rmtree(path)
     return True
 
 
@@ -190,7 +194,8 @@ def simulation_rlc_without_split_theta():
 
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('win'):
+        shutil.rmtree(path)
     return True
 
 
@@ -225,7 +230,8 @@ def simulation_rlc_plot():
     simu.process()
     simu.data.plot_powerbal(mode='multi')
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('win'):
+        shutil.rmtree(path)
     return True
 
 
@@ -293,5 +299,6 @@ def simulation_nlcore_full():
     # Proceed
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('win'):
+        shutil.rmtree(path)
     return True

@@ -1,0 +1,3 @@
+mechanics.mass mass ('nHammer',): M=('Mhammer', 3e-2);
+mechanics.felt felt ('nContact', 'nHammer'): A=('A', 1000.); F=('F', 1000.); B=('B', 2.5); L=('L', 1e-2);
+mechanics.source contact ('nContact',): type=velocity;

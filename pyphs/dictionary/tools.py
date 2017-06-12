@@ -6,8 +6,8 @@ Created on Tue Jun  7 18:57:18 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs.core.core import PHSCore
-from pyphs.core.symbs_tools import _assert_expr
+from ..core.core import PHSCore
+from ..core.tools import types
 
 symbols = PHSCore.symbols
 
@@ -33,14 +33,16 @@ def form(name, obj):
     subs : PHSCore.subs
     """
     if isinstance(obj, tuple):
-        assert isinstance(obj[0], str), 'for tupple parameter, \
-        first element should be a str, got {0!s}'.format(type(obj[0]))
+        if not isinstance(obj[0], str):
+            raise TypeError('For tupple parameter, \
+        first element should be a str, got {0}'.format(type(obj[0])))
         try:
-            assert isinstance(obj[1], (float, int)), 'for tupple parameter, \
-                second element should be numeric, got\
-                {0!s}'.format(type(obj[1]))
+            if not isinstance(obj[1], types.scalar_types):
+                raise TypeError('For tupple parameter, \
+                    second element should be numeric, got\
+                    {0}'.format(type(obj[1])))
         except AssertionError:
-            _assert_expr(obj[1])
+            types.scalar_test(obj[1])
         string = obj[0]
         symb = PHSCore.symbols(string)
         sub = {symb: obj[1]}
@@ -56,7 +58,7 @@ def form(name, obj):
         sub = {}
         par = symb
     else:
-        _assert_expr(obj)
+        types.scalar_test(obj)
         string = name
         symb = PHSCore.symbols(string)
         sub = {symb: obj}

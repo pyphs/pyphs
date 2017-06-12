@@ -1,0 +1,3 @@
+mechanics.source IN ('nBeamHam', '#'): type=force;
+beams.cantilever beam ('nBeamHam', 'nBeamPick'): F=440.0; R=2e-3; E=180e+9; D=1; A=1e0; M=7750.; N=2; z1=0.2; w1=0.015; z2=1.; w2=0.;
+mechanics.source OUT ('nBeamPick', '#'): type=force;

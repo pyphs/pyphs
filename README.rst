@@ -16,19 +16,19 @@ This is the development branch of the ``pyphs`` package.
 
 ----------------------------
 
-.. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=development
+.. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=rhodes-plugin
     :target: https://www.travis-ci.org/afalaize/pyphs
 
-.. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/development?svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/rhodes-plugin?svg=true
 	:target: https://ci.appveyor.com/project/afalaize/pyphs
 
-.. image:: https://codecov.io/gh/afalaize/pyphs/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/afalaize/pyphs/branch/rhodes-plugin/graph/badge.svg
     :target: https://codecov.io/gh/afalaize/pyphs
 
-.. image:: https://www.quantifiedcode.com/api/v1/project/0c1fbf5b44e94b4085a24c18a1895947/badge.svg?branch=development
+.. image:: https://www.quantifiedcode.com/api/v1/project/0c1fbf5b44e94b4085a24c18a1895947/badge.svg?branch=rhodes-plugin
   :target: https://www.quantifiedcode.com/app/project/0c1fbf5b44e94b4085a24c18a1895947
   :alt: issues
 
-.. image:: https://landscape.io/github/afalaize/pyphs/development/landscape.svg?style=flat
-   :target: https://landscape.io/github/afalaize/pyphs/development
+.. image:: https://landscape.io/github/afalaize/pyphs/rhodes-plugin/landscape.svg?style=flat
+   :target: https://landscape.io/github/afalaize/pyphs/rhodes-plugin
    :alt: Code Health

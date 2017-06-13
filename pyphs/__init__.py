@@ -14,6 +14,9 @@ from .misc.latex import core2tex, netlist2tex, graphplot2tex, texdocument
 from .numerics.cpp.numcore2cpp import numcore2cpp
 from .numerics.cpp.simu2cpp import simu2cpp
 
+from .config import path_to_configuration_file
+
+
 __licence__ = \
     "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
@@ -26,4 +29,5 @@ __all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
            'signalgenerator', 'PHSNumericalOperation', 'PHSCoreMethod',
            'PHSNumericalCore', 'PHSNumericalEval',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
-           'numcore2cpp', 'simu2cpp', 'netlist2core', 'symbols']
+           'numcore2cpp', 'simu2cpp', 'netlist2core',
+           'path_to_configuration_file']

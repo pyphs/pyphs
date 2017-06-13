@@ -75,7 +75,7 @@ class PHSCore:
         self.assertions = {'real': True}
 
         # Ordered list of variables considered as the systems's arguments
-        self.args_names = ('x', 'dx', 'w', 'u', 'p')
+        self.args_names = ('x', 'dx', 'w', 'u', 'p', 'o')
 
         self.attrstocopy = {('dims', '_xl'), ('dims', '_wl'),
                             'connectors', 'force_wnl', 'subs', 'M', '_dxH',

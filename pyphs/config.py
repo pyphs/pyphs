@@ -6,7 +6,11 @@ Created on Sat May 21 10:57:32 2016
 """
 
 import numpy
+import os
 
+# Define the path to this file
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+path_to_configuration_file = os.path.join(here, 'config.py')
 
 ###############################################################################
 
@@ -92,11 +96,17 @@ special_chars = ['#']
 # EIGEN_PATH = r'/roor/path/subpath/eigen', PyPHS will include the following in
 # the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
 # !!! This should be a raw string (especially for Windows user) !!!!
-EIGEN_PATH = r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen'
+# Example MacOSX: r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen'
+# Example Linux: r'/home/afalaize/Documents/DEV/C++/bibliotheques/eigen'
+EIGEN_PATH = r'/home/afalaize/dev/c++/bibliotheques/eigen'
 
 # We use the CMAKE build system to build the generated c++ sources. Below is
 # the path to cmake executable (as returned e.g. on UNIX by `which cmake`).
-CMAKE_PATH = r'/opt/local/bin/cmake'
+# Example Linux: r'/usr/bin/cmake'
+# Example MaOSX: r'/opt/local/bin/cmake'
+
+CMAKE_PATH = r'/opt/cmake/bin/cmake'
+
 
  ###############################################################################
 

@@ -32,8 +32,6 @@ config = {'fs': 48e3,           # Sample rate (Hz)
           'pbar': True,         # Display a progress bar
           'timer': False,       # Display minimal timing infos
           'lang': 'python',     # Language in {'python', 'c++'}
-#          'script': None,       # Call to C++ compiler and exec binary
-#          'eigen': None,        # Path to Eigen C++ library
           # Options for the data reader. The data are read from index imin
           # to index imax, rendering one element out of the number decim
           'load': {'imin': 0, 'imax': None, 'decim': 1}
@@ -82,8 +80,8 @@ def sequ():
 x0 = numpy.array([0., ]*core.dims.x())
 
 # Initialize the simulation
-simu.init(u=sequ(), x0=x0, nt=nt,
-          config={'load': {'imin': 0, 'imax': None, 'decim': 1}})
+simu.init(u=sequ(), x0=x0, nt=nt)
+
 # Proceed
 simu.process()
 

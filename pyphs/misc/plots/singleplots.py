@@ -129,9 +129,6 @@ None).
     from matplotlib.pyplot import rc
     rc('font', size=opts['fontsize'], **globalfonts())
 
-    from matplotlib.pyplot import close
-    close('all')
-
     from matplotlib.pyplot import figure
     fig = figure(1, figsize=opts['figsize'])
     nplots = datay.__len__()

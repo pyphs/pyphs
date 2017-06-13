@@ -167,7 +167,7 @@ class PHSSimulation:
             time_it = (t_total/float(self.data.config['nt']))
             print(string.format(time_it))
 
-    print('Simulation: Done')
+        print('Simulation: Done')
 
     def _init_pb(self):
         pb_widgets = ['\n', 'Simulation: ',

@@ -148,8 +148,7 @@ subplots.
         opts['labels'] = [None, ] * nplots
     if opts['log'] is None:
         opts['log'] = ['', ] * nplots
-    from matplotlib.pyplot import subplots, close
-    close('all')
+    from matplotlib.pyplot import subplots
     fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'])
 
     activate_latex(opts)

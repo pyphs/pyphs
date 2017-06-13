@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     # ---------------------------  LOOP  --------------------------------
 
-    for v_hammer in [1., ]:  # numpy.linspace(1, 10, 10)[0:]:
+    for v_hammer in numpy.linspace(1, 10, 10):
 
         # def generator for sequence of inputs to feed in the PHSSimulation
         def sequ():

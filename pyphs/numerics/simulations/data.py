@@ -103,7 +103,7 @@ Returns
             setattr(data_generator, 'func_doc', doc)
             return data_generator
 
-        for name in list(self.core.args_names) + ['y', 'dxH', 'z', 'dx']:
+        for name in ['x', 'dx', 'w', 'u', 'p', 'y', 'dxH', 'z']:
             setattr(self, name, build_generator(name))
 
     def _data_generator(self, name, ind=None, postprocess=None,
@@ -207,6 +207,7 @@ dtE_generator: generator
             subs = {}
             for x, dx in zip(self.core.x, self.core.dx()):
                 subs.update({x: x+dx})
+                
             Hpost_expr = Hpost_expr.subs(subs)
             Hpost_symbs = free_symbols(Hpost_expr)
             Hpost_args, Hpost_inds = find(Hpost_symbs, self.core.args())
@@ -214,9 +215,9 @@ dtE_generator: generator
                              theano=self.config['theano'])
             Hpost_args = lambdify(self.core.args(), Hpost_args,
                                   theano=self.config['theano'])
-
             for arg in self.args(**options):
                 yield (Hpost(*Hpost_args(*arg)) - H(*H_args(*arg)))*self.config['fs']
+                
         elif DtE == 'DxhDtx':
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
                 yield scalar_product(dtx, dxh)
@@ -305,6 +306,52 @@ ps_generator: generator
                         self.y(**options)):
             yield scalar_product(u, y)
 
+    def o(self, imin=None, imax=None, decim=None):
+        """
+ps
+==
+
+Generator of discrete sources power values.
+
+Parameters
+-----------
+imin: int or None, optional
+    Starting index. If None, imin=0 (default).
+imax: int or None,
+    Stoping index. If None, imax=simu.config['nt'] (default).
+decim: int or None,
+    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+
+Returns
+-------
+
+ps_generator: generator
+    A python generator of scalar discrete sources power value ps[i] for each
+    time step i starting from index imin to index imax with decimation
+    factor decim (i.e. the value is generated if i-imin % decim == 0), with
+    ps[i] = u[i] dot y[i].
+
+        """
+        options = self.config['load']
+        options = {'imin': options['imin'] if imin is None else imin,
+                   'imax': options['imax'] if imax is None else imax,
+                   'decim': options['decim'] if decim is None else decim}
+
+        obs_expr = [e.subs(self.core.subs) for e in self.core.observers.values()]
+
+        obs_symbs = free_symbols(obs_expr)
+
+        obs_args, obs_inds = find(obs_symbs, self.core.args())
+
+        obs = lambdify(obs_args, obs_expr, theano=self.config['theano'])
+        obs_args = lambdify(self.core.args(), obs_args,
+                          theano=self.config['theano'])
+
+        
+        for arg in self.args(**options):
+            yield obs(*obs_args(*arg))
+            
+            
     def args(self, ind=None, imin=None, imax=None, decim=None):
         """
 args
@@ -341,10 +388,11 @@ args_generator: generator
                                   self.w(**options),
                                   self.u(**options),
                                   self.p(**options)):
+            arg = x + dx + w + u + p
             if ind is None:
-                yield x + dx + w + u + p
+                yield arg
             else:
-                yield (x + dx + w + u + p)[ind]
+                yield arg[ind]
 
     def dtx(self, ind=None, imin=None, imax=None, decim=None):
         """

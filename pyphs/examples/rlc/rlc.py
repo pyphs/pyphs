@@ -22,9 +22,11 @@ simu = PHSSimulation(core)
 
 
 if __name__ == '__main__':
-    # Define the simulation parameters
+    
+    # Include the linear dissipatives in the connexion structure
     core.build_R()
-
+    
+    # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': .5,             # theta-scheme for the structure
@@ -34,7 +36,7 @@ if __name__ == '__main__':
               'path': None,             # Path to the results folder
               'pbar': False,      # Display a progress bar
               'timer': False,           # Display minimal timing infos
-              'lang': 'c++',     # in {'python', 'c++'}
+              'lang': 'python',     # in {'python', 'c++'}
               'theano': False
               }
 
@@ -49,15 +51,17 @@ if __name__ == '__main__':
 
     simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
+    # Run the simulation
     simu.process()
 
-    simu.data.plot_powerbal(mode='multi')
+    # Plots
+    simu.data.plot_powerbal(mode='single')
 
     # clean: delete folders 'data' and 'figures'
     shutil.rmtree(os.path.join(here, 'data'))
     shutil.rmtree(os.path.join(here, 'figures'))
-    try:
+    
+    # clean: delete folder 'rlc'
+    if config['lang'] == 'c++':
         shutil.rmtree(os.path.join(here, 'rlc'))
-    except:
-        pass
-    pass
+        

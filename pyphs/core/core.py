@@ -22,7 +22,8 @@ from .structure.connectors import port2connector
 from .maths import gradient, jacobian, inverse
 from .structure.dimensions import Dimensions
 from .structure.indices import Indices
-from .tools import types, free_symbols, sympify, substitute_core
+from .tools import (types, free_symbols, sympify,
+                    substitute_core, subsinverse_core)
 
 from ..misc.latex import texdocument, core2tex
 
@@ -490,6 +491,20 @@ class PHSCore:
             recursively. Default is True.
         """
         substitute_core(self, **kwargs)
+
+    # =========================================================================
+
+    def subsinverse(self):
+        """
+        subsinverse
+        ***********
+
+        Remove every occurence of inverse of symbols in core.subs. they are
+        replaced by the same symbols with prefix 'inv', which is appended to
+        the dictionary core.subs.
+
+        """
+        subsinverse_core(self)
 
     # =========================================================================
 

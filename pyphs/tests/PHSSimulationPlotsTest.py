@@ -32,7 +32,6 @@ def plot_power_balance_rlc_with_split():
               'pbar': True,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
 
@@ -73,7 +72,6 @@ def plot_power_balance_nlcore_with_split():
               'pbar': True,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
 
@@ -114,7 +112,6 @@ def plot_rlc_with_split():
               'pbar': True,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
 

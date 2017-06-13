@@ -65,8 +65,15 @@ class PHSNumericalCore(object):
 
         # Manage configuration
         self.config = simulations.copy()  # init with standard
+        
         if config is None:
             config = {}
+        else:
+            for k in config.keys():
+                if not k in self.config.keys():
+                    text = 'Configuration key "{0}" unknown.'.format(k)
+                    raise AttributeError(text)
+        self.config.update(config)
 
         # Save PHSCore object
         self.method = PHSCoreMethod(core, config=config)

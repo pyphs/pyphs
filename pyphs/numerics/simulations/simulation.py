@@ -58,6 +58,12 @@ class PHSSimulation:
         # update with provided opts
         if config is None:
             config = {}
+        else:
+            for k in config.keys():
+                if not k in self.config.keys():
+                    text = 'Configuration key "{0}" unknown.'.format(k)
+                    raise AttributeError(text)
+                    
         self.config.update(config)
 
         if self.config['path'] is None:

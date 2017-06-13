@@ -48,7 +48,6 @@ class PHSNumericalCore(object):
                       'maxit': {},
                       'split': {},
                       'eigen': {},
-                      'script': {},
                       'load': {}
                       }
 

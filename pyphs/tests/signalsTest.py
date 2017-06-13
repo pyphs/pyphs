@@ -28,7 +28,7 @@ def signal_waves():
     fss, ss = sig.waves.wavread(path)
     os.remove(path)
     ss /= max(abs(ss))
-    return all(ss - s < 1e-4) and fss == fs
+    return max(abs(ss-s)) < 1e-4 and fss - fs < 1e-4
 
 
 def signal_synthesis():

@@ -19,7 +19,7 @@ from pyphs.examples.rlc.rlc import core
 
 from pyphs import PHSSimulation, signalgenerator
 
-from pyphs.cpp.simu2cpp import simu2cpp
+from pyphs.numerics.cpp.simu2cpp import simu2cpp
 import os
 import shutil
 
@@ -30,32 +30,33 @@ path = os.path.join(here, 'simu')
 
 def simulation_rlc_with_split():
     rlc = core.__deepcopy__()
-    config = {'fs': 48e3,               # Sample rate
+    config = {'fs': 48e3,           # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
-              'theta': 0.5,             # theta-scheme for the structure
-              'split': True,           # apply core.split_linear() beforehand
-              'maxit': 10,              # Max iteration for NL solvers
-              'eps': 1e-16,          # Global numerical tolerance
-              'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
-              'timer': True,            # Display minimal timing infos
+              'theta': 0.5,         # theta-scheme for the structure
+              'split': True,        # apply core.split_linear() beforehand
+              'maxit': 10,          # Max iteration for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+              'path': path,         # Path to the results folder
+              'pbar': True,         # Display a progress bar
+              'timer': True,        # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,}       # path to Eigen library
 
     simu = PHSSimulation(rlc, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800.,
+                        tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('nt'):
+        shutil.rmtree(path)
     return True
 
 
@@ -69,27 +70,25 @@ def simulation_rlc_cpp():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
-              'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
-              'eigen': None,       # path to Eigen library
+              'lang': 'c++',     # in {'python', 'c++'}
               }
 
     simu = PHSSimulation(rlc, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
-
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu2cpp(simu)
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('nt'):
+        shutil.rmtree(path)
     return True
 
 
@@ -104,27 +103,27 @@ def simulation_rlc_without_split():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(rlc, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('nt'):
+        shutil.rmtree(path)
     return True
 
 
@@ -138,30 +137,30 @@ def simulation_rlc_without_split_trapez():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(rlc, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('nt'):
+        shutil.rmtree(path)
     return True
 
-    
+
 def simulation_rlc_without_split_theta():
     rlc = core.__deepcopy__()
     # Define the simulation parameters
@@ -172,30 +171,30 @@ def simulation_rlc_without_split_theta():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(rlc, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('nt'):
+        shutil.rmtree(path)
     return True
 
-    
+
 def simulation_rlc_plot():
     rlc = core.__deepcopy__()
     # Define the simulation parameters
@@ -206,28 +205,28 @@ def simulation_rlc_plot():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
 
     simu = PHSSimulation(rlc, config=config)
 
     dur = 0.01
-    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
+    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
     def sequ():
         for el in u():
             yield (el, )
 
-    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 
     simu.process()
     simu.data.plot_powerbal(mode='multi')
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('nt'):
+        shutil.rmtree(path)
     return True
 
 
@@ -241,10 +240,9 @@ def simulation_nlcore_full():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'script': None,  # compile and exec binary
               'eigen': None,       # path to Eigen library
               }
 
@@ -254,8 +252,8 @@ def simulation_nlcore_full():
 
     # def simulation time
     tmax = 0.02
-    nmax = int(tmax*simu.fs)
-    t = [n/simu.fs for n in range(nmax)]
+    nmax = int(tmax*simu.config['fs'])
+    t = [n/simu.config['fs'] for n in range(nmax)]
     nt = len(t)
 
     # def input signal
@@ -290,10 +288,11 @@ def simulation_nlcore_full():
     x0 = (0., 0.)
 
     # Initialize the simulation
-    simu.init(sequ=sequ(), x0=x0, nt=nt)
+    simu.init(u=sequ(), x0=x0, nt=nt)
 
     # Proceed
     simu.process()
 
-    shutil.rmtree(path)
+    if not os.name.lower().startswith('nt'):
+        shutil.rmtree(path)
     return True

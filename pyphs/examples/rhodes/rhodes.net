@@ -1,4 +1,7 @@
-beams.cantilever beam ('nBeam',): f0=55.0; zh=0.15; r=0.001; E=1.8e+11; damping=1; alpha=1e-2; m=7750; nk=5; wh=0.015;
-mechanics.felt felt ('nBeam', 'nMass'): A=('A', 100.0); K=('K', 500000.0); B=('B', 2.5); L=('L', 0.015);
-mechanics.mass mass ('nMass',): M=('M', 0.2);
-mechanics.source input ('nMass', '#'): type=force;
+mechanics.mass HammerMass ('nHammer',): M=('Mhammer', 3e-2);
+mechanics.felt HammerFelt ('nContact', 'nHammer'): A=('A', 1000.); F=('F', 1000.); B=('B', 2.5); L=('L', 1e-2);
+beams.cantilever Beam ('nContact', 'nPickupMeca'): F=440.0; R=2e-3; E=180e+9; D=2.; A=2e-2; M=7750.; N=4; z1=0.2; w1=0.015; z2=1.; w2=0.;
+transducers.pickup Pickup ('nPickupMeca', '#', 'nPickupElec'): Ccoil=330e-7; Ncoil=100.; Rb=2e-3; Rp=5e-3; H0=1.; Lh=1e-2; Lv=0.5e-3;
+electronics.resistor Resistor ('nPickupElec', 'nOutput'): R=('Rrc', 1e3);
+electronics.capacitor Capacitor ('#', 'nOutput'): C=('Crc', 33e-8);
+electronics.source Output ('#', 'nOutput'): type=current;

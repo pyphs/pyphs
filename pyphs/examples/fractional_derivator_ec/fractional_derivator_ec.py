@@ -44,7 +44,7 @@ if __name__ == '__main__':
 #        for el in u():
 #            yield (el, )
 #
-#    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+#    simu.init(u=sequ(), nt=int(dur*simu.fs))
 #
 #    simu.process()
 #

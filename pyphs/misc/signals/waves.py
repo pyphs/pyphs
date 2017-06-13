@@ -4,6 +4,13 @@ Created on Mon Jun 13 09:29:31 2016
 
 @author: Falaize
 """
+from scipy.signal import resample
+import types
+from struct import pack
+from scipy.io import wavfile
+import wave
+
+
 _maxVol = 2**15-1.0  # maximum amplitude
 
 
@@ -27,7 +34,6 @@ def wavread(path, fs=None, normalize=False):
     data : numpy array
         Data read from wav file
     """
-    from scipy.io import wavfile
     fs, sig = wavfile.read(path)
     sig = sig.astype(float)
     for i, el in enumerate(sig):
@@ -36,13 +42,11 @@ def wavread(path, fs=None, normalize=False):
 
 
 def wavwrite(sig, fs_sig, path, fs_out=None, normalize=None, timefades=0):
-    from scipy.signal import resample
-    import types
-
     assert isinstance(sig, (list, types.GeneratorType)), 'Signal should be a \
 list or a generator. Got {0!s}'.format(type(sig))
     if isinstance(sig, types.GeneratorType):
-        sig = [s for s in sig]
+        print('Convert generator to list...')
+        sig = list(sig)
 
     nsig = len(sig)
     nfades = int(timefades*fs_sig)
@@ -50,14 +54,15 @@ list or a generator. Got {0!s}'.format(type(sig))
         fadein = [n/(nfades) for n in range(nfades)]
         fadeout = [(nfades-1-n)/(nfades) for n in range(nfades)]
         fades = fadein + [1.]*(nsig-2*nfades) + fadeout
+        print('Fade begining and ending...')
         sig = [elsig*elfade for (elsig, elfade) in zip(sig, fades)]
 
     if fs_out is None:
         fs_out = fs_sig
-    sig = resample(sig, int(nsig*fs_out*fs_sig**-1))
+    elif not fs_out == fs_sig:
+        print('Resampling from {}Hz to {}Hz...'.format(fs_sig, fs_out))
+        sig = resample(sig, int(nsig*fs_out*fs_sig**-1))
 
-    from struct import pack
-    import wave
     if not path.endswith('.wav'):
         path += '.wav'
     wv = wave.open(path, 'w')
@@ -69,7 +74,8 @@ list or a generator. Got {0!s}'.format(type(sig))
         scale = max([abs(el) for el in sig])
     else:
         scale = 1.
-    for i in range(0, sig.__len__()):
+    print('Write wave file...')
+    for i in range(len(sig)):
         data = int(_maxVol*sig[i]/scale)
         wv.writeframes(pack('h', data))
     wv.close()

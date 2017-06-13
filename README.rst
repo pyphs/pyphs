@@ -22,7 +22,7 @@ This is the development branch of the ``pyphs`` package.
 .. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/development?svg=true
 	:target: https://ci.appveyor.com/project/afalaize/pyphs
 
-.. image:: https://codecov.io/gh/afalaize/pyphs/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/afalaize/pyphs/branch/development/graph/badge.svg
     :target: https://codecov.io/gh/afalaize/pyphs
 
 .. image:: https://www.quantifiedcode.com/api/v1/project/0c1fbf5b44e94b4085a24c18a1895947/badge.svg?branch=development

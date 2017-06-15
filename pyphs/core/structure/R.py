@@ -8,6 +8,7 @@ from __future__ import absolute_import, division, print_function
 import sympy
 from pyphs.misc.tools import geteval
 from pyphs.core.tools import types
+from pyphs.core.maths import inverse
 
 
 def build_R(core):
@@ -58,7 +59,7 @@ after this operation, and :code:`core.z()=core.znl()`.
     # build inverse of Dl
     iDl = types.matrix_types[0](sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl)
     # build Dl
-    Dl = iDl.inv()
+    Dl = inverse(iDl)
     # build Mwlnl
     Mwlnl = types.matrix_types[0].hstack(core.Mwlxl(),
                                 core.Mwlxnl(),

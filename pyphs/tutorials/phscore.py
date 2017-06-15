@@ -48,7 +48,7 @@ Jxw = [[-1.],
 core.set_Jxw(Jxw)
 
 # ... or sympy.SparseMatrix.
-Jxy = sympy.SprseMatrix([[-1.],
+Jxy = sympy.SparseMatrix([[-1.],
                          [0.]])
 core.set_Jxy(Jxy)
 

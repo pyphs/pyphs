@@ -10,6 +10,6 @@ connectors.transformer  T   ('C', '#', 'D', '#'):   alpha=('Bl', 16.37);
 #
 #======================  MECHANICS  ======================#
 mechanics.mass          M   ('D',):                 M=('M', 0.075);
-mechanics.stiffness     K   ('D', '#'):             K=('K', 7.14);
-mechanics.damper        A   ('D', '#'):             A=('A', 3);
+mechanics.stiffness     K   ('D', '#'):             K=('K', 1e4);
+mechanics.damper        A   ('D', '#'):             A=('A', 10.);
 #

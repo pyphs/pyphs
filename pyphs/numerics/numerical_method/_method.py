@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import sympy as sp
 from pyphs.core.maths import matvecprod, jacobian, sumvecs
-from pyphs.core.tools import free_symbols
+from pyphs.core.tools import free_symbols, types
 from pyphs.config import (GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER,
                           FILES, EPS, MAXIT, SPLIT, EIGEN_PATH,
                           LOAD_OPTS, PBAR, FS, FS_SYMBS, simulations)
@@ -348,11 +348,15 @@ Generators of getters for block matrices:
     def func_generator_Mab(a, b):
         "Getter generator"
         def func():
-            temp_1 = sp.Matrix.hstack(getattr(method, 'Mx'+a+'x'+b)(),
-                                      getattr(method, 'Mx'+a+'w'+b)())
-            temp_2 = sp.Matrix.hstack(getattr(method, 'Mw'+a+'x'+b)(),
-                                      getattr(method, 'Mw'+a+'w'+b)())
-            return sp.Matrix.vstack(temp_1, temp_2)
+            temp_1 = types.matrix_types[0].hstack(getattr(method,
+                                                          'Mx'+a+'x'+b)(),
+                                                  getattr(method,
+                                                          'Mx'+a+'w'+b)())
+            temp_2 = types.matrix_types[0].hstack(getattr(method,
+                                                          'Mw'+a+'x'+b)(),
+                                                  getattr(method,
+                                                          'Mw'+a+'w'+b)())
+            return types.matrix_types[0].vstack(temp_1, temp_2)
         doc = """
 Getter for block M{0}{1} = [[Mx{0}x{1}, Mx{0}w{1}],
                             [Mw{0}x{1}, Mw{0}w{1}]]
@@ -363,9 +367,9 @@ Getter for block M{0}{1} = [[Mx{0}x{1}, Mx{0}w{1}],
     def func_generator_My(suffix):
         "Getter generator"
         def func():
-            temp_1 = sp.Matrix.hstack(getattr(method, 'Mx'+suffix+'y')(),)
-            temp_2 = sp.Matrix.hstack(getattr(method, 'Mw'+suffix+'y')(),)
-            return sp.Matrix.vstack(temp_1, temp_2)
+            temp_1 = types.matrix_types[0].hstack(getattr(method, 'Mx'+suffix+'y')(),)
+            temp_2 = types.matrix_types[0].hstack(getattr(method, 'Mw'+suffix+'y')(),)
+            return types.matrix_types[0].vstack(temp_1, temp_2)
         doc = """
 Getter for block M{0}y = [[Mx{0}y],
                           [Mw{0}y]]
@@ -413,6 +417,7 @@ def set_getters_tempF(method):
                 fnl = geteval(method, 'fnl')
                 u = geteval(method, 'u')
                 temp = [sp.sympify(0), ]*len(geteval(method, 'v'+suffix))
+                print()
                 temp = sumvecs(temp,
                                matvecprod(method.I(suffix), v),
                                [-e for e in matvecprod(Mvvl, fl)],
@@ -431,6 +436,7 @@ F{0} = [[fs*dx{0}],] - [[Mv{0}vl, Mv{0}vnl, Mv{0}y]]. [[fl],
     # append getters
     method.setexpr('tempF', func_generator_tempF(''))
     for suffix in ('l', 'nl'):
+        print(suffix)
         method.setexpr('tempF{}'.format(suffix), func_generator_tempF(suffix)())
 
 
@@ -491,7 +497,9 @@ def set_getters_I(method):
     def I(suffix):
         dimx, dimw = (getattr(method.dims, 'x'+suffix)(),
                       getattr(method.dims, 'w'+suffix)())
-        return sp.diag(sp.eye(dimx)*method.config['fs'], sp.eye(dimw))
+        out = types.matrix_types[0](sp.diag(sp.eye(dimx)*method.config['fs'],
+                                            sp.eye(dimw)))
+        return types.matrix_types[0](out)
     setattr(method, 'I', I)
 
 
@@ -630,8 +638,8 @@ dictionary.
     # build discrete evaluation of the gradient
     if method.config['grad'] == 'discret':
         # discrete gradient
-        dxHl = list(sp.Matrix(method.Q)*(sp.Matrix(method.xl()) +
-                    0.5*sp.Matrix(method.dxl())))
+        dxHl = list(types.matrix_types[0](method.Q)*(types.matrix_types[0](method.xl()) +
+                    0.5*types.matrix_types[0](method.dxl())))
         dxHnl = discrete_gradient(method.H, method.xnl(), method.dxnl(),
                                   method.config['eps'])
         method._dxH = dxHl + dxHnl

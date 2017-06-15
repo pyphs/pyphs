@@ -435,6 +435,6 @@ compatible'.format(e_label, link_e_label)
 
 def isequal(M1, M2):
     """
-    Test M1==M2 with M1 and M2 of type sympy.Matrix or numpy.matrix
+    Test M1==M2 with M1 and M2 of type sympy.SparseMatrix or numpy.matrix
     """
     return not (M1-M2).any()

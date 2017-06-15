@@ -5,22 +5,25 @@ Created on Wed Jun  8 00:58:26 2016
 @author: Falaize
 """
 import sympy
+from pyphs.core.tools import types
 
 
 def buildCore(graph):
-    vstack = sympy.Matrix.vstack
-    hstack = sympy.Matrix.hstack
+    vstack = types.matrix_types[0].vstack
+    hstack = types.matrix_types[0].hstack
     nec = len(graph.analysis.ec_edges)
     nfc = len(graph.analysis.fc_edges)
     # incidence matrix for the effort-controlled edges
-    gamma_ec = sympy.Matrix(graph.analysis.Gamma_ec)
+    gamma_ec = types.matrix_types[0](graph.analysis.Gamma_ec)
     # incidence matrix for the flux-controlled edges
-    igamma_fc = sympy.Matrix(graph.analysis.iGamma_fc)
+    igamma_fc = types.matrix_types[0](graph.analysis.iGamma_fc)
     # solve linear relations to get the port-Hamiltonian structure
     gamma = igamma_fc * gamma_ec
     # build J matrix
-    graph.analysis.J = vstack(hstack(sympy.zeros(nec), gamma.T),
-                              hstack(-gamma, sympy.zeros(nfc)))
+    graph.analysis.J = vstack(hstack(types.matrix_types[0](sympy.zeros(nec)),
+                                     gamma.T),
+                              hstack(-gamma,
+                                     types.matrix_types[0](sympy.zeros(nfc))))
     _sort_edges_J(graph.analysis)
     _setCore(graph)
 

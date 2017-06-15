@@ -19,7 +19,7 @@ def subsinverse_scalar(expr, subs, symbols):
         args = expr.args
         try:
             test3 = bool(args[1] < 0)
-        except (TypeError, IndexError):
+        except (TypeError, IndexError, AttributeError):
             test3 = False
         if (isinstance(expr, sp.Pow) and bool(args[0] in subs.keys()) and
                 test3):
@@ -85,13 +85,11 @@ def subsinverse_matrix(expr, subs, symbols):
     """
     # iterate over matrix elements
     # iterate over list elements
-    m, n = expr.shape
-    for i in range(m):
-        for j in range(n):
-            try:
-                expr[i, j] = subsinverse_scalar(expr[i, j], subs, symbols)
-            except (AttributeError, TypeError):
-                pass
+    for i, j, e in expr.row_list():
+        try:
+            expr[i, j] = subsinverse_scalar(e, subs, symbols)
+        except (AttributeError, TypeError):
+            pass
     return expr
 
 

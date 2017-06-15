@@ -6,10 +6,10 @@ Created on Sat May 21 16:24:12 2016
 """
 from __future__ import absolute_import, division, print_function
 
-import sympy.physics.units as pu
 import sympy
 from .tools import symbols, nicevarlabel
 from pyphs.config import GMIN
+from pyphs.core.tools import types
 from .edges import (PHSPort,
                     PHSDissipativeLinear, PHSDissipativeNonLinear,
                     PHSStorageLinear)
@@ -18,6 +18,8 @@ __all__ = ['Source', 'Capacitor', 'Inductor', 'Resistor',
            'Potentiometer', 'Diode', 'Bjt', 'Triode']
 
 
+# Test for physical units management
+#import sympy.physics.units as pu
 #units = {'f': pu.amperes,
 #         'e': pu.volts,
 #         'q': pu.coulombs,
@@ -367,11 +369,11 @@ transistor#Ebers.E2.80.93Moll_model
         # dissipation variable
         wbjt = symbols(["w"+label+ind for ind in ['bc', 'be']])
         # bjt dissipation funcion
-        coeffs = sympy.Matrix([[(betaR+1)/betaR, -1],
+        coeffs = types.matrix_types[0]([[(betaR+1)/betaR, -1],
                                [-1, (betaF+1)/betaF]])
         funcs = [Is*(sympy.exp(wbjt[0]/(mu*Vt))-1) + GMIN*wbjt[0],
                  Is*(sympy.exp(wbjt[1]/(mu*Vt))-1) + GMIN*wbjt[1]]
-        zbjt = coeffs*sympy.Matrix(funcs)
+        zbjt = coeffs*types.matrix_types[0](funcs)
         # bjt edges data
         data_bc = {'label': wbjt[0],
                    'type': 'dissipative',
@@ -383,8 +385,8 @@ transistor#Ebers.E2.80.93Moll_model
                    'link': None}
         # connector resistances dissipative functions
         wR = symbols(["w"+label+ind for ind in ['rb', 'rc', 're']])
-        Rmat = sympy.diag(Rb, Rc, Re)
-        zR = Rmat*sympy.Matrix(wR)
+        Rmat = types.matrix_types[0](sympy.diag(Rb, Rc, Re))
+        zR = Rmat*types.matrix_types[0](wR)
         # connector resistances edges data
         data_rb = {'label': wR[0],
                    'z': {'e_ctrl': wR[0]/Rb, 'f_ctrl': Rb*wR[0]},

@@ -10,7 +10,6 @@ from __future__ import absolute_import, division, print_function
 from sympy.printing import ccode
 from .tools import matrix_type, dereference, indent
 from pyphs.core.tools import types
-import sympy
 
 
 def append_funcs(nums, files, objlabel):
@@ -40,7 +39,7 @@ def _append_funcs_defs(nums, files):
             if isinstance(expr, types.scalar_types):
                 files['h']['private'] += '\ndouble _{0};'.format(name)
             else:
-                mtype = matrix_type(*sympy.Matrix(expr).shape)
+                mtype = matrix_type(*types.matrix_types[0](expr).shape)
                 files['h']['private'] += '\n{0} _{1};'.format(mtype, name)
 
 
@@ -80,7 +79,7 @@ def _append_funcs_get_vector(nums, files, objlabel):
 
 
 def _str_mat_func_get(method, name, objlabel):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
+    mat = types.matrix_types[0](getattr(method, name + '_expr'))
     mtype = matrix_type(mat.shape[0], mat.shape[1])
     get_h = '\n{0} {1}() const;'.format(mtype, name)
     get_cpp = '\n{0} {1}::{2}() const'.format(mtype, objlabel, name)
@@ -99,7 +98,7 @@ def _str_scal_func_get(name, objlabel):
 
 
 def _str_mat_func_get_vector(method, name, objlabel):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
+    mat = types.matrix_types[0](getattr(method, name + '_expr'))
     mtype = 'vector<double>'
     get_h = '\n{0} {1}_vector() const;'.format(mtype, name)
     get_cpp = '\n{0} {1}::{2}_vector() const'.format(mtype, objlabel, name) + \
@@ -133,12 +132,10 @@ def _append_funcs_updates(nums, files, objlabel):
 
 
 def _str_mat_func_update(method, name, objlabel):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
+    mat = types.matrix_types[0](getattr(method, name + '_expr'))
     update_h = '\nvoid {0}_update();'.format(name)
     update_cpp = '\nvoid {0}::{1}_update()'.format(objlabel, name) + '{'
-    for n in range(mat.shape[1]):
-        for m in range(mat.shape[0]):
-            expr = mat[m, n]
+    for m, n, expr in mat.row_list():
             symbs = expr.free_symbols
             if any(symb in method.args() for symb in symbs):
                 c = ccode(expr, dereference=dereference(method))
@@ -176,20 +173,21 @@ def _append_funcs_data(nums, files, objlabel):
 
 
 def _str_mat_func_init_data(method, name):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
+    mat = types.matrix_types[0](getattr(method, name + '_expr'))
+    mat_dic = dict((((i, j), e) for i, j, e in mat.row_list()))
     init_data = 'double {0}_data[] ='.format(name) + ' {'
     crop = False
     for n in range(mat.shape[1]):
         for m in range(mat.shape[0]):
-            expr = mat[m, n]
-            symbs = expr.free_symbols
-            if any(symb in method.args() for symb in symbs):
-                init_data += "0., "
-                crop = True
-            else:
-                c = ccode(expr, dereference=dereference(method))
-                init_data += 'float({0}), '.format(c)
-                crop = True
+            crop = True
+            data = "0., "
+            if (m, n) in mat_dic.keys():
+                expr = mat[m, n]
+                symbs = expr.free_symbols
+                if not any(symb in method.args() for symb in symbs):
+                    c = ccode(expr, dereference=dereference(method))
+                    data = 'float({0}), '.format(c)
+            init_data += data
     if crop:
         init_data = init_data[:-2]
     init_data += '};'
@@ -225,7 +223,7 @@ def _append_funcs_init(nums, files, objlabel):
 
 
 def _str_mat_func_init_cpp(method, name):
-    mat = sympy.Matrix(getattr(method, name + '_expr'))
+    mat = types.matrix_types[0](getattr(method, name + '_expr'))
     mtype = matrix_type(mat.shape[0], mat.shape[1])
     return '\n_{0} = Map<{1}> ({0}_data);'.format(name, mtype)
 

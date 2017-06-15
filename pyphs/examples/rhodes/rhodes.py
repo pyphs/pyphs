@@ -31,6 +31,8 @@ core = graph.buildCore()
 # ---------------------------  SIMULATION  ---------------------------------- #
 if __name__ == '__main__':
 
+    core.subsinverse()
+
     core.build_R()
 
     # Define the simulation parameters

@@ -91,7 +91,7 @@ args : list of sympy.Symbols
     Arguments symbols for the symbolic expression; defines also the number of
     arguments of the returned numeric function.
 
-expr : sympy.Expr, list of sympy.Expr, or sympy.Matrix.
+expr : sympy.Expr, list of sympy.Expr, or sympy.SparseMatrix.
     Symbolic expression to lambdify.
 
 subs: dict (optional)
@@ -136,7 +136,11 @@ f : callable
         raise AttributeError('Missing free symbols {}'.format(missing_symbols))
 
     # Choose backend (theano or numpy)
-    if theano and got_theano:
-        return theano_lambdify(args, expr)
+    if isinstance(expr, types.matrix_types):
+        expr_ = sympy.Matrix(expr)
     else:
-        return numpy_lambdify(args, expr)
+        expr_ = expr
+    if theano and got_theano:
+        return theano_lambdify(args, expr_)
+    else:
+        return numpy_lambdify(args, expr_)

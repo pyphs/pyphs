@@ -22,7 +22,7 @@ def gradient(scalar_func, vars_, simplify=False):
 
         Scalar function.
 
-    vars_ : list or sympy.Matrix
+    vars_ : list or sympy.SparseMatrix
 
         array of sympy symbols for variables
 
@@ -60,7 +60,7 @@ def hessian(scalar_func, vars_, simplify=False):
 
         Scalar function.
 
-    vars_ : list or sympy.Matrix
+    vars_ : list or sympy.SparseMatrix
 
         array of sympy symbols for variables
 
@@ -71,7 +71,7 @@ def hessian(scalar_func, vars_, simplify=False):
     Output
     -------
 
-    hess : sympy.Matrix
+    hess : sympy.SparseMatrix
 
         gradient of H with hess = Jac(Grad(H))
     """
@@ -94,7 +94,7 @@ def jacobian(func, vars_, simplify=False):
 
         Vector function.
 
-    vars_ : list or sympy.Matrix
+    vars_ : list or sympy.SparseMatrix
 
         List of sympy symbols for variables
 
@@ -105,14 +105,14 @@ def jacobian(func, vars_, simplify=False):
     Output
     -------
 
-    Jac : sympy.Matrix
+    Jac : sympy.SparseMatrix
 
         Jacobian of f with Jac[i, j] = f[i].diff(x[j])
     """
     types.vector_test(vars_)
     types.vector_test(func)
     nv, nf = len(vars_), len(func)
-    Jac = sympy.zeros(nf, nv)
+    Jac = types.matrix_types[0](sympy.zeros(nf, nv))
     for i in range(nf):
         for j in range(nv):
             Jac[i, j] = func[i].diff(vars_[j]).doit()

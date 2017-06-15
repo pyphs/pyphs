@@ -77,7 +77,7 @@ def vector_test(obj, metadata=(None, None)):
 
 # ============================ MATRICES ===================================== #
 
-matrix_types = (sympy.Matrix, )
+matrix_types = (sympy.SparseMatrix, )
 
 
 class MatrixExprTypeError(Exception):

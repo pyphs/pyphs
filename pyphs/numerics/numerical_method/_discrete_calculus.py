@@ -23,11 +23,11 @@ def discrete_gradient(H, x, dx, numtol=EPS):
 
         Scalar function of x.
 
-    x : list or sympy.Matrix
+    x : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
-    dx : list or sympy.Matrix
+    dx : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
@@ -70,11 +70,11 @@ def gradient_theta(H, x, dx, theta=0.):
 
         Scalar function of x.
 
-    x : list or sympy.Matrix
+    x : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
-    dx : list or sympy.Matrix
+    dx : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
@@ -113,11 +113,11 @@ def gradient_trapez(H, x, dx):
 
         Scalar function of x.
 
-    x : list or sympy.Matrix
+    x : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
-    dx : list or sympy.Matrix
+    dx : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 

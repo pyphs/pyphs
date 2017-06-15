@@ -42,7 +42,7 @@ port-Hamiltonian systems.
                 text = 'Can not understand netlist type {}'.format(t)
                 raise TypeError(text)
 
-            self.Netlist = netlist
+            self.netlist = netlist
 
             self._build_from_netlist()
 
@@ -86,7 +86,7 @@ port-Hamiltonian systems.
     'netlists' module).
         """
         from importlib import import_module
-        for line in self.Netlist:
+        for line in self.netlist:
             dic_name = 'pyphs.dictionary.' + line['dictionary']
             dic = import_module(dic_name)
             name = line['component'].lower()
@@ -167,8 +167,8 @@ port-Hamiltonian systems.
             flag = any((change_s, change_p))
 
     def __add__(graph1, graph2):
-        if hasattr(graph1, 'Netlist') and hasattr(graph2, 'Netlist'):
-            graph1.Netlist += graph2.Netlist
+        if hasattr(graph1, 'netlist') and hasattr(graph2, 'netlist'):
+            graph1.netlist += graph2.netlist
         graph1.core += graph2.core
         graph1.add_edges_from(graph2.edges(data=True))
         return graph1

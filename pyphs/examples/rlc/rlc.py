@@ -9,7 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import (netlist2core, PHSSimulation, signalgenerator)
+from pyphs import (netlist2core, PHSSimulation, signalgenerator, PHSGraph)
 import shutil
 
 label = 'rlc'
@@ -17,14 +17,15 @@ label = 'rlc'
 here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = os.path.join(here, label + '.net')
+graph = PHSGraph(netlist='netlist_filename', label=label)
 core = netlist2core(netlist_filename)
 
 
 if __name__ == '__main__':
-    
+
     # Include the linear dissipatives in the connexion structure
     core.build_R()
-    
+
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -35,7 +36,7 @@ if __name__ == '__main__':
               'path': None,             # Path to the results folder
               'pbar': False,      # Display a progress bar
               'timer': False,           # Display minimal timing infos
-              'lang': 'python',     # in {'python', 'c++'}
+              'lang': 'c++',     # in {'python', 'c++'}
               'theano': False
               }
 
@@ -59,8 +60,7 @@ if __name__ == '__main__':
     # clean: delete folders 'data' and 'figures'
     shutil.rmtree(os.path.join(here, 'data'))
     shutil.rmtree(os.path.join(here, 'figures'))
-    
+
     # clean: delete folder 'rlc'
     if config['lang'] == 'c++':
         shutil.rmtree(os.path.join(here, 'rlc'))
-        

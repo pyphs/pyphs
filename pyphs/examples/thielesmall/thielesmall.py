@@ -54,6 +54,5 @@ if __name__ == '__main__':
 #    plt.close('all')
 #    plt.figure()
 #    plt.semilogx(f, TF)
-#    plt.grid('on', which='minor')
 
     pass

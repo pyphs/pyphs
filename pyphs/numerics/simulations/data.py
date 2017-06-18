@@ -343,13 +343,13 @@ ps_generator: generator
         obs_expr = [e.subs(self.core.subs) for e in self.core.observers.values()]
 
         obs_symbs = free_symbols(obs_expr)
+        index = len(self.core.args())-len(obs_expr)
 
-        obs_args, obs_inds = find(obs_symbs, self.core.args()[:-len(obs_expr)])
+        obs_args, obs_inds = find(obs_symbs, self.core.args()[:index])
 
         obs = lambdify(obs_args, obs_expr, theano=self.config['theano'])
-        obs_args = lambdify(self.core.args()[:-len(obs_expr)], obs_args,
-                          theano=self.config['theano'])
-
+        obs_args = lambdify(self.core.args()[:index], obs_args,
+                            theano=self.config['theano'])
 
         for arg in self.args(**options):
             yield obs(*obs_args(*arg))

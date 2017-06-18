@@ -148,8 +148,12 @@ subplots.
         opts['labels'] = [None, ] * nplots
     if opts['log'] is None:
         opts['log'] = ['', ] * nplots
-    from matplotlib.pyplot import subplots
-    fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'])
+    from matplotlib.pyplot import subplots, fignum_exists
+    i = 1
+    while fignum_exists(i):
+        i += 1
+    fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'],
+                        num=i)
 
     activate_latex(opts)
 

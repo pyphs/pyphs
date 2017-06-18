@@ -129,8 +129,11 @@ None).
     from matplotlib.pyplot import rc
     rc('font', size=opts['fontsize'], **globalfonts())
 
-    from matplotlib.pyplot import figure
-    fig = figure(1, figsize=opts['figsize'])
+    from matplotlib.pyplot import figure, fignum_exists
+    i = 1
+    while fignum_exists(i):
+        i += 1
+    fig = figure(i, figsize=opts['figsize'])
     nplots = datay.__len__()
 
     if isinstance(datax[0], (float, int)):

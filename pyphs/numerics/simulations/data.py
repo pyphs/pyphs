@@ -215,8 +215,10 @@ dtE_generator: generator
                              theano=self.config['theano'])
             Hpost_args = lambdify(self.core.args(), Hpost_args,
                                   theano=self.config['theano'])
-            for arg in self.args(**options):
-                yield (Hpost(*Hpost_args(*arg)) - H(*H_args(*arg)))*self.config['fs']
+            for args, o in zip(self.args(**options), self.o(**options)):
+                a = (list(args)+list(o))
+                yield (Hpost(*Hpost_args(*a)) -
+                       H(*H_args(*a)))*self.config['fs']
 
         elif DtE == 'DxhDtx':
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
@@ -262,15 +264,16 @@ pd_generator: generator
         R = lambdify(R_args, R_expr, theano=self.config['theano'])
         R_args = lambdify(self.core.args(), R_args,
                           theano=self.config['theano'])
-        for w, z, a, b, args in zip(self.w(**options),
-                                    self.z(**options),
-                                    self.a(**options),
-                                    self.b(**options),
-                                    self.args(**options)):
+        for w, z, a, b, args, o in zip(self.w(**options),
+                                       self.z(**options),
+                                       self.a(**options),
+                                       self.b(**options),
+                                       self.args(**options),
+                                       self.o(**options)):
             yield scalar_product(w, z) + \
                 scalar_product(a,
                                a,
-                               R(*R_args(*args)))
+                               R(*R_args(*(list(args)+list(o)))))
 
     def ps(self, imin=None, imax=None, decim=None):
         """
@@ -341,10 +344,10 @@ ps_generator: generator
 
         obs_symbs = free_symbols(obs_expr)
 
-        obs_args, obs_inds = find(obs_symbs, self.core.args())
+        obs_args, obs_inds = find(obs_symbs, self.core.args()[:-len(obs_expr)])
 
         obs = lambdify(obs_args, obs_expr, theano=self.config['theano'])
-        obs_args = lambdify(self.core.args(), obs_args,
+        obs_args = lambdify(self.core.args()[:-len(obs_expr)], obs_args,
                           theano=self.config['theano'])
 
 

@@ -6,7 +6,9 @@ Created on Fri Jun 16 12:14:22 2017
 @author: Falaize
 """
 
-from ..edges import PHSStorageNonLinear
+from ..edges import PHSPort
+from ..tools import symbols
+
 
 class Source(PHSPort):
     """
@@ -30,16 +32,20 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
     def __init__(self, label, nodes, **kwargs):
         type_ = kwargs['type']
         type_ = type_.lower()
-        assert type_ in ('force', 'velocity')
-        if type_ == 'force':
+        assert type_ in ('temperature', 'entropyvariation')
+        if type_ == 'entropyvariation':
             ctrl = 'e'
-        elif type_ == 'velocity':
+            obs = {}
+        elif type_ == 'temperature':
             ctrl = 'f'
+            obs = {symbols('gx'+label): symbols('u'+label)}
+
         kwargs.update({'ctrl': ctrl})
         PHSPort.__init__(self, label, nodes, **kwargs)
+        self.core.observers.update(obs)
 
     @staticmethod
     def metadata():
         return {'nodes': ('N1', 'N2'),
-                'arguments': {'type': 'force'}}
+                'arguments': {'type': 'temperature'}}
 

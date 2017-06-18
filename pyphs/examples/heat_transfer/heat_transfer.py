@@ -38,12 +38,14 @@ if __name__ == '__main__':
     simu = PHSSimulation(core, config)
 
     nt = int(fs*tsig)
+
+    # Initial entropies (J/K)
     x0 = (1., -5.)
 
     def u():
-        tamb = 0.
+        tamb = 20.   # Impose Temperature (°C)
         for i in range(nt):
-            yield np.array([tamb+273.16, ])
+            yield np.array([tamb+273.16, ])  # (K)
 
     simu.init(u=u(), nt=nt, x0=x0)
 
@@ -56,11 +58,17 @@ if __name__ == '__main__':
     sigma = np.array(list(simu.data.x())).T
     sigmay = np.array(list(simu.data.y())).T
 
-    singleplot(t, theta-core.subs[core.symbols('T0')], unitx='Time $t$ (s)', unity=r'Temperature $\theta$ ($^\circ$C)',
+    simu.data.plot_powerbal()
+
+    singleplot(t, theta-core.subs[core.symbols('T0')],
+               unitx='Time $t$ (s)', unity=r'Temperature $\theta$ ($^\circ$C)',
                labels=[r'$\theta_1$', r'$\theta_2$'])
 
-    singleplot(t, np.vstack((sigma, sigmay, np.sum(sigma, axis=0)[np.newaxis, :]+ sigmay)),
+    singleplot(t, np.vstack((sigma, sigmay,
+                             np.sum(sigma, axis=0)[np.newaxis, :] + sigmay)),
                unitx='Time $t$ (s)', unity=r'Entropy $\sigma$ (J/K)',
-               labels=[r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_{\mathrm{amb}}$', r'$\sigma_1+\sigma_2+\sigma_{\mathrm{amb}}$'])
+               labels=[r'$\sigma_1$', r'$\sigma_2$',
+                       r'$\sigma_{\mathrm{amb}}$',
+                       r'$\sigma_1+\sigma_2+\sigma_{\mathrm{amb}}$'])
 
     pass

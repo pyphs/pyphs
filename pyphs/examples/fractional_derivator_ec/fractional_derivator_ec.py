@@ -24,7 +24,7 @@ netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)
 core = netlist2core(netlist_filename)
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
     # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
     # !!! Very long simulation with numpy
 
@@ -62,5 +62,5 @@ if __name__ == '__main__':
 #    plt.xlabel('freq (Hz)')
 #    plt.ylabel(r'$\mathrm{abs}(y(f)/u(f))$ ($\Omega$)')
 #    plt.title('Transfer function')
-#    
-    pass
+#
+#    pass

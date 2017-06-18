@@ -1,13 +1,11 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
 """
-Created on Fri Jun 16 12:14:22 2017
+Created on Sat May 21 16:29:43 2016
 
 @author: Falaize
 """
 
+from __future__ import absolute_import, division, print_function
 from ..edges import PHSPort
-from ..tools import symbols
 
 
 class Source(PHSPort):
@@ -32,20 +30,15 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
     def __init__(self, label, nodes, **kwargs):
         type_ = kwargs['type']
         type_ = type_.lower()
-        assert type_ in ('temperature', 'entropyvariation')
-        if type_ == 'entropyvariation':
+        assert type_ in ('force', 'velocity')
+        if type_ == 'force':
             ctrl = 'e'
-            obs = {}
-        elif type_ == 'temperature':
+        elif type_ == 'velocity':
             ctrl = 'f'
-            obs = {symbols('gx'+label): symbols('u'+label)}
-
         kwargs.update({'ctrl': ctrl})
         PHSPort.__init__(self, label, nodes, **kwargs)
-        self.core.observers.update(obs)
 
     @staticmethod
     def metadata():
         return {'nodes': ('N1', 'N2'),
-                'arguments': {'type': 'temperature'}}
-
+                'arguments': {'type': 'force'}}

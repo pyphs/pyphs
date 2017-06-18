@@ -8,9 +8,10 @@ Created on Sun Apr  2 20:11:16 2017
 import sympy as sp
 from numpy import (sqrt, sin, cos, tanh, cosh, sinh, array, pi, linspace,
                    nonzero, diff, sign, newaxis)
-from pyphs.dictionary.mechanics import Mass, Stiffness, Damper, datum
+from pyphs.dictionary.mechanics import Mass, Stiffness, Damper
 from pyphs.dictionary.connectors import Transformer
 from pyphs import PHSGraph
+from pyphs.graphs import datum
 
 
 def parameters_JSV2016():

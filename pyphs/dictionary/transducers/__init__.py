@@ -1,4 +1,4 @@
 #
-from .pickup import Pickup
+from ._pickup import Pickup
 
 __all__ = ['Pickup']

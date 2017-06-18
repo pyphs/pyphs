@@ -1,5 +1,5 @@
-thermics.mass       T1      ('T1', ):           C=('C1', 100.);     T0=('T0', 273.16);
-thermics.mass       T2      ('T2', ):           C=('C2', 10.);      T0=('T0', 273.16);
-thermics.transfer   R12     ('T1', 'T2'):       R=('R', 2.);
-thermics.transfer   R2AMB   ('T2', 'TAMB'):     R=('R', 2.);
-thermics.source     TAMB    ('#', 'TAMB'):      type='temperature';
+thermics.capacitor  T1      ('T1', ):           C=('C1', 100.);
+thermics.capacitor  T2      ('T2', ):           C=('C2', 10.);
+thermics.transfer   R12     ('T1', 'T2'):       R=('R12', 1.);
+thermics.transfer   R2AMB   ('T2', 'TAMB'):     R=('R2A', 10.);
+thermics.source     TAMB    ('TAMB', ):          type='temperature';

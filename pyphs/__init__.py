@@ -4,7 +4,7 @@ from __future__ import print_function
 
 from .core.core import PHSCore
 from .graphs.graph import PHSGraph
-from .graphs import netlist2core
+from .graphs import netlist2core, netlist2graph
 from .graphs.netlists import PHSNetlist
 from .numerics import (PHSCoreMethod, PHSNumericalCore,
                        PHSNumericalEval, PHSNumericalOperation)
@@ -30,4 +30,4 @@ __all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
            'PHSNumericalCore', 'PHSNumericalEval',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
            'numcore2cpp', 'simu2cpp', 'netlist2core',
-           'path_to_configuration_file']
+           'path_to_configuration_file', 'netlist2graph']

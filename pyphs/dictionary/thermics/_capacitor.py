@@ -12,9 +12,9 @@ from pyphs.graphs import datum
 import sympy as sp
 
 
-class Mass(PHSStorageNonLinear):
+class Capacitor(PHSStorageNonLinear):
     """
-    Thermal mass (capacity) with exponential law
+    Thermal capacitor (mass) with exponential law
     * The state is the entropy x=s
     * The Parameters are the thermal capacity C and the initial temperature t0.
     * The Storage function is H(s) = C*t0*exp(s/C)
@@ -23,7 +23,7 @@ class Mass(PHSStorageNonLinear):
     Usage
     -----
 
-    thermics.mass label nodes: **kwargs
+    thermics.capacitor label nodes: **kwargs
 
     Parameters:
     -----------
@@ -38,7 +38,15 @@ class Mass(PHSStorageNonLinear):
     """
     def __init__(self, label, nodes, **kwargs):
         # parameters
+        if not label == nodes[0]:
+            text = "The node label associated with a heat capacitor must be the\
+ same as the component label:\n{}\nis not \n{}".format(label, nodes[0])
+            raise NameError(text)
         pars = ['C', 'T0']
+        base_kwargs = {'C': ('C', 1e2), 'T0': ('T0', 273.16)}
+        for k in base_kwargs.keys():
+            if k not in kwargs:
+                kwargs[k] = base_kwargs[k]
         for par in pars:
             assert par in kwargs.keys()
         C, T0 = symbols(pars)
@@ -65,4 +73,4 @@ class Mass(PHSStorageNonLinear):
     def metadata():
         return {'nodes': ('T', ),
                 'arguments': {'C': ('C', 1e2),
-                              'T0': ('T0', 293.16)}}
+                              'T0': ('T0', 273.16)}}

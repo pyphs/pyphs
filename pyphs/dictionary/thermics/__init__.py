@@ -1,7 +1,7 @@
 #
 
-from ._mass import Mass
+from ._capacitor import Capacitor
 from ._transfers import Transfer
-from ._sources import Source
+from ._source import Source
 
-__all__ = ['Mass', 'Transfer', 'Source']
+__all__ = ['Capacitor', 'Transfer', 'Source']

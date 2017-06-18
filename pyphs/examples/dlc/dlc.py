@@ -24,7 +24,7 @@ netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)
 core = graph.buildCore()
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
 #    tsig = 0.01
 #    fs = 48000.
 #
@@ -45,4 +45,4 @@ if __name__ == '__main__':
 #    simu.process()
 #
 #    simu.data.plot_powerbal()
-    pass
+#    pass

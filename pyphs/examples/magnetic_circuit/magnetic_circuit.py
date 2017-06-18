@@ -9,18 +9,22 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import (netlist2core, PHSSimulation, signalgenerator)
-import shutil
+from pyphs import netlist2graph
 
-label = 'rlc'
+
+label = 'magnetic_circuit'
 
 here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = os.path.join(here, label + '.net')
-core = netlist2core(netlist_filename)
 
+graph = netlist2graph(netlist_filename)
+
+core = graph.buildCore()
 
 #if __name__ == '__main__':
+#    from pyphs import (PHSSimulation, signalgenerator, PHSGraph)
+#    import shutil
 #
 #    # Include the linear dissipatives in the connexion structure
 #    core.build_R()
@@ -46,7 +50,7 @@ core = netlist2core(netlist_filename)
 #
 #    def sequ():
 #        for el in u():
-#            yield (el, )
+#            yield (1e4*el, )
 #
 #    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
 #
@@ -55,6 +59,7 @@ core = netlist2core(netlist_filename)
 #
 #    # Plots
 #    simu.data.plot_powerbal(mode='single')
+#    simu.data.plot(('u', 'x', 'y'))
 #
 #    # clean: delete folders 'data' and 'figures'
 #    shutil.rmtree(os.path.join(here, 'data'))
@@ -62,4 +67,4 @@ core = netlist2core(netlist_filename)
 #
 #    # clean: delete folder 'rlc'
 #    if config['lang'] == 'c++':
-#        shutil.rmtree(os.path.join(here, 'rlc'))
+#        shutil.rmtree(os.path.join(here, 'magnetic_circuit'))

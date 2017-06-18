@@ -51,8 +51,8 @@ def discrete_gradient(H, x, dx, numtol=EPS):
         Hpost = H.subs(x[i], x[i] + dx[i])
         dxh = (Hpost - H)/dx[i]
         dxh0 = H.diff(x[i]).doit()
-        dxhi = sympy.Piecewise((dxh, dx[i] < -numtol),
-                               (dxh0, dx[i] < numtol),
+        dxhi = sympy.Piecewise((dxh, dx[i] < -(numtol**2)),
+                               (dxh0, dx[i] < numtol**2),
                                (dxh, True))
         dxHd.append(dxhi)
     return dxHd

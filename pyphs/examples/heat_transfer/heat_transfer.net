@@ -1,0 +1,3 @@
+thermics.mass T1 ('T1', ): C=('C1', 100.); T0=('T0', 300.);
+thermics.mass T2 ('T2', ): C=('C2', 10.); T0=('T0', 300.);
+thermics.transfer R12 ('T1', 'T2'): R=('R', 2.);

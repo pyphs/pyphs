@@ -46,17 +46,6 @@ else return value.
 
 # =========================================================================== #
 
-def norm(vec):
-    """
-Return the norm of a vector.
-    """
-    assertions.vector(vec)
-    a = numpy.array(vec)
-    return numpy.sqrt(numpy.einsum('i,i', a, a))
-
-
-# =========================================================================== #
-
 def myrange(N, indi, indf):
     """
 Return 'range(N)' with index 'indi' at position 'indf'

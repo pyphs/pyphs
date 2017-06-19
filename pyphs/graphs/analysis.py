@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 import networkx
 import numpy
 from ..misc.tools import myrange, pause
-from ..config import datum
+from ..config import datum, EPS
 from ..misc.plots.graphs import plot_analysis
 from .exceptions import PHSUndefinedPotential
 
@@ -149,9 +149,12 @@ Execute an iteration over the lists:
         # init memory of lambda to: check for change or stop while loop
         self.Lambda_temp = numpy.ones(self.Lambda.shape)
         # loop while Lambda is changed
-        while not len((self.Lambda_temp-self.Lambda).flatten().nonzero()[0]) == 0:
+        while not (numpy.sum(numpy.abs(self.Lambda_temp-self.Lambda)) < 
+                   numpy.finfo(float).eps):
             if self._verbose:
                 print('###################################\nLoop Start\n')
+                print('self.Lambda_temp-self.Lambda')
+                print(self.Lambda_temp-self.Lambda)
                 # save Lambda for comparison in while condition
             self.Lambda_temp = numpy.matrix(self.Lambda, copy=True)
             # iterate on indeterminate nodes

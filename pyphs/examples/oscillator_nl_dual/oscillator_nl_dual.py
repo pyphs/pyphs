@@ -13,12 +13,13 @@ from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
 import numpy as np
 
 
-label = 'mka_dual'
+label = 'oscillator_nl_dual'
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 netlist_filename = path + os.sep + label + '.net'
 netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)
 core = graph.buildCore()
+
 
 if __name__ == '__main__':
 #    tsig = 0.01

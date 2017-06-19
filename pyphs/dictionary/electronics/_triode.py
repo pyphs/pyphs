@@ -55,7 +55,7 @@ class Triode(PHSDissipativeNonLinear):
     Convention of the AES, SF USA, 2009.
 
     """
-    def __init__(self, label, nodes_labels, subs):
+    def __init__(self, label, nodes, **kwargs):
         # parameters
         pars = ['mu', 'Ex', 'Kg', 'Kp', 'Kvb', 'Vcp', 'Va', 'Rgk']
         mu, Ex, Kg, Kp, Kvb, Vcp, Va, Rgk = symbols(pars)
@@ -91,22 +91,20 @@ class Triode(PHSDissipativeNonLinear):
         # edges data
         edge_pk_data = {'label': w[0],
                         'type': 'dissipative',
-                        'realizability': 'effort_controlled',
-                        'linear': False,
-                        'link': w[0]}
+                        'ctrl': 'e',
+                        'link': None}
         edge_gk_data = {'label': w[1],
                         'type': 'dissipative',
-                        'realizability': 'effort_controlled',
-                        'linear': False,
-                        'link': w[1]}
+                        'ctrl': 'e',
+                        'link': None}
         # edges
-        edge_pk = (nodes_labels[1], nodes_labels[0], edge_pk_data)
-        edge_gk = (nodes_labels[2], nodes_labels[0], edge_gk_data)
+        edge_pk = (nodes[1], nodes[0], edge_pk_data)
+        edge_gk = (nodes[2], nodes[0], edge_gk_data)
         edges = [edge_pk, edge_gk]
 
         # init component
-        PHSDissipativeNonLinear.__init__(self, label, nodes_labels, subs,
-                                         pars, [w], [z], edges)
+        PHSDissipativeNonLinear.__init__(self, label, edges,
+                                         w, z, **kwargs)
 
     @staticmethod
     def metadata():

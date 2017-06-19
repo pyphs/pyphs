@@ -1,0 +1,2 @@
+mechanics.mass M ('n1',): M=('M', 0.01);
+mechanics.springsat K ('#', 'n1'): K0=('K0', 1000.0); Ksat=('Ksat', 1e3); xsat=('xsat', 1e-1);

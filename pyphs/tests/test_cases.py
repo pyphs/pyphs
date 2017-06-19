@@ -186,6 +186,18 @@ class TestExamples(TestCase):
         from pyphs.examples.thielesmall_NL.thielesmall_NL import core as thielesmall_NL_core
         self.assertTrue(True)
 
+    def test_import_examples18(self):
+        from pyphs.examples.triodeamp.triodeamp import core as triodeamp_core
+        self.assertTrue(True)
+
+    def test_import_examples19(self):
+        from pyphs.examples.oscillator_nl.oscillator_nl import core as oscillator_nl_core
+        self.assertTrue(True)
+
+    def test_import_examples20(self):
+        from pyphs.examples.oscillator_nl_dual.oscillator_nl_dual import core as oscillator_nl_dual_core
+        self.assertTrue(True)
+
 class TestPlots(TestCase):
     def test_plot_rlc_with_split(self):
         self.assertTrue(plot_rlc_with_split())

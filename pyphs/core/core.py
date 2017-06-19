@@ -584,9 +584,9 @@ add the connector'.format(i)
         # recover connectors and sort cy and cu
         for i, c in enumerate(self.connectors):
             all_alpha.append(c['alpha'])
-            i_primal = self.cy.index(c['y'][0])
+            i_primal = getattr(self, 'cy').index(c['y'][0])
             self.move_connector(i_primal, 2*i)
-            i_dual = self.cy.index(c['y'][1])
+            i_dual = getattr(self, 'cy').index(c['y'][1])
             self.move_connector(i_dual, 2*i+1)
 
         Mswitch_list = [alpha * sympy.Matrix([[0, -1],
@@ -612,9 +612,9 @@ add the connector'.format(i)
             self.M = types.matrix_types[0](self.M[:nxwy, :nxwy] + M_connectors)
 
             # clean
-            self.cy = list()
-            self.cu = list()
-            self.connectors = list()
+            setattr(self, 'cy', list())
+            setattr(self, 'cu', list())
+            setattr(self, 'connectors', list())
 
         except ValueError:
             raise Exception('Can not resolve the connection.\n\nABORD')

@@ -169,7 +169,7 @@ class PHSSimulation:
         if self.config['timer']:
 
             t_total = tstop-tstart
-            print('Total time: {}s'.format(tstop-tstart, 'f'))
+            print('Total time: {}s'.format(tstop-tstart))
 
             string = 'Total time w.r.t number of iterations: {}s'
             time_it = (t_total/float(self.data.config['nt']))

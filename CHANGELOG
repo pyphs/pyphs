@@ -1,4 +1,6 @@
 0.1.9.9
+  - Improve coverage
+  - Implement the Thermics dictionary
   - Implement CMake build system
   - changes in PHSCore:
 	* core.apply_sub => core.substitute

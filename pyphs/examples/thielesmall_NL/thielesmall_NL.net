@@ -1,0 +1,15 @@
+#=======================  INPUTS  ========================#
+electronics.source      IN  ('A', '#'):             type=voltage;
+#
+#=====================  ELECTRONICS  =====================#
+electronics.resistor    R   ('A', 'B'):             R=('R', 5.9);
+electronics.inductor    L   ('B', 'C'):             L=('L', 2.36*1e-3);
+#
+#======================  CONNECTOR  ======================#
+connectors.transformer  T   ('C', '#', 'D', '#'):   alpha=('Bl', 16.37);
+#
+#======================  MECHANICS  ======================#
+mechanics.mass          M   ('D',):                 M=('M', 0.075);
+mechanics.springcubic   K   ('D', '#'):             K0=('K0', 1e4);    K2=('K2', 1e4);
+mechanics.damper        A   ('D', '#'):             A=('A', 10.);
+#

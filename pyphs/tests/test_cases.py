@@ -85,7 +85,6 @@ class TestPHSGraph(TestCase):
         self.assertTrue(plot_GraphAnalysis())
 
 
-
 class TestCore2Latex(TestCase):
     def test_core_2_latex(self):
         self.assertTrue(TestCore2Tex())
@@ -119,21 +118,72 @@ class TestCpp(TestCase):
 
 class TestExamples(TestCase):
 
-    def test_import_examples(self):
+    def test_import_examples1(self):
         from pyphs.examples.bjtamp.bjtamp import core as bjtamp_core
+        self.assertTrue(True)
+
+    def test_import_examples2(self):
         from pyphs.examples.connectors.connectors import core as connectors_core
+        self.assertTrue(True)
+
+    def test_import_examples3(self):
         from pyphs.examples.dlc.dlc import core as dlc_core
+        self.assertTrue(True)
+
+    def test_import_examples4(self):
         from pyphs.examples.fractional_derivator_ec.fractional_derivator_ec import core as fractional_derivator_ec_core
+        self.assertTrue(True)
+
+    def test_import_examples5(self):
         from pyphs.examples.fractional_derivator_fc.fractional_derivator_fc import core as fractional_derivator_fc_core
+        self.assertTrue(True)
+
+    def test_import_examples6(self):
         from pyphs.examples.fractional_integrator_ec.fractional_integrator_ec import core as fractional_integrator_ec_core
+        self.assertTrue(True)
+
+    def test_import_examples7(self):
         from pyphs.examples.fractional_integrator_fc.fractional_integrator_fc import core as fractional_integrator_fc_core
+        self.assertTrue(True)
+
+    def test_import_examples8(self):
         from pyphs.examples.mka.mka import core as mka_core
+        self.assertTrue(True)
+
+    def test_import_examples9(self):
         from pyphs.examples.mka_dual.mka_dual import core as mka_dual_core
+        self.assertTrue(True)
+
+    def test_import_examples10(self):
         from pyphs.examples.pwl.pwl import core as pwl_core
+        self.assertTrue(True)
+
+    def test_import_examples11(self):
         from pyphs.examples.rhodes.rhodes import core as rhodes_core
+        self.assertTrue(True)
+
+    def test_import_examples12(self):
         from pyphs.examples.rlc.rlc import core as rlc_core
+        self.assertTrue(True)
+
+    def test_import_examples13(self):
         from pyphs.examples.thielesmall.thielesmall import core as thielesmall_core
+        self.assertTrue(True)
+
+    def test_import_examples14(self):
         from pyphs.examples.thielesmall_dual.thielesmall_dual import core as thielesmall_dual_core
+        self.assertTrue(True)
+
+    def test_import_examples15(self):
+        from pyphs.examples.heat_transfer.heat_transfer import core as heat_transfer_core
+        self.assertTrue(True)
+
+    def test_import_examples16(self):
+        from pyphs.examples.magnetic_circuit.magnetic_circuit import core as magnetic_circuit_core
+        self.assertTrue(True)
+
+    def test_import_examples17(self):
+        from pyphs.examples.thielesmall_NL.thielesmall_NL import core as thielesmall_NL_core
         self.assertTrue(True)
 
 class TestPlots(TestCase):

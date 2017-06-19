@@ -116,7 +116,7 @@ def waveNumbers(N, Lb, Kb, Mb):
     nPeriods = N
     nPoints = N*1e6
     # [1/m] A vector of wavenumners
-    k = linspace(0, nPeriods*2*pi/Lb, nPoints)
+    k = linspace(0., nPeriods*2*pi/Lb, int(nPoints))
     # Add an axis to get k as a 2-dimensional array
     k = k[newaxis, :]
     # Indices of wavenumers in k satisfying eigen-modes cos(k*L)=-1./cosh(k*L)

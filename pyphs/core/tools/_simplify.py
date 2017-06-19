@@ -58,12 +58,10 @@ expr_simp: same type as expr
         return simplify_vector(expr, **kwargs)
     elif isinstance(expr, dict):
         return simplify_dict(expr, **kwargs)
+    elif isinstance(expr, types.scalar_types):
+        return simplify_scalar(expr, **kwargs)
     else:
-        try:
-            types.scalar_test(expr)
-            return simplify_scalar(expr, **kwargs)
-        except types.ScalarExprTypeError:
-            raise TypeError('Unknown type {}'.format(type(expr)))
+        raise TypeError('Unknown type {}'.format(type(expr)))
 
 
 def timeout_simplify(expr, method=SIMPLIFY, timeout=TIMEOUT):
@@ -218,3 +216,24 @@ expr_simp: dict
         if finished:
             expr[new_k] = new_v
     return expr if finished else 'not finished'
+
+# =========================================================================
+
+
+def simplify_core(core):
+    """
+    substitute_core
+    ***************
+
+    Apply simplifications to every expressions of a PHSCore.
+
+    """
+
+    # substitutions in core's list of expressions and symbols
+    attrs_to_sub = set(list(core.exprs_names) +
+                       list(core.symbs_names) +
+                       ['M', '_dxH', 'observers'])
+    for name in attrs_to_sub:
+        expr = getattr(core, name)
+        if expr is not None:
+            setattr(core, name, simplify(expr))

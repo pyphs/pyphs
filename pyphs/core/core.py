@@ -23,8 +23,7 @@ from .maths import gradient, jacobian, inverse
 from .structure.dimensions import Dimensions
 from .structure.indices import Indices
 from .tools import (types, free_symbols, sympify,
-                    substitute_core, subsinverse_core)
-
+                    substitute_core, subsinverse_core, simplify_core)
 from ..misc.latex import texdocument, core2tex
 
 from collections import OrderedDict
@@ -448,11 +447,23 @@ class PHSCore:
             If None, every symbols are returned, else the label with index i is
             returned (default is None).
         """
-        labels = sum([self.x, self.w, self.y, self.cy])
+        labels = self.x + self.w + self.y + self.cy
         if i is None:
             return [str(el) for el in labels]
         else:
             return str(labels[i])
+
+    # =========================================================================
+
+    def simplify(self, **kwargs):
+        """
+        substitute
+        **********
+
+        Apply simplifications to every expressions.
+
+        """
+        simplify_core(self)
 
     # =========================================================================
 
@@ -809,6 +820,24 @@ add the connector'.format(i)
                                self.cu)
 
         sympy.pprint([b, self.M, a], **settings)
+
+    # =========================================================================
+
+    def build_eval(self, vectorize=True):
+        """
+        Add an attribute object 'eval' for the numerical evaluation of core
+        functions. Notice this is not a dynamical object, so it has to be
+        rebuild if the core is changed in any way.
+
+        Parameter
+        ---------
+
+        vectorize : boll (optional)
+            If True, every function are vectorized with numpy.vectorize.
+            The default is True.
+        """
+        from pyphs.numerics.tools._evaluation import PHSNumericalEval
+        setattr(self, 'eval', PHSNumericalEval(self, vectorize=vectorize))
 
     # =========================================================================
 

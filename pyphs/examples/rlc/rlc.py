@@ -18,7 +18,7 @@ here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = os.path.join(here, label + '.net')
 core = netlist2core(netlist_filename)
-
+core.build_eval()
 
 #if __name__ == '__main__':
 #

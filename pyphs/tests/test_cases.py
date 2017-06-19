@@ -23,6 +23,13 @@ from .PHSSimulationPlotsTest import (plot_rlc_with_split,
                                      plot_power_balance_nlcore_with_split,
                                      plot_power_balance_rlc_with_split,
                                      TranferFunction)
+
+
+from .PHSCoreTests import (test_allsymbs, test_build_eval, test_freesymbols,
+                           test_init_M, test_labels, test_pprint,
+                           test_simplify, test_subsinverse)
+
+
 from .cppTest import cpp_nlcore_full
 import numpy as np
 
@@ -150,3 +157,30 @@ class TestSignals(TestCase):
 
     def test_signal_waves(self):
         self.assertTrue(signal_waves())
+
+
+class TestCorefunctions(TestCase):
+
+    def test_build_eval(self):
+        self.assertTrue(test_build_eval())
+
+    def test_freesymbols(self):
+        self.assertTrue(test_freesymbols())
+
+    def test_init_M(self):
+        self.assertTrue(test_init_M())
+
+    def test_labels(self):
+        self.assertTrue(test_labels())
+
+    def test_pprint(self):
+        self.assertTrue(test_pprint())
+
+    def test_simplify(self):
+        self.assertTrue(test_simplify())
+
+    def test_subsinverse(self):
+        self.assertTrue(test_subsinverse())
+
+    def test_allsymbs(self):
+        self.assertTrue(test_allsymbs())

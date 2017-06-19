@@ -13,7 +13,9 @@ import os
 import numpy
 from pyphs.numerics.tools import lambdify
 from pyphs.misc.tools import find
-from pyphs.core.tools import free_symbols, substitute
+from pyphs.core.tools import free_symbols
+from pyphs.config import VERBOSE
+
 
 try:
     import itertools.izip as zip
@@ -47,7 +49,8 @@ plot_powerbal:
     """
     def __init__(self, core, config):
 
-        print('Build data i/o...')
+        if VERBOSE >= 1:
+            print('Build data i/o...')
 
         # init configuration options
         self.config = config

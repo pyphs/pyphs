@@ -208,7 +208,6 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
                        ['M', '_dxH', 'observers'])
     for name in attrs_to_sub:
         expr = getattr(core, name)
-        print(name)
         keys = free_symbols(expr).intersection(set(subs.keys()))
         # recast the elements of the substitution dictionary as sympy objects
         subs_e = dict(map(lambda k, v: (k, v),

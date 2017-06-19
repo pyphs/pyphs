@@ -11,7 +11,7 @@ from ..tools import types as num_types
 from pyphs.misc.tools import remove_duplicates, get_strings
 from ..tools import lambdify, PHSNumericalOperation
 from ..numerical_method._method import PHSCoreMethod
-from pyphs.config import simulations
+from pyphs.config import simulations, VERBOSE
 import numpy
 
 
@@ -83,7 +83,8 @@ class PHSNumericalCore(object):
 
     def build(self):
 
-        print('Build numerical core...')
+        if VERBOSE >= 1:
+            print('Build numerical core...')
 
         # init args values with 0
         self.args = numpy.array([0., ]*self.method.dims.args())
@@ -141,7 +142,8 @@ class PHSNumericalCore(object):
         """
         Link and lambdify a numerical operation or numerical function from name
         """
-        print('    Build numerical evaluation of {}'.format(name))
+        if VERBOSE >= 2:
+            print('    Build numerical evaluation of {}'.format(name))
         # build for sympy.expression
         if name in self.method.funcs_names:
             self._build_func(name)
@@ -218,7 +220,7 @@ class PHSNumericalCore(object):
                 and self.it < self.config['maxit']:
             self._execs(commands)
             self.it += 1
-        if self.it >= self.config['maxit']:
+        if self.it >= self.config['maxit'] and VERBOSE >= 1:
             message = 'Warning: {} = {} after {} iterations'
             print(message.format(res_name,
                                  getattr(self, res_name)(),

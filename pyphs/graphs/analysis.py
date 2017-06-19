@@ -149,14 +149,18 @@ Execute an iteration over the lists:
         # init memory of lambda to: check for change or stop while loop
         self.Lambda_temp = numpy.ones(self.Lambda.shape)
         # loop while Lambda is changed
-        while not (numpy.sum(numpy.abs(self.Lambda_temp-self.Lambda)) < 
-                   numpy.finfo(float).eps):
+        while not isequal(self.Lambda_temp, self.Lambda):
             if self._verbose:
                 print('###################################\nLoop Start\n')
-                print('self.Lambda_temp-self.Lambda')
-                print(self.Lambda_temp-self.Lambda)
                 # save Lambda for comparison in while condition
             self.Lambda_temp = numpy.matrix(self.Lambda, copy=True)
+            if self._verbose:
+                print('###################################\nLambda_tempn')
+                print(self.Lambda_temp)
+                print('###################################\nLambda')
+                print(self.Lambda)
+                print('###################################\nLambda')
+                print(list(numpy.array(self.Lambda_temp == self.Lambda).flatten()))
             # iterate on indeterminate nodes
             self.iterate_nodes()
             # iterate on flux-controlled edges
@@ -227,6 +231,7 @@ define it as effort-controlled (0 column in lambda).
                     if not e == len(self.ic_edges):
                         self.Lambda[n, len(self.ec_edges) + e] = 0
                         break
+        self.verbose('unlock')
 
     def get_edges_data(self, key):
         """
@@ -440,4 +445,4 @@ def isequal(M1, M2):
     """
     Test M1==M2 with M1 and M2 of type sympy.SparseMatrix or numpy.matrix
     """
-    return not (M1-M2).any()
+    return all(numpy.array(M1-M2<EPS).flatten())

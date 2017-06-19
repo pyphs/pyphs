@@ -13,7 +13,8 @@ from pyphs.core.maths import matvecprod, jacobian, sumvecs
 from pyphs.core.tools import free_symbols, types
 from pyphs.config import (GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER,
                           FILES, EPS, MAXIT, SPLIT, EIGEN_PATH,
-                          LOAD_OPTS, PBAR, FS, FS_SYMBS, simulations)
+                          LOAD_OPTS, PBAR, FS, FS_SYMBS, simulations,
+                          VERBOSE)
 from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
 from pyphs import PHSCore
 from ..tools import PHSNumericalOperation
@@ -21,7 +22,6 @@ from ._discrete_calculus import (discrete_gradient, gradient_theta,
                                  gradient_trapez)
 import copy
 
-import time
 
 class PHSCoreMethod(PHSCore):
     """
@@ -63,13 +63,12 @@ class PHSCoreMethod(PHSCore):
                    FILES, EPS, int(MAXIT), SPLIT, EIGEN_PATH,
                    LOAD_OPTS)
 
-        print('Build numerical method...')
-        tstart = time.time()
-        print('    Init PHSCoreMethod...')
+        if VERBOSE >= 1:
+            print('Build numerical method...')
+        if VERBOSE >= 2:
+            print('    Init PHSCoreMethod...')
         # INIT PHSCore object
         PHSCore.__init__(self, label=core.label+'_method')
-        print('init core : {}'.format(time.time()-tstart))
-        tstart = time.time()
         # Copy core content
         for name in (list(set().union(
                           core.attrstocopy,
@@ -85,13 +84,9 @@ class PHSCoreMethod(PHSCore):
                 attr_name = name[1]
             attr = getattr(source, attr_name)
             setattr(target, attr_name, copy.deepcopy(attr))
-        print('copy core : {}'.format(time.time()-tstart))
-        tstart = time.time()
 
         # replace every expressions in subs
         self.substitute(selfexprs=True)
-        print('substitute : {}'.format(time.time()-tstart))
-        tstart = time.time()
 
         # ------------- CLASSES ------------- #
 
@@ -130,60 +125,44 @@ class PHSCoreMethod(PHSCore):
         else:
             self.subs.update({self.fs: self.config['fs']})
 
-        if self.config['split']:
+        if self.config['split'] and VERBOSE >= 2:
             print('    Split Linear/Nonlinear...')
             self.linear_nonlinear()
 
-        print('misc : {}'.format(time.time()-tstart))
-        tstart = time.time()
-        print('    Build numerical structure...')
+        if VERBOSE >= 2:
+            print('    Build numerical structure...')
         # build the discrete evaluation for the gradient
         build_gradient_evaluation(self)
-        print('grad: {}'.format(time.time()-tstart))
-        tstart = time.time()
         # build the discrete evaluation for the structure
         build_structure_evaluation(self)
-        print('struc: {}'.format(time.time()-tstart))
-        tstart = time.time()
         # build method updates
         set_structure(self)
-        print('all: {}'.format(time.time()-tstart))
-        tstart = time.time()
 
         if self.config['split']:
-            print('    Split Implicit/Resolved...')
+            if VERBOSE >= 2:
+                print('    Split Implicit/Resolved...')
             # Split implicit equations from explicit equations
             self.explicit_implicit()
-            print('split: {}'.format(time.time()-tstart))
-            tstart = time.time()
-            print('    Re-Build numerical structure...')
+            if VERBOSE >= 2:
+                print('    Re-Build numerical structure...')
             # build the discrete evaluation for the gradient
             build_gradient_evaluation(self)
-            print('grad: {}'.format(time.time()-tstart))
-            tstart = time.time()
             # build the discrete evaluation for the structure
             build_structure_evaluation(self)
-            print('struc: {}'.format(time.time()-tstart))
-            tstart = time.time()
             # build method updates
             set_structure(self)
-            print('all: {}'.format(time.time()-tstart))
-            tstart = time.time()
 
-        print('    Init update actions...')
+        if VERBOSE >= 2:
+                print('    Init update actions...')
         set_execactions(self)
-        print('execations: {}'.format(time.time()-tstart))
-        tstart = time.time()
 
-        print('    Init arguments...')
+        if VERBOSE >= 2:
+                print('    Init arguments...')
         self.init_args()
-        print('args: {}'.format(time.time()-tstart))
-        tstart = time.time()
 
-        print('    Init functions...')
+        if VERBOSE >= 2:
+                print('    Init functions...')
         self.init_funcs()
-        print('funcs: {}'.format(time.time()-tstart))
-        tstart = time.time()
 
     def update_actions_deps(self):
         """
@@ -218,7 +197,8 @@ class PHSCoreMethod(PHSCore):
                         pass
 
     def setarg(self, name):
-        print('        Build {}'.format(name))
+        if VERBOSE >= 3:
+            print('        Build {}'.format(name))
         expr = geteval(self, name)
         # retrieve expr symbols
         symbs = free_symbols(expr)
@@ -240,7 +220,8 @@ class PHSCoreMethod(PHSCore):
             self.setfunc('fs', self.fs)
 
     def setfunc(self, name, expr=None):
-        print('        Build {}'.format(name))
+        if VERBOSE >= 3:
+            print('        Build {}'.format(name))
         if expr is None:
             expr = geteval(self, name)
         symbs = free_symbols(expr)
@@ -417,7 +398,6 @@ def set_getters_tempF(method):
                 fnl = geteval(method, 'fnl')
                 u = geteval(method, 'u')
                 temp = [sp.sympify(0), ]*len(geteval(method, 'v'+suffix))
-                print()
                 temp = sumvecs(temp,
                                matvecprod(method.I(suffix), v),
                                [-e for e in matvecprod(Mvvl, fl)],
@@ -436,7 +416,6 @@ F{0} = [[fs*dx{0}],] - [[Mv{0}vl, Mv{0}vnl, Mv{0}y]]. [[fl],
     # append getters
     method.setexpr('tempF', func_generator_tempF(''))
     for suffix in ('l', 'nl'):
-        print(suffix)
         method.setexpr('tempF{}'.format(suffix), func_generator_tempF(suffix)())
 
 

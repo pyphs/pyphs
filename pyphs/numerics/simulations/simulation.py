@@ -6,7 +6,7 @@ Created on Tue May 24 11:20:26 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from pyphs.config import simulations
+from pyphs.config import simulations, VERBOSE
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.numcore2cpp import numcore2cpp
 from .. import PHSNumericalCore
@@ -146,7 +146,9 @@ class PHSSimulation:
         .. code:: simu.process()
 
         """
-        print('Process...')
+        if VERBOSE >= 1:
+            print('Simulation: Process...')
+            
         if self.config['timer']:
             tstart = time.time()
 
@@ -173,7 +175,8 @@ class PHSSimulation:
             time_it = (t_total/float(self.data.config['nt']))
             print(string.format(time_it))
 
-        print('Simulation: Done')
+        if VERBOSE >= 1:
+            print('Simulation: Done')
 
     def _init_pb(self):
         pb_widgets = ['\n', 'Simulation: ',
@@ -298,12 +301,15 @@ def system_call(cmd):
         shell = True
     else:
         shell = True
-    print(cmd)
+    if VERBOSE >= 1:
+        print(cmd)
     p = subprocess.Popen(cmd, shell=shell,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT)
     for line in iter(p.stdout.readline, b''):
-        print(line.decode()),
+        l = line.decode()
+        if VERBOSE >= 1:
+            print(l),
 
 
 def execute_bash(text):

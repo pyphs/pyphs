@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import ast
-from pyphs.config import datum
+from pyphs.config import datum, VERBOSE
 
 
 def sep():
@@ -42,8 +42,9 @@ i-th parameter is defined as 'label_pari'.
         f = filename[:filename.rfind(os.sep)+1]
         if len(n) == 0:
             n, f = f, n
-        print('Read netlist {}'.format(n))
-        print('from folder {}'.format(f))
+        if VERBOSE >= 1:
+            print('Read netlist {}'.format(n))
+            print('from folder {}'.format(f))
         self.filename = filename
         if not os.path.isfile(self.filename) or clear:
             file_ = open(self.filename, 'w')
@@ -92,10 +93,12 @@ components).
         with file_ as openfileobject:
             for line in openfileobject:
                 if line.startswith('#'):
-                    print('pass "{}"'.format(line[:-1]))
+                    if VERBOSE >= 1:
+                        print('pass "{}"'.format(line[:-1]))
                     pass
                 else:
-                    print('read "{}"'.format(line[:-1]))
+                    if VERBOSE >= 1:
+                        print('read "{}"'.format(line[:-1]))
                     # get 'infos' (dic, comp and nodes) and parameters
                     infos, _, parameters = line.partition(':')
                     # get ‘dic.comp' and 'label nodes'

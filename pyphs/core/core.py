@@ -11,7 +11,7 @@ import sympy
 import copy
 
 from ..misc.tools import geteval
-
+from ..config import VERBOSE
 # Structure methods
 from .structure.R import build_R
 from .structure.splits import linear_nonlinear
@@ -514,7 +514,8 @@ class PHSCore:
         the dictionary core.subs.
 
         """
-        print("Remove Inverse of Parameters...")
+        if VERBOSE >= 1:
+            print("Remove Inverse of Parameters...")
         subsinverse_core(self)
 
     # =========================================================================
@@ -598,7 +599,6 @@ add the connector'.format(i)
         G_connectors = self.M[:nxwy, nxwy:]
         # Observation matrix
         O_connectors = self.M[nxwy:, :nxwy]
-        print(self.dims.cy(), self.Mcycy().shape, Mswitch.shape)
         N_connectors = types.matrix_types[0](sympy.eye(self.dims.cy()) -
                                              self.Mcycy() * Mswitch)
 

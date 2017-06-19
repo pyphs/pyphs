@@ -14,6 +14,14 @@ path_to_configuration_file = os.path.join(here, 'config.py')
 
 ###############################################################################
 
+# Below are the options for the INTERFACE
+
+# Verbose level in [0, 1, 2, 3]
+VERBOSE = 1
+
+
+###############################################################################
+
 # Below are the options for the DICTIONARY
 
 # Minimal conductance for accelerating convergence of NL-solver (used e.g. in

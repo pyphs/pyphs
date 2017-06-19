@@ -10,20 +10,27 @@ from __future__ import absolute_import, division, print_function
 from sympy.printing import ccode
 from .tools import matrix_type, dereference, indent
 from pyphs.core.tools import types
+from pyphs.config import VERBOSE
 
 
 def append_funcs(nums, files, objlabel):
-    print('        Definitions...')
+    if VERBOSE >= 2:
+        print('    Definitions...')
     _append_funcs_defs(nums, files)
-    print('        Accessors (matrix)...')
+    if VERBOSE >= 2:
+        print('    Accessors (matrix)...')
     _append_funcs_get(nums, files, objlabel)
-    print('        Accessors (vector)...')
+    if VERBOSE >= 2:
+        print('    Accessors (vector)...')
     _append_funcs_get_vector(nums, files, objlabel)
-    print('        Update...')
+    if VERBOSE >= 2:
+        print('    Update...')
     _append_funcs_updates(nums, files, objlabel)
-    print('        Data...')
+    if VERBOSE >= 2:
+        print('    Data...')
     _append_funcs_data(nums, files, objlabel)
-    print('        Initialisation...')
+    if VERBOSE >= 2:
+        print('    Initialisation...')
     _append_funcs_init(nums, files, objlabel)
 
 
@@ -119,7 +126,8 @@ def _append_funcs_updates(nums, files, objlabel):
     files['h']['private'] += title
     files['cpp']['private'] += title
     for name in nums.method.update_actions_deps():
-        print('            Build {}...'.format(name))
+        if VERBOSE >= 3:
+            print('        Build {}...'.format(name))
         if name in nums.method.funcs_names:
             expr = getattr(nums.method, name + '_expr')
             if isinstance(expr, types.scalar_types):

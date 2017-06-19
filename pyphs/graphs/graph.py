@@ -15,7 +15,7 @@ from ..misc.plots.graphs import plot
 from ..graphs import PHSNetlist
 from .tools import serial_edges, parallel_edges
 from .exceptions import PHSUndefinedPotential
-from ..config import datum
+from ..config import datum, VERBOSE
 import os
 
 
@@ -54,7 +54,8 @@ port-Hamiltonian systems.
 
         self.label = label
 
-        print('Build graph {}...'.format(self.label))
+        if VERBOSE >= 1:
+            print('Build graph {}...'.format(self.label))
 
         self._idpar = 0
         self._idser = 0
@@ -63,7 +64,8 @@ port-Hamiltonian systems.
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
     def buildCore(self, verbose=False, plot=False, apply_connectors=True):
-        print('Build core {}...'.format(self.label))
+        if VERBOSE >= 1:
+            print('Build core {}...'.format(self.label))
 
         self._set_analysis(verbose=verbose, plot=plot)
 

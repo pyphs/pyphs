@@ -13,13 +13,15 @@ from .functions import append_funcs
 from .operations import append_ops
 from .tools import indent, matrix_type, SEP, formatPath
 from pyphs.config import EIGEN_PATH as config_eigen_path
+from pyphs.config import VERBOSE
 import os
 
 standard_config = {'path': os.getcwd()}
 
 
 def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
-    print('Generate C++ code...')
+    if VERBOSE >= 1:
+        print('Generate core C++ object...')
     if objlabel is None:
         objlabel = 'phscore'.upper()
     else:
@@ -50,27 +52,36 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
     files['h']['closing'] += "\n}"+";\n\n#endif /* {0}_H */\n".format(objlabel)
     files['h']['private'] += '\nprivate:'
     files['h']['public'] += '\npublic:'
-    print('    Build parameters...')
+    if VERBOSE >= 2:
+        print('    Build parameters...')
     append_parameters(nums.method, files)
-    print('    Build update...')
+    if VERBOSE >= 2:
+        print('    Build update...')
     append_update(nums.method, files, objlabel)
-    print('    Build arguments...')
+    if VERBOSE >= 2:
+        print('    Build arguments...')
     append_args(nums.method, files, objlabel)
-    print('    Build functions...')
+    if VERBOSE >= 2:
+        print('    Build functions...')
     append_funcs(nums, files, objlabel)
-    print('    Build operations...')
+    if VERBOSE >= 2:
+        print('    Build operations...')
     append_ops(nums, files, objlabel)
-    print('    Build initialisation...')
+    if VERBOSE >= 2:
+        print('    Build initialisation...')
     append_init(objlabel, files)
-    print('    Build constructors...')
+    if VERBOSE >= 2:
+        print('    Build constructors...')
     append_constructor(objlabel, files)
     append_constructor_init_vector(objlabel, files)
     append_constructor_init_matrix(nums.method, objlabel, files)
-    print('    Build destructor...')
+    if VERBOSE >= 2:
+        print('    Build destructor...')
     append_destructuor(objlabel, files)
     for e in exts:
         filename = path + os.sep + 'core.{0}'.format(e)
-        print('    Write {}...'.format(filename))
+        if VERBOSE >= 1:
+            print('    Write {}...'.format(filename))
 
         string = files[e]['starting']
         string += '\n\n// PUBLIC'
@@ -86,7 +97,8 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
         parameters_files = parameters(nums.method.subs, objlabel)
     for e in exts:
         filename = path + os.sep + 'parameters.{0}'.format(e)
-        print('    Write {}'.format(filename))
+        if VERBOSE >= 1:
+            print('    Write {}'.format(filename))
         string = parameters_files[e]
         _file = open(filename, 'w')
         _file.write(string)

@@ -6,10 +6,10 @@ Created on Tue May 16 20:08:06 2017
 @author: Falaize
 """
 
+from pyphs.config import VERBOSE
 from pyphs.misc.tools import geteval, find
 from pyphs.core.tools import free_symbols, types
 from ._lambdify import lambdify
-import numpy
 
 
 class PHSNumericalEval(object):
@@ -18,7 +18,8 @@ class PHSNumericalEval(object):
     functions from a given PHSCore.
     """
     def __init__(self, core, vectorize=True):
-        print('Build numerical evaluations...')
+        if VERBOSE >= 1:
+            print('Build numerical evaluations...')
 
         self.core = core.__copy__()
         self.core.substitute(selfall=True)

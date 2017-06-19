@@ -29,7 +29,7 @@ def plot_power_balance_rlc_with_split():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
               'eigen': None,       # path to Eigen library
@@ -109,7 +109,7 @@ def plot_rlc_with_split():
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
-              'pbar': True,      # Display a progress bar
+              'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
               'eigen': None,       # path to Eigen library

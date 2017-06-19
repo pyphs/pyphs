@@ -24,9 +24,10 @@ netlist = PHSNetlist(netlist_filename)
 
 graph = PHSGraph(netlist=netlist)
 
-core = graph.buildCore()
+core = graph.buildCore(verbose=False)
 
 core.build_R()
+
 
 #if __name__ == '__main__':
 #    config = {'fs': 48e3,

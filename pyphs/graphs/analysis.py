@@ -149,7 +149,7 @@ Execute an iteration over the lists:
         # init memory of lambda to: check for change or stop while loop
         self.Lambda_temp = numpy.ones(self.Lambda.shape)
         # loop while Lambda is changed
-        while not isequal(self.Lambda_temp, self.Lambda):
+        while not len((self.Lambda_temp-self.Lambda).flatten().nonzero()[0]) == 0:
             if self._verbose:
                 print('###################################\nLoop Start\n')
                 # save Lambda for comparison in while condition

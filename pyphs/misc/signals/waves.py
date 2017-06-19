@@ -72,6 +72,8 @@ list or a generator. Got {0!s}'.format(type(sig))
         scale = normalize
     elif isinstance(normalize, bool) and normalize:
         scale = max([abs(el) for el in sig])
+        if scale == 0:
+            scale = 1.
     else:
         scale = 1.
     print('Write wave file...')

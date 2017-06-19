@@ -32,8 +32,8 @@ class GraphAnalysis:
         self.nn = len(self.nodes)
         self.ne = len(self.edges)
 
-        def plot_analysis_self():
-            plot_analysis(graph, self)
+        def plot_analysis_self(show=True):
+            plot_analysis(graph, self, show=show)
 
         self.plot = plot_analysis_self
         # init list of nodes for analysis

@@ -658,6 +658,7 @@ pyphs.misc.signals.waves.wavwrite
             fs = self.config['fs']
         if path is None:
             path = self.config['path'] + os.sep + name + str(index)
+        print(path)
         args = {'ind': index,
                 'imin': 0, 'imax': None, 'decim': 1,
                 'postprocess': lambda e: gain*e}

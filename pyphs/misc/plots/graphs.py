@@ -150,7 +150,7 @@ def draw_edges(graph, ax):
             draw_edge(edge, graph.positions, ax, move=move)
 
 
-def plot(graph, filename=None, ax=None, layout=None):
+def plot(graph, filename=None, ax=None, layout=None, show=True):
     """
     plot of a PHSGraph
     """
@@ -167,9 +167,11 @@ def plot(graph, filename=None, ax=None, layout=None):
         if not filename[-4:] == '.' + plot_format:
             filename += '.' + plot_format
         fig.savefig(filename)
+    if show:
+        plt.show()
 
 
-def plot_analysis(graph, analysis):
+def plot_analysis(graph, analysis, show=True):
 
     nodes_colors = list()
     ic_nodes_labels = [analysis.nodes[i] for i in analysis.ic_nodes]
@@ -236,3 +238,5 @@ def plot_analysis(graph, analysis):
     plt.tight_layout()
     ax.axes.get_xaxis().set_visible(False)
     ax.axes.get_yaxis().set_visible(False)
+    if show:
+        plt.show()

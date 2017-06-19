@@ -99,11 +99,11 @@ port-Hamiltonian systems.
                                         **line['arguments'])
             self += component_graph
 
-    def plot(self, filename=None, ax=None):
+    def plot(self, filename=None, ax=None, show=True):
         """
         Plot the graph (networkx.plot method).
         """
-        plot(self, filename=filename, ax=ax)
+        plot(self, filename=filename, ax=ax, show=show)
 
     def _split_serial(self):
         se = serial_edges(self)

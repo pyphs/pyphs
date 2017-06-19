@@ -53,8 +53,11 @@ def simulation_rlc_with_split():
             yield (el, )
 
     simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    
     simu.process()
-
+    
+    simu.data.wavwrite('y', 0)
+    
     if not os.name.lower().startswith('nt'):
         shutil.rmtree(path)
     return True

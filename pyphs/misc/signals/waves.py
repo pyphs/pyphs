@@ -77,7 +77,7 @@ list or a generator. Got {0!s}'.format(type(sig))
     else:
         scale = 1.
     print('Write wave file...')
-    for i in range(len(sig)):
-        data = int(_maxVol*sig[i]/scale)
+    for i, val in enumerate(sig):
+        data = int(_maxVol*val/scale)
         wv.writeframes(pack('h', data))
     wv.close()

@@ -84,16 +84,16 @@ def split_sp():
     netlist = NetlistThieleSmallNL()
     graph = PHSGraph(netlist=netlist)
     graph.split_sp()
-    return True
     os.remove(path)
+    return True
 
 
 def plot_Graph():
     netlist = NetlistThieleSmallNL()
     graph = PHSGraph(netlist=netlist)
     graph.plot(show=False)
-    return True
     os.remove(path)
+    return True
 
 
 def plot_GraphAnalysis():
@@ -101,5 +101,5 @@ def plot_GraphAnalysis():
     graph = PHSGraph(netlist=netlist)
     graph.buildCore()
     graph.analysis.plot(show=False)
-    return True
     os.remove(path)
+    return True

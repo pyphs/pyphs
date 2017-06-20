@@ -1,6 +1,12 @@
 PyPHS
 ======
-A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism. 
+A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.
+
+1. Inputs are netlist description of network systems.
+2. The associated graphs are analyzed to produce the system's dynamics equations in the PHS formalism.
+3. Simulations (i.e. solving DAE equations) are performed based on a variety of numerical methods (can be extended with new ones).
+4. The corresponding C++ simulation code is automatically generated and called from python (but can be used in other applications).
+5. LaTeX description files can be generated (for documentation, publication, etc.).
 
 .. image:: https://badge.fury.io/py/pyphs.svg
     :target: https://badge.fury.io/py/pyphs
@@ -14,9 +20,9 @@ A python software dedicated to the simulation of multiphysical systems in the Po
 .. image:: https://img.shields.io/badge/documentation-website-blue.svg
     :target: https://afalaize.github.io/pyphs/
 
-It is developped in the `project/team S3 <http://s3.ircam.fr/?lang=en>`__ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`__ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`__. 
+It is developped by `Antoine Falaize <https://afalaize.github.io/>`_ in the `Team M2N <http://lasie.univ-larochelle.fr/Axe-AB-17>`_ (Mathematical and Numerical Methods) at the `LaSIE Research Lab <http://lasie.univ-larochelle.fr>`_ (CNRS UMR 7356), hosted by `Université de La Rochelle <http://www.univ-larochelle.fr/>`_, and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, `Project/team S3 <http://s3.ircam.fr/?lang=en>`_ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`_ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`_, Paris. 
 
-It was initially developed between 2012 and 2016 as a part of the PhD project of `Antoine Falaize <https://afalaize.github.io/>`__, under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`__, through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`__ (UPMC ED-130), and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`__.
+It was initially developed between 2012 and 2016 through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`_ (UPMC ED-130) and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`_, as a part of the PhD of `Antoine Falaize <https://afalaize.github.io/>`_ under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_.
 
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/afalaize/pyphs
@@ -38,13 +44,13 @@ It was initially developed between 2012 and 2016 as a part of the PhD project of
        
 Installation
 ==============
-It is possible to install ``pyphs`` from package (if you just want to use it) or source (if you plan to use it for development). Whichever method you choose, make sure that all prerequisites are installed.
+It is possible to install ``PyPHS`` from package (if you just want to use it) or source (if you plan to use it for development). Whichever method you choose, make sure that all prerequisites are installed.
 
 Prerequisites
 -------------
 
-The ``pyphs`` package run on Python 2.7 and Python
-3.4 or newer, with the following packages installed:
+The ``PyPHS`` package run on Python 2.7 and Python
+3.5 or newer (3.4 is no longer tested), with the following packages installed:
 
 - `sympy <http://www.sympy.org/fr/>`_
 - `numpy <http://www.numpy.org>`_
@@ -60,23 +66,19 @@ required versions and make sure that these modules are up to date.
 
 Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if installed (for faster numerical evaluation of symbolic expressions).
 
-Finally, the generated `C++` code rely on the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ (see **Configuration** below). It is not needed for pure Python usage.
+The generated C++ sources build with CMake >= 3.1 (see **Configuration** below). The code relies on the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ (not needed for pure Python usage).
 
 Install from package
 --------------------
 
-The instructions given here should be used if you just want to install the
-package, e.g. to run the bundled programs or use some functionality for your
-own project. If you intend to change anything within the `pyphs` package,
-please follow the steps in the next section.
+The instructions given here should be used if you just want to install the package, e.g. to run the bundled programs or use some functionality for your own project. If you intend to change anything within the `PyPHS` package, please follow the steps in the next section.
 
 The easiest way to install the package is via ``pip`` from the `PyPI (Python
 Package Index) <https://pypi.python.org/pypi>`_::
 
     pip install pyphs
 
-This includes the latest code and should install all
-dependencies automatically. If this is not the case, each dependency can be install the same way with ``pip``.
+This includes the latest code and should install all dependencies automatically. If this is not the case, each dependency can be install the same way with ``pip``.
 
 You might need higher privileges (use su or sudo) to install the package globally. Alternatively you can install the package locally
 (i.e. only for you) by adding the ``--user`` argument::
@@ -101,26 +103,31 @@ To run the included tests::
 Configuration
 --------------
 
-After installation, it is recommanded to configure the `config.py </pyphs/config.py>`_ to your needs. Particularily, this is where the local path to the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified (and then included in the generated C++ code).
+After installation, it is recommanded to configure the `config.py </pyphs/config.py>`_ to your needs. Particularily, this is where the local path to the CMake binary and `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified.
 
-Your local `config.py </pyphs/config.py>`_ file is located at the root of the `pyphs` package, which can be recovered with:
+Your local `config.py </pyphs/config.py>`_ file is located at the root of the `PyPHS` package, which can be recovered with:
     
-    >>> import pyphs
-    >>> help(pyph)
+    >>> from pyphs import path_to_configuration_file
+    >>> print(path_to_configuration_file)
 
 
 Upgrade of existing installations
 ---------------------------------
 
-To upgrade the package, please use the same mechanism (pip vs. source) as you
-did for installation. In each case, it is recommanded to uninstall the package first.
+To upgrade the package, please use the same mechanism (pip vs. source) as you did for installation. In each case, it is recommanded to uninstall the package first.
 
 Upgrade a package
 ~~~~~~~~~~~~~~~~~
 
-Simply upgrade the package via pip::
+Simply upgrade the package via pip:
 
     pip install --upgrade pyphs [--user]
+
+In some cases, you will need to manually uninstall the package:
+
+    pip uninstall pyphs
+    pip install pyphs [--user]
+
 
 Upgrade from source
 ~~~~~~~~~~~~~~~~~~~
@@ -132,34 +139,55 @@ Simply pull the latest sources::
 Package structure
 -----------------
 
-The package divided into the following folders:
+The package is divided into the following folders:
 
-`/docs <docs>`_
-  package documentation
 `/pyphs/tutorials </pyphs/tutorials>`_
-  tutorials programs for the main `pyphs classes
+  Tutorials for the main `PyPHS` classes (executable programs).
+
 `/pyphs/examples </pyphs/examples>`_
-  additional examples (executable programs)
+  Various applications (executable programs).
+
 `/pyphs/core </pyphs/core>`_
-    define the core PHS structure class `PHSCore`
-`/pyphs/graphs </pyphs/graphs>`_
-    define the classes `PHSNetlist` and `PHSGraph`
+
+    `PHSCore` class :
+        This is the core PHS structure. It provides several methods for the manipulation of symbolic expression (reorganization, connection, simplification, etc.). It is passed as an argument to the constructor of most of others PyPHS objects.
+
+`/pyphs/graphs </pyphs/graphs>`_     
+
+    `PHSNetlist` class : 
+        Management of netlist description files.
+
+    `PHSGraph` class :
+        (1) Construction and manipulation of network systems,
+        (2) Analysis of network realizability,
+        (3) Generation of PHS equations (`PHSCore`).
+
 `/pyphs/dictionary </pyphs/dictionary>`_
-  components (`PHSGraph`)
+    Components are `PHSGraph` objects. The dictionary is organized in thematic sub-packages (*electronics*, *thermics*, *fractional calculus*, etc.). Each theme is organized in component sub-packages (`electronics.resistor`, `thermics.transfer`, `fraccalc.fracderec`, etc.).
+
 `/pyphs/numerics </pyphs/numerics>`_
-    define the classes `PHSNumericalEval`, `PHSNumericalMethod` and `PHSNumericalCore` for the numerical evaluation of `PHSCore`
-`/pyphs/simulations </pyphs/simulations>`_
-    define the classes `PHSSimulation` and `PHSData` for simulation
-`/pyphs/latex </pyphs/latex>`_
-    LaTeX code generation
-`/pyphs/cpp </pyphs/cpp>`_
-    C++ code generation
+
+    `PHSNumericalEval` class :
+        Numerical evaluation of a given `PHSCore`.
+
+    `PHSCoreMethod` object :
+        Construction of the *symbolic* expressions associated with several numerical methods (theta-schemes, trapezoidal rule, discret gradient, etc.).
+
+    `PHSNumericalCore` object :
+        Numerical evaluation of a given `PHSCore` associated with a given `PHSCoreMethod`.
+
+    `PHSSimulation` object :
+        Perform the simulation of a given `PHSCore` associated with a given `PHSCoreMethod` through the execution of the resulting `PHSNumericalCore`.
+
+    `PHSData` object :
+        Methods for writing, reading and rendering `PHSSimulation` file results.
+
 `/pyphs/tests </pyphs/tests>`_
-  test programs (withe `nose`)
-`/pyphs/plots </pyphs/plots>`_
-    Plot tools
+    Test programs executed by `nose` (see above).
+
 `/pyphs/misc </pyphs/misc>`_
-    Miscelaneous tools
+
+    Miscelaneous tools (plots, LaTeX code generation, signal processing, iles I/O).
   
 Documentation
 ==============
@@ -176,7 +204,7 @@ The package comes with a serie of tutorials for the use of the main functionalit
     >>> import pyphs
     >>> help(pyphs)
 
-The `website <https://afalaize.github.io/pyphs/>`_ contains additional materials.
+The `website <https://afalaize.github.io/pyphs/>`_ is not currently up-to-date.
 
 
 Reference

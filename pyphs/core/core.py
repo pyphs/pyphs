@@ -102,7 +102,7 @@ class PHSCore:
         self.connectors = list()
 
         # UNORDERED Dictionary of substitution {symbol: value}
-        self.subs = dict()
+        self.subs = OrderedDict()
 
         # ORDERED Dictionary of observers {symbol: expr}
         self.observers = OrderedDict()

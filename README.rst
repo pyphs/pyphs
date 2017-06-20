@@ -1,13 +1,3 @@
-PyPHS
-======
-A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.
-
-1. Inputs are netlist description of network systems.
-2. The associated graphs are analyzed to produce the system's dynamics equations in the PHS formalism.
-3. Simulations (i.e. solving DAE equations) are performed based on a variety of numerical methods (can be extended with new ones).
-4. The corresponding C++ simulation code is automatically generated and called from python (but can be used in other applications).
-5. LaTeX description files can be generated (for documentation, publication, etc.).
-
 .. image:: https://badge.fury.io/py/pyphs.svg
     :target: https://badge.fury.io/py/pyphs
 
@@ -20,9 +10,9 @@ A python software dedicated to the simulation of multiphysical systems in the Po
 .. image:: https://img.shields.io/badge/documentation-website-blue.svg
     :target: https://afalaize.github.io/pyphs/
 
-It is developped by `Antoine Falaize <https://afalaize.github.io/>`_ in the `Team M2N <http://lasie.univ-larochelle.fr/Axe-AB-17>`_ (Mathematical and Numerical Methods) at the `LaSIE Research Lab <http://lasie.univ-larochelle.fr>`_ (CNRS UMR 7356), hosted by `Université de La Rochelle <http://www.univ-larochelle.fr/>`_, and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, `Project/team S3 <http://s3.ircam.fr/?lang=en>`_ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`_ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`_, Paris. 
-
-It was initially developed between 2012 and 2016 through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`_ (UPMC ED-130) and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`_, as a part of the PhD of `Antoine Falaize <https://afalaize.github.io/>`_ under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_.
+PyPHS
+======
+A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.
 
 .. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/afalaize/pyphs
@@ -41,6 +31,16 @@ It was initially developed between 2012 and 2016 through a funding from French d
 .. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
    :target: https://landscape.io/github/afalaize/pyphs/master
    :alt: Health
+
+1. Inputs are netlist description of network systems.
+2. The associated graphs are analyzed to produce the system's dynamics equations in the PHS formalism.
+3. Simulations (i.e. solving DAE equations) are performed based on a variety of numerical methods (can be extended with new ones).
+4. The corresponding C++ simulation code is automatically generated and called from python (but can be used in other applications).
+5. LaTeX description files can be generated (for documentation, publication, etc.).
+
+It is developped by `Antoine Falaize <https://afalaize.github.io/>`_ in the `Team M2N <http://lasie.univ-larochelle.fr/Axe-AB-17>`_ (Mathematical and Numerical Methods) at the `LaSIE Research Lab <http://lasie.univ-larochelle.fr>`_ (CNRS UMR 7356), hosted by `Université de La Rochelle <http://www.univ-larochelle.fr/>`_, and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, `Project/team S3 <http://s3.ircam.fr/?lang=en>`_ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`_ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`_, Paris. 
+
+It was initially developed between 2012 and 2016 through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`_ (UPMC ED-130) and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`_, as a part of the PhD thesis of `Antoine Falaize <https://afalaize.github.io/>`_ under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_.
        
 Installation
 ==============
@@ -66,7 +66,7 @@ required versions and make sure that these modules are up to date.
 
 Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if installed (for faster numerical evaluation of symbolic expressions).
 
-The generated C++ sources build with CMake >= 3.1 (see **Configuration** below). The code relies on the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ (not needed for pure Python usage).
+The generated C++ sources build with `CMake <https://cmake.org/>`_ >= 3.1 (see **Configuration** below). The code relies on the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ (not needed for pure Python usage).
 
 Install from package
 --------------------

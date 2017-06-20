@@ -16,16 +16,20 @@ from . import rhodes
 from . import rlc
 from . import thielesmall
 from . import thielesmall_dual
+from . import heat_transfer
+from . import magnetic_circuit
 
-__all__ = ['bjtamp', 'connectors', 'dlc', 
+__all__ = ['bjtamp', 'connectors', 'dlc',
            'fractional_derivator_ec',
            'fractional_derivator_fc',
            'fractional_integrator_ec',
            'fractional_integrator_fc',
-           'mka', 
-           'mka_dual', 
+           'mka',
+           'mka_dual',
            'pwl',
            'rhodes',
            'rlc',
            'thielesmall',
-           'thielesmall_dual']
+           'thielesmall_dual',
+           'heat_transfer',
+           'magnetic_circuit']

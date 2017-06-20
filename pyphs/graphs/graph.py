@@ -10,12 +10,13 @@ from __future__ import absolute_import, division, print_function
 import networkx as nx
 from .analysis import GraphAnalysis
 from .build import buildCore
-from pyphs.core.core import PHSCore
-from pyphs.plots.graphs import plot
-from pyphs.graphs import PHSNetlist
+from ..core.core import PHSCore
+from ..misc.plots.graphs import plot
+from ..graphs import PHSNetlist
 from .tools import serial_edges, parallel_edges
 from .exceptions import PHSUndefinedPotential
-from pyphs.config import datum
+from ..config import datum, VERBOSE
+import os
 
 
 class PHSGraph(nx.MultiDiGraph):
@@ -24,53 +25,70 @@ class PHSGraph(nx.MultiDiGraph):
 port-Hamiltonian systems.
     """
     def __init__(self, netlist=None, label=None):
-        if label is None:
-            l = ''
-        else:
-            l = label
-        print('Build graph {}...'.format(l))
+
+        self.datum = datum
+
         nx.MultiDiGraph.__init__(self)
+
         self.core = PHSCore()
-        self._idpar = 0
-        self._idser = 0
-        self.label = label
+
         if netlist is not None:
+
             if isinstance(netlist, str):
                 netlist = PHSNetlist(netlist)
-            self.Netlist = netlist
-            self.build_from_netlist()
 
-    def __add__(graph1, graph2):
-        if hasattr(graph1, 'Netlist') and hasattr(graph2, 'Netlist'):
-            graph1.Netlist += graph2.Netlist
-        graph1.core += graph2.core
-        graph1.add_edges_from(graph2.edges(data=True))
-        return graph1
+            elif not isinstance(netlist, PHSNetlist):
+                t = type(netlist)
+                text = 'Can not understand netlist type {}'.format(t)
+                raise TypeError(text)
 
-    def set_analysis(self, verbose=False, plot=False):
+            self.netlist = netlist
+
+            self._build_from_netlist()
+
+            if label is None:
+                label = os.path.basename(netlist.filename).split('.')[0]
+
+        if label is None:
+            label = 'None'
+
+        self.label = label
+
+        if VERBOSE >= 1:
+            print('Build graph {}...'.format(self.label))
+
+        self._idpar = 0
+        self._idser = 0
+
+    def _set_analysis(self, verbose=False, plot=False):
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
     def buildCore(self, verbose=False, plot=False, apply_connectors=True):
-        if self.label is None:
-            l = ''
-        else:
-            l = self.label
-        print('Build core {}...'.format(l))
-        self.set_analysis(verbose=verbose, plot=plot)
+        if VERBOSE >= 1:
+            print('Build core {}...'.format(self.label))
+
+        self._set_analysis(verbose=verbose, plot=plot)
+
         self.analysis.perform()
+
         buildCore(self)
+
         core = self.core.__deepcopy__()
+
         if apply_connectors:
             core.apply_connectors()
+
+        core.label = self.label
+
         return core
 
-    def build_from_netlist(self):
+    def _build_from_netlist(self):
         """
         build the graph of the system from the netlist structure (see \
     'netlists' module).
         """
         from importlib import import_module
-        for line in self.Netlist:
+        for line in self.netlist:
             dic_name = 'pyphs.dictionary.' + line['dictionary']
             dic = import_module(dic_name)
             name = line['component'].lower()
@@ -81,13 +99,13 @@ port-Hamiltonian systems.
                                         **line['arguments'])
             self += component_graph
 
-    def plot(self, filename=None, ax=None):
+    def plot(self, filename=None, ax=None, show=True):
         """
         Plot the graph (networkx.plot method).
         """
-        plot(self, filename=filename, ax=ax)
+        plot(self, filename=filename, ax=ax, show=show)
 
-    def split_serial(self):
+    def _split_serial(self):
         se = serial_edges(self)
         for edges in se:
             for e in edges[0]:
@@ -100,7 +118,7 @@ port-Hamiltonian systems.
                                                      'ctrl': '?',
                                                      'label': n})
             sg.add_edges_from(edges[0])
-            sg.set_analysis()
+            sg._set_analysis()
             self._idser += 1
             self.add_edge(edges[1], edges[2],
                           attr_dict={'type': 'graph',
@@ -116,7 +134,7 @@ port-Hamiltonian systems.
                 self.remove_node(node)
         return bool(len(se))
 
-    def split_parallel(self):
+    def _split_parallel(self):
         pe = parallel_edges(self)
         for edges in pe:
             n1, n2 = edges[0][:2]
@@ -128,7 +146,7 @@ port-Hamiltonian systems.
             pg = PHSGraph()
             pg.add_edges_from(edges)
 
-            pg.set_analysis()
+            pg._set_analysis()
             self._idpar += 1
             for n in (n1, n2):
                 if not n == datum:
@@ -146,9 +164,16 @@ port-Hamiltonian systems.
     def split_sp(self):
         flag = True
         while flag:
-            change_s = self.split_serial()
-            change_p = self.split_parallel()
+            change_s = self._split_serial()
+            change_p = self._split_parallel()
             flag = any((change_s, change_p))
+
+    def __add__(graph1, graph2):
+        if hasattr(graph1, 'netlist') and hasattr(graph2, 'netlist'):
+            graph1.netlist += graph2.netlist
+        graph1.core += graph2.core
+        graph1.add_edges_from(graph2.edges(data=True))
+        return graph1
 
     @staticmethod
     def iter_analysis(graph):

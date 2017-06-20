@@ -12,12 +12,20 @@ from __future__ import division
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core as nlcore
 
-from pyphs import PHSNumericalMethod, PHSNumericalCore, numcore2cpp
+from pyphs import PHSNumericalCore, numcore2cpp
+import os
+import shutil
+
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 
 def cpp_nlcore_full():
-    method = PHSNumericalMethod(nlcore)
-    nums = PHSNumericalCore(method)
-    numcore2cpp(nums)
+    nums = PHSNumericalCore(nlcore)
 
+    label = 'test'
+    path = os.path.join(here, label)
+
+    numcore2cpp(nums, objlabel=label, path=path)
+    if not os.name.lower().startswith('nt'):
+        shutil.rmtree(path)
     return True

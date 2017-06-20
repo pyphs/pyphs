@@ -36,6 +36,21 @@ def close_files(files):
             _file.close()
 
 
+def with_files(path, files_to_open, process, files=None):
+    """
+open the files in files_to_open into folder path and execute process(files)
+    """
+    if files is None:
+        files = {}
+    name = files_to_open.pop()
+    with open(os.path.join(path, name + '.txt'), 'w') as files[name]:
+        if len(files_to_open) == 0:
+            process(files)
+            return files
+        else:
+            with_files(path, files_to_open, process, files=files)
+
+
 def dump_files(nums, files):
     for key in files:
         _file = files[key]
@@ -59,20 +74,20 @@ def data_generator(filename, ind=None, decim=1,
                    postprocess=None, imin=0, imax=None):
     if imax is None:
         imax = float('Inf')
-    f = open(filename, "r")
     i = 0
-    for line in f:
-        if imin <= i < imax and not bool((i-imin) % decim):
-            if ind is None:
-                out = [float(x) for x in line.split()]
-                if postprocess is None:
-                    y = out
+    with open(filename, "r") as f:
+        for line in f:
+            if imin <= i < imax and not bool((i-imin) % decim):
+                if ind is None:
+                    out = [float(x) for x in line.split()]
+                    if postprocess is None:
+                        y = out
+                    else:
+                        y = list(map(postprocess, out))
+                    yield y
                 else:
-                    y = list(map(postprocess, out))
-                yield y
-            else:
-                assert isinstance(ind, int), 'Index should be an \
-    integer. Got {0!s}'.format(type(ind))
-                out = float(line.split()[ind])
-                yield out if postprocess is None else postprocess(out)
-        i += 1
+                    assert isinstance(ind, int), 'Index should be an \
+        integer. Got {0!s}'.format(type(ind))
+                    out = float(line.split()[ind])
+                    yield out if postprocess is None else postprocess(out)
+            i += 1

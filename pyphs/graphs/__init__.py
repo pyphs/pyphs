@@ -5,8 +5,11 @@ from .graph import PHSGraph, datum
 __all__ = ['PHSNetlist', 'PHSGraph', 'datum']
 
 
-def netlist2core(netlist):
+def netlist2graph(netlist):
     if not isinstance(netlist, PHSNetlist):
         netlist = PHSNetlist(netlist)
-    graph = PHSGraph(netlist=netlist)
-    return graph.buildCore()
+    return PHSGraph(netlist=netlist)
+
+
+def netlist2core(netlist):
+    return netlist2graph(netlist).buildCore()

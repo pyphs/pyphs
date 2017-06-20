@@ -8,38 +8,36 @@ Created on Tue Dec 27 15:11:30 2016
 from __future__ import absolute_import, division, print_function
 
 from unittest import TestCase
-from pyphs import PHSNetlist
-from .PHSNetlistTests import NetlistThieleSmallNL, target_netlist
-from .PHSGraphTests import (graph, target_edges, target_M, split_sp, 
+from .signalsTest import signal_synthesis, signal_waves
+from .PHSNetlistTests import test_netslist
+from .PHSGraphTests import (graph, target_edges, target_M, split_sp,
                             plot_Graph, plot_GraphAnalysis)
 from .PHSLatexTest import TestCore2Tex
 from .PHSSimulationTest import (simulation_rlc_with_split,
                                 simulation_rlc_without_split,
+                                simulation_rlc_without_split_theta,
+                                simulation_rlc_without_split_trapez,
                                 simulation_nlcore_full,
                                 simulation_rlc_cpp)
 from .PHSSimulationPlotsTest import (plot_rlc_with_split,
                                      plot_power_balance_nlcore_with_split,
                                      plot_power_balance_rlc_with_split,
                                      TranferFunction)
+
+
+from .PHSCoreTests import (test_allsymbs, test_build_eval, test_freesymbols,
+                           test_init_M, test_labels, test_pprint,
+                           test_simplify, test_subsinverse)
+
+
 from .cppTest import cpp_nlcore_full
 import numpy as np
 
 
-#class TestPHSNetlistInit(TestCase):
-#    def test_netlist_init_and_add_components(self):
-#        netlist = NetlistThieleSmallNL()
-#        self.assertTrue(netlist.netlist() == target_netlist)
-#
-#
-#class TestPHSNetlistReadWrite(TestCase):
-#    def test_netlist_write_and_read(self):
-#        netlist = NetlistThieleSmallNL()
-#        netlist.write()
-#        filename = netlist.filename
-#        netlist2 = PHSNetlist(filename, clear=False)
-#        self.assertTrue(netlist2.netlist() == target_netlist)
-#
-#
+class TestPHSNetlistInit(TestCase):
+    def test_netlist_init_and_add_components(self):
+        self.assertTrue(test_netslist())
+
 
 class TestPHSGraph(TestCase):
     def test_graph_build_from_netlist(self):
@@ -86,7 +84,6 @@ class TestPHSGraph(TestCase):
     def test_plot_GraphAnalysis(self):
         self.assertTrue(plot_GraphAnalysis())
 
-        
 
 class TestCore2Latex(TestCase):
     def test_core_2_latex(self):
@@ -101,9 +98,15 @@ class TestSimulation(TestCase):
     def test_simulation_rlc_without_split(self):
         self.assertTrue(simulation_rlc_without_split())
 
+    def test_simulation_rlc_without_split_theta(self):
+        self.assertTrue(simulation_rlc_without_split_theta())
+
+    def test_simulation_rlc_without_split_trapez(self):
+        self.assertTrue(simulation_rlc_without_split_trapez())
+
     def test_simulation_nlcore_full(self):
         self.assertTrue(simulation_nlcore_full())
-        
+
     def test_simulation_rlc_cpp(self):
         self.assertTrue(simulation_rlc_cpp())
 
@@ -115,21 +118,84 @@ class TestCpp(TestCase):
 
 class TestExamples(TestCase):
 
-    def test_import_examples(self):
+    def test_import_examples1(self):
         from pyphs.examples.bjtamp.bjtamp import core as bjtamp_core
+        self.assertTrue(True)
+
+    def test_import_examples2(self):
         from pyphs.examples.connectors.connectors import core as connectors_core
+        self.assertTrue(True)
+
+    def test_import_examples3(self):
         from pyphs.examples.dlc.dlc import core as dlc_core
+        self.assertTrue(True)
+
+    def test_import_examples4(self):
         from pyphs.examples.fractional_derivator_ec.fractional_derivator_ec import core as fractional_derivator_ec_core
+        self.assertTrue(True)
+
+    def test_import_examples5(self):
         from pyphs.examples.fractional_derivator_fc.fractional_derivator_fc import core as fractional_derivator_fc_core
+        self.assertTrue(True)
+
+    def test_import_examples6(self):
         from pyphs.examples.fractional_integrator_ec.fractional_integrator_ec import core as fractional_integrator_ec_core
+        self.assertTrue(True)
+
+    def test_import_examples7(self):
         from pyphs.examples.fractional_integrator_fc.fractional_integrator_fc import core as fractional_integrator_fc_core
+        self.assertTrue(True)
+
+    def test_import_examples8(self):
         from pyphs.examples.mka.mka import core as mka_core
+        self.assertTrue(True)
+
+    def test_import_examples9(self):
         from pyphs.examples.mka_dual.mka_dual import core as mka_dual_core
+        self.assertTrue(True)
+
+    def test_import_examples10(self):
         from pyphs.examples.pwl.pwl import core as pwl_core
+        self.assertTrue(True)
+
+    def test_import_examples11(self):
         from pyphs.examples.rhodes.rhodes import core as rhodes_core
+        self.assertTrue(True)
+
+    def test_import_examples12(self):
         from pyphs.examples.rlc.rlc import core as rlc_core
+        self.assertTrue(True)
+
+    def test_import_examples13(self):
         from pyphs.examples.thielesmall.thielesmall import core as thielesmall_core
+        self.assertTrue(True)
+
+    def test_import_examples14(self):
         from pyphs.examples.thielesmall_dual.thielesmall_dual import core as thielesmall_dual_core
+        self.assertTrue(True)
+
+    def test_import_examples15(self):
+        from pyphs.examples.heat_transfer.heat_transfer import core as heat_transfer_core
+        self.assertTrue(True)
+
+    def test_import_examples16(self):
+        from pyphs.examples.magnetic_circuit.magnetic_circuit import core as magnetic_circuit_core
+        self.assertTrue(True)
+
+    def test_import_examples17(self):
+        from pyphs.examples.thielesmall_NL.thielesmall_NL import core as thielesmall_NL_core
+        self.assertTrue(True)
+
+    def test_import_examples18(self):
+        from pyphs.examples.triodeamp.triodeamp import core as triodeamp_core
+        self.assertTrue(True)
+
+    def test_import_examples19(self):
+        from pyphs.examples.oscillator_nl.oscillator_nl import core as oscillator_nl_core
+        self.assertTrue(True)
+
+    def test_import_examples20(self):
+        from pyphs.examples.oscillator_nl_dual.oscillator_nl_dual import core as oscillator_nl_dual_core
         self.assertTrue(True)
 
 class TestPlots(TestCase):
@@ -144,4 +210,39 @@ class TestPlots(TestCase):
 
     def test_Transfer_function(self):
         self.assertTrue(TranferFunction())
-        
+
+
+class TestSignals(TestCase):
+
+    def test_signal_synthesis(self):
+        self.assertTrue(signal_synthesis())
+
+    def test_signal_waves(self):
+        self.assertTrue(signal_waves())
+
+
+class TestCorefunctions(TestCase):
+
+    def test_build_eval(self):
+        self.assertTrue(test_build_eval())
+
+    def test_freesymbols(self):
+        self.assertTrue(test_freesymbols())
+
+    def test_init_M(self):
+        self.assertTrue(test_init_M())
+
+    def test_labels(self):
+        self.assertTrue(test_labels())
+
+    def test_pprint(self):
+        self.assertTrue(test_pprint())
+
+    def test_simplify(self):
+        self.assertTrue(test_simplify())
+
+    def test_subsinverse(self):
+        self.assertTrue(test_subsinverse())
+
+    def test_allsymbs(self):
+        self.assertTrue(test_allsymbs())

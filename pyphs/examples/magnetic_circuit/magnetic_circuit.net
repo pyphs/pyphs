@@ -1,0 +1,4 @@
+magnetics.source in ('#', 'n1'): type=mmf;
+magnetics.resistor R ('n1', 'n2'): R=('R',1e3);
+magnetics.capacitor C ('n2', 'n3'): C=('C',2e-06);
+magnetics.capacitorsat Csat ('n3', '#'): C0=('Csat0', 1e3); Csat=('Csat', 1e3); phisat=('phisat', 1e-2);

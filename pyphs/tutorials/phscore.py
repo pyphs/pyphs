@@ -47,9 +47,9 @@ Jxw = [[-1.],
        [0.]]
 core.set_Jxw(Jxw)
 
-# ... or sympy.Matrix.
-Jxy = sympy.Matrix([[-1.],
-                   [0.]])
+# ... or sympy.SparseMatrix.
+Jxy = sympy.SparseMatrix([[-1.],
+                         [0.]])
 core.set_Jxy(Jxy)
 
 # Physical parameters with f0 ~ (2*pi*sqrt(L*C))**-1
@@ -71,7 +71,7 @@ core.build_R()
 
 # change R to R(xL) = Rnl * xC^
 Rnl = core.symbols('Rnl')
-core.apply_subs(subs={R: Rnl*(1+core.x[0]**2)})
+core.substitute(subs={R: Rnl*(1+core.x[0]**2)})
 
 # save value for symbol Rnl = 0.1 kOhm/Coulomb
 core.subs.update({Rnl: R_value})
@@ -81,4 +81,4 @@ core.M[1, 1] = core.g()[1]
 # not executed if this script is imported in an other module
 if __name__ == '__main__':
     # Export latex description
-    core.texwrite(filename='dummy_core.tex', title='a Dummy PHSCore')
+    core.texwrite(path='dummy_core.tex', title='a Dummy PHSCore')

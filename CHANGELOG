@@ -1,0 +1,29 @@
+0.1.9.9
+  - Improve coverage
+  - Implement the Thermics dictionary
+  - Implement CMake build system
+  - changes in PHSCore:
+	* core.apply_sub => core.substitute
+	* core.split_linear => core.linear_nonlinear
+  - changes in PHSSimulation:
+	* simu.fs => simu.config['fs']
+	* simu.init(sequ=u, seqp=p, nt=nt) => simu.init(u=u, p=p, nt=nt)
+	* config is no more an option to simu.init. This means the numerical object is fixed once and for all at PHSSimulation instanciation.
+  - PHSNumericalMethod => PHSCoreMethod
+  - latex/ => misc/latex/
+  - plots/ => misc/plots/
+  - simulations/ => numerics/simulations/
+  - cpp/ => numerics/cpp/
+
+0.1.9.8
+  - Include MANIFEST.in, AUTHORS, CHANCELOG.
+  - Correct connectors ordering in graph analysis
+  - Correct state initialization in generated c++ code
+  - Add Beam/cantilever component
+  - Add Mechanics/felt component
+
+0.1.9.7
+  - Add continuous integration tools (Travis CI, Codecov, Coveral, Landscape).
+  - Add tests.
+  - Use of Theano for lambdifications.
+  

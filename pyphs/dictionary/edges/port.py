@@ -7,7 +7,7 @@ Created on Tue Jun  7 19:14:24 2016
 
 from pyphs import PHSGraph
 from pyphs.config import datum
-from pyphs.core.core import symbols
+from pyphs.dictionary.tools import symbols
 from pyphs.dictionary.tools import nicevarlabel
 
 

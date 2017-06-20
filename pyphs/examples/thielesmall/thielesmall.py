@@ -31,24 +31,25 @@ if __name__ == '__main__':
 #              'timer': True,
 #              'lang': 'python'
 #              }
-#
+#    core.subsinverse()
 #    simu = PHSSimulation(core, config=config)
 #
 #    dur = 10.
-#    u = signalgenerator(which='noise', tsig=dur, fs=simu.fs)
+#    u = signalgenerator(which='noise', tsig=dur, fs=config['fs'])
 #
 #    def sequ():
 #        for el in u():
 #            yield (el, )
 #
-#    simu.init(sequ=sequ(), nt=int(dur*simu.fs))
+#    simu.init(u=sequ(), nt=int(dur*config['fs']))
 #
 #    simu.process()
 #
 #    u = list(simu.data.u(0))
 #    y = list(simu.data.y(0))
 #
-#    f, TF = transferFunction(y, u, fs=simu.fs, nfft=2**13, limits=(1e2, 1e4))
+#    f, TF = transferFunction(y, u, fs=config['fs'],
+#                             nfft=2**15, limits=(1e1, 5e3))
 #
 #    plt.close('all')
 #    plt.figure()

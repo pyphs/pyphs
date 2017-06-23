@@ -309,11 +309,10 @@ class PHSCore:
             for symb in this_name_symbs:
                 symbs.add(symb)
         for k in self.subs:
-            try:
-                symbs.add(free_symbols(self.subs[k]))
-                symbs.add(free_symbols(k))
-            except:
-                pass
+            for s in free_symbols(k):
+                symbs.add(s)
+            for s in free_symbols(self.subs[k]):
+                symbs.add(s)
         return symbs
 
     # =========================================================================
@@ -550,7 +549,7 @@ class PHSCore:
 
         Notice this method only stores a description of the connection in the
         :code:`core.connectors` argument. The connection will be effective only
-        after calling the method :code:`core.apply_connectors()`.
+        after calling the method :code:`core.connect()`.
         """
         assert indices[0] != indices[1], 'Can not connect a port to itself: \
 indices={}.'.format(indices)
@@ -571,7 +570,7 @@ add the connector'.format(i)
         for n, i in enumerate(sorted_indices):
             port2connector(self, i)
 
-    def apply_connectors(self):
+    def connect(self):
         """
         Effectively connect inputs and outputs defined in core.connectors.
 
@@ -684,7 +683,8 @@ add the connector'.format(i)
         else:
             text = 'Type of w and z should be one of {}'.format(w_types)
             raise TypeError(text)
-        assert len(w) == len(z), 'w and z should have same dimension.'
+        if not len(w) == len(z):
+            raise TypeError('w and z should have same dimension.')
         self.w += w
         self.z += z
 
@@ -707,15 +707,18 @@ add the connector'.format(i)
         y : one or several sympy.Expr
             Outputs symbols. Can be a single symbol or a list of symbols.
         """
-        try:
-            types.vector_test(u)
+        if isinstance(u, types.vector_types):
             types.vector_test(y)
-        except:
-            types.scalar_test(u)
+        elif isinstance(u, types.scalar_types):
             types.scalar_test(y)
             u = [u, ]
             y = [y, ]
-        assert len(u) == len(y), 'u and y should have same dimension.'
+            y_types = types.scalar_types+types.vector_types
+        else:
+            text = 'Type of u and y should be one of {}'.format(y_types)
+            raise TypeError(text)
+        if not len(u) == len(y):
+            raise TypeError('u and y should have same dimension.')
         self.u += u
         self.y += y
 
@@ -730,10 +733,9 @@ add the connector'.format(i)
         p : one or several pyphs.symbols
             Parameters symbols. Can be a single symbol or a list of symbols.
         """
-        try:
-            types.vector_test(p)
-        except:
-            types.scalar_test(p)
+        if isinstance(p, types.vector_types):
+            pass
+        elif isinstance(p, types.scalar_types):
             p = [p, ]
         self.p += p
 
@@ -742,14 +744,14 @@ add the connector'.format(i)
         add_observer
         *************
 
-        Add a dictionary of oservers
+        Add a dictionary of observers
         Parameter
         ---------
         obs: dict
             Observers are couple {symb: expr}. They are evaluated during
             simulation at the begining of each time step.
         """
-        self.observers.append(obs)
+        self.observers.update(obs)
 
     # =========================================================================
 

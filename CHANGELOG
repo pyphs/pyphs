@@ -1,4 +1,8 @@
-0.1.9.9
+0.1.9.9.5
+  - changes in PHSCore:
+	* core.apply_connectors => core.connect
+  - Improve code quality
+0.1.9.9.4
   - Improve coverage
   - Implement the Thermics dictionary
   - Implement CMake build system

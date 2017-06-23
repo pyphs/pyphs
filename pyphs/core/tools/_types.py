@@ -20,7 +20,7 @@ def is_known_test(obj):
         try:
             checks.pop()(obj)
             found = True
-        except:
+        except (ScalarExprTypeError, VectorExprTypeError, MatrixExprTypeError):
             raised += 1
 
     if raised == 3:

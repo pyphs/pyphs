@@ -36,7 +36,7 @@ core.add_connector((core.y.index(c1.y[1]), core.y.index(c2.y[1])),
                 alpha=1)
 
 # apply the connection
-core.apply_connectors()
+core.connect()
 
 # target structure matrix
 target = array([[0, -1, 1, 0],

@@ -63,7 +63,7 @@ port-Hamiltonian systems.
     def _set_analysis(self, verbose=False, plot=False):
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
-    def buildCore(self, verbose=False, plot=False, apply_connectors=True):
+    def buildCore(self, verbose=False, plot=False, connect=True):
         if VERBOSE >= 1:
             print('Build core {}...'.format(self.label))
 
@@ -75,8 +75,8 @@ port-Hamiltonian systems.
 
         core = self.core.__deepcopy__()
 
-        if apply_connectors:
-            core.apply_connectors()
+        if connect:
+            core.connect()
 
         core.label = self.label
 

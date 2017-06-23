@@ -60,7 +60,7 @@ class TestPHSGraph(TestCase):
 
     def test_graph_build_core(self):
         graph.buildCore()
-        graph.core.apply_connectors()
+        graph.core.connect()
         if not graph.core.x[:2] == graph.core.symbols(['xM', 'xL']):
             i = graph.core.x.index(graph.core.symbols('xM'))
             graph.core.move_storage(0, i)

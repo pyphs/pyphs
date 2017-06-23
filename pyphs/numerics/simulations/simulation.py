@@ -63,12 +63,12 @@ class PHSSimulation:
                 if not k in self.config.keys():
                     text = 'Configuration key "{0}" unknown.'.format(k)
                     raise AttributeError(text)
-                    
+
         self.config.update(config)
 
         if self.config['path'] is None:
             self.config['path'] = os.getcwd()
-        
+
         if not os.path.exists(self.config['path']):
             os.mkdir(self.config['path'])
 
@@ -148,7 +148,7 @@ class PHSSimulation:
         """
         if VERBOSE >= 1:
             print('Simulation: Process...')
-            
+
         if self.config['timer']:
             tstart = time.time()
 
@@ -309,7 +309,7 @@ def system_call(cmd):
     for line in iter(p.stdout.readline, b''):
         l = line.decode()
         if VERBOSE >= 1:
-            print(l),
+            print(l)
 
 
 def execute_bash(text):

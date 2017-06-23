@@ -196,7 +196,7 @@ subplots.
                     l = opts['labels'][n][m]
                 print_legend = l is not None or print_legend
 
-                y = dec(datay[n][m])
+                y = dec(datay[n][m], opts)
                 maxy = max([maxy, max(y)])
                 miny = min([miny, min(y)])
                 plotn = whichplot(opts['log'][n], axs[n])

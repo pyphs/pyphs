@@ -27,14 +27,13 @@ graph = PHSGraph(netlist=netlist)
 
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
+core.build_R()
+core.subsinverse()
 
-## ---------------------------  SIMULATION  ---------------------------------- #
-#if __name__ == '__main__':
-#
-#    core.subsinverse()
-#
-#    core.build_R()
-#
+
+# ---------------------------  SIMULATION  ---------------------------------- #
+if __name__ == '__main__':
+    pass
 #    # Define the simulation parameters
 #    config = {'fs': 48e3,           # Sample rate (Hz)
 #              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
@@ -74,7 +73,7 @@ core = graph.buildCore()
 #
 #    # ---------------------------  LOOP  --------------------------------
 #
-#    for v_hammer in numpy.linspace(1, 10, 10):
+#    for v_hammer in numpy.linspace(1, 1, 1):
 #
 #        # def generator for sequence of inputs to feed in the PHSSimulation
 #        def sequ():

@@ -94,7 +94,7 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
         _file.write(string)
         _file.close()
 
-        parameters_files = parameters(nums.method.subs, objlabel)
+    parameters_files = parameters(nums.method.subs, objlabel)
     for e in exts:
         filename = path + os.sep + 'parameters.{0}'.format(e)
         if VERBOSE >= 1:
@@ -117,6 +117,9 @@ def append_parameters(method, files):
 
 
 def parameters(subs, objlabel):
+    """
+    Generates the C++ files associated with the parameters
+    """
     files = {'h': str_preamble(objlabel),
              'cpp': str_preamble(objlabel)}
     files['h'] += """
@@ -131,12 +134,18 @@ def parameters(subs, objlabel):
 
 
 def _append_include(files):
+    """
+    Used in .parameters()
+    """
     files['cpp'] += """
 # include "parameters.h"\
 """
 
 
 def _append_subs(subs, files):
+    """
+    Used in .parameters()
+    """
     dim = len(subs)
     if dim > 0:
         files['h'] += """\n

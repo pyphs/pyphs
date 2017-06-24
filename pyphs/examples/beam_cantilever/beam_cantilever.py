@@ -9,7 +9,6 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-import numpy
 from pyphs import PHSNetlist, PHSGraph
 
 # ---------------------------  NETLIST  ------------------------------------- #
@@ -32,6 +31,7 @@ core.substitute(selfall=True)
 #    from pyphs import PHSSimulation, PHSNetlist, PHSGraph
 #    from pyphs.misc.signals.waves import wavread
 #    import matplotlib.pyplot as plt
+#    import numpy 
 #    # recover normalized hammer force from wave file
 #    fs, hammer_force = wavread(os.path.join(here, 'hammer_force.wav'))
 #

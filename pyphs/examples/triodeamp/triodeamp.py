@@ -11,7 +11,7 @@ Here, we build the PHS core asssociated with the
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
+from pyphs import PHSNetlist, PHSGraph
 
 
 label = 'triodeamp'
@@ -30,6 +30,9 @@ core.build_R()
 
 
 #if __name__ == '__main__':
+#
+#    from pyphs import PHSSimulation, signalgenerator
+#
 #    config = {'fs': 48e3,
 #              'split': True,
 #              'progressbar': True,

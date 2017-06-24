@@ -9,10 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph, PHSSimulation
-from pyphs.misc.plots.singleplots import singleplot
-import numpy as np
-
+from pyphs import PHSNetlist, PHSGraph
 
 label = 'heat_transfer'
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
@@ -25,6 +22,11 @@ core.build_R()
 core.subsinverse()
 
 #if __name__ == '__main__':
+#
+#    from pyphs import PHSSimulation
+#    from pyphs.misc.plots.singleplots import singleplot
+#    import numpy as np
+#
 #    tsig = 500.
 #    fs = 1e1
 #

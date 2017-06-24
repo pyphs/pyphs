@@ -8,7 +8,7 @@ Created on Fri Jun  3 15:27:55 2016
 from __future__ import absolute_import, division, print_function
 from pyphs.core.tools import types as core_types
 from ..tools import types as num_types
-from pyphs.misc.tools import remove_duplicates, get_strings
+from pyphs.misc.tools import remove_duplicates
 from ..tools import lambdify, PHSNumericalOperation
 from ..numerical_method._method import PHSCoreMethod
 from pyphs.config import simulations, VERBOSE
@@ -64,7 +64,7 @@ class PHSNumericalCore(object):
 
         # Manage configuration
         self.config = simulations.copy()  # init with standard
-        
+
         if config is None:
             config = {}
         else:
@@ -251,7 +251,7 @@ def evalfunc_generator(nums, name):
     expr = getattr(nums.method, name + '_expr')
     args = getattr(nums.method, name + '_args')
     inds = getattr(nums.method, name + '_inds')
-    func = lambdify(args, expr, subs=nums.method.subs, 
+    func = lambdify(args, expr, subs=nums.method.subs,
                     theano=nums.config['theano'])
 
     if len(inds) > 0:

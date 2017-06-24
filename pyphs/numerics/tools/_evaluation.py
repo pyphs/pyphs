@@ -8,7 +8,7 @@ Created on Tue May 16 20:08:06 2017
 
 from pyphs.config import VERBOSE
 from pyphs.misc.tools import geteval, find
-from pyphs.core.tools import free_symbols, types
+from pyphs.core.tools import free_symbols
 from ._lambdify import lambdify
 
 

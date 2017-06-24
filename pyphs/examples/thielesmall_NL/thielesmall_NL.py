@@ -9,9 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
-from pyphs.misc.signals.analysis import transferFunction
-import matplotlib.pyplot as plt
+from pyphs import PHSNetlist, PHSGraph
 
 label = 'thielesmall_NL'
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
@@ -23,6 +21,10 @@ core = graph.buildCore()
 
 #    # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
 #if __name__ == '__main__':
+#
+#    from pyphs import PHSSimulation, signalgenerator
+#    from pyphs.misc.signals.analysis import transferFunction
+#    import matplotlib.pyplot as plt
 #
 #    # !!! Very long simulation with numpy
 #    config = {'fs': 48e3,

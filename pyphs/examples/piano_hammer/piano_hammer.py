@@ -9,9 +9,7 @@ Created on Sun Jun 11 11:17:07 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-import numpy
-import matplotlib.pyplot as plt
-from pyphs import PHSSimulation, PHSNetlist, PHSGraph
+from pyphs import PHSNetlist, PHSGraph
 
 # ---------------------------  NETLIST  ------------------------------------- #
 label = 'piano_hammer'
@@ -31,6 +29,10 @@ core = graph.buildCore()
 
 ## ---------------------------  SIMULATION  ---------------------------------- #
 #if __name__ == '__main__':
+#
+#    import numpy
+#    import matplotlib.pyplot as plt
+#    from pyphs import PHSSimulation
 #
 #    core.build_R()
 #

@@ -5,7 +5,6 @@ Created on Sat Jun 11 19:19:36 2016
 @author: Falaize
 """
 
-import sympy
 from sympy.printing import latex
 from pyphs.config import fold_short_frac, mat_delim, mat_str, mul_symbol
 from pyphs.misc.tools import geteval

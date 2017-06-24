@@ -9,9 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
-import numpy as np
-
+from pyphs import PHSNetlist, PHSGraph
 
 label = 'dlc'
 
@@ -25,6 +23,10 @@ graph = PHSGraph(netlist=netlist)
 core = graph.buildCore()
 
 #if __name__ == '__main__':
+#
+#    from pyphs import PHSSimulation, signalgenerator
+#    import numpy as np
+#
 #    tsig = 0.01
 #    fs = 48000.
 #

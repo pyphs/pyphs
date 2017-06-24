@@ -9,8 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import (netlist2core, PHSSimulation, signalgenerator)
-import shutil
+from pyphs import netlist2core
 
 label = 'rlc'
 
@@ -21,6 +20,10 @@ core = netlist2core(netlist_filename)
 core.build_eval()
 
 #if __name__ == '__main__':
+#
+#
+#    from pyphs import PHSSimulation, signalgenerator
+#    import shutil
 #
 #    # Include the linear dissipatives in the connexion structure
 #    core.build_R()

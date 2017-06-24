@@ -9,10 +9,7 @@ Created on Wed May 24 23:01:21 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-import numpy
-import matplotlib.pyplot as plt
-from pyphs import PHSSimulation, PHSNetlist, PHSGraph, signalgenerator
-from pyphs.misc.tools import interleave
+from pyphs import PHSNetlist, PHSGraph
 
 # ---------------------------  NETLIST  ------------------------------------- #
 label = 'pickup'
@@ -29,7 +26,12 @@ core = graph.buildCore()
 
 ## ---------------------------  SIMULATION  ---------------------------------- #
 #if __name__ == '__main__':
-##
+#
+#    import numpy
+#    import matplotlib.pyplot as plt
+#    from pyphs import PHSNetlist, PHSGraph
+#    from pyphs.misc.tools import interleave
+#
 #    core.build_R()
 #
 #    # Define the simulation parameters

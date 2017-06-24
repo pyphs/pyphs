@@ -454,7 +454,7 @@ class PHSCore:
 
     # =========================================================================
 
-    def simplify(self, **kwargs):
+    def simplify(self):
         """
         substitute
         **********
@@ -567,7 +567,7 @@ add the connector'.format(i)
         sorted_indices = list(copy.deepcopy(indices))
         sorted_indices.sort()
         sorted_indices.reverse()
-        for n, i in enumerate(sorted_indices):
+        for i in sorted_indices:
             port2connector(self, i)
 
     def connect(self):

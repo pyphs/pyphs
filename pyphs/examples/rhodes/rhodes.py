@@ -9,10 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-import numpy
-import matplotlib.pyplot as plt
-from pyphs import PHSSimulation, PHSNetlist, PHSGraph
-from pyphs.misc.signals.waves import wavwrite
+from pyphs import PHSNetlist, PHSGraph
 
 
 # ---------------------------  NETLIST  ------------------------------------- #
@@ -32,8 +29,13 @@ core.subsinverse()
 
 
 # ---------------------------  SIMULATION  ---------------------------------- #
-if __name__ == '__main__':
-    pass
+#if __name__ == '__main__':
+#
+#    import numpy
+#    import matplotlib.pyplot as plt
+#    from pyphs import PHSSimulation
+#    from pyphs.misc.signals.waves import wavwrite
+#
 #    # Define the simulation parameters
 #    config = {'fs': 48e3,           # Sample rate (Hz)
 #              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}

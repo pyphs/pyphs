@@ -29,7 +29,7 @@ path = os.path.join(here, 'simu')
 
 
 def simulation_rlc_with_split():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     config = {'fs': 48e3,           # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,         # theta-scheme for the structure
@@ -64,7 +64,7 @@ def simulation_rlc_with_split():
 
 
 def simulation_rlc_cpp():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -97,7 +97,7 @@ def simulation_rlc_cpp():
 
 
 def simulation_rlc_without_split():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -131,7 +131,7 @@ def simulation_rlc_without_split():
 
 
 def simulation_rlc_without_split_trapez():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'trapez',    # in {'discret', 'theta', 'trapez'}
@@ -165,7 +165,7 @@ def simulation_rlc_without_split_trapez():
 
 
 def simulation_rlc_without_split_theta():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'theta',    # in {'discret', 'theta', 'trapez'}
@@ -199,7 +199,7 @@ def simulation_rlc_without_split_theta():
 
 
 def simulation_rlc_plot():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}

@@ -168,25 +168,27 @@ class PHSCore:
         core.label = copy.copy(self.label)
         return core
 
-    def __deepcopy__(self, memo=None):
-        core = PHSCore(label=None)
-        for name in (list(set().union(
-                          self.attrstocopy,
-                          self.exprs_names,
-                          self.symbs_names))):
-            if isinstance(name, str):
-                source = self
-                target = core
-                attr_name = name
-            else:
-                source = getattr(self, name[0])
-                target = getattr(core, name[0])
-                attr_name = name[1]
-            attr = getattr(source, attr_name)
-            setattr(target, attr_name, copy.deepcopy(attr, memo))
-        core.label = copy.copy(self.label)
-        return core
-
+# copy.deepcopy should no be used, see sympy issue here:
+# https://github.com/sympy/sympy/pull/7674
+#    def __deepcopy__(self, memo=None):
+#        core = PHSCore(label=None)
+#        for name in (list(set().union(
+#                          self.attrstocopy,
+#                          self.exprs_names,
+#                          self.symbs_names))):
+#            if isinstance(name, str):
+#                source = self
+#                target = core
+#                attr_name = name
+#            else:
+#                source = getattr(self, name[0])
+#                target = getattr(core, name[0])
+#                attr_name = name[1]
+#            attr = getattr(source, attr_name)
+#            setattr(target, attr_name, copy.deepcopy(attr, memo))
+#        core.label = copy.copy(self.label)
+#        return core
+#
     # =========================================================================
 
     def __add__(core1, core2):
@@ -456,7 +458,7 @@ class PHSCore:
 
     def simplify(self):
         """
-        substitute
+        simplify
         **********
 
         Apply simplifications to every expressions.

@@ -73,7 +73,7 @@ class PHSSimulation:
             os.mkdir(self.config['path'])
 
         # store PHSCore
-        setattr(self, '_core', core.__deepcopy__())
+        setattr(self, '_core', core.__copy__())
 
         assert self.config['lang'] in ['c++', 'python']
         setattr(self, 'nums', PHSNumericalCore(self._core, config=self.config))

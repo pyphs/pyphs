@@ -73,7 +73,7 @@ port-Hamiltonian systems.
 
         buildCore(self)
 
-        core = self.core.__deepcopy__()
+        core = self.core.__copy__()
 
         if connect:
             core.connect()

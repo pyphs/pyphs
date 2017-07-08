@@ -221,4 +221,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
 
     # remove entries in core.subs
     for k in subs.keys():
-        core.subs.pop(k)
+        try:
+            core.subs.pop(k)
+        except KeyError:
+            pass

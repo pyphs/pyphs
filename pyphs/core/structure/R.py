@@ -80,6 +80,7 @@ after this operation, and :code:`core.z()=core.znl()`.
         for namej in names:
             mati.append(geteval(core, 'M'+namei+namej))
         mat.append(types.matrix_types[0].hstack(*mati))
+    print([m.shape for m in mat])
     Mnl = types.matrix_types[0].vstack(*mat)
     # Set M to Mnew
     core.M = Mnlwl*core.Zl*Dl*Mwlnl + Mnl

@@ -1,6 +1,6 @@
 numpy>=1.9.3
 scipy>=0.16.0
-sympy>=1.0
+sympy=1.0
 networkx>=1.11
 progressbar2>=2.3
 matplotlib>=2.0.0

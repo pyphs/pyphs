@@ -164,7 +164,10 @@ class PHSCore:
                 target = getattr(core, name[0])
                 attr_name = name[1]
             attr = getattr(source, attr_name)
-            setattr(target, attr_name, copy.copy(attr))
+            try: 
+                setattr(target, attr_name, attr.copy())
+            except AttributeError:
+                setattr(target, attr_name, copy.copy(attr))
         core.label = copy.copy(self.label)
         return core
 

@@ -54,13 +54,13 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
     files['h']['public'] += '\npublic:'
     if VERBOSE >= 2:
         print('    Build parameters...')
-    append_parameters(nums.method, files)
+    append_parameters(nums.method, files, objlabel)
     if VERBOSE >= 2:
         print('    Build update...')
     append_update(nums.method, files, objlabel)
     if VERBOSE >= 2:
         print('    Build arguments...')
-    append_args(nums.method, files, objlabel)
+    append_args(nums, files, objlabel)
     if VERBOSE >= 2:
         print('    Build functions...')
     append_funcs(nums, files, objlabel)
@@ -73,8 +73,8 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
     if VERBOSE >= 2:
         print('    Build constructors...')
     append_constructor(objlabel, files)
-    append_constructor_init_vector(objlabel, files)
-    append_constructor_init_matrix(nums.method, objlabel, files)
+#    append_constructor_init_vector(objlabel, files)
+#    append_constructor_init_matrix(nums.method, objlabel, files)
     if VERBOSE >= 2:
         print('    Build destructor...')
     append_destructuor(objlabel, files)
@@ -108,13 +108,27 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
 ###############################################################################
 # parameters
 
-def append_parameters(method, files):
+def append_parameters(method, files, objlabel):
     files['h']['private'] += "\n\n// Parameters\n"
-    files['h']['private'] += '\nconst unsigned int subs_ref = 0;' + '\n'
+    files['h']['private'] += '\nconst unsigned int indexParameters = 0;' + '\n'
     for i, sub in enumerate(method.subs):
-        files['h']['private'] += \
-            '\nconst double * {0} = & subs[subs_ref][{1}];'.format(str(sub), i)
-
+        if str(sub) == 'F_S':
+            files['h']['private'] += "\n\n// Sample Rate"
+            files['h']['private'] += \
+                '\n\ndouble sampleRate = {};'.format(method.subs[sub])
+            files['h']['private'] += \
+                '\nconst double * F_S = & sampleRate;'
+            files['h']['public'] += "\n\n// Sample Rate\n"
+            files['h']['public'] += \
+                '\nvoid set_sampleRate(double &);'
+            files['cpp']['public'] += "\n\n// Sample Rate\n"
+            files['cpp']['public'] += \
+                "\nvoid {0}::set_sampleRate(double & value)".format(objlabel) +\
+                " {\n" + indent('sampleRate = value;') + '\n}'                
+        else:
+            files['h']['private'] += \
+                '\nconst double * {0} = & subs[indexParameters][{1}];'.format(str(sub), i)
+            
 
 def parameters(subs, objlabel):
     """
@@ -154,12 +168,15 @@ extern const double subs[1][""" + str(dim) + """];"""
 // Correspondance is
 """
         for i, k in enumerate(subs):
-            files['cpp'] += '// subs[i][{}] = {}\n'.format(i, k)
+            if not str(k) == 'F_S':
+                files['cpp'] += '// subs[i][{}] = {}\n'.format(i, k)
+                
         files['cpp'] += """\n
 const double subs[1][""" + str(dim) + """] = {
     {"""
-        for el in subs:
-            files['cpp'] += str(float(subs[el])) + ', '
+        for k in subs:
+            if not str(k) == 'F_S':
+                files['cpp'] += str(float(subs[k])) + ', '
         files['cpp'] = files['cpp'][:-2] + """},
 };"""
 
@@ -171,12 +188,26 @@ def append_init(objlabel, files):
     title = "\n\n// Initialization\n\n"
     files['h']['private'] += "{0}void {1}();".format(title, 'init')
     files['cpp']['private'] += title
-    string = 'void {0}::{1}()'.format(objlabel, 'init') + '{\n'
+    string = 'void {0}::{1}()'.format(objlabel, 'init') + '{'
     string += indent(files['cpp']['data'])
     string += indent(files['cpp']['init'])
     string += '\n};'
     files['cpp']['private'] += string
 
+
+def append_initParameters(objlabel, files):
+    title = "\n\n// Initialization\n\n"
+    files['h']['private'] += "{0}void {1}(int &);".format(title, 'initParameters')
+    files['cpp']['private'] += title
+    string = 'void {0}::{1}(int & i)'.format(objlabel, 
+                                                           'init') + '{'
+    string += indent('\nindexParameters = i;')
+    string += indent('\ninit();')
+    string += '\n};'
+    files['cpp']['private'] += string
+
+
+# ----------------------------------------------------------------------- #
 
 def append_constructor(objlabel, files):
     title = "\n\n// Default Constructor\n\n"
@@ -187,32 +218,32 @@ def append_constructor(objlabel, files):
     files['cpp']['public'] += string
 
 
-def append_constructor_init_matrix(method, objlabel, files):
-    title = "\n\n// Constructor with matrix state initalization\n\n"
-    mtype = matrix_type(method.dims.x(), 1)
-    files['h']['public'] += "{0}{1}({2} &);".format(title, objlabel, mtype)
-    files['cpp']['public'] += title
-    string = '{0}::{0}({1} & x0)'.format(objlabel, mtype) + '{\n'
-    string += "set_x(x0);"
-    string += '\n' + indent('init();') + '\n};'
-    files['cpp']['public'] += string
-
-
-def append_constructor_init_vector(objlabel, files):
-    title = "\n\n// Constructor with vector state initalization\n\n"
-    files['h']['public'] += "{0}{1}(vector<double> &);".format(title, objlabel)
-    files['cpp']['public'] += title
-    string = '{0}::{0}(vector<double> & x0)'.format(objlabel) + '{\n'
-    string += """
-    if (x().size() == x0.size()) {
-        set_x(x0);
-    }
-    else {
-        cerr << "Size of x0 does not match size of x" << endl;
-        exit(1);
-    }"""
-    string += '\n' + indent('init();') + '\n};'
-    files['cpp']['public'] += string
+#def append_constructor_init_matrix(method, objlabel, files):
+#    title = "\n\n// Constructor with matrix state initalization\n\n"
+#    mtype = matrix_type(method.dims.x(), 1)
+#    files['h']['public'] += "{0}{1}({2} &);".format(title, objlabel, mtype)
+#    files['cpp']['public'] += title
+#    string = '{0}::{0}({1} & x0)'.format(objlabel, mtype) + '{\n'
+#    string += "set_x(x0);"
+#    string += '\n' + indent('init();') + '\n};'
+#    files['cpp']['public'] += string
+#
+#
+#def append_constructor_init_vector(objlabel, files):
+#    title = "\n\n// Constructor with vector state initalization\n\n"
+#    files['h']['public'] += "{0}{1}(vector<double> &);".format(title, objlabel)
+#    files['cpp']['public'] += title
+#    string = '{0}::{0}(vector<double> & x0)'.format(objlabel) + '{\n'
+#    string += """
+#    if (x().size() == x0.size()) {
+#        set_x(x0);
+#    }
+#    else {
+#        cerr << "Size of x0 does not match size of x" << endl;
+#        exit(1);
+#    }"""
+#    string += '\n' + indent('init();') + '\n};'
+#    files['cpp']['public'] += string
 
 
 def append_destructuor(objlabel, files):
@@ -278,22 +309,16 @@ def iterate(method, actions, res_label, step_label):
 def append_update(method, files, objlabel):
     string_h = ""
     string_cpp = ""
-    str_u_cpp = "vector<double> & u_vec"
-    str_u_h = "vector<double> &"
-    str_coma = ', '
-    str_p_cpp = "vector<double> & p_vec"
-    str_p_h = "vector<double> &"
-    string_h += "\nvoid update(" + str_u_h + str_coma + str_p_h + ");"
+    string_h += "\nvoid update();"
     string_cpp += """\n
-void """ + objlabel + '::' + """update(""" + str_u_cpp + str_coma +\
-        str_p_cpp + """){\n"""
-    string_cpp += '\n' + indent('set_u(u_vec);')
-    string_cpp += '\n' + indent('set_p(p_vec);')
+void """ + objlabel + '::' + """update(){\n"""
     for action in method.update_actions:
         if action[0] == 'exec':
             string_cpp += '\n' + indent(execs(action[1]))
         elif action[0] == 'iter':
             string_cpp += '\n' + indent(iterate(method, *action[1]))
     string_cpp += "\n}"
+    files['h']['public'] += "\n\n// Core update\n"
     files['h']['public'] += string_h
+    files['cpp']['public'] += "\n\n// Core update\n"
     files['cpp']['public'] += string_cpp

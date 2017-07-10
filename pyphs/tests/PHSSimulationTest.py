@@ -11,6 +11,7 @@ from __future__ import division
 
 # import of external packages
 import numpy                     # numerical tools
+import sympy
 
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core as nlcore
@@ -250,8 +251,12 @@ def simulation_nlcore_full():
               }
 
 
+    # state initialization
+    # !!! must be array with shape (core.dims.x(), )
+    x0 = list(map(sympy.sympify, (0., 0.)))
+    
     # Instantiate a pyphs.PHSSimulation object associated with a given core PHS
-    simu = PHSSimulation(nlcore, config=config)
+    simu = PHSSimulation(nlcore, config=config, inits={'x': x0})
 
     # def simulation time
     tmax = 0.02
@@ -286,12 +291,8 @@ def simulation_nlcore_full():
             # !!! must be array with shape (core.dims.u(), )
             yield numpy.array([u1, ])  # numpy.array([u1, u2, ...])
 
-    # state initialization
-    # !!! must be array with shape (core.dims.x(), )
-    x0 = (0., 0.)
-
     # Initialize the simulation
-    simu.init(u=sequ(), x0=x0, nt=nt)
+    simu.init(u=sequ(), nt=nt)
 
     # Proceed
     simu.process()

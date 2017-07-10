@@ -24,6 +24,9 @@ core.build_eval()
 #
 #    from pyphs import PHSSimulation, signalgenerator
 #    import shutil
+#    import numpy as np
+#    import sympy as sp
+#    
 #
 #    # Include the linear dissipatives in the connexion structure
 #    core.build_R()
@@ -42,7 +45,11 @@ core.build_eval()
 #              'theano': False
 #              }
 #
-#    simu = PHSSimulation(core, config=config)
+#    x0 = np.zeros(core.dims.x())
+#    x0[0] = 1
+#    x0_expr = list(map(sp.sympify, x0))    
+#    inits = {'x': x0_expr}
+#    simu = PHSSimulation(core, config=config, inits=inits)
 #
 #    dur = 0.01
 #    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -51,14 +58,14 @@ core.build_eval()
 #        for el in u():
 #            yield (el, )
 #
-#    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+#    simu.init(u=sequ(), nt=int(dur*simu.config['fs']), inits=inits)
 #
 #    # Run the simulation
 #    simu.process()
 #
 #    # Plots
 #    simu.data.plot_powerbal(mode='single')
-#
+#    simu.data.plot(['u', 'x', 'y'])
 #    # clean: delete folders 'data' and 'figures'
 #    shutil.rmtree(os.path.join(here, 'data'))
 #    shutil.rmtree(os.path.join(here, 'figures'))

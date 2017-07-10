@@ -1,3 +1,6 @@
+  - Initialization of PHSSimulation is made at object instanciation by passing a dictionnary of list of sympy expressions.
+
+
 0.1.9.9.5
   - changes in PHSCore:
 	* core.apply_connectors => core.connect

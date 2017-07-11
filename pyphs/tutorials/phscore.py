@@ -47,9 +47,9 @@ Jxw = [[-1.],
        [0.]]
 core.set_Jxw(Jxw)
 
-# ... or sympy.Matrix.
-Jxy = sympy.Matrix([[-1.],
-                   [0.]])
+# ... or sympy.SparseMatrix.
+Jxy = sympy.SparseMatrix([[-1.],
+                         [0.]])
 core.set_Jxy(Jxy)
 
 # Physical parameters with f0 ~ (2*pi*sqrt(L*C))**-1

@@ -37,7 +37,7 @@ from sympy module. If not succeed, returns 'not finished'.
 Parameters
 ----------
 
-expr: sympy.Matrix or list of sympy.Expr or sympy.Expr
+expr: sympy.SparseMatrix or list of sympy.Expr or sympy.Expr
     Expression(s) to simplify.
 
 method: str in sympy simplify methods
@@ -58,12 +58,10 @@ expr_simp: same type as expr
         return simplify_vector(expr, **kwargs)
     elif isinstance(expr, dict):
         return simplify_dict(expr, **kwargs)
+    elif isinstance(expr, types.scalar_types):
+        return simplify_scalar(expr, **kwargs)
     else:
-        try:
-            types.scalar_test(expr)
-            return simplify_scalar(expr, **kwargs)
-        except types.ScalarExprTypeError:
-            raise TypeError('Unknown type {}'.format(type(expr)))
+        raise TypeError('Unknown type {}'.format(type(expr)))
 
 
 def timeout_simplify(expr, method=SIMPLIFY, timeout=TIMEOUT):
@@ -177,14 +175,13 @@ vec_simp: same type as vec or str
     types.matrix_test(mat)
     dim1, dim2 = mat.shape
     not_finished = False
-    for i in range(dim1):
-        row = [elt for elt in mat[i, :]]
-        row = simplify_vector(row, **kwargs)
-        if row == 'not finished':
+    for i, j, expr in mat.row_list():
+        simplified_expr = simplify_scalar(expr, **kwargs)
+        if simplified_expr == 'not finished':
             not_finished = True
             break
-        for j in range(dim2):
-            mat[i, j] = row[j]
+        else:
+            mat[i, j] = simplified_expr
     return 'not finished' if not_finished else mat
 
 
@@ -219,3 +216,24 @@ expr_simp: dict
         if finished:
             expr[new_k] = new_v
     return expr if finished else 'not finished'
+
+# =========================================================================
+
+
+def simplify_core(core):
+    """
+    substitute_core
+    ***************
+
+    Apply simplifications to every expressions of a PHSCore.
+
+    """
+
+    # substitutions in core's list of expressions and symbols
+    attrs_to_sub = set(list(core.exprs_names) +
+                       list(core.symbs_names) +
+                       ['M', '_dxH', 'observers'])
+    for name in attrs_to_sub:
+        expr = getattr(core, name)
+        if expr is not None:
+            setattr(core, name, simplify(expr))

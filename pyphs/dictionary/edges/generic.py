@@ -7,7 +7,7 @@ Created on Sun Apr  2 20:18:13 2017
 """
 
 from pyphs import PHSGraph
-from pyphs.dictionary.tools import PHSArgument, nicevarlabel, mappars
+from pyphs.dictionary.tools import PHSArgument, mappars
 
 
 class PHSGeneric(PHSGraph):

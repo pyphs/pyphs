@@ -1,0 +1,63 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jun 19 00:12:15 2017
+
+@author: Falaize
+"""
+
+from __future__ import absolute_import, division, print_function
+
+import numpy as np
+from .. import edges
+from pyphs import PHSGraph
+from pyphs.misc.io import data_generator
+from ..tools import symbols
+from .tools import pwl_func
+
+
+class Dissipative(PHSGraph):
+    def __init__(self, label, nodes, **kwargs):
+
+        # instanciate a PHSGraph object
+        PHSGraph.__init__(self, label=label)
+
+        assert 'file' in kwargs, "pwl.dissipative component need 'file' argument"
+        path = kwargs.pop('file')
+        data = np.vstack(map(np.array, data_generator(path)))
+        w_vals = data[0, :]
+        z_vals = data[1, :]
+
+        assert all(z_vals[np.nonzero(w_vals >= 0)] >= 0), 'All values z(w) for\
+ w>=0 must be non-negative (component {})'.format(label)
+
+        assert all(z_vals[np.nonzero(w_vals >= 0)] >= 0), 'All values z(w) for\
+ w<0 must be negative (component {})'.format(label)
+
+        assert all(z_vals[np.nonzero(w_vals == 0)] == 0), 'z(0) must be zero \
+(component {})'.format(label)
+
+        ctrl = kwargs.pop('ctrl')
+
+        # state  variable
+        w = symbols("w"+label)
+        # storage funcion
+        z = pwl_func(w_vals, z_vals, w, **kwargs)
+
+        # edge data
+        data = {'label': w,
+                'type': 'dissipative',
+                'ctrl': ctrl,
+                'link': None}
+        N1, N2 = nodes
+
+        # edge
+        edge = (N1, N2, data)
+
+        # init component
+        self += edges.PHSDissipativeNonLinear(label, [edge, ], w, z, **kwargs)
+
+    @staticmethod
+    def metadata():
+        return {'nodes': ('N1', 'N2'),
+                'arguments': {}}

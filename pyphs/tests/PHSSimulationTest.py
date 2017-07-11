@@ -11,6 +11,7 @@ from __future__ import division
 
 # import of external packages
 import numpy                     # numerical tools
+import sympy
 
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core as nlcore
@@ -29,7 +30,7 @@ path = os.path.join(here, 'simu')
 
 
 def simulation_rlc_with_split():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     config = {'fs': 48e3,           # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,         # theta-scheme for the structure
@@ -53,15 +54,18 @@ def simulation_rlc_with_split():
             yield (el, )
 
     simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    
     simu.process()
-
+    
+    simu.data.wavwrite('y', 0)
+    
     if not os.name.lower().startswith('nt'):
         shutil.rmtree(path)
     return True
 
 
 def simulation_rlc_cpp():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -94,7 +98,7 @@ def simulation_rlc_cpp():
 
 
 def simulation_rlc_without_split():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -128,7 +132,7 @@ def simulation_rlc_without_split():
 
 
 def simulation_rlc_without_split_trapez():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'trapez',    # in {'discret', 'theta', 'trapez'}
@@ -162,7 +166,7 @@ def simulation_rlc_without_split_trapez():
 
 
 def simulation_rlc_without_split_theta():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'theta',    # in {'discret', 'theta', 'trapez'}
@@ -196,7 +200,7 @@ def simulation_rlc_without_split_theta():
 
 
 def simulation_rlc_plot():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -247,8 +251,12 @@ def simulation_nlcore_full():
               }
 
 
+    # state initialization
+    # !!! must be array with shape (core.dims.x(), )
+    x0 = list(map(sympy.sympify, (0., 0.)))
+    
     # Instantiate a pyphs.PHSSimulation object associated with a given core PHS
-    simu = PHSSimulation(nlcore, config=config)
+    simu = PHSSimulation(nlcore, config=config, inits={'x': x0})
 
     # def simulation time
     tmax = 0.02
@@ -283,12 +291,8 @@ def simulation_nlcore_full():
             # !!! must be array with shape (core.dims.u(), )
             yield numpy.array([u1, ])  # numpy.array([u1, u2, ...])
 
-    # state initialization
-    # !!! must be array with shape (core.dims.x(), )
-    x0 = (0., 0.)
-
     # Initialize the simulation
-    simu.init(u=sequ(), x0=x0, nt=nt)
+    simu.init(u=sequ(), nt=nt)
 
     # Proceed
     simu.process()

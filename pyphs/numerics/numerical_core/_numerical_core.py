@@ -8,10 +8,10 @@ Created on Fri Jun  3 15:27:55 2016
 from __future__ import absolute_import, division, print_function
 from pyphs.core.tools import types as core_types
 from ..tools import types as num_types
-from pyphs.misc.tools import remove_duplicates, get_strings
+from pyphs.misc.tools import remove_duplicates
 from ..tools import lambdify, PHSNumericalOperation
 from ..numerical_method._method import PHSCoreMethod
-from pyphs.config import simulations
+from pyphs.config import simulations, VERBOSE
 import numpy
 
 
@@ -23,7 +23,7 @@ class PHSNumericalCore(object):
     method is applied symbolically to a PHScore, then every relevant functions
     for simulations are lambdified and organized into the object.
     """
-    def __init__(self, core, config=None, build=True):
+    def __init__(self, core, config=None, inits=None, build=True):
         """
     Instanciate a PHSNumericalCore.
 
@@ -33,7 +33,7 @@ class PHSNumericalCore(object):
     core : PHSCore
         Base system to descretize and lambdify.
 
-        config: dict or None
+        config: dict or None (optional)
             A dictionary of simulation parameters. If None, the standard
             pyphs.config.simulations is used (the default is None):
             config = {'fs': {},
@@ -51,7 +51,12 @@ class PHSNumericalCore(object):
                       'load': {}
                       }
 
-        build : bool
+        inits : dict or None (optional)
+            Dictionary with variable name as keys and initialization values
+            as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
+            with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
+            
+        build : bool (optional)
             If False, the object is not built at instanciation. Then the method
             :code:`build()` must be called before any usage.
 
@@ -64,7 +69,7 @@ class PHSNumericalCore(object):
 
         # Manage configuration
         self.config = simulations.copy()  # init with standard
-        
+
         if config is None:
             config = {}
         else:
@@ -76,14 +81,42 @@ class PHSNumericalCore(object):
 
         # Save PHSCore object
         self.method = PHSCoreMethod(core, config=config)
-
+        
+        # Define inits
+        self.inits = {}        
+        if inits is not None:
+            self.inits.update(inits)
+            
         # Build... or not
         if build:
             self.build()
 
+    def init(self):
+        """
+        Set initilization values of self (and subsequently of the 
+        generated c++ object).
+        
+        """
+        for k in self.inits.keys():
+            val = self.inits[k]
+            get_func = getattr(self, k)
+            self_shape = get_func().shape
+            set_func = getattr(self, 'set_' + k)                
+            if val is None:
+                val = numpy.zeros(self_shape)                
+                set_func(val)
+            else:                
+                val = numpy.asarray(val)
+                if not val.shape == self_shape:
+                    text = 'Init value for {0} has wrong shape {1}'.format(k, val.shape)
+                    raise TypeError(text)
+                else:
+                    set_func(val)
+                
     def build(self):
 
-        print('Build numerical core...')
+        if VERBOSE >= 1:
+            print('Build numerical core...')
 
         # init args values with 0
         self.args = numpy.array([0., ]*self.method.dims.args())
@@ -91,6 +124,10 @@ class PHSNumericalCore(object):
         # build evaluations for arguments
         for name in self.method.args_names:
             self._build_arg(name)
+            
+        # init values for arguents
+        self.init()
+        
 
         # build numerical evaluation for functions and operations
         for name in self.method.update_actions_deps():
@@ -141,7 +178,8 @@ class PHSNumericalCore(object):
         """
         Link and lambdify a numerical operation or numerical function from name
         """
-        print('    Build numerical evaluation of {}'.format(name))
+        if VERBOSE >= 2:
+            print('    Build numerical evaluation of {}'.format(name))
         # build for sympy.expression
         if name in self.method.funcs_names:
             self._build_func(name)
@@ -218,7 +256,7 @@ class PHSNumericalCore(object):
                 and self.it < self.config['maxit']:
             self._execs(commands)
             self.it += 1
-        if self.it >= self.config['maxit']:
+        if self.it >= self.config['maxit'] and VERBOSE >= 1:
             message = 'Warning: {} = {} after {} iterations'
             print(message.format(res_name,
                                  getattr(self, res_name)(),
@@ -249,7 +287,7 @@ def evalfunc_generator(nums, name):
     expr = getattr(nums.method, name + '_expr')
     args = getattr(nums.method, name + '_args')
     inds = getattr(nums.method, name + '_inds')
-    func = lambdify(args, expr, subs=nums.method.subs, 
+    func = lambdify(args, expr, subs=nums.method.subs,
                     theano=nums.config['theano'])
 
     if len(inds) > 0:

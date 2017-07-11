@@ -9,7 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
+from pyphs import PHSNetlist, PHSGraph
 
 label = 'thielesmall_dual'
 
@@ -23,7 +23,9 @@ graph = PHSGraph(netlist=netlist)
 
 core = graph.buildCore()
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
+#
+#    from pyphs import PHSSimulation, signalgenerator
 #    config = {'fs': 48e3,
 #              'split': True,
 #              'pbar': True,
@@ -52,4 +54,3 @@ if __name__ == '__main__':
 #                    ('dtx', 0),
 #                    ('dxH', 2),
 #                    ('y', 0)])
-    pass

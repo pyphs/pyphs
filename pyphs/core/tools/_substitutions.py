@@ -5,7 +5,7 @@ Created on Thu May 18 21:39:29 2017
 
 @author: Falaize
 """
-from ..tools import types, sympify, free_symbols
+from ..tools import types, free_symbols
 from ..tools import simplify as simplify_func
 import sympy
 
@@ -221,4 +221,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
 
     # remove entries in core.subs
     for k in subs.keys():
-        core.subs.pop(k)
+        try:
+            core.subs.pop(k)
+        except KeyError:
+            pass

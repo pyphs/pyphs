@@ -4,9 +4,7 @@ Created on Sat Mar  5 13:53:43 2016
 
 @author: Falaize
 """
-import numpy
 from datetime import datetime
-from ..core.tools import types
 
 
 # =========================================================================== #
@@ -42,17 +40,6 @@ else return value.
         return elt()
     else:
         return elt
-
-
-# =========================================================================== #
-
-def norm(vec):
-    """
-Return the norm of a vector.
-    """
-    assertions.vector(vec)
-    a = numpy.array(vec)
-    return numpy.sqrt(numpy.einsum('i,i', a, a))
 
 
 # =========================================================================== #

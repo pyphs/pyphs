@@ -18,6 +18,6 @@ sums vectors (list elements)
     l = len(v0)
     for v in args:
         types.vector_test(v)
-        assert len(v) == l
+        assert len(v) == l, '{} not equal to {}'.format(len(v), l)
         v0 = [e1 + e2 for e1, e2 in zip(v0, v)]
     return v0

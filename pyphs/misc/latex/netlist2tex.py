@@ -46,7 +46,7 @@ parameters " + r"\\ \hline" + cr(1)
     return str_netlist
 
 
-def graphplot2tex(graph, name=None, path=None):
+def graphplot2tex(graph, name=None, path=None, show=False):
     """
     associate the plot of the graph to a latex figure
     """
@@ -60,7 +60,7 @@ def graphplot2tex(graph, name=None, path=None):
     if path is None:
         path = os.getcwd()
     filename = path + os.sep + name + '.' + plot_format
-    graph.plot(filename=filename)
+    graph.plot(filename=filename, show=show)
     string = cr(2) + r"""\begin{figure}[!h]
 \begin{center}
 \includegraphics[width=\linewidth]{""" + filename + r"""}

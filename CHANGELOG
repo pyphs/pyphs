@@ -1,4 +1,13 @@
-0.1.9.9
+  - Initialization of PHSSimulation is made at object instanciation by passing a dictionnary of list of sympy expressions.
+
+
+0.1.9.9.5
+  - changes in PHSCore:
+	* core.apply_connectors => core.connect
+  - Improve code quality
+0.1.9.9.4
+  - Improve coverage
+  - Implement the Thermics dictionary
   - Implement CMake build system
   - changes in PHSCore:
 	* core.apply_sub => core.substitute

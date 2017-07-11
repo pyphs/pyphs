@@ -7,13 +7,12 @@ Created on Mon May 15 15:53:09 2017
 """
 
 from . import types
-import sympy
 
 
 def free_symbols(expr):
     """
 Return a set of the free symbols in expression.
-expr can be a sympy.Expr, a sympy.Matrix or a list of sympy.Expr
+expr can be a sympy.Expr, a sympy.SparseMatrix or a list of sympy.Expr
     """
     if isinstance(expr, types.matrix_types):
         symbs = free_symbols_mat(expr)
@@ -26,7 +25,8 @@ expr can be a sympy.Expr, a sympy.Matrix or a list of sympy.Expr
     elif expr is None:
         symbs = set()
     else:
-        raise TypeError("Unkown type {}".format(type(expr)))
+        b = '\n'*2+'*'*50 + '\n'*2
+        raise TypeError("{0}{1}{0}Unkown type {2}".format(b, expr, type(expr)))
     return symbs
 
 
@@ -47,7 +47,10 @@ Return a set of the free symbols in expression.
 expr must be a sympy.Expr
     """
     types.scalar_test(expr)
-    symbs = expr.free_symbols
+    if isinstance(expr, types.sympy.Expr):
+        symbs = expr.free_symbols
+    else:
+        symbs = set()
     return symbs
 
 
@@ -66,15 +69,9 @@ expr must be a list of sympy.Expr
 def free_symbols_mat(mat):
     """
 Return a set of the free symbols in expression.
-expr must be a sympy.Matrix
+expr must be a sympy.SparseMatrix
     """
     types.matrix_test(mat)
     m, n = mat.shape
-    symbs = set()
-    for i in range(m):
-        try:
-            line_vec = mat[i, :].tolist()[0]
-            symbs = symbs.union(free_symbols_vec(line_vec))
-        except AssertionError:
-            pass
+    symbs = free_symbols_vec([e for (_, _, e) in mat.row_list()])
     return symbs

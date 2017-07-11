@@ -6,7 +6,7 @@ Created on Mon May 15 15:18:03 2017
 @author: Falaize
 """
 import sympy
-from ..tools import simplify
+from ..tools import types
 
 
 # =============================== Output function =========================== #
@@ -31,21 +31,21 @@ y: list
     if core.dims.y() > 0:  # Check if system has external ports
 
         # contribution of inputs to the output
-        Vyu = core.Myy()*sympy.Matrix(core.u)
+        Vyu = core.Myy()*types.matrix_types[0](core.u)
 
         if core.dims.x() > 0:  # Check if system has storage parts
-            Vyx = core.Myx()*sympy.Matrix(core.dxH())
+            Vyx = core.Myx()*types.matrix_types[0](core.dxH())
         else:
-            Vyx = sympy.zeros(core.dims.y(), 1)
+            Vyx = types.matrix_types[0](sympy.zeros(core.dims.y(), 1))
 
         if core.dims.w() > 0:  # Check if system has dissipative parts
-            Vyw = core.Myw()*sympy.Matrix(core.z)
+            Vyw = types.matrix_types[0](core.Myw()*types.matrix_types[0](core.z))
         else:
-            Vyw = sympy.zeros(core.dims.y(), 1)
+            Vyw = types.matrix_types[0](sympy.zeros(core.dims.y(), 1))
 
         out = list(Vyx + Vyw + Vyu)
 
     else:
-        out = sympy.Matrix(list(list()))
+        out = types.matrix_types[0](list(list()))
 
     return list(out)

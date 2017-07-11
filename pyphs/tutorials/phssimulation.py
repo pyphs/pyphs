@@ -10,6 +10,7 @@ Created on Fri Feb 10 21:13:41 2017
 from __future__ import division
 
 # import of external packages
+import sympy                     # CAS tools
 import numpy                     # numerical tools
 import matplotlib.pyplot as plt  # plot tools
 
@@ -37,8 +38,12 @@ config = {'fs': 48e3,           # Sample rate (Hz)
           'load': {'imin': 0, 'imax': None, 'decim': 1}
           }
 
+# state initialization
+# !!! must be numpy array with shape (core.dims.x(), )
+x0 = list(map(sympy.sympify, [0., ]*core.dims.x()))
+
 # Instantiate a pyphs.PHSSimulation object associated with a given core PHS
-simu = PHSSimulation(core, config=config)
+simu = PHSSimulation(core, config=config, inits={'x': x0})
 
 # def simulation time
 tmax = 1e-2
@@ -75,12 +80,8 @@ def sequ():
         # !!! must be array with shape (core.dims.u(), )
         yield numpy.array([u1, ])  # numpy.array([u1, u2, ...])
 
-# state initialization
-# !!! must be numpy array with shape (core.dims.x(), )
-x0 = numpy.array([0., ]*core.dims.x())
-
 # Initialize the simulation
-simu.init(u=sequ(), x0=x0, nt=nt)
+simu.init(u=sequ(), nt=nt)
 
 # Proceed
 simu.process()

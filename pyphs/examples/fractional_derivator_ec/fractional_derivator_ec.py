@@ -9,11 +9,7 @@ Created on Sat May 13 17:00:14 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import (netlist2core, PHSSimulation, signalgenerator,
-                   PHSNetlist, PHSGraph)
-from pyphs.misc.signals.analysis import transferFunction
-import matplotlib.pyplot as plt
-import numpy as np
+from pyphs import (netlist2core, PHSNetlist, PHSGraph)
 
 label = 'fractional_derivator_ec'
 
@@ -24,10 +20,14 @@ netlist = PHSNetlist(netlist_filename)
 graph = PHSGraph(netlist=netlist)
 core = netlist2core(netlist_filename)
 
-if __name__ == '__main__':
-    # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
-    # !!! Very long simulation with numpy
+# UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
+# !!! Very long simulation with numpy (use c++ if possible)
 
+#if __name__ == '__main__':
+#    from pyphs import PHSSimulation, signalgenerator
+#    from pyphs.misc.signals.analysis import transferFunction
+#    import matplotlib.pyplot as plt
+#    import numpy as np
 #    config = {'fs': 48e3,
 #              'split': True,
 #              'pbar': True,
@@ -62,5 +62,3 @@ if __name__ == '__main__':
 #    plt.xlabel('freq (Hz)')
 #    plt.ylabel(r'$\mathrm{abs}(y(f)/u(f))$ ($\Omega$)')
 #    plt.title('Transfer function')
-#    
-    pass

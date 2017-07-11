@@ -16,6 +16,9 @@ import numpy as np
 
 
 netlist = NetlistThieleSmallNL()
+
+netlist.setline(3, netlist[3])
+
 graph = PHSGraph(netlist=netlist)
 
 symbols = graph.core.symbols
@@ -81,22 +84,22 @@ def split_sp():
     netlist = NetlistThieleSmallNL()
     graph = PHSGraph(netlist=netlist)
     graph.split_sp()
-    return True
     os.remove(path)
+    return True
 
 
 def plot_Graph():
     netlist = NetlistThieleSmallNL()
     graph = PHSGraph(netlist=netlist)
-    graph.plot()
-    return True
+    graph.plot(show=False)
     os.remove(path)
+    return True
 
 
 def plot_GraphAnalysis():
     netlist = NetlistThieleSmallNL()
     graph = PHSGraph(netlist=netlist)
     graph.buildCore()
-    graph.analysis.plot()
-    return True
+    graph.analysis.plot(show=False)
     os.remove(path)
+    return True

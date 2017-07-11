@@ -11,7 +11,7 @@ import sympy
 import copy
 
 from ..misc.tools import geteval
-
+from ..config import VERBOSE
 # Structure methods
 from .structure.R import build_R
 from .structure.splits import linear_nonlinear
@@ -22,8 +22,8 @@ from .structure.connectors import port2connector
 from .maths import gradient, jacobian, inverse
 from .structure.dimensions import Dimensions
 from .structure.indices import Indices
-from .tools import types, free_symbols, sympify, substitute_core
-
+from .tools import (types, free_symbols, sympify,
+                    substitute_core, subsinverse_core, simplify_core)
 from ..misc.latex import texdocument, core2tex
 
 from collections import OrderedDict
@@ -96,13 +96,13 @@ class PHSCore:
         self.exprs_names = set()
 
         # Init structure
-        self.M = sympy.zeros(0)
+        self.M = types.matrix_types[0](sympy.zeros(0))
 
         # List of connectors
         self.connectors = list()
 
         # UNORDERED Dictionary of substitution {symbol: value}
-        self.subs = dict()
+        self.subs = OrderedDict()
 
         # ORDERED Dictionary of observers {symbol: expr}
         self.observers = OrderedDict()
@@ -126,8 +126,8 @@ class PHSCore:
         self.setexpr('z', types.vector_types[0]())
 
         # Coefficient matrices for linear parts
-        self.setexpr('Q', sympy.zeros(0, 0))
-        self.setexpr('Zl', sympy.zeros(0, 0))
+        self.setexpr('Q', types.matrix_types[0](sympy.zeros(0, 0)))
+        self.setexpr('Zl', types.matrix_types[0](sympy.zeros(0, 0)))
 
         # init tools
         self.dims = Dimensions(self)
@@ -164,29 +164,34 @@ class PHSCore:
                 target = getattr(core, name[0])
                 attr_name = name[1]
             attr = getattr(source, attr_name)
-            setattr(target, attr_name, copy.copy(attr))
+            try: 
+                setattr(target, attr_name, attr.copy())
+            except AttributeError:
+                setattr(target, attr_name, copy.copy(attr))
         core.label = copy.copy(self.label)
         return core
 
-    def __deepcopy__(self, memo=None):
-        core = PHSCore(label=None)
-        for name in (list(set().union(
-                          self.attrstocopy,
-                          self.exprs_names,
-                          self.symbs_names))):
-            if isinstance(name, str):
-                source = self
-                target = core
-                attr_name = name
-            else:
-                source = getattr(self, name[0])
-                target = getattr(core, name[0])
-                attr_name = name[1]
-            attr = getattr(source, attr_name)
-            setattr(target, attr_name, copy.deepcopy(attr, memo))
-        core.label = copy.copy(self.label)
-        return core
-
+# copy.deepcopy should no be used, see sympy issue here:
+# https://github.com/sympy/sympy/pull/7674
+#    def __deepcopy__(self, memo=None):
+#        core = PHSCore(label=None)
+#        for name in (list(set().union(
+#                          self.attrstocopy,
+#                          self.exprs_names,
+#                          self.symbs_names))):
+#            if isinstance(name, str):
+#                source = self
+#                target = core
+#                attr_name = name
+#            else:
+#                source = getattr(self, name[0])
+#                target = getattr(core, name[0])
+#                attr_name = name[1]
+#            attr = getattr(source, attr_name)
+#            setattr(target, attr_name, copy.deepcopy(attr, memo))
+#        core.label = copy.copy(self.label)
+#        return core
+#
     # =========================================================================
 
     def __add__(core1, core2):
@@ -210,7 +215,7 @@ class PHSCore:
             for varj in core.dims.names:
                 Mij1 = getattr(core1, 'M'+vari+varj)()
                 Mij2 = getattr(core2, 'M'+vari+varj)()
-                Mij = sympy.diag(Mij1, Mij2)
+                Mij = types.matrix_types[0](sympy.diag(Mij1, Mij2))
                 if all(dim > 0 for dim in Mij.shape):
                     set_func = getattr(core, 'set_M'+vari+varj)
                     set_func(Mij)
@@ -282,8 +287,8 @@ class PHSCore:
         *
 
         Returns the symbols "oi" associated with the i-th keyof dictionary
-        'PHSCore.observers'. It is used in the numerical methods as replacement symbols
-        for the discrete evaluation of observers in the structure
+        'PHSCore.observers'. It is used in the numerical methods as replacement
+        symbols for the discrete evaluation of observers in the structure
         matrix and dissipation function z.
         """
         return list(self.observers.keys())
@@ -309,11 +314,10 @@ class PHSCore:
             for symb in this_name_symbs:
                 symbs.add(symb)
         for k in self.subs:
-            try:
-                symbs.add(free_symbols(self.subs[k]))
-                symbs.add(free_symbols(k))
-            except:
-                pass
+            for s in free_symbols(k):
+                symbs.add(s)
+            for s in free_symbols(self.subs[k]):
+                symbs.add(s)
         return symbs
 
     # =========================================================================
@@ -390,16 +394,15 @@ class PHSCore:
         init_M
         ******
 
-        Init the structure matrix \
-        :code:`core.M = sympy.zeros(core.dims.tot(), core.dims.tot())`.
+        Init the structure matrix M with zeros.
+
         """
-        self.M = sympy.zeros(self.dims.tot())
+        self.M = types.matrix_types[0](sympy.zeros(self.dims.tot()))
 
     def J(self):
         """
-        =
         J
-        =
+        *
 
         Return the skew-symetric part of structure matrix \
         :math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the \
@@ -408,16 +411,16 @@ class PHSCore:
         Return
         ------
 
-        J: sympy Matrix
+        J: sympy SparseMatrix
             :math:`\\mathbf{J} = \\frac{1}{2}(\\mathbf{M} - \\mathbf{M}^\intercal)`
         """
         return (self.M - self.M.T)/2.
 
     def R(self):
         """
-        =
+        *
         R
-        =
+        *
 
         Return the symetric part of structure matrix \
         :math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the \
@@ -426,7 +429,7 @@ class PHSCore:
         Return
         ------
 
-        R: sympy Matrix
+        R: sympy SparseMatrix
             :math:`\\mathbf{R} = -\\frac{1}{2}(\\mathbf{M} + \\mathbf{M}^\intercal)`
         """
         return -(self.M + self.M.T)/2.
@@ -448,11 +451,23 @@ class PHSCore:
             If None, every symbols are returned, else the label with index i is
             returned (default is None).
         """
-        labels = sum([self.x, self.w, self.y, self.cy])
+        labels = self.x + self.w + self.y + self.cy
         if i is None:
             return [str(el) for el in labels]
         else:
             return str(labels[i])
+
+    # =========================================================================
+
+    def simplify(self):
+        """
+        simplify
+        **********
+
+        Apply simplifications to every expressions.
+
+        """
+        simplify_core(self)
 
     # =========================================================================
 
@@ -493,6 +508,22 @@ class PHSCore:
 
     # =========================================================================
 
+    def subsinverse(self):
+        """
+        subsinverse
+        ***********
+
+        Remove every occurence of inverse of symbols in core.subs. they are
+        replaced by the same symbols with prefix 'inv', which is appended to
+        the dictionary core.subs.
+
+        """
+        if VERBOSE >= 1:
+            print("Remove Inverse of Parameters...")
+        subsinverse_core(self)
+
+    # =========================================================================
+
     # Connectors
 
     def add_connector(self, indices, alpha):
@@ -523,7 +554,7 @@ class PHSCore:
 
         Notice this method only stores a description of the connection in the
         :code:`core.connectors` argument. The connection will be effective only
-        after calling the method :code:`core.apply_connectors()`.
+        after calling the method :code:`core.connect()`.
         """
         assert indices[0] != indices[1], 'Can not connect a port to itself: \
 indices={}.'.format(indices)
@@ -541,10 +572,10 @@ add the connector'.format(i)
         sorted_indices = list(copy.deepcopy(indices))
         sorted_indices.sort()
         sorted_indices.reverse()
-        for n, i in enumerate(sorted_indices):
+        for i in sorted_indices:
             port2connector(self, i)
 
-    def apply_connectors(self):
+    def connect(self):
         """
         Effectively connect inputs and outputs defined in core.connectors.
 
@@ -557,23 +588,23 @@ add the connector'.format(i)
         # recover connectors and sort cy and cu
         for i, c in enumerate(self.connectors):
             all_alpha.append(c['alpha'])
-            i_primal = self.cy.index(c['y'][0])
+            i_primal = getattr(self, 'cy').index(c['y'][0])
             self.move_connector(i_primal, 2*i)
-            i_dual = self.cy.index(c['y'][1])
+            i_dual = getattr(self, 'cy').index(c['y'][1])
             self.move_connector(i_dual, 2*i+1)
 
         Mswitch_list = [alpha * sympy.Matrix([[0, -1],
                                               [1, 0]])
                         for alpha in all_alpha]
-        Mswitch = sympy.diag(*Mswitch_list)
+        Mswitch = types.matrix_types[0](sympy.diag(*Mswitch_list))
 
         nxwy = self.dims.x() + self.dims.w() + self.dims.y()
         # Gain matrix
-        G_connectors = sympy.Matrix(self.M[:nxwy, nxwy:])
+        G_connectors = self.M[:nxwy, nxwy:]
         # Observation matrix
-        O_connectors = sympy.Matrix(self.M[nxwy:, :nxwy])
-
-        N_connectors = sympy.eye(self.dims.cy()) - self.Mcycy() * Mswitch
+        O_connectors = self.M[nxwy:, :nxwy]
+        N_connectors = types.matrix_types[0](sympy.eye(self.dims.cy()) -
+                                             self.Mcycy() * Mswitch)
 
         try:
             iN_connectors = inverse(N_connectors, dosimplify=False)
@@ -582,12 +613,12 @@ add the connector'.format(i)
             M_connectors = G_connectors*Mswitch*iN_connectors*O_connectors
 
             # Store new structure
-            self.M = self.M[:nxwy, :nxwy] + M_connectors
+            self.M = types.matrix_types[0](self.M[:nxwy, :nxwy] + M_connectors)
 
             # clean
-            self.cy = list()
-            self.cu = list()
-            self.connectors = list()
+            setattr(self, 'cy', list())
+            setattr(self, 'cu', list())
+            setattr(self, 'connectors', list())
 
         except ValueError:
             raise Exception('Can not resolve the connection.\n\nABORD')
@@ -655,8 +686,10 @@ add the connector'.format(i)
             z = [z, ]
             w_types = types.scalar_types+types.vector_types
         else:
-            raise TypeError('Type of w and z should be one of {}'.format(w_types))
-        assert len(w) == len(z), 'w and z should have same dimension.'
+            text = 'Type of w and z should be one of {}'.format(w_types)
+            raise TypeError(text)
+        if not len(w) == len(z):
+            raise TypeError('w and z should have same dimension.')
         self.w += w
         self.z += z
 
@@ -679,15 +712,18 @@ add the connector'.format(i)
         y : one or several sympy.Expr
             Outputs symbols. Can be a single symbol or a list of symbols.
         """
-        try:
-            types.vector_test(u)
+        if isinstance(u, types.vector_types):
             types.vector_test(y)
-        except:
-            types.scalar_test(u)
+        elif isinstance(u, types.scalar_types):
             types.scalar_test(y)
             u = [u, ]
             y = [y, ]
-        assert len(u) == len(y), 'u and y should have same dimension.'
+            y_types = types.scalar_types+types.vector_types
+        else:
+            text = 'Type of u and y should be one of {}'.format(y_types)
+            raise TypeError(text)
+        if not len(u) == len(y):
+            raise TypeError('u and y should have same dimension.')
         self.u += u
         self.y += y
 
@@ -702,10 +738,9 @@ add the connector'.format(i)
         p : one or several pyphs.symbols
             Parameters symbols. Can be a single symbol or a list of symbols.
         """
-        try:
-            types.vector_test(p)
-        except:
-            types.scalar_test(p)
+        if isinstance(p, types.vector_types):
+            pass
+        elif isinstance(p, types.scalar_types):
             p = [p, ]
         self.p += p
 
@@ -714,14 +749,14 @@ add the connector'.format(i)
         add_observer
         *************
 
-        Add a dictionary of oservers
+        Add a dictionary of observers
         Parameter
         ---------
         obs: dict
             Observers are couple {symb: expr}. They are evaluated during
             simulation at the begining of each time step.
         """
-        self.observers.append(obs)
+        self.observers.update(obs)
 
     # =========================================================================
 
@@ -781,17 +816,35 @@ add the connector'.format(i)
 
         sympy.init_printing()
 
-        b = sympy.Matrix(self.dx() +
-                         self.w +
-                         self.y +
-                         self.cy)
+        b = types.matrix_types[0](self.dx() +
+                               self.w +
+                               self.y +
+                               self.cy)
 
-        a = sympy.Matrix(self.g() +
-                         self.symbols(['z'+str(w)[1:] for w in self.w]) +
-                         self.u +
-                         self.cu)
+        a = types.matrix_types[0](self.g() +
+                               self.symbols(['z'+str(w)[1:] for w in self.w]) +
+                               self.u +
+                               self.cu)
 
         sympy.pprint([b, self.M, a], **settings)
+
+    # =========================================================================
+
+    def build_eval(self, vectorize=True):
+        """
+        Add an attribute object 'eval' for the numerical evaluation of core
+        functions. Notice this is not a dynamical object, so it has to be
+        rebuild if the core is changed in any way.
+
+        Parameter
+        ---------
+
+        vectorize : boll (optional)
+            If True, every function are vectorized with numpy.vectorize.
+            The default is True.
+        """
+        from pyphs.numerics.tools._evaluation import PHSNumericalEval
+        setattr(self, 'eval', PHSNumericalEval(self, vectorize=vectorize))
 
     # =========================================================================
 
@@ -860,7 +913,6 @@ add the connector'.format(i)
         """.format(name, dims_names[0], dims_names[1])
         return get_mat
 
-
     def _build_set_mat(self, dims_names, name):
         """
         mat is ('matr', ('m', 'n')) with matr the matrix argument to define
@@ -869,9 +921,9 @@ add the connector'.format(i)
         def set_mat(mat):
             vari, varj = dims_names
             if self.M.shape[0] != self.dims.tot():
-                self.M = sympy.zeros(self.dims.tot())
+                self.M = types.matrix_types[0](sympy.zeros(self.dims.tot()))
             if name == 'J':
-                Jab = sympy.Matrix(mat)
+                Jab = types.matrix_types[0](mat)
                 Rab = getattr(self, 'R'+vari + varj)()
                 Rba = getattr(self, 'R'+varj + vari)()
                 Mab = Jab - Rab
@@ -879,17 +931,17 @@ add the connector'.format(i)
             if name == 'R':
                 Jab = getattr(self, 'J'+vari + varj)()
                 Jba = getattr(self, 'J'+varj + vari)()
-                R = sympy.Matrix(mat)
+                R = types.matrix_types[0](mat)
                 Mab = Jab - R
                 Mba = Jba - R.T
             if name == 'M':
-                Mab = sympy.Matrix(mat)
+                Mab = types.matrix_types[0](mat)
                 Mba = getattr(self, 'M'+varj + vari)()
             debi, endi = getattr(self.inds, vari)()
             debj, endj = getattr(self.inds, varj)()
-            self.M[debi:endi, debj:endj] = sympy.Matrix(Mab)
+            self.M[debi:endi, debj:endj] = types.matrix_types[0](Mab)
             if vari != varj:
-                self.M[debj:endj, debi:endi] = sympy.Matrix(Mba)
+                self.M[debj:endj, debi:endi] = types.matrix_types[0](Mba)
         set_mat.__doc__ = """
         =========
         set_{0}{1}{2}
@@ -900,20 +952,20 @@ add the connector'.format(i)
         Parameter
         ---------
         mat: matrix like
-            Can be a list of core.dims.{1}() lists of core.dims.{2}() elements, or\
-         numpy array or sympy Matrix with shape \
-        :code:`[core.dims{1}(), core.dims{2}()]`.
+            Can be
+            * a list of core.dims.{1}() lists of core.dims.{2}() elements,
+            * a numpy array with shape (core.dims{1}(), core.dims{2}()),
+            * a sympy Matrix with shape (core.dims{1}(), core.dims{2}()).
 
         Remark
         ------
 
-        The skew-symmetry/symmetry of :code:`core.J`/:code:`core.R` are preserved \
-        by the automatic replacement of matrix :code:`core.{0}{2}{1}` with the \
-        transpose of :code:`core.{0}{1}{2}` and appropriate sign.
+        The skew-symmetry/symmetry of core.J/core.R is preserved by the
+        automatic replacement of matrix core.{0}{2}{1} with the transpose of
+        core.{0}{1}{2} and appropriate sign.
         """.format(name, dims_names[0], dims_names[1])
 
         return set_mat
-
 
     # =============================================================================
 
@@ -937,7 +989,7 @@ add the connector'.format(i)
 
     See also
     --------
-    :code:`PHSCore.split_linear()` to split the system into linear and nonlinear
+    PHSCore.split_linear() to split the system into linear and nonlinear
     storage and dissipative parts.
         """.format(name, dim_label)
 
@@ -958,7 +1010,7 @@ add the connector'.format(i)
 
     See also
     --------
-    :code:`PHSCore.split_linear()` to split the system into linear and nonlinear
+    PHSCore.split_linear() to split the system into linear and nonlinear
     storage and dissipative parts.
         """.format(name, dim_label)
         return (l_accessor, nl_accessor)

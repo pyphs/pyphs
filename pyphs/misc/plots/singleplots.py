@@ -129,8 +129,11 @@ None).
     from matplotlib.pyplot import rc
     rc('font', size=opts['fontsize'], **globalfonts())
 
-    from matplotlib.pyplot import figure
-    fig = figure(1, figsize=opts['figsize'])
+    from matplotlib.pyplot import figure, fignum_exists
+    i = 1
+    while fignum_exists(i):
+        i += 1
+    fig = figure(i, figsize=opts['figsize'])
     nplots = datay.__len__()
 
     if isinstance(datax[0], (float, int)):
@@ -145,7 +148,7 @@ None).
 
     miny = float('Inf')
     maxy = -float('Inf')
-
+    print_legend = False
     for n in range(nplots):
 
         x = dec(datax[n], opts)
@@ -159,6 +162,7 @@ None).
             l = None
         else:
             l = opts['labels'][n]
+        print_legend = l is not None or print_legend
 
         plotn = whichplot(opts['log'], ax)
         plotn(x, y, opts['linestyles'][n], linewidth=opts['linewidth'],
@@ -168,8 +172,9 @@ None).
     setlims(ax, x, miny, maxy, opts['ylims'])
     setticks(ax, opts)
 
-    from matplotlib.pyplot import legend
-    legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
+    if print_legend:
+        from matplotlib.pyplot import legend
+        legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
 
     if opts['unitx'] is not None:
         from matplotlib.pyplot import xlabel

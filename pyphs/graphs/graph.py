@@ -15,7 +15,7 @@ from ..misc.plots.graphs import plot
 from ..graphs import PHSNetlist
 from .tools import serial_edges, parallel_edges
 from .exceptions import PHSUndefinedPotential
-from ..config import datum
+from ..config import datum, VERBOSE
 import os
 
 
@@ -42,7 +42,7 @@ port-Hamiltonian systems.
                 text = 'Can not understand netlist type {}'.format(t)
                 raise TypeError(text)
 
-            self.Netlist = netlist
+            self.netlist = netlist
 
             self._build_from_netlist()
 
@@ -54,7 +54,8 @@ port-Hamiltonian systems.
 
         self.label = label
 
-        print('Build graph {}...'.format(self.label))
+        if VERBOSE >= 1:
+            print('Build graph {}...'.format(self.label))
 
         self._idpar = 0
         self._idser = 0
@@ -62,8 +63,9 @@ port-Hamiltonian systems.
     def _set_analysis(self, verbose=False, plot=False):
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
-    def buildCore(self, verbose=False, plot=False, apply_connectors=True):
-        print('Build core {}...'.format(self.label))
+    def buildCore(self, verbose=False, plot=False, connect=True):
+        if VERBOSE >= 1:
+            print('Build core {}...'.format(self.label))
 
         self._set_analysis(verbose=verbose, plot=plot)
 
@@ -71,10 +73,10 @@ port-Hamiltonian systems.
 
         buildCore(self)
 
-        core = self.core.__deepcopy__()
+        core = self.core.__copy__()
 
-        if apply_connectors:
-            core.apply_connectors()
+        if connect:
+            core.connect()
 
         core.label = self.label
 
@@ -86,7 +88,7 @@ port-Hamiltonian systems.
     'netlists' module).
         """
         from importlib import import_module
-        for line in self.Netlist:
+        for line in self.netlist:
             dic_name = 'pyphs.dictionary.' + line['dictionary']
             dic = import_module(dic_name)
             name = line['component'].lower()
@@ -97,11 +99,11 @@ port-Hamiltonian systems.
                                         **line['arguments'])
             self += component_graph
 
-    def plot(self, filename=None, ax=None):
+    def plot(self, filename=None, ax=None, show=True):
         """
         Plot the graph (networkx.plot method).
         """
-        plot(self, filename=filename, ax=ax)
+        plot(self, filename=filename, ax=ax, show=show)
 
     def _split_serial(self):
         se = serial_edges(self)
@@ -167,8 +169,8 @@ port-Hamiltonian systems.
             flag = any((change_s, change_p))
 
     def __add__(graph1, graph2):
-        if hasattr(graph1, 'Netlist') and hasattr(graph2, 'Netlist'):
-            graph1.Netlist += graph2.Netlist
+        if hasattr(graph1, 'netlist') and hasattr(graph2, 'netlist'):
+            graph1.netlist += graph2.netlist
         graph1.core += graph2.core
         graph1.add_edges_from(graph2.edges(data=True))
         return graph1

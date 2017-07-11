@@ -22,7 +22,7 @@ def sort_outputs(core):
     for i in range(core.dims.y()):
         if not str(core.y[i]).endswith(str(i+1)):
             core.move_port([str(y).endswith(str(i+1)) for y in core.y].index(True), i)
-    
+
 # build simple PHSCores
 c1 = netlist2core(netlist_path('phs1'))
 sort_outputs(c1)
@@ -32,11 +32,11 @@ sort_outputs(c2)
 # concatenate c1 and c2 into a new PHSCore
 core = c1 + c2
 # define the connection
-core.add_connector((core.y.index(c1.y[1]), core.y.index(c2.y[1])), 
+core.add_connector((core.y.index(c1.y[1]), core.y.index(c2.y[1])),
                 alpha=1)
 
 # apply the connection
-core.apply_connectors()
+core.connect()
 
 # target structure matrix
 target = array([[0, -1, 1, 0],
@@ -44,4 +44,4 @@ target = array([[0, -1, 1, 0],
                 [-1, 0, 0, 0],
                 [0, 1, 0, 0]])
 
-assert all(map(lambda x: not x, array(core.M - target).flatten())), '{}\n\n{}'.format(core.M, target)
+assert all(map(lambda x: not x, array(array(core.M) - target).flatten())), '{}\n\n{}'.format(core.M, target)

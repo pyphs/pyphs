@@ -148,8 +148,12 @@ subplots.
         opts['labels'] = [None, ] * nplots
     if opts['log'] is None:
         opts['log'] = ['', ] * nplots
-    from matplotlib.pyplot import subplots
-    fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'])
+    from matplotlib.pyplot import subplots, fignum_exists
+    i = 1
+    while fignum_exists(i):
+        i += 1
+    fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'],
+                        num=i)
 
     activate_latex(opts)
 
@@ -162,6 +166,8 @@ subplots.
 
         miny = float('Inf')
         maxy = -float('Inf')
+
+        print_legend = False
 
         if type(datay[n]) is list:
             y = dec(datay[n], opts)
@@ -188,8 +194,9 @@ subplots.
                     l = None
                 else:
                     l = opts['labels'][n][m]
+                print_legend = l is not None or print_legend
 
-                y = dec(datay[n][m])
+                y = dec(datay[n][m], opts)
                 maxy = max([maxy, max(y)])
                 miny = min([miny, min(y)])
                 plotn = whichplot(opts['log'][n], axs[n])
@@ -200,8 +207,8 @@ subplots.
 
         setlims(axs[n], x, miny, maxy, opts['limits'][n])
         setticks(axs[n], opts, n)
-
-        axs[n].legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
+        if print_legend:
+            axs[n].legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
         if opts['unity'][n] is not None:
             axs[n].set_ylabel(opts['unity'][n], fontsize=opts['fontsize'])
             if opts['xpos_ylabel'] is not None:

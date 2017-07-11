@@ -6,7 +6,7 @@ Created on Tue May 24 11:20:26 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from pyphs.config import simulations
+from pyphs.config import simulations, VERBOSE
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.numcore2cpp import numcore2cpp
 from .. import PHSNumericalCore
@@ -24,7 +24,7 @@ class PHSSimulation:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
-    def __init__(self, core, config=None):
+    def __init__(self, core, config=None, inits=None):
         """
         Parameters
         -----------
@@ -50,6 +50,10 @@ class PHSSimulation:
               'load': {'imin': None,
                        'imax': None,
                        'decim': None}
+        inits : dict
+            Dictionary with variable name as keys and initialization values
+            as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
+            with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
         """
 
         # init config with standard configuration options
@@ -63,21 +67,36 @@ class PHSSimulation:
                 if not k in self.config.keys():
                     text = 'Configuration key "{0}" unknown.'.format(k)
                     raise AttributeError(text)
-                    
-        self.config.update(config)
+
+        self.config.update(config)        
 
         if self.config['path'] is None:
             self.config['path'] = os.getcwd()
-        
+
         if not os.path.exists(self.config['path']):
             os.mkdir(self.config['path'])
 
         # store PHSCore
-        setattr(self, '_core', core.__deepcopy__())
+        setattr(self, '_core', core.__copy__())
 
-        assert self.config['lang'] in ['c++', 'python']
-        setattr(self, 'nums', PHSNumericalCore(self._core, config=self.config))
-
+        # Define inits
+        self.inits = {}        
+        if inits is not None:
+            self.inits.update(inits)
+            
+        self.init_numericalCore()
+        
+        
+    def init_numericalCore(self):
+        """
+        Build the PHSNumericalCore from the PHSCore.
+        Additionnally, generate the c++ code if config['lang'] == 'c++'.
+        """
+        setattr(self, 'nums', PHSNumericalCore(self._core, 
+                                               config=self.config,
+                                               inits=self.inits))
+        if not self.config['lang'] in ['c++', 'python']:
+            raise AttributeError('Unknows language {}'.format(self.config['lang']))
         if self.config['lang'] == 'c++':
             objlabel = self.nums.label.upper()
             self.cpp_path = os.path.join(main_path(self), objlabel.lower())
@@ -89,9 +108,12 @@ class PHSSimulation:
             numcore2cpp(self.nums, objlabel=objlabel, path=self.src_path,
                         eigen_path=self.config['eigen'])
 
+        self.data = PHSData(self.nums.method, self.config) 
+
 ###############################################################################
 
-    def init(self, nt=None, u=None, p=None, x0=None, dx0=None, w0=None):
+
+    def init(self, nt=None, u=None, p=None,  inits=None):
         """
     init
     ****
@@ -114,26 +136,20 @@ class PHSSimulation:
         set to nt=len(seqp). If None, a sequence with length nt of zeros with
         appropriate shape is used (default).
 
-    x0: array of float or None, optional
-        State vector initialisation value. If None, an array of zeros with
-        appropriate shape is used (default).
-
     nt: int or None:
         Number of time steps. If None, the lenght of either sequ or seqp must
         be known (i.e. they are not either generators or None).
 
+    inits : dict
+        Dictionary with variable name as keys and initialization values
+        as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
+        with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
         """
-        self.data = PHSData(self.nums.method, self.config)
-        if x0 is None:
-            x0 = np.zeros(self.nums.method.dims.x())
-        self.nums.set_x(x0)
-        if dx0 is None:
-            dx0 = np.zeros(self.nums.method.dims.x())
-        self.nums.set_dx(dx0)
-        if w0 is None:
-            w0 = np.zeros(self.nums.method.dims.w())
-        self.nums.set_w(w0)
-        self.data.init_data(u, p, x0, nt)
+
+        if inits is not None and inits != self.inits:
+            self.inits = inits
+            self.init_numericalCore()
+        self.data.init_data(u, p, nt)
 
     def process(self):
         """
@@ -146,7 +162,9 @@ class PHSSimulation:
         .. code:: simu.process()
 
         """
-        print('Process...')
+        if VERBOSE >= 1:
+            print('Simulation: Process...')
+
         if self.config['timer']:
             tstart = time.time()
 
@@ -167,13 +185,14 @@ class PHSSimulation:
         if self.config['timer']:
 
             t_total = tstop-tstart
-            print('Total time: {}s'.format(tstop-tstart, 'f'))
+            print('Total time: {}s'.format(tstop-tstart))
 
             string = 'Total time w.r.t number of iterations: {}s'
             time_it = (t_total/float(self.data.config['nt']))
             print(string.format(time_it))
 
-        print('Simulation: Done')
+        if VERBOSE >= 1:
+            print('Simulation: Done')
 
     def _init_pb(self):
         pb_widgets = ['\n', 'Simulation: ',
@@ -298,12 +317,15 @@ def system_call(cmd):
         shell = True
     else:
         shell = True
-    print(cmd)
+    if VERBOSE >= 1:
+        print(cmd)
     p = subprocess.Popen(cmd, shell=shell,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT)
     for line in iter(p.stdout.readline, b''):
-        print(line.decode()),
+        l = line.decode()
+        if VERBOSE >= 1:
+            print(l)
 
 
 def execute_bash(text):

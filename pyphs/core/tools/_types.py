@@ -20,7 +20,7 @@ def is_known_test(obj):
         try:
             checks.pop()(obj)
             found = True
-        except:
+        except (ScalarExprTypeError, VectorExprTypeError, MatrixExprTypeError):
             raised += 1
 
     if raised == 3:
@@ -77,7 +77,7 @@ def vector_test(obj, metadata=(None, None)):
 
 # ============================ MATRICES ===================================== #
 
-matrix_types = (sympy.Matrix, )
+matrix_types = (sympy.SparseMatrix, )
 
 
 class MatrixExprTypeError(Exception):

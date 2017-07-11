@@ -13,7 +13,9 @@ import os
 import numpy
 from pyphs.numerics.tools import lambdify
 from pyphs.misc.tools import find
-from pyphs.core.tools import free_symbols, substitute
+from pyphs.core.tools import free_symbols
+from pyphs.config import VERBOSE
+
 
 try:
     import itertools.izip as zip
@@ -47,7 +49,8 @@ plot_powerbal:
     """
     def __init__(self, core, config):
 
-        print('Build data i/o...')
+        if VERBOSE >= 1:
+            print('Build data i/o...')
 
         # init configuration options
         self.config = config
@@ -207,7 +210,7 @@ dtE_generator: generator
             subs = {}
             for x, dx in zip(self.core.x, self.core.dx()):
                 subs.update({x: x+dx})
-                
+
             Hpost_expr = Hpost_expr.subs(subs)
             Hpost_symbs = free_symbols(Hpost_expr)
             Hpost_args, Hpost_inds = find(Hpost_symbs, self.core.args())
@@ -215,9 +218,11 @@ dtE_generator: generator
                              theano=self.config['theano'])
             Hpost_args = lambdify(self.core.args(), Hpost_args,
                                   theano=self.config['theano'])
-            for arg in self.args(**options):
-                yield (Hpost(*Hpost_args(*arg)) - H(*H_args(*arg)))*self.config['fs']
-                
+            for args, o in zip(self.args(**options), self.o(**options)):
+                a = (list(args)+list(o))
+                yield (Hpost(*Hpost_args(*a)) -
+                       H(*H_args(*a)))*self.config['fs']
+
         elif DtE == 'DxhDtx':
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
                 yield scalar_product(dtx, dxh)
@@ -262,15 +267,16 @@ pd_generator: generator
         R = lambdify(R_args, R_expr, theano=self.config['theano'])
         R_args = lambdify(self.core.args(), R_args,
                           theano=self.config['theano'])
-        for w, z, a, b, args in zip(self.w(**options),
-                                    self.z(**options),
-                                    self.a(**options),
-                                    self.b(**options),
-                                    self.args(**options)):
+        for w, z, a, b, args, o in zip(self.w(**options),
+                                       self.z(**options),
+                                       self.a(**options),
+                                       self.b(**options),
+                                       self.args(**options),
+                                       self.o(**options)):
             yield scalar_product(w, z) + \
                 scalar_product(a,
                                a,
-                               R(*R_args(*args)))
+                               R(*R_args(*(list(args)+list(o)))))
 
     def ps(self, imin=None, imax=None, decim=None):
         """
@@ -340,18 +346,18 @@ ps_generator: generator
         obs_expr = [e.subs(self.core.subs) for e in self.core.observers.values()]
 
         obs_symbs = free_symbols(obs_expr)
+        index = len(self.core.args())-len(obs_expr)
 
-        obs_args, obs_inds = find(obs_symbs, self.core.args())
+        obs_args, obs_inds = find(obs_symbs, self.core.args()[:index])
 
         obs = lambdify(obs_args, obs_expr, theano=self.config['theano'])
-        obs_args = lambdify(self.core.args(), obs_args,
-                          theano=self.config['theano'])
+        obs_args = lambdify(self.core.args()[:index], obs_args,
+                            theano=self.config['theano'])
 
-        
         for arg in self.args(**options):
             yield obs(*obs_args(*arg))
-            
-            
+
+
     def args(self, ind=None, imin=None, imax=None, decim=None):
         """
 args
@@ -513,7 +519,7 @@ b_generator: generator
             else:
                 yield [list(dtx) + list(w) + list(y)][ind]
 
-    def init_data(self, sequ=None, seqp=None, x0=None, nt=None):
+    def init_data(self, sequ=None, seqp=None, nt=None):
         """
 Initialize the object and save the sequences for input u, parameters p and
 state initialisation x0 to files in the folder specified by the simulation
@@ -535,18 +541,9 @@ seqp: iterable or None, optional
     nt=len(seqp). If None, a sequence with length nt of zeros with appropriate
     shape is used (default).
 
-x0: array of float or None, optional
-    State vector initialisation value. If None, an array of zeros with
-    appropriate shape is used (default).
-
 nt: int or None:
     Number of time steps. If None, the lenght of either sequ or seqp must be
     known (default).
-
-Returns
--------
-
-No output
 
         """
         # get number of time-steps
@@ -580,20 +577,10 @@ No output
                         yield ""
             seqp = generator_p()
 
-        if x0 is None:
-            x0 = [0, ]*self.core.dims.x()
-        else:
-            assert isinstance(x0, (list, tuple, numpy.ndarray)), \
-                'x0 not a list, tuple or numpy.array: got {}'.format(x0)
-            assert len(x0) == self.core.dims.x(), 'len(x0) is len(x)'
-            assert isinstance(x0[0], (float, int)), \
-                'x0[0] not a number, got {0!s}'.format(type(x0[0]))
         # write input sequence
         write_data(self.config['path']+os.sep+'data', sequ, 'u')
         # write parameters sequence
         write_data(self.config['path']+os.sep+'data', seqp, 'p')
-        # write initial state
-        write_data(self.config['path']+os.sep+'data', [x0, ], 'x0')
 
         self.config['nt'] = nt
 
@@ -652,6 +639,7 @@ pyphs.misc.signals.waves.wavwrite
             fs = self.config['fs']
         if path is None:
             path = self.config['path'] + os.sep + name + str(index)
+        print(path)
         args = {'ind': index,
                 'imin': 0, 'imax': None, 'decim': 1,
                 'postprocess': lambda e: gain*e}

@@ -7,6 +7,10 @@ Created on Wed Jan  4 18:44:58 2017
 """
 
 
+class PHSCanNotUnlock(Exception):
+    pass
+
+
 class PHSUndefinedPotential(Exception):
     pass
 

@@ -9,9 +9,9 @@ from __future__ import absolute_import, division, print_function
 import networkx
 import numpy
 from ..misc.tools import myrange, pause
-from ..config import datum
+from ..config import datum, EPS
 from ..misc.plots.graphs import plot_analysis
-from .exceptions import PHSUndefinedPotential
+from .exceptions import PHSUndefinedPotential, PHSCanNotUnlock
 
 
 class GraphAnalysis:
@@ -25,15 +25,15 @@ class GraphAnalysis:
         # Compute incidence Matrix
         Gamma = networkx.linalg.incidence_matrix(graph, oriented=True)
         # we use the other convention for orientation encoding in Gamma
-        self.Gamma = -numpy.matrix(Gamma.todense())
+        self.Gamma = -numpy.array(Gamma.todense())
         # init lambda with adjacency matrix
         self.Lambda = numpy.abs(self.Gamma)
         # get number of nodes and edges
         self.nn = len(self.nodes)
         self.ne = len(self.edges)
 
-        def plot_analysis_self():
-            plot_analysis(graph, self)
+        def plot_analysis_self(show=True):
+            plot_analysis(graph, self, show=show)
 
         self.plot = plot_analysis_self
         # init list of nodes for analysis
@@ -129,7 +129,7 @@ First, it is checked that the correponding row of matrix graph.analysis.la
             # test for definite node
             if self.Lambda[n, :].sum() == 1:
                 # get index of the edge that imposes the potential on node n
-                e = self.Lambda[n, :].tolist()[0].index(1)
+                e = numpy.nonzero(self.Lambda[n, :] == 1)[0][0]
                 # assert the potential is not imposed by efort-controlled edge
                 assert e not in self.ec_edges, \
                     "potential on node {0!s} is imposed by effort-controlled \
@@ -153,7 +153,14 @@ Execute an iteration over the lists:
             if self._verbose:
                 print('###################################\nLoop Start\n')
                 # save Lambda for comparison in while condition
-            self.Lambda_temp = numpy.matrix(self.Lambda, copy=True)
+            self.Lambda_temp = numpy.array(self.Lambda, copy=True)
+            if self._verbose:
+                print('###################################\nLambda_tempn')
+                print(self.Lambda_temp)
+                print('###################################\nLambda')
+                print(self.Lambda)
+                print('###################################\nLambda')
+                print(list(numpy.array(self.Lambda_temp == self.Lambda).flatten()))
             # iterate on indeterminate nodes
             self.iterate_nodes()
             # iterate on flux-controlled edges
@@ -192,10 +199,10 @@ in lambda corresponding to two indeterminate control edges are the same, we
 select the first edge which is not a conector (transformer or gyrator) and
 define it as effort-controlled (0 column in lambda).
         """
-        still_locked = False
+        still_locked = True
         # for each row in block matrix extracted from the ic colums of Lambda
         for n, row in enumerate(self.Lambda[:, self.ic_edges].tolist()):
-            # only if the node is overdeterminated
+            # only if the node is overdeterminated            
             if sum(row) > 1:
                 col = self.Lambda[:, len(self.ec_edges)]  # first ic column
                 e = 0
@@ -203,13 +210,12 @@ define it as effort-controlled (0 column in lambda).
                        sum(col) != 1 and
                        e < len(self.ic_edges)):
                     e += 1
-                    col = self.Lambda[:, len(self.ec_edges) + e]
+                    col = self.Lambda[:, len(self.ec_edges) + e]                
                 if not e == (len(self.ic_edges) and not
                              self.get_edge_data(e, 'type')):
                     self.Lambda[n, len(self.ec_edges) + e] = 0
+                    still_locked = False
                     break
-            if n == self.nn-1:
-                still_locked = True
         if still_locked:
             lambd_icfc = self.Lambda[:, self.ic_edges[0]:]
             for n, row in enumerate(lambd_icfc.tolist()):
@@ -217,13 +223,17 @@ define it as effort-controlled (0 column in lambda).
                     e = 0
                     col = self.Lambda[:, len(self.ec_edges) + e]
                     while row[e] != 1 and \
-                            sum(col) != 1 and \
-                            e < len(self.ic_edges):
+                            not sum(col) >= 2 and \
+                            e < len(self.ic_edges+self.fc_edges):
                         e += 1
                         col = self.Lambda[:, len(self.ec_edges) + e]
-                    if not e == len(self.ic_edges):
+                    if not e == len(self.ic_edges+self.fc_edges):
                         self.Lambda[n, len(self.ec_edges) + e] = 0
+                        still_locked = False
                         break
+        if still_locked:
+            raise PHSCanNotUnlock
+        self.verbose('unlock')
 
     def get_edges_data(self, key):
         """
@@ -435,6 +445,6 @@ compatible'.format(e_label, link_e_label)
 
 def isequal(M1, M2):
     """
-    Test M1==M2 with M1 and M2 of type sympy.Matrix or numpy.matrix
+    Test M1==M2 with M1 and M2 of type sympy.SparseMatrix or numpy.matrix
     """
-    return not (M1-M2).any()
+    return all(numpy.array(M1-M2<EPS).flatten())

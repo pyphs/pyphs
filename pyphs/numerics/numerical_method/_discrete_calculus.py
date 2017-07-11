@@ -7,7 +7,7 @@ Created on Fri Jun  3 01:46:04 2016
 from __future__ import absolute_import, division, print_function
 import sympy
 from pyphs.config import EPS
-from pyphs.core.tools import types, simplify
+from pyphs.core.tools import types
 from pyphs.core.maths import gradient
 
 
@@ -23,11 +23,11 @@ def discrete_gradient(H, x, dx, numtol=EPS):
 
         Scalar function of x.
 
-    x : list or sympy.Matrix
+    x : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
-    dx : list or sympy.Matrix
+    dx : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
@@ -51,8 +51,8 @@ def discrete_gradient(H, x, dx, numtol=EPS):
         Hpost = H.subs(x[i], x[i] + dx[i])
         dxh = (Hpost - H)/dx[i]
         dxh0 = H.diff(x[i]).doit()
-        dxhi = sympy.Piecewise((dxh, dx[i] < -numtol),
-                               (dxh0, dx[i] < numtol),
+        dxhi = sympy.Piecewise((dxh, dx[i] < -(numtol**2)),
+                               (dxh0, dx[i] < numtol**2),
                                (dxh, True))
         dxHd.append(dxhi)
     return dxHd
@@ -70,11 +70,11 @@ def gradient_theta(H, x, dx, theta=0.):
 
         Scalar function of x.
 
-    x : list or sympy.Matrix
+    x : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
-    dx : list or sympy.Matrix
+    dx : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
@@ -113,11 +113,11 @@ def gradient_trapez(H, x, dx):
 
         Scalar function of x.
 
-    x : list or sympy.Matrix
+    x : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 
-    dx : list or sympy.Matrix
+    dx : list or sympy.SparseMatrix
 
         1 dimensional array of sympy symbols.
 

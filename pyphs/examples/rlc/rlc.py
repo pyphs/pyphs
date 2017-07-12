@@ -17,7 +17,6 @@ here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = os.path.join(here, label + '.net')
 core = netlist2core(netlist_filename)
-core.build_eval()
 
 #if __name__ == '__main__':
 #
@@ -27,6 +26,9 @@ core.build_eval()
 #    import numpy as np
 #    import sympy as sp
 #    
+#
+#   core.build_R()
+#
 #
 #    # Include the linear dissipatives in the connexion structure
 #    core.build_R()

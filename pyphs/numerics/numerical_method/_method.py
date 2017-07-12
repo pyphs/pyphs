@@ -125,8 +125,9 @@ class PHSCoreMethod(PHSCore):
         else:
             self.subs.update({self.fs: self.config['fs']})
 
-        if self.config['split'] and VERBOSE >= 2:
-            print('    Split Linear/Nonlinear...')
+        if self.config['split']:
+            if VERBOSE >= 2:
+                print('    Split Linear/Nonlinear...')
             self.linear_nonlinear()
 
         if VERBOSE >= 2:

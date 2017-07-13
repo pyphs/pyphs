@@ -17,7 +17,7 @@ import numpy  # numerical tools
 import matplotlib.pyplot as plt  # plot tools
 
 # load the pyphs.PHSNumericalEval class in the current namespace
-from pyphs import PHSCore, PHSCoreMethod, PHSNumericalCore
+from pyphs import PHSCore, PHSMethod, PHSNumeric
 
 # instantiate a pyphs.PHSCore object
 core = PHSCore()
@@ -48,7 +48,7 @@ core.subs.update(subs)
 
 core.linear_nonlinear()
 # instantiate a pyphs.PHSNumericalEval object associated with a pyphs.PHSCore
-method = PHSCoreMethod(core)
+method = PHSMethod(core)
 
 # Explicit Euler update:
 # dx = Mxx*dxH(x) + Mxy*u
@@ -84,7 +84,7 @@ method.set_execaction([('x', 'ud_x'),       # x = x + dx
 
 #%%
 method.build_struc()
-nums = PHSNumericalCore(method, build=False)
+nums = PHSNumeric(method, build=False)
 nums.build()
 
 

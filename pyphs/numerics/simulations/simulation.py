@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 from pyphs.config import simulations, VERBOSE
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.numcore2cpp import numcore2cpp
-from .. import PHSNumericalCore
+from .. import PHSNumeric
 from .data import PHSData
 from pyphs.misc.io import dump_files, with_files
 import subprocess
@@ -89,10 +89,10 @@ class PHSSimulation:
         
     def init_numericalCore(self):
         """
-        Build the PHSNumericalCore from the PHSCore.
+        Build the PHSNumeric from the PHSCore.
         Additionnally, generate the c++ code if config['lang'] == 'c++'.
         """
-        setattr(self, 'nums', PHSNumericalCore(self._core, 
+        setattr(self, 'nums', PHSNumeric(self._core, 
                                                config=self.config,
                                                inits=self.inits))
         if not self.config['lang'] in ['c++', 'python']:

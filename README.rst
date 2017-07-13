@@ -170,14 +170,14 @@ The package is divided into the following folders:
     `PHSNumericalEval` class :
         Numerical evaluation of a given `PHSCore`.
 
-    `PHSCoreMethod` object :
+    `PHSMethod` object :
         Construction of the *symbolic* expressions associated with several numerical methods (theta-schemes, trapezoidal rule, discret gradient, etc.).
 
-    `PHSNumericalCore` object :
-        Numerical evaluation of a given `PHSCore` associated with a given `PHSCoreMethod`.
+    `PHSNumeric` object :
+        Numerical evaluation of a given `PHSCore` associated with a given `PHSMethod`.
 
     `PHSSimulation` object :
-        Perform the simulation of a given `PHSCore` associated with a given `PHSCoreMethod` through the execution of the resulting `PHSNumericalCore`.
+        Perform the simulation of a given `PHSCore` associated with a given `PHSMethod` through the execution of the resulting `PHSNumeric`.
 
     `PHSData` object :
         Methods for writing, reading and rendering `PHSSimulation` file results.

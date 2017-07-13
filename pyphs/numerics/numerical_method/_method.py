@@ -23,7 +23,7 @@ from ._discrete_calculus import (discrete_gradient, gradient_theta,
 import copy
 
 
-class PHSCoreMethod(PHSCore):
+class PHSMethod(PHSCore):
     """
     Base class for pyphs numerical methods (defined symbolically).
     """
@@ -66,7 +66,7 @@ class PHSCoreMethod(PHSCore):
         if VERBOSE >= 1:
             print('Build numerical method...')
         if VERBOSE >= 2:
-            print('    Init PHSCoreMethod...')
+            print('    Init PHSMethod...')
         # INIT PHSCore object
         PHSCore.__init__(self, label=core.label+'_method')
         # Copy core content

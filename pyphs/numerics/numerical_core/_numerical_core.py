@@ -10,14 +10,14 @@ from pyphs.core.tools import types as core_types
 from ..tools import types as num_types
 from pyphs.misc.tools import remove_duplicates
 from ..tools import lambdify, PHSNumericalOperation
-from ..numerical_method._method import PHSCoreMethod
+from ..numerical_method._method import PHSMethod
 from pyphs.config import simulations, VERBOSE
 import numpy
 
 
 # =========================================================================== #
 
-class PHSNumericalCore(object):
+class PHSNumeric(object):
     """
     This class implements a numerical version of PHSCore. First, a numerical
     method is applied symbolically to a PHScore, then every relevant functions
@@ -25,7 +25,7 @@ class PHSNumericalCore(object):
     """
     def __init__(self, core, config=None, inits=None, build=True):
         """
-    Instanciate a PHSNumericalCore.
+    Instanciate a PHSNumeric.
 
     Parameters
     ----------
@@ -63,7 +63,7 @@ class PHSNumericalCore(object):
         Return
         ------
 
-        mums : PHSNumericalCore
+        mums : PHSNumeric
         """
         self.label = core.label
 
@@ -80,7 +80,7 @@ class PHSNumericalCore(object):
         self.config.update(config)
 
         # Save PHSCore object
-        self.method = PHSCoreMethod(core, config=config)
+        self.method = PHSMethod(core, config=config)
         
         # Define inits
         self.inits = {}        
@@ -274,7 +274,7 @@ def evalfunc_generator(nums, name):
     Parameters
     ----------
 
-    nums : PHSNumericalCore
+    nums : PHSNumeric
 
     name : str
 

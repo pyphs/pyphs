@@ -6,7 +6,7 @@ from .core.core import PHSCore
 from .graphs.graph import PHSGraph
 from .graphs import netlist2core, netlist2graph
 from .graphs.netlists import PHSNetlist
-from .numerics import (PHSCoreMethod, PHSNumericalCore,
+from .numerics import (PHSMethod, PHSNumeric,
                        PHSNumericalEval, PHSNumericalOperation)
 from .numerics.simulations.simulation import PHSSimulation
 from .misc.signals.synthesis import signalgenerator
@@ -28,8 +28,8 @@ __version__ = '0.1.9.9.4'
 __author_email__ = 'antoine.falaize@ircam.fr'
 
 __all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
-           'signalgenerator', 'PHSNumericalOperation', 'PHSCoreMethod',
-           'PHSNumericalCore', 'PHSNumericalEval',
+           'signalgenerator', 'PHSNumericalOperation', 'PHSMethod',
+           'PHSNumeric', 'PHSNumericalEval',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
            'numcore2cpp', 'simu2cpp', 'netlist2core',
            'path_to_configuration_file', 'netlist2graph',

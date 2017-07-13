@@ -364,7 +364,7 @@ class PHSCore:
         dxH: list of sympy expressions
             If core._dxH is None, this is a shortcut for
             :code:`[core.H.diff(xi) for xi in core.x]`. Else, returns
-            :code:`core._dxH` (as an example, :code:`PHSCoreMethod.dxH()`
+            :code:`core._dxH` (as an example, :code:`PHSMethod.dxH()`
             returns the discrete gradient expression).
 
         See also

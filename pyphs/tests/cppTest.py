@@ -12,7 +12,7 @@ from __future__ import division
 # retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
 from pyphs.tutorials.phscore import core as nlcore
 
-from pyphs import PHSNumericalCore, numcore2cpp
+from pyphs import PHSNumeric, numcore2cpp
 import os
 import shutil
 
@@ -20,7 +20,7 @@ here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 
 def cpp_nlcore_full():
-    nums = PHSNumericalCore(nlcore)
+    nums = PHSNumeric(nlcore)
 
     label = 'test'
     path = os.path.join(here, label)

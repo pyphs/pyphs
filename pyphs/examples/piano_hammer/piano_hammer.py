@@ -9,18 +9,18 @@ Created on Sun Jun 11 11:17:07 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph
+from pyphs import Netlist, Graph
 
 # ---------------------------  NETLIST  ------------------------------------- #
 label = 'piano_hammer'
 this_script = os.path.realpath(__file__)
 here = this_script[:this_script.rfind(os.sep)]
 netlist_filename = here + os.sep + label + '.net'
-netlist = PHSNetlist(netlist_filename)
+netlist = Netlist(netlist_filename)
 
 
 # ---------------------------  GRAPH  --------------------------------------- #
-graph = PHSGraph(netlist=netlist)
+graph = Graph(netlist=netlist)
 
 
 # ---------------------------  CORE  ---------------------------------------- #
@@ -32,7 +32,7 @@ core = graph.buildCore()
 #
 #    import numpy
 #    import matplotlib.pyplot as plt
-#    from pyphs import PHSSimulation
+#    from pyphs import Simulation
 #
 #    core.build_R()
 #
@@ -54,8 +54,8 @@ core = graph.buildCore()
 #                       'decim': None}
 #              }
 #
-#    # Instanciate PHSSimulation class
-#    simu = PHSSimulation(core, config=config)
+#    # Instanciate Simulation class
+#    simu = Simulation(core, config=config)
 #
 #    def ordering(name, *args):
 #        def get_index(e):
@@ -74,10 +74,10 @@ core = graph.buildCore()
 #    sig = list()
 #
 #    # ---------------------------  LOOP  --------------------------------
-#    # def generator for sequence of inputs to feed in the PHSSimulation object
+#    # def generator for sequence of inputs to feed in the Simulation object
 #    def sequ():
 #        """
-#        generator of input sequence for PHSSimulation
+#        generator of input sequence for Simulation
 #        """
 #        for tn in t:
 #            # numpy.array([u1, u2, ...])

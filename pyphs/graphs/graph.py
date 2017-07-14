@@ -10,16 +10,16 @@ from __future__ import absolute_import, division, print_function
 import networkx as nx
 from .analysis import GraphAnalysis
 from .build import buildCore
-from ..core.core import PHSCore
+from ..core.core import Core
 from ..misc.plots.graphs import plot
-from ..graphs import PHSNetlist
+from ..graphs import Netlist
 from .tools import serial_edges, parallel_edges
-from .exceptions import PHSUndefinedPotential
+from .exceptions import UndefinedPotential
 from ..config import datum, VERBOSE
 import os
 
 
-class PHSGraph(nx.MultiDiGraph):
+class Graph(nx.MultiDiGraph):
     """
     Class that stores and manipulates graph representation of \
 port-Hamiltonian systems.
@@ -30,14 +30,14 @@ port-Hamiltonian systems.
 
         nx.MultiDiGraph.__init__(self)
 
-        self.core = PHSCore()
+        self.core = Core()
 
         if netlist is not None:
 
             if isinstance(netlist, str):
-                netlist = PHSNetlist(netlist)
+                netlist = Netlist(netlist)
 
-            elif not isinstance(netlist, PHSNetlist):
+            elif not isinstance(netlist, Netlist):
                 t = type(netlist)
                 text = 'Can not understand netlist type {}'.format(t)
                 raise TypeError(text)
@@ -110,7 +110,7 @@ port-Hamiltonian systems.
         for edges in se:
             for e in edges[0]:
                 self.remove_edges_from([(e[0], e[1], None) for e in edges[0]])
-            sg = PHSGraph()
+            sg = Graph()
 
             for n in edges[1:3]:
                 if not n == datum:
@@ -143,7 +143,7 @@ port-Hamiltonian systems.
                 self.remove_edges_from([(n2, n1, k) for k in self[n2][n1]])
             except KeyError:
                 pass
-            pg = PHSGraph()
+            pg = Graph()
             pg.add_edges_from(edges)
 
             pg._set_analysis()
@@ -181,6 +181,6 @@ port-Hamiltonian systems.
         for e in graph.edges(data=True):
             if e[-1]['type'] == 'graph':
                 try:
-                    PHSGraph.iter_analysis(e[-1]['graph'])
-                except PHSUndefinedPotential:
+                    Graph.iter_analysis(e[-1]['graph'])
+                except UndefinedPotential:
                     pass

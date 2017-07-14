@@ -15,11 +15,11 @@ from __future__ import division, print_function, absolute_import
 import numpy  # numerical tools
 import sympy  # symbolic tools
 
-# load the pyphs.PHSCore class in the current namespace
-from pyphs import PHSCore
+# load the pyphs.Core class in the current namespace
+from pyphs import Core
 
-# instantiate a pyphs.PHSCore object
-core = PHSCore()
+# instantiate a pyphs.Core object
+core = Core()
 
 xL, L = core.symbols(['xL', 'L'])   # define sympy symbols
 HL = xL**2/(2*L)                    # define sympy expression
@@ -81,4 +81,4 @@ core.M[1, 1] = core.g()[1]
 # not executed if this script is imported in an other module
 if __name__ == '__main__':
     # Export latex description
-    core.texwrite(path='dummy_core.tex', title='a Dummy PHSCore')
+    core.texwrite(path='dummy_core.tex', title='a Dummy Core')

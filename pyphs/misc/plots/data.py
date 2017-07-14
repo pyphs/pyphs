@@ -75,7 +75,7 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True, label=None):
     Parameters
     ----------
 
-    data : PHSData
+    data : Data
         Simulation data.
 
     vars : list

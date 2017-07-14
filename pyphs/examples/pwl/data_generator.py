@@ -8,7 +8,7 @@ Created on Wed May 10 23:48:24 2017
 
 import numpy as np
 import os
-from pyphs import PHSNetlist
+from pyphs import Netlist
 from pyphs.graphs import datum
 
 x = np.linspace(-4, 4, 20)
@@ -31,7 +31,7 @@ def generate_data():
     
 def generate_netlist():
     netlist_path = os.path.join(path, netlist_name + '.net')
-    netlist = PHSNetlist(netlist_path, clear=True)
+    netlist = Netlist(netlist_path, clear=True)
     
     netlist_line = {'dictionary': 'pwl',
                     'component': 'storage',

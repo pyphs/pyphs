@@ -6,10 +6,10 @@ Created on Tue Jun  7 19:13:35 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from ..edges.connectors import PHSConnector
+from ..edges.connectors import Connector
 
 
-class Transformer(PHSConnector):
+class Transformer(Connector):
     """
     Transformer
     ============
@@ -28,7 +28,7 @@ class Transformer(PHSConnector):
     """
     def __init__(self, label, nodes, **kwargs):
         kwargs.update({'connector_type': 'transformer'})
-        PHSConnector.__init__(self, label, nodes, **kwargs)
+        Connector.__init__(self, label, nodes, **kwargs)
 
     @staticmethod
     def metadata():

@@ -29,7 +29,7 @@ from ..misc.latex import texdocument, core2tex
 from collections import OrderedDict
 
 
-class PHSCore:
+class Core:
     """
     This is the base class for the core *Port-Hamiltonian Systems* structure
     in PyPHS.
@@ -60,7 +60,7 @@ class PHSCore:
         Returns
         -------
 
-        core : PHSCore
+        core : Core
             A Core Port-Hamiltonian structure object.
         """
 
@@ -150,7 +150,7 @@ class PHSCore:
     # =========================================================================
 
     def __copy__(self):
-        core = PHSCore(label=None)
+        core = Core(label=None)
         for name in (list(set().union(
                           self.attrstocopy,
                           self.exprs_names,
@@ -174,7 +174,7 @@ class PHSCore:
 # copy.deepcopy should no be used, see sympy issue here:
 # https://github.com/sympy/sympy/pull/7674
 #    def __deepcopy__(self, memo=None):
-#        core = PHSCore(label=None)
+#        core = Core(label=None)
 #        for name in (list(set().union(
 #                          self.attrstocopy,
 #                          self.exprs_names,
@@ -203,7 +203,7 @@ class PHSCore:
         """
         assert set(core1.symbs_names) == set(core2.symbs_names)
 
-        core = PHSCore(label=core1.label)
+        core = Core(label=core1.label)
 
         # Concatenate lists of symbols
         for name in core1.symbs_names:
@@ -262,7 +262,7 @@ class PHSCore:
         **
 
         Returns the symbols "dxi" associated with the differentials of the
-        state with symbol "xi" for each "xi" in state vector 'PHSCore.x'. It
+        state with symbol "xi" for each "xi" in state vector 'Core.x'. It
         is used in the numerical methods as the state increment
         :code:`x[n+1]=x[n]+dx[n]`.
         """
@@ -275,7 +275,7 @@ class PHSCore:
 
         Returns the symbols "gxi" associated with the gradient of the storage
         function w.r.t the state "xi" for each "xi" in state vector
-        'PHSCore.x'. It is used in the numerical methods as replacement symbols
+        'Core.x'. It is used in the numerical methods as replacement symbols
         for the discrete evaluation of Hamiltonian's gradient in the structure
         matrix and dissipation function z.
         """
@@ -287,7 +287,7 @@ class PHSCore:
         *
 
         Returns the symbols "oi" associated with the i-th keyof dictionary
-        'PHSCore.observers'. It is used in the numerical methods as replacement
+        'Core.observers'. It is used in the numerical methods as replacement
         symbols for the discrete evaluation of observers in the structure
         matrix and dissipation function z.
         """
@@ -306,7 +306,7 @@ class PHSCore:
     def allsymbs(self):
         """
         Returns all the symbols in the lists with names from
-        'CorePHS.symbs_names'.
+        'Core.symbs_names'.
         """
         symbs = set()
         for name in self.symbs_names:
@@ -342,7 +342,7 @@ class PHSCore:
         ***********
 
         Retrun a set of freesymbols in all exprs referenced in
-        'PHSCore.exprs_names'.
+        'Core.exprs_names'.
         """
         symbs = set()
         for name in self.exprs_names:
@@ -364,7 +364,7 @@ class PHSCore:
         dxH: list of sympy expressions
             If core._dxH is None, this is a shortcut for
             :code:`[core.H.diff(xi) for xi in core.x]`. Else, returns
-            :code:`core._dxH` (as an example, :code:`PHSMethod.dxH()`
+            :code:`core._dxH` (as an example, :code:`Method.dxH()`
             returns the discrete gradient expression).
 
         See also
@@ -488,12 +488,12 @@ class PHSCore:
             symbol or a sympy expression. Default is None.
 
         selfall : bool
-            If True, every substitutions in the dictionary :code:`PHSCore.subs`
+            If True, every substitutions in the dictionary :code:`Core.subs`
              are applied and the dictionary is reinitialized to :code:`{}`.
              Default is False.
 
         selfexprs : bool
-            If True, only substitutions in the dictionary :code:`PHSCore.subs`
+            If True, only substitutions in the dictionary :code:`Core.subs`
             that are not numerical values are applied.
 
         simplify : bool
@@ -532,7 +532,7 @@ class PHSCore:
         *************
 
         Add a connector which describes the connection of two ports from a \
-        unique PHScore.
+        unique core.
 
         Usage
         ------
@@ -843,8 +843,8 @@ add the connector'.format(i)
             If True, every function are vectorized with numpy.vectorize.
             The default is True.
         """
-        from pyphs.numerics.tools._evaluation import PHSNumericalEval
-        setattr(self, 'eval', PHSNumericalEval(self, vectorize=vectorize))
+        from pyphs.numerics.tools._evaluation import NumericalEval
+        setattr(self, 'eval', NumericalEval(self, vectorize=vectorize))
 
     # =========================================================================
 
@@ -989,7 +989,7 @@ add the connector'.format(i)
 
     See also
     --------
-    PHSCore.split_linear() to split the system into linear and nonlinear
+    Core.split_linear() to split the system into linear and nonlinear
     storage and dissipative parts.
         """.format(name, dim_label)
 
@@ -1010,7 +1010,7 @@ add the connector'.format(i)
 
     See also
     --------
-    PHSCore.split_linear() to split the system into linear and nonlinear
+    Core.split_linear() to split the system into linear and nonlinear
     storage and dissipative parts.
         """.format(name, dim_label)
         return (l_accessor, nl_accessor)
@@ -1020,7 +1020,7 @@ add the connector'.format(i)
     @staticmethod
     def symbols(obj, *args, **kwargs):
         """
-        sympy.symbols function with PHSCore.assertions.
+        sympy.symbols function with Core.assertions.
         """
-        kwargs.update(PHSCore().assertions)
+        kwargs.update(Core().assertions)
         return sympy.symbols(obj, *args, **kwargs)

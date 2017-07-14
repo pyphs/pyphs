@@ -21,7 +21,7 @@ from the list of ports and is appended to the end of the list of connectors.
 Parameters
 ----------
 
-core: PHSCore
+core: Core
 
 i: int
     index of the port to be defined as a connector. The index value must
@@ -30,7 +30,7 @@ i: int
 Output
 ------
 
-No output (inplace change of the PHSCore)
+No output (inplace change of the Core)
     """
     moveCoreMcolnrow(core, core.dims.x()+core.dims.w()+i, core.dims.tot())
 

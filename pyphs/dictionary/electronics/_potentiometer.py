@@ -9,10 +9,10 @@ Created on Mon Jun 19 00:06:10 2017
 from __future__ import absolute_import, division, print_function
 
 from ..tools import symbols
-from ..edges import PHSDissipativeNonLinear
+from ..edges import DissipativeNonLinear
 
 
-class Potentiometer(PHSDissipativeNonLinear):
+class Potentiometer(DissipativeNonLinear):
     """
     Electronic nonlinear dissipative component: diode PN
 
@@ -67,7 +67,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         edge_2 = (N2, N3, data_2)
 
         # init component
-        PHSDissipativeNonLinear.__init__(self, label,
+        DissipativeNonLinear.__init__(self, label,
                                          [edge_1, edge_2],
                                          w, z, **kwargs)
 

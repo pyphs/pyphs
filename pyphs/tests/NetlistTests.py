@@ -9,7 +9,7 @@ Created on Tue Dec 27 12:40:03 2016
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist
+from pyphs import Netlist
 from pyphs.config import datum as config_datum
 
 config_datum = "'"+config_datum+"'"
@@ -27,7 +27,7 @@ def NetlistThieleSmallNL(clear=True,
     loudspeakers.
     """
 
-    netlist = PHSNetlist(path, clear=clear)
+    netlist = Netlist(path, clear=clear)
 
     datum = netlist.datum
 

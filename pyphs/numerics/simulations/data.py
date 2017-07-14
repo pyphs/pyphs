@@ -23,13 +23,13 @@ except ImportError:
     pass
 
 
-class PHSData:
+class Data:
     """
 =======
-PHSData
+Data
 =======
 
-Interface for pyphs.PHSSimulation data files.
+Interface for pyphs.Simulation data files.
 
 Generators
 -----------

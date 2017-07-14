@@ -10,17 +10,17 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 from .. import edges
-from pyphs import PHSGraph
+from pyphs import Graph
 from pyphs.misc.io import data_generator
 from ..tools import symbols
 from .tools import pwl_func
 
 
-class Storage(PHSGraph):
+class Storage(Graph):
     def __init__(self, label, nodes, **kwargs):
 
-        # instanciate a PHSGraph object
-        PHSGraph.__init__(self, label=label)
+        # instanciate a Graph object
+        Graph.__init__(self, label=label)
 
         assert 'file' in kwargs, "pwl.storage component need 'file' argument"
         path = kwargs.pop('file')
@@ -59,7 +59,7 @@ zero (component {})'.format(label)
         edge = (N1, N2, data)
 
         # init component
-        self += edges.PHSStorageNonLinear(label, [edge], x, h, **kwargs)
+        self += edges.StorageNonLinear(label, [edge], x, h, **kwargs)
 
     @staticmethod
     def metadata():

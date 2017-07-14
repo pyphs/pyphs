@@ -10,17 +10,17 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 from .. import edges
-from pyphs import PHSGraph
+from pyphs import Graph
 from pyphs.misc.io import data_generator
 from ..tools import symbols
 from .tools import pwl_func
 
 
-class Dissipative(PHSGraph):
+class Dissipative(Graph):
     def __init__(self, label, nodes, **kwargs):
 
-        # instanciate a PHSGraph object
-        PHSGraph.__init__(self, label=label)
+        # instanciate a Graph object
+        Graph.__init__(self, label=label)
 
         assert 'file' in kwargs, "pwl.dissipative component need 'file' argument"
         path = kwargs.pop('file')
@@ -55,7 +55,7 @@ class Dissipative(PHSGraph):
         edge = (N1, N2, data)
 
         # init component
-        self += edges.PHSDissipativeNonLinear(label, [edge, ], w, z, **kwargs)
+        self += edges.DissipativeNonLinear(label, [edge, ], w, z, **kwargs)
 
     @staticmethod
     def metadata():

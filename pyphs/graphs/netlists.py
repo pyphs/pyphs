@@ -16,7 +16,7 @@ def sep():
     return ','
 
 
-class PHSNetlist:
+class Netlist:
     """
     Data structure for netlist elements. Each line of the netlist describes a\
  component, with data structured a follows

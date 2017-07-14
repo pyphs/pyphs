@@ -10,10 +10,10 @@ from __future__ import absolute_import, division, print_function
 
 import sympy
 from ..tools import symbols, nicevarlabel
-from ..edges import PHSDissipativeNonLinear
+from ..edges import DissipativeNonLinear
 
 
-class Triode(PHSDissipativeNonLinear):
+class Triode(DissipativeNonLinear):
     """
     Usage
     -----
@@ -103,7 +103,7 @@ class Triode(PHSDissipativeNonLinear):
         edges = [edge_pk, edge_gk]
 
         # init component
-        PHSDissipativeNonLinear.__init__(self, label, edges,
+        DissipativeNonLinear.__init__(self, label, edges,
                                          w, z, **kwargs)
 
     @staticmethod

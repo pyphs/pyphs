@@ -9,8 +9,8 @@ from __future__ import absolute_import, division, print_function
 from pyphs.config import simulations, VERBOSE
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.numcore2cpp import numcore2cpp
-from .. import PHSNumeric
-from .data import PHSData
+from .. import Numeric
+from .data import Data
 from pyphs.misc.io import dump_files, with_files
 import subprocess
 import progressbar
@@ -20,7 +20,7 @@ import sys
 import numpy as np
 
 
-class PHSSimulation:
+class Simulation:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
@@ -76,7 +76,7 @@ class PHSSimulation:
         if not os.path.exists(self.config['path']):
             os.mkdir(self.config['path'])
 
-        # store PHSCore
+        # store Core
         setattr(self, '_core', core.__copy__())
 
         # Define inits
@@ -89,10 +89,10 @@ class PHSSimulation:
         
     def init_numericalCore(self):
         """
-        Build the PHSNumeric from the PHSCore.
+        Build the Numeric from the Core.
         Additionnally, generate the c++ code if config['lang'] == 'c++'.
         """
-        setattr(self, 'nums', PHSNumeric(self._core, 
+        setattr(self, 'nums', Numeric(self._core, 
                                                config=self.config,
                                                inits=self.inits))
         if not self.config['lang'] in ['c++', 'python']:
@@ -108,7 +108,7 @@ class PHSSimulation:
             numcore2cpp(self.nums, objlabel=objlabel, path=self.src_path,
                         eigen_path=self.config['eigen'])
 
-        self.data = PHSData(self.nums.method, self.config) 
+        self.data = Data(self.nums.method, self.config) 
 
 ###############################################################################
 
@@ -157,7 +157,7 @@ class PHSSimulation:
 
         Usage
         -----
-        After initialization of a PHSSimulation object `simu.init`:
+        After initialization of a Simulation object `simu.init`:
 
         .. code:: simu.process()
 

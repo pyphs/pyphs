@@ -1,5 +1,7 @@
   - Initialization of PHSSimulation is made at object instanciation by passing a dictionnary of list of sympy expressions.
-
+  - Rename PHSCoreMethod in PHSMethod.
+  - Rename PHSNumericalCore in PHSNumeric.
+  - Remove 'PHS' prefix in classes names.
 
 0.1.9.9.5
   - changes in PHSCore:

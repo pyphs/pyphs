@@ -238,7 +238,7 @@ def _init_files(phs):
 def _str_instanciate(simu, objlabel):
     string = ""
     string += """\n
-    // Instance of PyPHS numerical core
+    // Instance of Py numerical core
     {0} {1};""".format(objlabel.upper(), objlabel.lower())
     return string
 

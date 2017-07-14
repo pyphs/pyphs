@@ -7,11 +7,11 @@ Created on Fri Jun 16 13:13:07 2017
 """
 
 from pyphs.graphs import datum
-from ..edges import PHSDissipativeNonLinear
+from ..edges import DissipativeNonLinear
 from ..tools import symbols
 
 
-class Transfer(PHSDissipativeNonLinear):
+class Transfer(DissipativeNonLinear):
     """
     Thermal transfer between two masses.
     * The dissipation variables are temperatures w1=t1, w2=t2,
@@ -71,7 +71,7 @@ class Transfer(PHSDissipativeNonLinear):
         edge2 = (datum, N2, data2)
 
         # init component
-        PHSDissipativeNonLinear.__init__(self, label,
+        DissipativeNonLinear.__init__(self, label,
                                          [edge1,
                                           edge2],
                                          w, [z1, z2],

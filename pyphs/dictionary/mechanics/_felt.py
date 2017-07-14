@@ -7,11 +7,11 @@ Created on Sat May 21 16:29:43 2016
 
 from __future__ import absolute_import, division, print_function
 from ..tools import symbols, mappars
-from pyphs import PHSGraph
+from pyphs import Graph
 import sympy as sp
 
 
-class Felt(PHSGraph):
+class Felt(Graph):
     """
     Piano hammer felt
     ==================
@@ -41,7 +41,7 @@ class Felt(PHSGraph):
 
     """
     def __init__(self, label, nodes, **kwargs):
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
         dic = {'A': 1e2,  # [N.s/m] Felt damping coefficient
                'B': 2.5,  # [#] Hysteresis coefficient for the felt
                'F': 13.8,  # [N/m] Elastic characteristic force

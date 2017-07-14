@@ -8,22 +8,22 @@ Created on Tue Dec 27 14:52:26 2016
 
 from __future__ import absolute_import, division, print_function
 
-from pyphs import PHSGraph
-from pyphs.dictionary.tools import PHSArgument, nicevarlabel, mappars
+from pyphs import Graph
+from pyphs.dictionary.tools import Argument, nicevarlabel, mappars
 
 
 ###############################################################
 # LINEAR
 ###############################################################
 
-class PHSStorageLinear(PHSGraph):
+class StorageLinear(Graph):
     """
     Linear flux-controlled storage component
     """
     def __init__(self, label, nodes, **kwargs):
-        PHSGraph.__init__(self, label=label)
-        if not isinstance(kwargs['value'], PHSArgument):
-            coeff = PHSArgument(label + 'coeff', kwargs['value'])
+        Graph.__init__(self, label=label)
+        if not isinstance(kwargs['value'], Argument):
+            coeff = Argument(label + 'coeff', kwargs['value'])
         else:
             coeff = kwargs['value']
         x = nicevarlabel("x", label)
@@ -47,7 +47,7 @@ class PHSStorageLinear(PHSGraph):
 # NONLINEAR
 ###############################################################
 
-class PHSStorageNonLinear(PHSGraph):
+class StorageNonLinear(Graph):
     """
     nonlinear storage component class.
 
@@ -83,7 +83,7 @@ keys of the kwargs arguments.
     """
     def __init__(self, label, edges, x, H, **kwargs):
         # init PortHamiltonianObject
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
         # build correspondance between labels in subs and pars (dicpars)...
         # ... and build the correspondance between symbols and subs (subs)
         dicpars, subs = mappars(self, **kwargs)

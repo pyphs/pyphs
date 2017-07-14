@@ -10,10 +10,10 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
-from pyphs import PHSGraph
+from pyphs import Graph
 from pyphs.config import EPS
 
-from ..edges import PHSDissipativeLinear, PHSStorageLinear
+from ..edges import DissipativeLinear, StorageLinear
 from pyphs.dictionary.connectors import Transformer
 from pyphs.graphs import datum
 
@@ -21,7 +21,7 @@ from pyphs.graphs import datum
 # ======================================================================= #
 
 
-class Fracderec(PHSGraph):
+class Fracderec(Graph):
     """ 
 Effort-controlled fractional integrator:
 .. math:: f(s) = p \\, s^alpha  \\, e(s)
@@ -34,7 +34,7 @@ PolesMinMax=(-10,10); NbFreqPoints=200; FreqsMinMax=(1, 48e3); \
 DoPlot=False;
     """
     def __init__(self, label, nodes, **kwargs):
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
         if 'p' not in kwargs:
             p = 1
         else:
@@ -57,7 +57,7 @@ DoPlot=False;
 
             N1 = 'N'+label+str(n)+"_1"
             N2 = 'N'+label+str(n)+"_2"
-            self += PHSDissipativeLinear(label+'R'+str(n),
+            self += DissipativeLinear(label+'R'+str(n),
                                          (N1, Ndeb),
                                          inv_coeff=True,
                                          coeff=Rn,
@@ -66,7 +66,7 @@ DoPlot=False;
             
             
             Qn = diagQ[n]
-            self += PHSStorageLinear(label+'Q'+str(n),
+            self += StorageLinear(label+'Q'+str(n),
                                      (N2, datum),
                                      value=Qn,
                                      ctrl='f',
@@ -89,7 +89,7 @@ DoPlot=False;
 # ======================================================================= #
 
 
-class Fracderfc(PHSGraph):
+class Fracderfc(Graph):
     """ 
 Flux-controlled fractional integrator:
 .. math:: e(s) = p \\, s^alpha  \\, f(s)
@@ -102,7 +102,7 @@ PolesMinMax=(-10,10); NbFreqPoints=200; FreqsMinMax=(1, 48e3); \
 DoPlot=False;
     """
     def __init__(self, label, nodes, **kwargs):
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
         if 'p' not in kwargs:
             p = 1
         else:
@@ -126,7 +126,7 @@ DoPlot=False;
             else:
                 N2 = Nend
             Rn = diagR[n]  # here, diagR[n] is a res (flux-controlled)            
-            self += PHSDissipativeLinear(label+'R'+str(n),
+            self += DissipativeLinear(label+'R'+str(n),
                                          (N2, N1),
                                          ctrl='f',
                                          coeff=Rn,
@@ -134,7 +134,7 @@ DoPlot=False;
 
             Qn = diagQ[n]
             N3 = 'N'+label+str(n)+"_2"
-            self += PHSStorageLinear(label+'Q'+str(n),
+            self += StorageLinear(label+'Q'+str(n),
                                      (N3, datum),
                                      value=Qn,
                                      inv_coeff=False,

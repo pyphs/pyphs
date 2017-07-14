@@ -2,13 +2,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from .core.core import PHSCore
-from .graphs.graph import PHSGraph
+from .core.core import Core
+from .graphs.graph import Graph
 from .graphs import netlist2core, netlist2graph
-from .graphs.netlists import PHSNetlist
-from .numerics import (PHSMethod, PHSNumeric,
-                       PHSNumericalEval, PHSNumericalOperation)
-from .numerics.simulations.simulation import PHSSimulation
+from .graphs.netlists import Netlist
+from .numerics import (Method, Numeric,
+                       NumericalEval, NumericalOperation)
+from .numerics.simulations.simulation import Simulation
 from .misc.signals.synthesis import signalgenerator
 from .misc.latex import core2tex, netlist2tex, graphplot2tex, texdocument
 from .numerics.cpp.numcore2cpp import numcore2cpp
@@ -27,9 +27,9 @@ __copyright__ = "Copyright 2012-2017"
 __version__ = '0.1.9.9.4'
 __author_email__ = 'antoine.falaize@ircam.fr'
 
-__all__ = ['PHSCore', 'PHSNetlist', 'PHSSimulation', 'PHSGraph',
-           'signalgenerator', 'PHSNumericalOperation', 'PHSMethod',
-           'PHSNumeric', 'PHSNumericalEval',
+__all__ = ['Core', 'Netlist', 'Simulation', 'Graph',
+           'signalgenerator', 'NumericalOperation', 'Method',
+           'Numeric', 'NumericalEval',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
            'numcore2cpp', 'simu2cpp', 'netlist2core',
            'path_to_configuration_file', 'netlist2graph',

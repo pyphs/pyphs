@@ -9,28 +9,28 @@ from __future__ import absolute_import, division, print_function
 from pyphs.core.tools import types as core_types
 from ..tools import types as num_types
 from pyphs.misc.tools import remove_duplicates
-from ..tools import lambdify, PHSNumericalOperation
-from ..numerical_method._method import PHSMethod
+from ..tools import lambdify, NumericalOperation
+from ..numerical_method._method import Method
 from pyphs.config import simulations, VERBOSE
 import numpy
 
 
 # =========================================================================== #
 
-class PHSNumeric(object):
+class Numeric(object):
     """
-    This class implements a numerical version of PHSCore. First, a numerical
-    method is applied symbolically to a PHScore, then every relevant functions
+    This class implements a numerical version of Core. First, a numerical
+    method is applied symbolically to a core, then every relevant functions
     for simulations are lambdified and organized into the object.
     """
     def __init__(self, core, config=None, inits=None, build=True):
         """
-    Instanciate a PHSNumeric.
+    Instanciate a Numeric.
 
     Parameters
     ----------
 
-    core : PHSCore
+    core : Core
         Base system to descretize and lambdify.
 
         config: dict or None (optional)
@@ -63,7 +63,7 @@ class PHSNumeric(object):
         Return
         ------
 
-        mums : PHSNumeric
+        mums : Numeric
         """
         self.label = core.label
 
@@ -79,8 +79,8 @@ class PHSNumeric(object):
                     raise AttributeError(text)
         self.config.update(config)
 
-        # Save PHSCore object
-        self.method = PHSMethod(core, config=config)
+        # Save Core object
+        self.method = Method(core, config=config)
         
         # Define inits
         self.inits = {}        
@@ -183,7 +183,7 @@ class PHSNumeric(object):
         # build for sympy.expression
         if name in self.method.funcs_names:
             self._build_func(name)
-        # build for PHSNumericalOperation
+        # build for NumericalOperation
         elif name in self.method.ops_names:
             #  build of dependencies before hand
             deps = getattr(self.method, name + '_deps')
@@ -274,7 +274,7 @@ def evalfunc_generator(nums, name):
     Parameters
     ----------
 
-    nums : PHSNumeric
+    nums : Numeric
 
     name : str
 
@@ -326,7 +326,7 @@ def evalop_generator(nums, name, op):
     """
     args = list()
     for arg in op.args:
-        if isinstance(arg, PHSNumericalOperation):
+        if isinstance(arg, NumericalOperation):
             args.append(evalop_generator(nums, name, arg))
         elif isinstance(arg, str):
             args.append(getattr(nums, arg))
@@ -335,7 +335,7 @@ def evalop_generator(nums, name, op):
         else:
             assert isinstance(arg, (int, float))
             args.append(arg)
-    func = PHSNumericalOperation(op.operation, args)
+    func = NumericalOperation(op.operation, args)
 
     def eval_func():
         return func()

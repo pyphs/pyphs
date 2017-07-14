@@ -8,10 +8,10 @@ Created on Sun Jun 18 23:21:59 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges import PHSPort
+from ..edges import Port
 
 
-class Source(PHSPort):
+class Source(Port):
     """
     Source of variation of magnetic flux or magnetomotive force.
 
@@ -52,7 +52,7 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         elif type_ == 'fluxvar':
             ctrl = 'e'
         kwargs.update({'ctrl': ctrl})
-        PHSPort.__init__(self, label, nodes, **kwargs)
+        Port.__init__(self, label, nodes, **kwargs)
 
     @staticmethod
     def metadata():

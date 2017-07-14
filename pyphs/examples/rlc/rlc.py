@@ -21,7 +21,7 @@ core = netlist2core(netlist_filename)
 if __name__ == '__main__':
 
 
-    from pyphs import PHSSimulation, signalgenerator
+    from pyphs import Simulation, signalgenerator
     import shutil
     import numpy as np
     import sympy as sp
@@ -47,8 +47,8 @@ if __name__ == '__main__':
 #    x0[0] = 1
 #    x0_expr = list(map(sp.sympify, x0))    
 #    inits = {'x': x0_expr}
-#    simu = PHSSimulation(core, config=config, inits=inits)
-    simu = PHSSimulation(core, config=config)
+#    simu = Simulation(core, config=config, inits=inits)
+    simu = Simulation(core, config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])

@@ -16,14 +16,14 @@ from pyphs.config import (GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER,
                           LOAD_OPTS, PBAR, FS, FS_SYMBS, simulations,
                           VERBOSE)
 from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
-from pyphs import PHSCore
-from ..tools import PHSNumericalOperation
+from pyphs import Core
+from ..tools import NumericalOperation
 from ._discrete_calculus import (discrete_gradient, gradient_theta,
                                  gradient_trapez)
 import copy
 
 
-class PHSMethod(PHSCore):
+class Method(Core):
     """
     Base class for pyphs numerical methods (defined symbolically).
     """
@@ -33,7 +33,7 @@ class PHSMethod(PHSCore):
         Parameters
         -----------
 
-        core: pyphs.PHSCore
+        core: pyphs.Core
             The core Port-Hamiltonian structure on wich the method is build.
 
         config: dict or None
@@ -66,9 +66,9 @@ class PHSMethod(PHSCore):
         if VERBOSE >= 1:
             print('Build numerical method...')
         if VERBOSE >= 2:
-            print('    Init PHSMethod...')
-        # INIT PHSCore object
-        PHSCore.__init__(self, label=core.label+'_method')
+            print('    Init Method...')
+        # INIT Core object
+        Core.__init__(self, label=core.label+'_method')
         # Copy core content
         for name in (list(set().union(
                           core.attrstocopy,
@@ -90,8 +90,8 @@ class PHSMethod(PHSCore):
 
         # ------------- CLASSES ------------- #
 
-        # recover PHSNumericalOperation class
-        self.Operation = PHSNumericalOperation
+        # recover NumericalOperation class
+        self.Operation = NumericalOperation
 
         # ------------- ARGUMENTS ------------- #
 
@@ -233,7 +233,7 @@ class PHSMethod(PHSCore):
         self.funcs_names.append(name)
 
     def setoperation(self, name, op):
-        "set PHSNumericalOperation 'op' as the attribute 'name'."
+        "set NumericalOperation 'op' as the attribute 'name'."
         setattr(self, name+'_op', op)
         setattr(self, name+'_deps', op.freesymbols)
         self.ops_names.append(name)
@@ -611,7 +611,7 @@ def set_execactions(method):
 def build_gradient_evaluation(method):
     """
 Build the symbolic expression for the numerical evaluation of the gradient
-associated with the PHSCore core and the chosen numerical method in the config
+associated with the Core core and the chosen numerical method in the config
 dictionary.
     """
 
@@ -636,19 +636,19 @@ gradient evaluation: {}'.format(method.config['grad'])
         # trapezoidal rule
         method._dxH = gradient_trapez(method.H, method.x, method.dx())
 
-    # reference the discrete gradient for the PHSCore in core.exprs_names
+    # reference the discrete gradient for the Core in core.exprs_names
     method.setexpr('dxH', method.dxH)
 
 
 def build_structure_evaluation(method):
     """
-Build the substitutions of the state x associated with the PHSCore core and
+Build the substitutions of the state x associated with the Core core and
 the chosen value for the theta scheme.
 
 Parameters
 ----------
 
-core: PHSCore:
+core: Core:
     Core structure on which the numerical evaluation is built.
 
 theta: numeric in [0, 1] or 'trapez'
@@ -659,7 +659,7 @@ Output
 ------
 
 None:
-    In-place transformation of the PHSCore.
+    In-place transformation of the Core.
     """
 
     # define theta parameter for the function 'build_structure_evaluation'

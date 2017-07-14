@@ -8,10 +8,10 @@ Created on Sun Jun 18 23:56:00 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges import PHSStorageLinear
+from ..edges import StorageLinear
 
 
-class Inductor(PHSStorageLinear):
+class Inductor(StorageLinear):
     """
     Linear inductor
 
@@ -35,7 +35,7 @@ class Inductor(PHSStorageLinear):
                   'value': par_val,
                   'inv_coeff': True,
                   'ctrl': 'e'}
-        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
+        StorageLinear.__init__(self, label, nodes, **kwargs)
 
     @staticmethod
     def metadata():

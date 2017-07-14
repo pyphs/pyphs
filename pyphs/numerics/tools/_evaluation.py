@@ -12,10 +12,10 @@ from pyphs.core.tools import free_symbols
 from ._lambdify import lambdify
 
 
-class PHSNumericalEval(object):
+class NumericalEval(object):
     """
     Class that serves as a container for numerical evaluation of all
-    functions from a given PHSCore.
+    functions from a given Core.
     """
     def __init__(self, core, vectorize=True):
         if VERBOSE >= 1:
@@ -59,7 +59,7 @@ class PHSNumericalEval(object):
         Parameters
         ----------
 
-        core : PHSCore
+        core : Core
 
         name : str
 

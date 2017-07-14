@@ -7,10 +7,10 @@ Created on Sun Jun 18 23:49:05 2017
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import PHSStorageLinear
+from ..edges import StorageLinear
 
 
-class Mass(PHSStorageLinear):
+class Mass(StorageLinear):
     """
     Mass moving in 1D space
 
@@ -34,7 +34,7 @@ class Mass(PHSStorageLinear):
                   'value': par_val,
                   'inv_coeff': True,
                   'ctrl': 'e'}
-        PHSStorageLinear.__init__(self, label, (nodes[0], nodes[1]), **kwargs)
+        StorageLinear.__init__(self, label, (nodes[0], nodes[1]), **kwargs)
 
     @staticmethod
     def metadata():

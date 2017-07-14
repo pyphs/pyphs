@@ -9,7 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph
+from pyphs import Netlist, Graph
 
 
 # ---------------------------  NETLIST  ------------------------------------- #
@@ -17,10 +17,10 @@ label = 'rhodes'
 this_script = os.path.realpath(__file__)
 here = this_script[:this_script.rfind(os.sep)]
 netlist_filename = here + os.sep + label + '.net'
-netlist = PHSNetlist(netlist_filename)
+netlist = Netlist(netlist_filename)
 
 # ---------------------------  GRAPH  --------------------------------------- #
-graph = PHSGraph(netlist=netlist)
+graph = Graph(netlist=netlist)
 
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
@@ -33,7 +33,7 @@ core.subsinverse()
 #
 #    import numpy
 #    import matplotlib.pyplot as plt
-#    from pyphs import PHSSimulation
+#    from pyphs import Simulation
 #    from pyphs.misc.signals.waves import wavwrite
 #
 #    # Define the simulation parameters
@@ -54,8 +54,8 @@ core.subsinverse()
 #                       'decim': None}
 #              }
 #
-#    # Instanciate PHSSimulation class
-#    simu = PHSSimulation(core, config=config)
+#    # Instanciate Simulation class
+#    simu = Simulation(core, config=config)
 #
 #    def ordering(name, *args):
 #        def get_index(e):
@@ -77,10 +77,10 @@ core.subsinverse()
 #
 #    for v_hammer in numpy.linspace(1, 1, 1):
 #
-#        # def generator for sequence of inputs to feed in the PHSSimulation
+#        # def generator for sequence of inputs to feed in the Simulation
 #        def sequ():
 #            """
-#            generator of input sequence for PHSSimulation
+#            generator of input sequence for Simulation
 #            """
 #            for tn in t:
 #                # numpy.array([u1, u2, ...])

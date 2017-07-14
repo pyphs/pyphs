@@ -7,17 +7,17 @@ Created on Wed Jan  4 18:44:58 2017
 """
 
 
-class PHSCanNotUnlock(Exception):
+class CanNotUnlock(Exception):
     pass
 
 
-class PHSUndefinedPotential(Exception):
+class UndefinedPotential(Exception):
     pass
 
 
-class PHSFluxCtrlIsEffortCtrl(Exception):
+class FluxCtrlIsEffortCtrl(Exception):
     pass
 
 
-class PHSEffortCtrlIsFluxCtrl(Exception):
+class EffortCtrlIsFluxCtrl(Exception):
     pass

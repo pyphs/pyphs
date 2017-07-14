@@ -20,7 +20,7 @@ from pyphs import Simulation
 # retrieve the pyphs.Core of a nonlinear RLC from the tutorial on Core
 from pyphs.tutorials.phscore import core
 
-core.build_R()
+core.reduce_z()
 
 # Define the simulation parameters
 config = {'fs': 48e3,           # Sample rate (Hz)

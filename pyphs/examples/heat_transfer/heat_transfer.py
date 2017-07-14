@@ -18,7 +18,7 @@ netlist = Netlist(netlist_filename)
 graph = Graph(netlist=netlist)
 core = graph.buildCore()
 
-core.build_R()
+core.reduce_z()
 core.subsinverse()
 
 #if __name__ == '__main__':

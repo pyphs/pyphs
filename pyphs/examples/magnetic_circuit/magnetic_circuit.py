@@ -27,7 +27,7 @@ core = graph.buildCore()
 #    import shutil
 #
 #    # Include the linear dissipatives in the connexion structure
-#    core.build_R()
+#    core.reduce_z()
 #
 #    # Define the simulation parameters
 #    config = {'fs': 48e3,               # Sample rate

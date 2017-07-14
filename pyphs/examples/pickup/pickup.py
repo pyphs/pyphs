@@ -32,7 +32,7 @@ core = graph.buildCore()
 #    from pyphs import Netlist, Graph
 #    from pyphs.misc.tools import interleave
 #
-#    core.build_R()
+#    core.reduce_z()
 #
 #    # Define the simulation parameters
 #    config = {'fs': 48e3,           # Sample rate (Hz)

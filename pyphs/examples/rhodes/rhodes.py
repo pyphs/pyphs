@@ -24,7 +24,7 @@ graph = Graph(netlist=netlist)
 
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
-core.build_R()
+core.reduce_z()
 core.subsinverse()
 
 

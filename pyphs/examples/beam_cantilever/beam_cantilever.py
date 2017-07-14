@@ -23,7 +23,7 @@ graph = Graph(netlist=netlist)
 
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
-core.build_R()
+core.reduce_z()
 core.substitute(selfall=True)
 
 #if __name__ is "__main__":

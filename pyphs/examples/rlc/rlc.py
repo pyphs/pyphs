@@ -27,7 +27,7 @@ if __name__ == '__main__':
     import sympy as sp
     
     # Include the linear dissipatives in the connexion structure
-#    core.build_R()
+#    core.reduce_z()
 
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate

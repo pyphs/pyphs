@@ -34,7 +34,7 @@ core = graph.buildCore()
 #    import matplotlib.pyplot as plt
 #    from pyphs import Simulation
 #
-#    core.build_R()
+#    core.reduce_z()
 #
 #    # Define the simulation parameters
 #    config = {'fs': 48e3,           # Sample rate (Hz)

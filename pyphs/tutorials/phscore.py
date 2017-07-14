@@ -67,7 +67,7 @@ subs = {L: L_value,
 core.subs.update(subs)
 
 # Build of the resistive structure R in M = J-R
-core.build_R()
+core.reduce_z()
 
 # change R to R(xL) = Rnl * xC^
 Rnl = core.symbols('Rnl')

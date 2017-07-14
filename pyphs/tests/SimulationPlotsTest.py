@@ -39,7 +39,7 @@ def plot_power_balance_rlc_with_split():
     from pyphs.examples.rlc.rlc import core as rlc
 
     rlc_ = rlc.__copy__()
-    rlc_.build_R()
+    rlc_.reduce_z()
     simu = Simulation(rlc_, config=config)
 
     dur = 0.01
@@ -79,7 +79,7 @@ def plot_power_balance_nlcore_with_split():
     # retrieve the pyphs.Core of a nonlinear RLC from
     # the tutorial on Core
     from pyphs.tutorials.phscore import core as nlcore
-    nlcore.build_R()
+    nlcore.reduce_z()
     simu = Simulation(nlcore, config=config)
 
     dur = 0.01

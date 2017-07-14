@@ -13,7 +13,7 @@ import copy
 from ..misc.tools import geteval
 from ..config import VERBOSE
 # Structure methods
-from .structure.R import build_R
+from .structure.R import reduce_z
 from .structure.splits import linear_nonlinear
 from .structure.output import output_function as output
 from .structure.moves import move_stor, move_diss, move_port, move_connector
@@ -38,7 +38,7 @@ class Core:
     # =====================================================================
     # Retrieve structure methods
 
-    build_R = build_R
+    reduce_z = reduce_z
     linear_nonlinear = linear_nonlinear
     output = output
 
@@ -107,7 +107,7 @@ class Core:
         # ORDERED Dictionary of observers {symbol: expr}
         self.observers = OrderedDict()
 
-        # List of dissipative variable symbols to be ignored in self.build_R
+        # List of dissipative variable symbols to be ignored in self.reduce_z
         self.force_wnl = list()
 
         # =====================================================================

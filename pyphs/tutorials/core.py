@@ -30,8 +30,8 @@ RL.set_Mxx([0])
 RL.set_Jxw([[-1]])
 RL.set_Jxy([[-1, -1]])
 
-print('Two-ports RL circuit PHS:')
-RL.pprint()
+#print('Two-ports RL circuit PHS:')
+#RL.pprint()
 
 ''' 2) THE MKA CORE '''
 
@@ -58,32 +58,32 @@ MKA.init_M()
 MKA.M = sympy.SparseMatrix([[0, 1, 0, 0], [-1, 0, -1, -1], 
                             [0, 1, 0, 0], [0, 1, 0, 0]])
 
-print('Mass-spring-damper PHS:')
-MKA.pprint()
+#print('Mass-spring-damper PHS:')
+#MKA.pprint()
 
 """ 3) CONNECTION OF RL AND MKA """
 
 #Additionate both cores 
-SPK = RL + MKA
+core = RL + MKA
 
 
 # Define the symbol BL for the electromechanical connection
-BL = SPK.symbols('BL')
+BL = core.symbols('BL')
 
 # Add the connector between the port #1 of RL and the port #3 of MKA
-SPK.add_connector((SPK.y.index(RL.y[1]), SPK.y.index(MKA.y[0])), alpha = BL)
+core.add_connector((core.y.index(RL.y[1]), core.y.index(MKA.y[0])), alpha = BL)
 
 # Apply the connector
-SPK.connect()
+core.connect()
 
-print('Thiele-Small PHS:')
-SPK.pprint()
+#print('Thiele-Small PHS:')
+#core.pprint()
 
 # Reduce the linear dissipative part
-SPK.reduce_z()
+core.reduce_z()
 
-print('z-reduced Thiele-Small PHS:')
-SPK.pprint()
+#print('z-reduced Thiele-Small PHS:')
+#core.pprint()
 
 
 # Physical parameters 
@@ -102,22 +102,22 @@ subs = {L: L_value,
         BL:BL_value
        }
 
-SPK.subs.update(subs)
+core.subs.update(subs)
 
 # Define the new expression
-B = SPK.symbols('B')
-BLnl = B*sympy.exp(-((SPK.x[1]))**2)
+B = core.symbols('B')
+BLnl = B*sympy.exp(-((core.x[1]))**2)
 
 #Associate the expression to BL
-SPK.substitute(subs={BL: BLnl})
-
+core.substitute(subs={BL: BLnl})
+core.subs.update({B:BL_value})
 
 # Simplify inversed symbols
-SPK.subsinverse()
+core.subsinverse()
 
 # Print the structure
-print('Thiele-Small with nonlinear interconnection PHS:')
-SPK.pprint()
+#print('Thiele-Small with nonlinear interconnection PHS:')
+#core.pprint()
 
 # Generate the lateX file
-SPK.texwrite(path=None, title=None, authors=None, affiliations=None)
+#core.texwrite(path=None, title=None, authors=None, affiliations=None)

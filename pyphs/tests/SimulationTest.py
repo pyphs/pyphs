@@ -14,7 +14,7 @@ import numpy                     # numerical tools
 import sympy
 
 # retrieve the pyphs.Core of a nonlinear RLC from the tutorial on Core
-from pyphs.tutorials.phscore import core as nlcore
+from pyphs.tutorials.core import core as nlcore
 
 from pyphs.examples.rlc.rlc import core
 
@@ -253,7 +253,7 @@ def simulation_nlcore_full():
 
     # state initialization
     # !!! must be array with shape (core.dims.x(), )
-    x0 = list(map(sympy.sympify, (0., 0.)))
+    x0 = list(map(sympy.sympify, (0., 0., 0.)))
     
     # Instantiate a pyphs.Simulation object associated with a given core 
     simu = Simulation(nlcore, config=config, inits={'x': x0})

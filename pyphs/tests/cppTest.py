@@ -10,7 +10,7 @@ Created on Sun Apr  2 05:40:20 2017
 from __future__ import division
 
 # retrieve the pyphs.Core of a nonlinear RLC from the tutorial on Core
-from pyphs.tutorials.phscore import core as nlcore
+from pyphs.tutorials.core import core as nlcore
 
 from pyphs import Numeric, numcore2cpp
 import os

@@ -78,7 +78,7 @@ def plot_power_balance_nlcore_with_split():
 
     # retrieve the pyphs.Core of a nonlinear RLC from
     # the tutorial on Core
-    from pyphs.tutorials.phscore import core as nlcore
+    from pyphs.tutorials.core import core as nlcore
     nlcore.reduce_z()
     simu = Simulation(nlcore, config=config)
 

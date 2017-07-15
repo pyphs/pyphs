@@ -9,7 +9,7 @@
 
 Welcome to PyPHS!
 ------------------
-PyPHS is a Python (2.7-3.5) package that implements a set of numerical methods for the simulation of multi-physical systems with the *Port-Hamiltonian Systems* approach.
+PyPHS is a Python (2.7-3.6) package that implements a set of numerical methods for the simulation of multi-physical systems with the *Port-Hamiltonian Systems* approach.
 
 .. image:: /figures/home2.png
 	:width: 650
@@ -26,8 +26,8 @@ It provides:
 3. A python class `pyphs.PHSSimulation` that runs the simulation of a discrete-time port-Hamiltonian structure, derived from a structure preserving numerical method (see [NumericalMethod2015]_). 
 4. An automated C++ and $\LaTeX$ code generation.
 
-.. image:: /figures/home1.png
-	:width: 580
+.. image:: /figures/synopsys.png
+	:width: 800
 	:align: center
 
 Installation

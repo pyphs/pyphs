@@ -7,222 +7,162 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://afalaize.github.io/pyphs/</loc>
-  <lastmod>2017-03-13T23:47:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/2016/</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/2017/</loc>
-  <lastmod>2017-01-30T20:43:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/archive.html</loc>
-  <lastmod>2017-03-08T01:55:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/authors/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/authors/afalaize/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/authors/tlebrun/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/blog/</loc>
-  <lastmod>2017-02-12T11:52:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/blog/index-1.html</loc>
-  <lastmod>2017-03-08T02:01:00Z</lastmod>
+  <lastmod>2017-07-15T00:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/building/</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/</loc>
-  <lastmod>2017-02-11T17:32:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/pyphs/categories/cat_documentation/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/cat_electronics/</loc>
-  <lastmod>2016-11-16T18:08:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/cat_tutorial/</loc>
-  <lastmod>2017-01-30T18:22:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/components/</loc>
-  <lastmod>2016-11-16T17:55:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/dissipatives/</loc>
-  <lastmod>2016-11-16T17:55:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/mathjax/</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/storages/</loc>
-  <lastmod>2016-11-16T18:26:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/categories/theory/</loc>
-  <lastmod>2017-02-11T17:32:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/categories/tutorial/</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/categories/thiele-small-mathjax/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/galleries/</loc>
-  <lastmod>2017-01-03T14:40:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/galleries/intro/</loc>
-  <lastmod>2017-01-03T14:40:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/galleries/intro1/</loc>
-  <lastmod>2017-01-03T14:40:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/pyphs/galleries/intro2/</loc>
-  <lastmod>2017-01-03T14:40:00Z</lastmod>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/capacitor/</loc>
-  <lastmod>2016-11-16T17:36:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/dicos/electronics/capacitor/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/dictionary/</loc>
-  <lastmod>2017-01-30T20:43:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/dicos/electronics/diode/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/diode/</loc>
-  <lastmod>2016-11-16T19:57:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/dicos/electronics/electronics/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/electronics/</loc>
-  <lastmod>2017-01-30T20:43:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/dicos/electronics/inductor/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/inductor/</loc>
-  <lastmod>2016-11-16T17:36:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/dicos/electronics/resistor/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/phscore/</loc>
-  <lastmod>2017-01-30T18:23:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/dicos/electronics/source/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/phsnumericaleval/</loc>
-  <lastmod>2017-03-08T00:21:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/docs/method/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/phssimulation/</loc>
-  <lastmod>2017-03-08T00:21:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/docs/port-hamiltonian-systems/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/port-hamiltonian-systems/</loc>
-  <lastmod>2017-02-11T17:32:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/docs/pyphs-method/</loc>
+  <lastmod>2017-07-15T00:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/resistor/</loc>
-  <lastmod>2016-11-16T17:36:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/tutos/numericaleval/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/source/</loc>
-  <lastmod>2016-11-16T17:36:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/tutos/pyphs-core/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/storage-components/</loc>
-  <lastmod>2017-02-12T11:52:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/tutos/pyphs-evaluation/</loc>
+  <lastmod>2017-07-15T00:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/posts/tuto1/</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/tutos/pyphs-graph/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/tutos/pyphs-simulation/</loc>
+  <lastmod>2017-07-15T00:51:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/modules.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/tutos/pyphs.simulation/</loc>
+  <lastmod>2017-07-15T00:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.data.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.dictionary.classes.connectors.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.dictionary.classes.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.dictionary.classes.linears.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.dictionary.classes.nonlinears.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.dictionary.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.generation.codecpp.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.generation.codelatex.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.generation.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.graphs.analysis.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.graphs.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.misc.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.misc.signals.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.numerics.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.plots.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.simulations.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.symbolics.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/pyphs.symbolics.structures.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
- </url>
- <url>
-  <loc>https://afalaize.github.io/pyphs/sphinx/search.html</loc>
-  <lastmod>2016-11-16T15:46:00Z</lastmod>
+  <loc>https://afalaize.github.io/pyphs/posts/tutos/simulation/</loc>
+  <lastmod>2017-07-15T00:43:00Z</lastmod>
  </url>
 </urlset>

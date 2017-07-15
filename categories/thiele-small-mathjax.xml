@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>PyPHS (Posts about thiele-small mathjax)</title><link>https://afalaize.github.io/pyphs/</link><description></description><atom:link href="https://afalaize.github.io/pyphs/categories/thiele-small-mathjax.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sat, 15 Jul 2017 00:43:54 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>The class PyPHS.Core</title><link>https://afalaize.github.io/pyphs/posts/tutos/pyphs-core/</link><dc:creator>tlebrun</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
+    &lt;div class="container" id="notebook-container"&gt;
+
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;In this tutorial, we firstly recall the &lt;em&gt;port-Hamiltonian systems (PHS)&lt;/em&gt; formalism in parallel with a description of the &lt;code&gt;pyphs.Core&lt;/code&gt; object. Secondly, we build the &lt;code&gt;pyphs.Core&lt;/code&gt; object associated with a two-ports serial RL circuit. Finally the Thiele-Small model of the loudspeaker is derived by connecting the RL circuit with a mass-spring-damper system. 
+&lt;/p&gt;&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/tutos/pyphs-core/"&gt;Read more…&lt;/a&gt; (10 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>thiele-small mathjax</category><guid>https://afalaize.github.io/pyphs/posts/tutos/pyphs-core/</guid><pubDate>Fri, 14 Jul 2017 20:49:41 GMT</pubDate></item></channel></rss>

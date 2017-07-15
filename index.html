@@ -2,33 +2,26 @@
 <html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
 <head>
 <meta charset="utf-8">
-<base href="https://afalaize.github.io/pyphs/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PyPHS: Passive modeling and simulation in python | PyPHS</title>
-<link href="assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="assets/css/html4css1.css" rel="stylesheet" type="text/css">
+<link href="assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
+<link href="assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="assets/css/theme.css" rel="stylesheet" type="text/css">
 <link href="assets/css/ipython.min.css" rel="stylesheet" type="text/css">
 <link href="assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
-<meta content="#618AC8" name="theme-color">
+<meta name="theme-color" content="#618AC8">
+<meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="https://afalaize.github.io/pyphs/">
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-        processEscapes: true
-    },
-    displayAlign: 'left', // Change this to 'center' to center equations.
-    "HTML-CSS": {
-        styles: {'.MathJax_Display': {"margin": 0}}
-    }
-});
-</script><!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
 <meta property="og:site_name" content="PyPHS">
 <meta property="og:title" content="PyPHS: Passive modeling and simulation in python">
 <meta property="og:url" content="https://afalaize.github.io/pyphs/">
 <meta property="og:description" content="Welcome to PyPHS!
-PyPHS is a Python (2.7-3.5) package that implements a set of numerical methods for the simulation of multi-physical systems with the Port-Hamiltonian Systems approach.
+PyPHS is a Python (2.7-3.6) package that implements a set of numerical methods for the simulation of multi-physical systems with the Port-Hamiltonian Systems approach.
 
 It provides:
 ">
@@ -58,16 +51,30 @@ It provides:
         <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Documentation <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="posts/docs/port-hamiltonian-systems/">Port-Hamiltonian Systems</a>
+                    </li>
+<li>
+<a href="posts/docs/pyphs-method/">PyPHS.Method</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tutorials <b class="caret"></b></a>
             <ul class="dropdown-menu">
 <li>
-<a href="posts/phscore/">PHSCore</a>
+<a href="posts/tutos/pyphs-core/">PyPHS.Core</a>
                     </li>
 <li>
-<a href="posts/phsnumericaleval/">PHSNumericalEval</a>
+<a href="posts/tutos/pyphs-evaluation/">PyPHS.Evaluation</a>
                     </li>
 <li>
-<a href="posts/phssimulation/">PHSSimulation</a>
+<a href="posts/tutos/pyphs-graph/">PyPHS.Graph</a>
+                    </li>
+<li>
+<a href="posts/tutos/pyphs-simulation/">PyPHS.Simulation</a>
             </li>
 </ul>
 </li>
@@ -75,13 +82,16 @@ It provides:
 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dictionary <b class="caret"></b></a>
             <ul class="dropdown-menu">
 <li>
-<a href="posts/electronics/">Electronic</a>
+<a href="posts/dicos/electronics/electronics/">Electronic</a>
                     </li>
 <li>
 <a href="building/">Mechanic</a>
                     </li>
 <li>
 <a href="building/">Magnetic</a>
+                    </li>
+<li>
+<a href="building/">Thermic</a>
             </li>
 </ul>
 </li>
@@ -103,7 +113,7 @@ It provides:
         <div class="row">
             
             
-<article class="storypage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">PyPHS: Passive modeling and simulation in python</a></h1>
+<article class="post-text storypage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">PyPHS: Passive modeling and simulation in python</a></h1>
 
         
 
@@ -111,7 +121,7 @@ It provides:
     <div>
 <div class="section" id="welcome-to-pyphs">
 <h2>Welcome to PyPHS!</h2>
-<p>PyPHS is a Python (2.7-3.5) package that implements a set of numerical methods for the simulation of multi-physical systems with the <em>Port-Hamiltonian Systems</em> approach.</p>
+<p>PyPHS is a Python (2.7-3.6) package that implements a set of numerical methods for the simulation of multi-physical systems with the <em>Port-Hamiltonian Systems</em> approach.</p>
 <img alt="/figures/home2.png" class="align-center" src="figures/home2.png" style="width: 650px;"><p>It provides:</p>
 <ol class="arabic simple">
 <li>A python class <cite>pyphs.PHSCore</cite> that encodes the core <strong>Port-Hamiltonian structure</strong>.</li>
@@ -125,14 +135,14 @@ It provides:
 <li>A python class <cite>pyphs.PHSSimulation</cite> that runs the simulation of a discrete-time port-Hamiltonian structure, derived from a structure preserving numerical method (see <a class="citation-reference" href="#numericalmethod2015" id="id2">[NumericalMethod2015]</a>).</li>
 <li>An automated C++ and $LaTeX$ code generation.</li>
 </ol>
-<img alt="/figures/home1.png" class="align-center" src="figures/home1.png" style="width: 580px;">
+<img alt="/figures/synopsys.png" class="align-center" src="figures/synopsys.png" style="width: 800px;">
 </div>
 <div class="section" id="installation">
 <h2>Installation</h2>
 <ul class="simple">
 <li>From sources with <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a>:</li>
 </ul>
-<pre class="code text"><a name="rest_code_1e2b2023d18541f9908f8e732aa28d20-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_fd4887b890a34a489ce65fddd5bd3151-1"></a>pip install pyphs
 </pre>
 <ul class="simple">
 <li>From a download of the <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a> package from the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>, execute in the package folder (that contains a <cite>setup.py</cite> file):</li>
@@ -141,13 +151,13 @@ It provides:
 <li>with <a class="reference external" href="https://setuptools.readthedocs.io/en/latest/">setuptools</a>
 </li>
 </ul>
-<pre class="code text"><a name="rest_code_8cb54e0d42c749b2a3d6da1415017335-1"></a>python setup.py install
+<pre class="code text"><a name="rest_code_63aae0656cd049ed9e5f335bdb174287-1"></a>python setup.py install
 </pre>
 <ul class="simple">
 <li>with <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a>
 </li>
 </ul>
-<pre class="code text"><a name="rest_code_5b5e13aba9684517a1bc6d51d192aa9f-1"></a>pip install .
+<pre class="code text"><a name="rest_code_7800f5f630bf4e9984a51920145b2ab6-1"></a>pip install .
 </pre>
 </div>
 <div class="section" id="typical-use">
@@ -211,23 +221,23 @@ It provides:
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-2"></a>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNetlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-5"></a>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSGraph</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-8"></a>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
-<a name="rest_code_f47db2ad06bd4b9ea5b75092424c5e23-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">buildCore</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_ea52a744347640b0a77309d19d38d7c6-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-2"></a>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNetlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-5"></a>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSGraph</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-8"></a>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
+<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">buildCore</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export $\LaTeX$</h3>
-<pre class="code python"><a name="rest_code_f5908b64897d4e72ba59d2836ca53c66-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_f5908b64897d4e72ba59d2836ca53c66-2"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_f5908b64897d4e72ba59d2836ca53c66-3"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">texdocument</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_d46c9a2994fc4986b7b829731282c5b1-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_d46c9a2994fc4986b7b829731282c5b1-2"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+<a name="rest_code_d46c9a2994fc4986b7b829731282c5b1-3"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">texdocument</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
@@ -240,14 +250,14 @@ It provides:
 </div>
 <div class="section" id="export-mathrm-c">
 <h3>4. Export $\mathrm{C_{++}}$</h3>
-<pre class="code python"><a name="rest_code_5441ba413fc44b33af330044eaba342d-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
-<a name="rest_code_5441ba413fc44b33af330044eaba342d-2"></a><span class="n">method</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalMethod</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_5441ba413fc44b33af330044eaba342d-3"></a>
-<a name="rest_code_5441ba413fc44b33af330044eaba342d-4"></a><span class="c1"># Numerical evaluation of 'method'</span>
-<a name="rest_code_5441ba413fc44b33af330044eaba342d-5"></a><span class="n">numcore</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalCore</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-<a name="rest_code_5441ba413fc44b33af330044eaba342d-6"></a>
-<a name="rest_code_5441ba413fc44b33af330044eaba342d-7"></a><span class="c1"># Export the set of C++ file for simulation</span>
-<a name="rest_code_5441ba413fc44b33af330044eaba342d-8"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">numcore2cpp</span><span class="p">(</span><span class="n">numcore</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_3f5cc57f49da4119b62e185150b20614-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
+<a name="rest_code_3f5cc57f49da4119b62e185150b20614-2"></a><span class="n">method</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalMethod</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+<a name="rest_code_3f5cc57f49da4119b62e185150b20614-3"></a>
+<a name="rest_code_3f5cc57f49da4119b62e185150b20614-4"></a><span class="c1"># Numerical evaluation of 'method'</span>
+<a name="rest_code_3f5cc57f49da4119b62e185150b20614-5"></a><span class="n">numcore</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalCore</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+<a name="rest_code_3f5cc57f49da4119b62e185150b20614-6"></a>
+<a name="rest_code_3f5cc57f49da4119b62e185150b20614-7"></a><span class="c1"># Export the set of C++ file for simulation</span>
+<a name="rest_code_3f5cc57f49da4119b62e185150b20614-8"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">numcore2cpp</span><span class="p">(</span><span class="n">numcore</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">
@@ -294,14 +304,15 @@ It provides:
 </div>
     </div>
     
-            <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><script type="text/x-mathjax-config">
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha256-SDRP1VVYu+tgAGKhddBSl5+ezofHKZeI+OzxakbIe/Y=" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
 MathJax.Hub.Config({
     tex2jax: {
         inlineMath: [ ['$','$'], ["\\(","\\)"] ],
         displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
         processEscapes: true
     },
-    displayAlign: 'left', // Change this to 'center' to center equations.
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
     "HTML-CSS": {
         styles: {'.MathJax_Display': {"margin": 0}}
     }
@@ -318,7 +329,7 @@ MathJax.Hub.Config({
 </div>
 
 
-            <script src="assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+            <script src="assets/js/jquery.min.js"></script><script src="assets/js/bootstrap.min.js"></script><script src="assets/js/moment-with-locales.min.js"></script><script src="assets/js/fancydates.js"></script><script src="assets/js/jquery.colorbox-min.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
     moment.locale("en");
     fancydates(0, "YYYY-MM-DD HH:mm");
     </script><!-- end fancy dates -->

@@ -8,14 +8,14 @@ Created on Tue May 16 20:08:06 2017
 
 from pyphs.config import VERBOSE
 from pyphs.misc.tools import geteval, find
-from pyphs.core.tools import free_symbols, types
+from pyphs.core.tools import free_symbols
 from ._lambdify import lambdify
+import numpy
 
-
-class PHSNumericalEval(object):
+class Evaluation(object):
     """
     Class that serves as a container for numerical evaluation of all
-    functions from a given PHSCore.
+    functions from a given Core.
     """
     def __init__(self, core, vectorize=True):
         if VERBOSE >= 1:
@@ -50,7 +50,7 @@ class PHSNumericalEval(object):
                 self.core.p + self.core.o())
 
     @staticmethod
-    def expr_to_numeric(core, name, allargs, theano=False):
+    def expr_to_numeric(core, name, allargs, theano=False, vectorize=True):
         """
         Return an evaluator of the function :code:`getarg(nums.method, names + '_expr')`,
         with a mapping to some of the arguments in :code:`nums.args`, using
@@ -59,11 +59,13 @@ class PHSNumericalEval(object):
         Parameters
         ----------
 
-        core : PHSCore
+        core : Core
 
         name : str
 
         theano : bool
+        
+        vectorize : bool
 
         Return
         ------
@@ -77,6 +79,7 @@ class PHSNumericalEval(object):
             args, inds = find(symbs, allargs)  # args are symbs reorganized
             func = lambdify(args, expr, subs=core.subs,
                             theano=theano)
+            func = numpy.vectorize(func)
             func.func_doc = """
     Evaluate `{0}`.
 

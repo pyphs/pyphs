@@ -5,10 +5,10 @@ Created on Sat May 21 16:29:43 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import PHSPort
+from ..edges import Port
 
 
-class Source(PHSPort):
+class Source(Port):
     """
     Voltage or current source
 
@@ -36,7 +36,7 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         elif type_ == 'velocity':
             ctrl = 'f'
         kwargs.update({'ctrl': ctrl})
-        PHSPort.__init__(self, label, nodes, **kwargs)
+        Port.__init__(self, label, nodes, **kwargs)
 
     @staticmethod
     def metadata():

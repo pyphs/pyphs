@@ -16,11 +16,11 @@ from __future__ import division, print_function, absolute_import
 import numpy  # numerical tools
 import matplotlib.pyplot as plt  # plot tools
 
-# load the pyphs.PHSNumericalEval class in the current namespace
-from pyphs import PHSCore, PHSCoreMethod, PHSNumericalCore
+# load the pyphs.Evaluation class in the current namespace
+from pyphs import Core, Method, Numeric
 
-# instantiate a pyphs.PHSCore object
-core = PHSCore()
+# instantiate a pyphs.Core object
+core = Core()
 
 xL, L = core.symbols(['xL', 'L'])   # define sympy symbols
 HL = xL**2/(2*L)                    # define sympy expression
@@ -47,8 +47,8 @@ subs = {L: L_value,
 core.subs.update(subs)
 
 core.linear_nonlinear()
-# instantiate a pyphs.PHSNumericalEval object associated with a pyphs.PHSCore
-method = PHSCoreMethod(core)
+# instantiate a pyphs.Evaluation object associated with a pyphs.Core
+method = Method(core)
 
 # Explicit Euler update:
 # dx = Mxx*dxH(x) + Mxy*u
@@ -84,7 +84,7 @@ method.set_execaction([('x', 'ud_x'),       # x = x + dx
 
 #%%
 method.build_struc()
-nums = PHSNumericalCore(method, build=False)
+nums = Numeric(method, build=False)
 nums.build()
 
 

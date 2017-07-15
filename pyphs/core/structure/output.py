@@ -21,7 +21,7 @@ Returns the expression of the continuous output vector function y.
 Input
 ------
 
-core: pyphs.PHSCore
+core: pyphs.Core
 
 Output
 ------

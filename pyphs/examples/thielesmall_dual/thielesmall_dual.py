@@ -9,7 +9,7 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
+from pyphs import Netlist, Graph
 
 label = 'thielesmall_dual'
 
@@ -17,13 +17,15 @@ path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = path + os.sep + label + '.net'
 
-netlist = PHSNetlist(netlist_filename)
+netlist = Netlist(netlist_filename)
 
-graph = PHSGraph(netlist=netlist)
+graph = Graph(netlist=netlist)
 
 core = graph.buildCore()
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
+#
+#    from pyphs import Simulation, signalgenerator
 #    config = {'fs': 48e3,
 #              'split': True,
 #              'pbar': True,
@@ -31,7 +33,7 @@ if __name__ == '__main__':
 #              'path': path
 #              }
 #
-#    simu = PHSSimulation(core, config=config)
+#    simu = Simulation(core, config=config)
 #
 #    dur = 0.01
 #    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)
@@ -52,4 +54,3 @@ if __name__ == '__main__':
 #                    ('dtx', 0),
 #                    ('dxH', 2),
 #                    ('y', 0)])
-    pass

@@ -23,13 +23,13 @@ except ImportError:
     pass
 
 
-class PHSData:
+class Data:
     """
 =======
-PHSData
+Data
 =======
 
-Interface for pyphs.PHSSimulation data files.
+Interface for pyphs.Simulation data files.
 
 Generators
 -----------
@@ -519,7 +519,7 @@ b_generator: generator
             else:
                 yield [list(dtx) + list(w) + list(y)][ind]
 
-    def init_data(self, sequ=None, seqp=None, x0=None, nt=None):
+    def init_data(self, sequ=None, seqp=None, nt=None):
         """
 Initialize the object and save the sequences for input u, parameters p and
 state initialisation x0 to files in the folder specified by the simulation
@@ -541,18 +541,9 @@ seqp: iterable or None, optional
     nt=len(seqp). If None, a sequence with length nt of zeros with appropriate
     shape is used (default).
 
-x0: array of float or None, optional
-    State vector initialisation value. If None, an array of zeros with
-    appropriate shape is used (default).
-
 nt: int or None:
     Number of time steps. If None, the lenght of either sequ or seqp must be
     known (default).
-
-Returns
--------
-
-No output
 
         """
         # get number of time-steps
@@ -586,20 +577,10 @@ No output
                         yield ""
             seqp = generator_p()
 
-        if x0 is None:
-            x0 = [0, ]*self.core.dims.x()
-        else:
-            assert isinstance(x0, (list, tuple, numpy.ndarray)), \
-                'x0 not a list, tuple or numpy.array: got {}'.format(x0)
-            assert len(x0) == self.core.dims.x(), 'len(x0) is len(x)'
-            assert isinstance(x0[0], (float, int)), \
-                'x0[0] not a number, got {0!s}'.format(type(x0[0]))
         # write input sequence
         write_data(self.config['path']+os.sep+'data', sequ, 'u')
         # write parameters sequence
         write_data(self.config['path']+os.sep+'data', seqp, 'p')
-        # write initial state
-        write_data(self.config['path']+os.sep+'data', [x0, ], 'x0')
 
         self.config['nt'] = nt
 

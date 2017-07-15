@@ -150,7 +150,7 @@ CLOCKS_PER_SEC;
 
 def _str_initvecs(simu):
     string = "\nconst unsigned int nt = {0};\n".format(simu.data.config['nt'])
-    names = ('x0', 'u', 'p')
+    names = ('u', 'p')
     for name in names:
         dim = getattr(simu.nums, name[0])().shape[0]
         string += "\nvector<double> {0}Vector({1});".format(name, dim)
@@ -169,10 +169,10 @@ def _str_initvecs(simu):
 def _str_open_files(simu):
     """
     return piece of cpp code.
-    open files 'x0.txt', 'u.txt' and 'p.txt'
+    open files 'u.txt' and 'p.txt'
     """
     string = "\n"
-    names = ('x0', 'u', 'p')
+    names = ('u', 'p')
     for name in names:
         string += r"""
     ifstream {0}File;
@@ -184,13 +184,6 @@ def _str_open_files(simu):
         exit(1);""".format(name) + "}"
     return string
 
-
-def _str_readx0():
-    string = """\n
-    for (unsigned int i=0; i<nx; i++) {
-        x0File >> x0Vector[i];
-    }"""
-    return string
 
 
 def _str_readdata(simu):
@@ -244,17 +237,9 @@ def _init_files(phs):
 
 def _str_instanciate(simu, objlabel):
     string = ""
-    dimx = simu.nums.x().shape[0]
-    if dimx > 0:
-        string += """\n
-    // Get state initialization data
-    for (unsigned int i=0; i<{0}; i++) """.format(dimx)
-        string += """{
-        x0File >> x0Vector[i];
-    }"""
     string += """\n
-    // Instance of PyPHS numerical core
-    {0} {1}(x0Vector);""".format(objlabel.upper(), objlabel.lower())
+    // Instance of Py numerical core
+    {0} {1};""".format(objlabel.upper(), objlabel.lower())
     return string
 
 
@@ -285,12 +270,14 @@ def _str_process(simu, objlabel):
             std::cout.flush();
         }"""
     string += """\n
+        // Update Input
+        """ + objlabel.lower() + """.set_u(uVector);
+
+        // Update Parameters
+        """ + objlabel.lower() + """.set_p(pVector);
+
         // Process update
-        """ + objlabel.lower() + """.update("""
-    string += "uVector"
-    string += ', '
-    string += "pVector"
-    string += ");\n\n        // Get quantities"
+        """ + objlabel.lower() + """.update();\n\n        // Get quantities"""
     string += indent(indent(_gets(simu, objlabel)))
     string += "\n    }"
     string += '\n    uFile.close();'

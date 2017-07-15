@@ -9,23 +9,23 @@ from __future__ import absolute_import, division, print_function
 
 from unittest import TestCase
 from .signalsTest import signal_synthesis, signal_waves
-from .PHSNetlistTests import test_netslist
-from .PHSGraphTests import (graph, target_edges, target_M, split_sp,
+from .NetlistTests import test_netslist
+from .GraphTests import (graph, target_edges, target_M, split_sp,
                             plot_Graph, plot_GraphAnalysis)
-from .PHSLatexTest import TestCore2Tex
-from .PHSSimulationTest import (simulation_rlc_with_split,
+from .LatexTest import TestCore2Tex
+from .SimulationTest import (simulation_rlc_with_split,
                                 simulation_rlc_without_split,
                                 simulation_rlc_without_split_theta,
                                 simulation_rlc_without_split_trapez,
                                 simulation_nlcore_full,
                                 simulation_rlc_cpp)
-from .PHSSimulationPlotsTest import (plot_rlc_with_split,
+from .SimulationPlotsTest import (plot_rlc_with_split,
                                      plot_power_balance_nlcore_with_split,
                                      plot_power_balance_rlc_with_split,
                                      TranferFunction)
 
 
-from .PHSCoreTests import (test_allsymbs, test_build_eval, test_freesymbols,
+from .CoreTests import (test_allsymbs, test_build_eval, test_freesymbols,
                            test_init_M, test_labels, test_pprint,
                            test_simplify, test_subsinverse)
 
@@ -34,12 +34,12 @@ from .cppTest import cpp_nlcore_full
 import numpy as np
 
 
-class TestPHSNetlistInit(TestCase):
+class TestNetlistInit(TestCase):
     def test_netlist_init_and_add_components(self):
         self.assertTrue(test_netslist())
 
 
-class TestPHSGraph(TestCase):
+class TestGraph(TestCase):
     def test_graph_build_from_netlist(self):
         edges = graph.edges(data=True)
         edges.sort()
@@ -60,7 +60,7 @@ class TestPHSGraph(TestCase):
 
     def test_graph_build_core(self):
         graph.buildCore()
-        graph.core.apply_connectors()
+        graph.core.connect()
         if not graph.core.x[:2] == graph.core.symbols(['xM', 'xL']):
             i = graph.core.x.index(graph.core.symbols('xM'))
             graph.core.move_storage(0, i)

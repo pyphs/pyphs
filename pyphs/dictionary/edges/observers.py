@@ -7,13 +7,13 @@ Created on Wed May 24 19:21:54 2017
 """
 
 
-from ..edges import PHSStorageLinear
+from ..edges import StorageLinear
 from pyphs.config import FS_SYMBS, EPS
 from pyphs.core.tools import sympify
-from pyphs.dictionary.tools import PHSArgument
+from pyphs.dictionary.tools import Argument
 
 
-class PHSObserverec(PHSStorageLinear):
+class Observerec(StorageLinear):
     """
     Obsevers for an effort and its time integration in one component to plug on
     two nodes (e.g. reference node and mass node to recover the position and
@@ -29,7 +29,7 @@ class PHSObserverec(PHSStorageLinear):
         ----------
 
         label : str
-            Observer's label. Used to defined the symbols in PHSCore.observers.
+            Observer's label. Used to defined the symbols in Core.observers.
 
         nodes : tuple
             Edge is "nodes[0] -> nodes[1]". This means e.g. in mechanics that
@@ -40,8 +40,8 @@ class PHSObserverec(PHSStorageLinear):
         Return
         ------
 
-        obs : PHSGraph
-            PHS graph component with one storage edge and two observers:
+        obs : Graph
+             graph component with one storage edge and two observers:
                 * q_label = the storage state x,
                 * dtq_label = dx*fs with fs the sample rate.
         """
@@ -52,10 +52,10 @@ class PHSObserverec(PHSStorageLinear):
         # correponding zero in Q from H(x)=x^T.Q.x, the inverse of which is
         # never computed.
         kwargs = {'name': label,
-                  'value': PHSArgument(label + 'coeff', sympify(EPS)),
+                  'value': Argument(label + 'coeff', sympify(EPS)),
                   'inv_coeff': False,
                   'ctrl': 'e'}
-        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
+        StorageLinear.__init__(self, label, nodes, **kwargs)
 
         # Observer for position q is the state value, which may be initialized.
         q = self.core.symbols('q_'+label)

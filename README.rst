@@ -24,9 +24,6 @@ A python software dedicated to the simulation of multiphysical systems in the Po
 .. image:: https://codecov.io/gh/afalaize/pyphs/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/afalaize/pyphs
 
-.. image:: https://www.quantifiedcode.com/api/v1/project/0c1fbf5b44e94b4085a24c18a1895947/badge.svg?branch=master
-  :target: https://www.quantifiedcode.com/app/project/0c1fbf5b44e94b4085a24c18a1895947
-  :alt: issues   
 
 .. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
    :target: https://landscape.io/github/afalaize/pyphs/master
@@ -170,14 +167,14 @@ The package is divided into the following folders:
     `PHSNumericalEval` class :
         Numerical evaluation of a given `PHSCore`.
 
-    `PHSCoreMethod` object :
+    `PHSMethod` object :
         Construction of the *symbolic* expressions associated with several numerical methods (theta-schemes, trapezoidal rule, discret gradient, etc.).
 
-    `PHSNumericalCore` object :
-        Numerical evaluation of a given `PHSCore` associated with a given `PHSCoreMethod`.
+    `PHSNumeric` object :
+        Numerical evaluation of a given `PHSCore` associated with a given `PHSMethod`.
 
     `PHSSimulation` object :
-        Perform the simulation of a given `PHSCore` associated with a given `PHSCoreMethod` through the execution of the resulting `PHSNumericalCore`.
+        Perform the simulation of a given `PHSCore` associated with a given `PHSMethod` through the execution of the resulting `PHSNumeric`.
 
     `PHSData` object :
         Methods for writing, reading and rendering `PHSSimulation` file results.

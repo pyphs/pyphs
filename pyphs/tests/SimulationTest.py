@@ -11,13 +11,14 @@ from __future__ import division
 
 # import of external packages
 import numpy                     # numerical tools
+import sympy
 
-# retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
-from pyphs.tutorials.phscore import core as nlcore
+# retrieve the pyphs.Core of a nonlinear RLC from the tutorial on Core
+from pyphs.tutorials.core import core as nlcore
 
 from pyphs.examples.rlc.rlc import core
 
-from pyphs import PHSSimulation, signalgenerator
+from pyphs import Simulation, signalgenerator
 
 from pyphs.numerics.cpp.simu2cpp import simu2cpp
 import os
@@ -29,7 +30,7 @@ path = os.path.join(here, 'simu')
 
 
 def simulation_rlc_with_split():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     config = {'fs': 48e3,           # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
               'theta': 0.5,         # theta-scheme for the structure
@@ -42,7 +43,7 @@ def simulation_rlc_with_split():
               'lang': 'python',     # in {'python', 'c++'}
               'eigen': None,}       # path to Eigen library
 
-    simu = PHSSimulation(rlc, config=config)
+    simu = Simulation(rlc, config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800.,
@@ -64,7 +65,7 @@ def simulation_rlc_with_split():
 
 
 def simulation_rlc_cpp():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -78,7 +79,7 @@ def simulation_rlc_cpp():
               'lang': 'c++',     # in {'python', 'c++'}
               }
 
-    simu = PHSSimulation(rlc, config=config)
+    simu = Simulation(rlc, config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -97,7 +98,7 @@ def simulation_rlc_cpp():
 
 
 def simulation_rlc_without_split():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -112,7 +113,7 @@ def simulation_rlc_without_split():
               'eigen': None,       # path to Eigen library
               }
 
-    simu = PHSSimulation(rlc, config=config)
+    simu = Simulation(rlc, config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -131,7 +132,7 @@ def simulation_rlc_without_split():
 
 
 def simulation_rlc_without_split_trapez():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'trapez',    # in {'discret', 'theta', 'trapez'}
@@ -146,7 +147,7 @@ def simulation_rlc_without_split_trapez():
               'eigen': None,       # path to Eigen library
               }
 
-    simu = PHSSimulation(rlc, config=config)
+    simu = Simulation(rlc, config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -165,7 +166,7 @@ def simulation_rlc_without_split_trapez():
 
 
 def simulation_rlc_without_split_theta():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'theta',    # in {'discret', 'theta', 'trapez'}
@@ -180,7 +181,7 @@ def simulation_rlc_without_split_theta():
               'eigen': None,       # path to Eigen library
               }
 
-    simu = PHSSimulation(rlc, config=config)
+    simu = Simulation(rlc, config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -199,7 +200,7 @@ def simulation_rlc_without_split_theta():
 
 
 def simulation_rlc_plot():
-    rlc = core.__deepcopy__()
+    rlc = core.__copy__()
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -214,7 +215,7 @@ def simulation_rlc_plot():
               'eigen': None,       # path to Eigen library
               }
 
-    simu = PHSSimulation(rlc, config=config)
+    simu = Simulation(rlc, config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -250,8 +251,12 @@ def simulation_nlcore_full():
               }
 
 
-    # Instantiate a pyphs.PHSSimulation object associated with a given core PHS
-    simu = PHSSimulation(nlcore, config=config)
+    # state initialization
+    # !!! must be array with shape (core.dims.x(), )
+    x0 = list(map(sympy.sympify, (0., 0., 0.)))
+    
+    # Instantiate a pyphs.Simulation object associated with a given core 
+    simu = Simulation(nlcore, config=config, inits={'x': x0})
 
     # def simulation time
     tmax = 0.02
@@ -275,10 +280,10 @@ def simulation_nlcore_full():
             out = 1.
         return out
 
-    # def generator for sequence of inputs to feed in the PHSSimulation object
+    # def generator for sequence of inputs to feed in the Simulation object
     def sequ():
         """
-        generator of input sequence for PHSSimulation
+        generator of input sequence for Simulation
         """
         for tn in t:
             u1 = sig(tn)
@@ -286,12 +291,8 @@ def simulation_nlcore_full():
             # !!! must be array with shape (core.dims.u(), )
             yield numpy.array([u1, ])  # numpy.array([u1, u2, ...])
 
-    # state initialization
-    # !!! must be array with shape (core.dims.x(), )
-    x0 = (0., 0.)
-
     # Initialize the simulation
-    simu.init(u=sequ(), x0=x0, nt=nt)
+    simu.init(u=sequ(), nt=nt)
 
     # Proceed
     simu.process()

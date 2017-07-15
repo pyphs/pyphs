@@ -5,10 +5,10 @@ Created on Sun May 14 16:12:19 2017
 
 @author: Falaize
 """
-from pyphs import PHSGraph
+from pyphs import Graph
 from ..connectors import Gyrator
 from ..magnetics import Source, Capacitor
-from ..edges import PHSObserverec
+from ..edges import Observerec
 from ..tools import mappars
 __all__ = ['Pickup']
 
@@ -34,7 +34,7 @@ def parameters_JSV2016():
     return pars
 
 
-class Pickup(PHSGraph):
+class Pickup(Graph):
     """
 ======
 Pickup
@@ -63,7 +63,7 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
     """
     def __init__(self, label, nodes, **kwargs):
 
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
 
         pars = parameters_JSV2016()
         pars.update(kwargs)
@@ -89,7 +89,7 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
 #                          'const': H0,
                           })
 
-        MASS_obs = PHSObserverec(label+'OBS', (self.datum, MASS))
+        MASS_obs = Observerec(label+'OBS', (self.datum, MASS))
         self += MASS_obs
         q, dtq = MASS_obs.core.o()
 

@@ -7,10 +7,10 @@ Created on Sun Jun 18 23:48:29 2017
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import PHSStorageLinear
+from ..edges import StorageLinear
 
 
-class Stiffness(PHSStorageLinear):
+class Stiffness(StorageLinear):
     """
     Linear stiffness
 
@@ -34,7 +34,7 @@ class Stiffness(PHSStorageLinear):
                   'value': par_val,
                   'inv_coeff': False,
                   'ctrl': 'f'}
-        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
+        StorageLinear.__init__(self, label, nodes, **kwargs)
 
     @staticmethod
     def metadata():

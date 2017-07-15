@@ -13,7 +13,7 @@ import copy
 from ..misc.tools import geteval
 from ..config import VERBOSE
 # Structure methods
-from .structure.R import build_R
+from .structure.R import reduce_z
 from .structure.splits import linear_nonlinear
 from .structure.output import output_function as output
 from .structure.moves import move_stor, move_diss, move_port, move_connector
@@ -29,7 +29,7 @@ from ..misc.latex import texdocument, core2tex
 from collections import OrderedDict
 
 
-class PHSCore:
+class Core:
     """
     This is the base class for the core *Port-Hamiltonian Systems* structure
     in PyPHS.
@@ -38,7 +38,7 @@ class PHSCore:
     # =====================================================================
     # Retrieve structure methods
 
-    build_R = build_R
+    reduce_z = reduce_z
     linear_nonlinear = linear_nonlinear
     output = output
 
@@ -60,7 +60,7 @@ class PHSCore:
         Returns
         -------
 
-        core : PHSCore
+        core : Core
             A Core Port-Hamiltonian structure object.
         """
 
@@ -107,7 +107,7 @@ class PHSCore:
         # ORDERED Dictionary of observers {symbol: expr}
         self.observers = OrderedDict()
 
-        # List of dissipative variable symbols to be ignored in self.build_R
+        # List of dissipative variable symbols to be ignored in self.reduce_z
         self.force_wnl = list()
 
         # =====================================================================
@@ -150,7 +150,7 @@ class PHSCore:
     # =========================================================================
 
     def __copy__(self):
-        core = PHSCore(label=None)
+        core = Core(label=None)
         for name in (list(set().union(
                           self.attrstocopy,
                           self.exprs_names,
@@ -164,29 +164,34 @@ class PHSCore:
                 target = getattr(core, name[0])
                 attr_name = name[1]
             attr = getattr(source, attr_name)
-            setattr(target, attr_name, copy.copy(attr))
+            try: 
+                setattr(target, attr_name, attr.copy())
+            except AttributeError:
+                setattr(target, attr_name, copy.copy(attr))
         core.label = copy.copy(self.label)
         return core
 
-    def __deepcopy__(self, memo=None):
-        core = PHSCore(label=None)
-        for name in (list(set().union(
-                          self.attrstocopy,
-                          self.exprs_names,
-                          self.symbs_names))):
-            if isinstance(name, str):
-                source = self
-                target = core
-                attr_name = name
-            else:
-                source = getattr(self, name[0])
-                target = getattr(core, name[0])
-                attr_name = name[1]
-            attr = getattr(source, attr_name)
-            setattr(target, attr_name, copy.deepcopy(attr, memo))
-        core.label = copy.copy(self.label)
-        return core
-
+# copy.deepcopy should no be used, see sympy issue here:
+# https://github.com/sympy/sympy/pull/7674
+#    def __deepcopy__(self, memo=None):
+#        core = Core(label=None)
+#        for name in (list(set().union(
+#                          self.attrstocopy,
+#                          self.exprs_names,
+#                          self.symbs_names))):
+#            if isinstance(name, str):
+#                source = self
+#                target = core
+#                attr_name = name
+#            else:
+#                source = getattr(self, name[0])
+#                target = getattr(core, name[0])
+#                attr_name = name[1]
+#            attr = getattr(source, attr_name)
+#            setattr(target, attr_name, copy.deepcopy(attr, memo))
+#        core.label = copy.copy(self.label)
+#        return core
+#
     # =========================================================================
 
     def __add__(core1, core2):
@@ -198,7 +203,7 @@ class PHSCore:
         """
         assert set(core1.symbs_names) == set(core2.symbs_names)
 
-        core = PHSCore(label=core1.label)
+        core = Core(label=core1.label)
 
         # Concatenate lists of symbols
         for name in core1.symbs_names:
@@ -257,7 +262,7 @@ class PHSCore:
         **
 
         Returns the symbols "dxi" associated with the differentials of the
-        state with symbol "xi" for each "xi" in state vector 'PHSCore.x'. It
+        state with symbol "xi" for each "xi" in state vector 'Core.x'. It
         is used in the numerical methods as the state increment
         :code:`x[n+1]=x[n]+dx[n]`.
         """
@@ -270,7 +275,7 @@ class PHSCore:
 
         Returns the symbols "gxi" associated with the gradient of the storage
         function w.r.t the state "xi" for each "xi" in state vector
-        'PHSCore.x'. It is used in the numerical methods as replacement symbols
+        'Core.x'. It is used in the numerical methods as replacement symbols
         for the discrete evaluation of Hamiltonian's gradient in the structure
         matrix and dissipation function z.
         """
@@ -282,7 +287,7 @@ class PHSCore:
         *
 
         Returns the symbols "oi" associated with the i-th keyof dictionary
-        'PHSCore.observers'. It is used in the numerical methods as replacement
+        'Core.observers'. It is used in the numerical methods as replacement
         symbols for the discrete evaluation of observers in the structure
         matrix and dissipation function z.
         """
@@ -301,7 +306,7 @@ class PHSCore:
     def allsymbs(self):
         """
         Returns all the symbols in the lists with names from
-        'CorePHS.symbs_names'.
+        'Core.symbs_names'.
         """
         symbs = set()
         for name in self.symbs_names:
@@ -309,11 +314,10 @@ class PHSCore:
             for symb in this_name_symbs:
                 symbs.add(symb)
         for k in self.subs:
-            try:
-                symbs.add(free_symbols(self.subs[k]))
-                symbs.add(free_symbols(k))
-            except:
-                pass
+            for s in free_symbols(k):
+                symbs.add(s)
+            for s in free_symbols(self.subs[k]):
+                symbs.add(s)
         return symbs
 
     # =========================================================================
@@ -338,7 +342,7 @@ class PHSCore:
         ***********
 
         Retrun a set of freesymbols in all exprs referenced in
-        'PHSCore.exprs_names'.
+        'Core.exprs_names'.
         """
         symbs = set()
         for name in self.exprs_names:
@@ -360,7 +364,7 @@ class PHSCore:
         dxH: list of sympy expressions
             If core._dxH is None, this is a shortcut for
             :code:`[core.H.diff(xi) for xi in core.x]`. Else, returns
-            :code:`core._dxH` (as an example, :code:`PHSCoreMethod.dxH()`
+            :code:`core._dxH` (as an example, :code:`Method.dxH()`
             returns the discrete gradient expression).
 
         See also
@@ -455,9 +459,9 @@ class PHSCore:
 
     # =========================================================================
 
-    def simplify(self, **kwargs):
+    def simplify(self):
         """
-        substitute
+        simplify
         **********
 
         Apply simplifications to every expressions.
@@ -484,12 +488,12 @@ class PHSCore:
             symbol or a sympy expression. Default is None.
 
         selfall : bool
-            If True, every substitutions in the dictionary :code:`PHSCore.subs`
+            If True, every substitutions in the dictionary :code:`Core.subs`
              are applied and the dictionary is reinitialized to :code:`{}`.
              Default is False.
 
         selfexprs : bool
-            If True, only substitutions in the dictionary :code:`PHSCore.subs`
+            If True, only substitutions in the dictionary :code:`Core.subs`
             that are not numerical values are applied.
 
         simplify : bool
@@ -528,7 +532,7 @@ class PHSCore:
         *************
 
         Add a connector which describes the connection of two ports from a \
-        unique PHScore.
+        unique core.
 
         Usage
         ------
@@ -550,7 +554,7 @@ class PHSCore:
 
         Notice this method only stores a description of the connection in the
         :code:`core.connectors` argument. The connection will be effective only
-        after calling the method :code:`core.apply_connectors()`.
+        after calling the method :code:`core.connect()`.
         """
         assert indices[0] != indices[1], 'Can not connect a port to itself: \
 indices={}.'.format(indices)
@@ -568,10 +572,10 @@ add the connector'.format(i)
         sorted_indices = list(copy.deepcopy(indices))
         sorted_indices.sort()
         sorted_indices.reverse()
-        for n, i in enumerate(sorted_indices):
+        for i in sorted_indices:
             port2connector(self, i)
 
-    def apply_connectors(self):
+    def connect(self):
         """
         Effectively connect inputs and outputs defined in core.connectors.
 
@@ -684,7 +688,8 @@ add the connector'.format(i)
         else:
             text = 'Type of w and z should be one of {}'.format(w_types)
             raise TypeError(text)
-        assert len(w) == len(z), 'w and z should have same dimension.'
+        if not len(w) == len(z):
+            raise TypeError('w and z should have same dimension.')
         self.w += w
         self.z += z
 
@@ -707,15 +712,18 @@ add the connector'.format(i)
         y : one or several sympy.Expr
             Outputs symbols. Can be a single symbol or a list of symbols.
         """
-        try:
-            types.vector_test(u)
+        if isinstance(u, types.vector_types):
             types.vector_test(y)
-        except:
-            types.scalar_test(u)
+        elif isinstance(u, types.scalar_types):
             types.scalar_test(y)
             u = [u, ]
             y = [y, ]
-        assert len(u) == len(y), 'u and y should have same dimension.'
+            y_types = types.scalar_types+types.vector_types
+        else:
+            text = 'Type of u and y should be one of {}'.format(y_types)
+            raise TypeError(text)
+        if not len(u) == len(y):
+            raise TypeError('u and y should have same dimension.')
         self.u += u
         self.y += y
 
@@ -730,10 +738,9 @@ add the connector'.format(i)
         p : one or several pyphs.symbols
             Parameters symbols. Can be a single symbol or a list of symbols.
         """
-        try:
-            types.vector_test(p)
-        except:
-            types.scalar_test(p)
+        if isinstance(p, types.vector_types):
+            pass
+        elif isinstance(p, types.scalar_types):
             p = [p, ]
         self.p += p
 
@@ -742,14 +749,14 @@ add the connector'.format(i)
         add_observer
         *************
 
-        Add a dictionary of oservers
+        Add a dictionary of observers
         Parameter
         ---------
         obs: dict
             Observers are couple {symb: expr}. They are evaluated during
             simulation at the begining of each time step.
         """
-        self.observers.append(obs)
+        self.observers.update(obs)
 
     # =========================================================================
 
@@ -836,8 +843,8 @@ add the connector'.format(i)
             If True, every function are vectorized with numpy.vectorize.
             The default is True.
         """
-        from pyphs.numerics.tools._evaluation import PHSNumericalEval
-        setattr(self, 'eval', PHSNumericalEval(self, vectorize=vectorize))
+        from pyphs.numerics.tools._evaluation import Evaluation
+        setattr(self, 'eval', Evaluation(self, vectorize=vectorize))
 
     # =========================================================================
 
@@ -982,7 +989,7 @@ add the connector'.format(i)
 
     See also
     --------
-    PHSCore.split_linear() to split the system into linear and nonlinear
+    Core.split_linear() to split the system into linear and nonlinear
     storage and dissipative parts.
         """.format(name, dim_label)
 
@@ -1003,7 +1010,7 @@ add the connector'.format(i)
 
     See also
     --------
-    PHSCore.split_linear() to split the system into linear and nonlinear
+    Core.split_linear() to split the system into linear and nonlinear
     storage and dissipative parts.
         """.format(name, dim_label)
         return (l_accessor, nl_accessor)
@@ -1013,7 +1020,7 @@ add the connector'.format(i)
     @staticmethod
     def symbols(obj, *args, **kwargs):
         """
-        sympy.symbols function with PHSCore.assertions.
+        sympy.symbols function with Core.assertions.
         """
-        kwargs.update(PHSCore().assertions)
+        kwargs.update(Core().assertions)
         return sympy.symbols(obj, *args, **kwargs)

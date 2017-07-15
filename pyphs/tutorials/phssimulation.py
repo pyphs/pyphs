@@ -10,16 +10,17 @@ Created on Fri Feb 10 21:13:41 2017
 from __future__ import division
 
 # import of external packages
+import sympy                     # CAS tools
 import numpy                     # numerical tools
 import matplotlib.pyplot as plt  # plot tools
 
-# load the pyphs.PHSNumericalEval class in the current namespace
-from pyphs import PHSSimulation
+# load the pyphs.Evaluation class in the current namespace
+from pyphs import Simulation
 
-# retrieve the pyphs.PHSCore of a nonlinear RLC from the tutorial on PHSCore
+# retrieve the pyphs.Core of a nonlinear RLC from the tutorial on Core
 from pyphs.tutorials.phscore import core
 
-core.build_R()
+core.reduce_z()
 
 # Define the simulation parameters
 config = {'fs': 48e3,           # Sample rate (Hz)
@@ -37,8 +38,12 @@ config = {'fs': 48e3,           # Sample rate (Hz)
           'load': {'imin': 0, 'imax': None, 'decim': 1}
           }
 
-# Instantiate a pyphs.PHSSimulation object associated with a given core PHS
-simu = PHSSimulation(core, config=config)
+# state initialization
+# !!! must be numpy array with shape (core.dims.x(), )
+x0 = list(map(sympy.sympify, [0., ]*core.dims.x()))
+
+# Instantiate a pyphs.Simulation object associated with a given core 
+simu = Simulation(core, config=config, inits={'x': x0})
 
 # def simulation time
 tmax = 1e-2
@@ -64,10 +69,10 @@ def sig(tn, mode='sin'):
     return out
 
 
-# def generator for sequence of inputs to feed in the PHSSimulation object
+# def generator for sequence of inputs to feed in the Simulation object
 def sequ():
     """
-    generator of input sequence for PHSSimulation
+    generator of input sequence for Simulation
     """
     for tn in t:
         u1 = sig(tn)
@@ -75,12 +80,8 @@ def sequ():
         # !!! must be array with shape (core.dims.u(), )
         yield numpy.array([u1, ])  # numpy.array([u1, u2, ...])
 
-# state initialization
-# !!! must be numpy array with shape (core.dims.x(), )
-x0 = numpy.array([0., ]*core.dims.x())
-
 # Initialize the simulation
-simu.init(u=sequ(), x0=x0, nt=nt)
+simu.init(u=sequ(), nt=nt)
 
 # Proceed
 simu.process()

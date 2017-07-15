@@ -6,13 +6,13 @@ Created on Fri Jun 16 12:14:04 2017
 @author: Falaize
 """
 
-from ..edges import PHSStorageNonLinear
+from ..edges import StorageNonLinear
 from ..tools import symbols
 from pyphs.graphs import datum
 import sympy as sp
 
 
-class Capacitor(PHSStorageNonLinear):
+class Capacitor(StorageNonLinear):
     """
     Thermal capacitor (mass) with exponential law
     * The state is the entropy x=s
@@ -66,7 +66,7 @@ class Capacitor(PHSStorageNonLinear):
         edge = (N1, N2, data)
 
         # init component
-        PHSStorageNonLinear.__init__(self, label, [edge],
+        StorageNonLinear.__init__(self, label, [edge],
                                      x, H, **kwargs)
 
     @staticmethod

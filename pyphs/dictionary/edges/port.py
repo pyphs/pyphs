@@ -5,15 +5,15 @@ Created on Tue Jun  7 19:14:24 2016
 @author: Falaize
 """
 
-from pyphs import PHSGraph
+from pyphs import Graph
 from pyphs.config import datum
 from pyphs.dictionary.tools import symbols
 from pyphs.dictionary.tools import nicevarlabel
 
 
-class PHSPort(PHSGraph):
+class Port(Graph):
     """
-    Class of port edges on PHSGraph.
+    Class of port edges on Graph.
 
     Arguments
     ----------
@@ -22,7 +22,7 @@ class PHSPort(PHSGraph):
 
     nodes: tupple,
         The port edge terminals. If a tuple with single element (n1) is
-        provided, the edge is defined as PHSGraph.datum -> n1. Else, the
+        provided, the edge is defined as Graph.datum -> n1. Else, the
         tupple must have two elements (n1, n2) and the edge is n1 -> n2.
 
     **kwargs: dict,
@@ -42,7 +42,7 @@ class PHSPort(PHSGraph):
         parameters = {'ctrl': '?', 'const': None}
         parameters.update(kwargs)
 
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
         # set starting node to datum if not provided
         if nodes.__len__() == 1:
             node1 = datum

@@ -23,11 +23,11 @@ graph = netlist2graph(netlist_filename)
 core = graph.buildCore()
 
 #if __name__ == '__main__':
-#    from pyphs import (PHSSimulation, signalgenerator, PHSGraph)
+#    from pyphs import (Simulation, signalgenerator, Graph)
 #    import shutil
 #
 #    # Include the linear dissipatives in the connexion structure
-#    core.build_R()
+#    core.reduce_z()
 #
 #    # Define the simulation parameters
 #    config = {'fs': 48e3,               # Sample rate
@@ -43,7 +43,7 @@ core = graph.buildCore()
 #              'theano': False
 #              }
 #
-#    simu = PHSSimulation(core, config=config)
+#    simu = Simulation(core, config=config)
 #
 #    dur = 0.01
 #    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])

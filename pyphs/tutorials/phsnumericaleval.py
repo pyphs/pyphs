@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 This is a tutorial for pyphs about the numerical evaluation
-of a given core PHS structure
+of a given core  structure
 Details can be found at: https://afalaize.github.io/pyphs/
 
 author: afalaize
@@ -11,14 +11,14 @@ date: 28 February 2017
 # Support for Python 2.x and Python 3.x
 from __future__ import division, print_function, absolute_import
 
-# retrieve the pyphs.PHSCore of a simple RLC from the previous tutorial
+# retrieve the pyphs.Core of a simple RLC from the previous tutorial
 from pyphs.tutorials.phscore import core
 
-# load the pyphs.PHSNumericalEval class in the current namespace
-from pyphs import PHSNumericalEval
+# load the pyphs.Evaluation class in the current namespace
+from pyphs import Evaluation
 
-# instantiate a pyphs.PHSNumericalEval object associated with a pyphs.PHSCore
-evals = PHSNumericalEval(core)
+# instantiate a pyphs.Evaluation object associated with a pyphs.Core
+evals = Evaluation(core)
 
 # values for arguments
 x = [5e-4, 2e-2]
@@ -39,7 +39,7 @@ H = evals.H(*args_H)
 # print "H(xL, xC) = 3947.84176069"
 print('{}{} = {}'.format('H', evals.H_args, H))
 
-# Same as above for a list of PHScore expressions and matrices
+# Same as above for a list of core expressions and matrices
 for name in ('dxH', 'z', 'Jxx', 'Rxx'):
 
     # retrieve the function to evaluate

@@ -8,10 +8,10 @@ Created on Sun Jun 18 23:04:04 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges.connectors import PHSConnector
+from ..edges.connectors import Connector
 
 
-class Gyrator(PHSConnector):
+class Gyrator(Connector):
     """
     Gyrator
     ========
@@ -30,7 +30,7 @@ class Gyrator(PHSConnector):
     """
     def __init__(self, label, nodes, **kwargs):
         kwargs.update({'connector_type': 'gyrator'})
-        PHSConnector.__init__(self, label, nodes, **kwargs)
+        Connector.__init__(self, label, nodes, **kwargs)
 
     @staticmethod
     def metadata():

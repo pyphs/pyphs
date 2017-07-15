@@ -148,7 +148,7 @@ None).
 
     miny = float('Inf')
     maxy = -float('Inf')
-
+    print_legend = False
     for n in range(nplots):
 
         x = dec(datax[n], opts)
@@ -162,6 +162,7 @@ None).
             l = None
         else:
             l = opts['labels'][n]
+        print_legend = l is not None or print_legend
 
         plotn = whichplot(opts['log'], ax)
         plotn(x, y, opts['linestyles'][n], linewidth=opts['linewidth'],
@@ -171,8 +172,9 @@ None).
     setlims(ax, x, miny, maxy, opts['ylims'])
     setticks(ax, opts)
 
-    from matplotlib.pyplot import legend
-    legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
+    if print_legend:
+        from matplotlib.pyplot import legend
+        legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
 
     if opts['unitx'] is not None:
         from matplotlib.pyplot import xlabel

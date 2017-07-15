@@ -9,29 +9,29 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-import numpy
-from pyphs import PHSNetlist, PHSGraph
+from pyphs import Netlist, Graph
 
 # ---------------------------  NETLIST  ------------------------------------- #
 label = 'beam_cantilever'
 this_script = os.path.realpath(__file__)
 here = this_script[:this_script.rfind(os.sep)]
 netlist_filename = here + os.sep + label + '.net'
-netlist = PHSNetlist(netlist_filename)
+netlist = Netlist(netlist_filename)
 
 # ---------------------------  GRAPH  --------------------------------------- #
-graph = PHSGraph(netlist=netlist)
+graph = Graph(netlist=netlist)
 
 # ---------------------------  CORE  ---------------------------------------- #
 core = graph.buildCore()
-core.build_R()
+core.reduce_z()
 core.substitute(selfall=True)
 
 #if __name__ is "__main__":
 #    # ---------------------------  SIMULATION  ------------------------------#
-#    from pyphs import PHSSimulation, PHSNetlist, PHSGraph
+#    from pyphs import Simulation, Netlist, Graph
 #    from pyphs.misc.signals.waves import wavread
 #    import matplotlib.pyplot as plt
+#    import numpy 
 #    # recover normalized hammer force from wave file
 #    fs, hammer_force = wavread(os.path.join(here, 'hammer_force.wav'))
 #
@@ -53,8 +53,8 @@ core.substitute(selfall=True)
 #                       'decim': None}
 #              }
 #
-#    # Instanciate PHSSimulation class
-#    simu = PHSSimulation(core, config=config)
+#    # Instanciate Simulation class
+#    simu = Simulation(core, config=config)
 #
 #    def ordering(name, *args):
 #        def get_index(e):
@@ -76,10 +76,10 @@ core.substitute(selfall=True)
 #    hammer_force = numpy.array(hammer_force)*AmpForce
 #
 #
-#    # def generator for sequence of inputs to feed in the PHSSimulation object
+#    # def generator for sequence of inputs to feed in the Simulation object
 #    def sequ():
 #        """
-#        generator of input sequence for PHSSimulation
+#        generator of input sequence for Simulation
 #        """
 #        for i, tn in enumerate(t):
 #            # numpy.array([u1, u2, ...])

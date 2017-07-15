@@ -6,11 +6,11 @@ Created on Fri Jun 16 12:14:22 2017
 @author: Falaize
 """
 
-from ..edges import PHSPort
+from ..edges import Port
 from ..tools import symbols
 from pyphs.graphs import datum
 
-class Source(PHSPort):
+class Source(Port):
     """
     Voltage or current source
 
@@ -45,7 +45,7 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
             obs = {symbols('gx'+label): symbols('u'+label)}
 
         kwargs.update({'ctrl': ctrl})
-        PHSPort.__init__(self, label,
+        Port.__init__(self, label,
                          (datum, nodes[0]), **kwargs)
         self.core.observers.update(obs)
 

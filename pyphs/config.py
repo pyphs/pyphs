@@ -39,7 +39,7 @@ EPS = numpy.finfo(float).eps
 # Define the data type (defualt is float 32bi)
 DTYPE = numpy.finfo(float).dtype.type
 
-# Symbol for sample rate in symbolic numerical scheme PHSCoreMethod
+# Symbol for sample rate in symbolic numerical scheme Method
 FS_SYMBS = 'F_S'
 ###############################################################################
 
@@ -150,8 +150,8 @@ LANGUAGE = 'python'
 SPLIT = True
 
 # Names of the files to save in PATH/data.
-# Should be known elements of PHSNumericalCore
-# !!!    For ploting with the PHSData object, FILES must    !!!
+# Should be known elements of Numeric
+# !!!    For ploting with the Data object, FILES must    !!!
 # !!!   contain at least ('x', 'dx', 'dxH', 'w', 'z', 'y')  !!!
 FILES = ('x', 'dx', 'dxH', 'w', 'z', 'y')
 

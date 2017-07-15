@@ -7,11 +7,11 @@ Created on Sat May 21 16:24:12 2016
 from __future__ import absolute_import, division, print_function
 
 import sympy as sp
-from ..edges import PHSStorageNonLinear
+from ..edges import StorageNonLinear
 from pyphs.dictionary.tools import symbols
 
 
-class Capacitorsat(PHSStorageNonLinear):
+class Capacitorsat(StorageNonLinear):
     """
     Magnetic capacitor with saturating nonlinearity
     F(phi)=C0*(phi + Csat*c(phi)) with
@@ -61,7 +61,7 @@ class Capacitorsat(PHSStorageNonLinear):
         edge = (N1, N2, data)
 
         # init component
-        PHSStorageNonLinear.__init__(self, label, [edge],
+        StorageNonLinear.__init__(self, label, [edge],
                                      x, H, **kwargs)
 
     @staticmethod

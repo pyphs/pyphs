@@ -5,7 +5,7 @@ Created on Thu May 18 21:39:29 2017
 
 @author: Falaize
 """
-from ..tools import types, sympify, free_symbols
+from ..tools import types, free_symbols
 from ..tools import simplify as simplify_func
 import sympy
 
@@ -161,7 +161,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
     substitute_core
     ***************
 
-    Apply substitutions to every expressions of a PHSCore.
+    Apply substitutions to every expressions of a Core.
 
     Parameters
     -----------
@@ -172,12 +172,12 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
         or a sympy expression. Default is None.
 
     selfall : bool
-        If True, every substitutions in the dictionary :code:`PHSCore.subs`
+        If True, every substitutions in the dictionary :code:`Core.subs`
          are applied and the dictionary is reinitialized to :code:`{}`. Default
          is False.
 
     selfexprs : bool
-        If True, only substitutions in the dictionary :code:`PHSCore.subs`
+        If True, only substitutions in the dictionary :code:`Core.subs`
         that are not numerical values are applied to the core's expressions.
 
     simplify : bool
@@ -221,4 +221,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
 
     # remove entries in core.subs
     for k in subs.keys():
-        core.subs.pop(k)
+        try:
+            core.subs.pop(k)
+        except KeyError:
+            pass

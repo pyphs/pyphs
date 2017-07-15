@@ -6,10 +6,10 @@ Created on Sat May 21 16:29:43 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import PHSDissipativeLinear
+from ..edges import DissipativeLinear
 
 
-class Damper(PHSDissipativeLinear):
+class Damper(DissipativeLinear):
     """
     Linear damper (unconstrained control)
 
@@ -32,7 +32,7 @@ class Damper(PHSDissipativeLinear):
             coeff = 0.
         else:
             coeff = kwargs['A']
-        PHSDissipativeLinear.__init__(self, label, nodes, coeff=coeff,
+        DissipativeLinear.__init__(self, label, nodes, coeff=coeff,
                                       inv_coeff=True)
 
     @staticmethod

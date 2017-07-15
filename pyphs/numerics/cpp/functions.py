@@ -24,6 +24,9 @@ def append_funcs(nums, files, objlabel):
         print('    Accessors (vector)...')
     _append_funcs_get_vector(nums, files, objlabel)
     if VERBOSE >= 2:
+        print('    Accessors (element)...')
+    _append_funcs_get_element(nums, files, objlabel)
+    if VERBOSE >= 2:
         print('    Update...')
     _append_funcs_updates(nums, files, objlabel)
     if VERBOSE >= 2:
@@ -54,7 +57,7 @@ def _append_funcs_defs(nums, files):
 # GET
 
 def _append_funcs_get(nums, files, objlabel):
-    title = "\n\n// Functions Results Accessors\n"
+    title = "\n\n// Functions Results Accessors (matrix)\n"
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in nums.method.update_actions_deps():
@@ -69,7 +72,7 @@ def _append_funcs_get(nums, files, objlabel):
 
 
 def _append_funcs_get_vector(nums, files, objlabel):
-    title = "\n\n// Functions Results Accessors\n"
+    title = "\n\n// Functions Results Accessors (vector)\n"
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in nums.method.update_actions_deps():
@@ -79,6 +82,24 @@ def _append_funcs_get_vector(nums, files, objlabel):
                 pass
             else:
                 getvec = _str_mat_func_get_vector(nums.method, name, objlabel)
+                h = getvec[0]
+                cpp = getvec[1]
+                files['h']['public'] += h
+                files['cpp']['public'] += cpp
+
+
+def _append_funcs_get_element(nums, files, objlabel):
+    title = "\n\n// Functions Results Accessors (element)\n"
+    files['h']['public'] += title
+    files['cpp']['public'] += title
+    for name in nums.method.update_actions_deps():
+        if name in nums.method.funcs_names:
+            expr = getattr(nums.method, name + '_expr')
+            if isinstance(expr, types.scalar_types):
+                pass
+            else:
+                getvec = _str_mat_func_get_element(nums.method, 
+                                                   name, objlabel)
                 h = getvec[0]
                 cpp = getvec[1]
                 files['h']['public'] += h
@@ -115,6 +136,15 @@ def _str_mat_func_get_vector(method, name, objlabel):
     for i in range(dim):
         get_cpp += indent("\nv[{0}] = _{1}({0}, 0);".format(i, name))
     get_cpp += indent("\nreturn v;")+"\n}"
+    return get_h, get_cpp
+
+
+def _str_mat_func_get_element(method, name, objlabel):
+    mtype = 'double'
+    get_h = '\n{0} {1}(unsigned int &) const;'.format(mtype, name)
+    get_cpp = '\n{0} {1}::{2}(unsigned int & index) const'.format(mtype, objlabel, name) + \
+        ' {'
+    get_cpp += indent("\nreturn _{0}(index, 0);".format(name))+"\n}"
     return get_h, get_cpp
 
 

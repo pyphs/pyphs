@@ -11,7 +11,7 @@ from pyphs.core.tools import types
 from pyphs.core.maths import inverse
 
 
-def build_R(core):
+def reduce_z(core):
     """
 Incorporate the linear dissipative elements in the interconnection by \
 redefining the structure matrix \

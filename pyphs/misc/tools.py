@@ -4,9 +4,7 @@ Created on Sat Mar  5 13:53:43 2016
 
 @author: Falaize
 """
-import numpy
 from datetime import datetime
-from ..core.tools import types
 
 
 # =========================================================================== #

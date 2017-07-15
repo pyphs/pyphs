@@ -16,7 +16,7 @@ def sep():
     return ','
 
 
-class PHSNetlist:
+class Netlist:
     """
     Data structure for netlist elements. Each line of the netlist describes a\
  component, with data structured a follows
@@ -95,7 +95,6 @@ components).
                 if line.startswith('#'):
                     if VERBOSE >= 1:
                         print('pass "{}"'.format(line[:-1]))
-                    pass
                 else:
                     if VERBOSE >= 1:
                         print('read "{}"'.format(line[:-1]))
@@ -120,7 +119,7 @@ components).
                         if value.startswith('('):
                             value = value[1:-1].split(',')
                             value = tuple(map(eval, value))
-                        else:                            
+                        else:
                             try:
                                 value = ast.literal_eval(value)
                             except ValueError:

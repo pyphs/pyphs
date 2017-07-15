@@ -3,7 +3,7 @@
 """
 Created on Sat Jan 14 11:50:23 2017
 
-Here, we build the PHS core asssociated with the
+Here, we build the  core asssociated with the
 
 @author: Falaize
 """
@@ -11,7 +11,7 @@ Here, we build the PHS core asssociated with the
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph, PHSSimulation, signalgenerator
+from pyphs import Netlist, Graph
 
 
 label = 'bjtamp'
@@ -20,22 +20,24 @@ path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = path + os.sep + label + '.net'
 
-netlist = PHSNetlist(netlist_filename)
+netlist = Netlist(netlist_filename)
 
-graph = PHSGraph(netlist=netlist)
+graph = Graph(netlist=netlist)
 
 core = graph.buildCore()
 
-core.build_R()
+core.reduce_z()
 
 #if __name__ == '__main__':
+#
+#    from pyphs import signalgenerator, Simulation
 #    config = {'fs': 48e3,
 #              'split': True,
 #              'progressbar': True,
 #              'timer': True,
 #              }
 #
-#    simu = PHSSimulation(core, config=config)
+#    simu = Simulation(core, config=config)
 #
 #    dur = 0.01
 #

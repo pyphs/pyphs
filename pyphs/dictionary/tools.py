@@ -6,13 +6,13 @@ Created on Tue Jun  7 18:57:18 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from ..core.core import PHSCore
+from ..core.core import Core
 from ..core.tools import types
 
-symbols = PHSCore.symbols
+symbols = Core.symbols
 
 
-class PHSArgument:
+class Argument:
 
     def __init__(self, name, obj):
         self.symb, self.sub, self.par = form(name, obj)
@@ -29,8 +29,8 @@ def form(name, obj):
 
     Outputs
     -------
-    symb : PHSCore.symbol
-    subs : PHSCore.subs
+    symb : Core.symbol
+    subs : Core.subs
     """
     if isinstance(obj, tuple):
         if not isinstance(obj[0], str):
@@ -44,23 +44,23 @@ def form(name, obj):
         except AssertionError:
             types.scalar_test(obj[1])
         string = obj[0]
-        symb = PHSCore.symbols(string)
+        symb = Core.symbols(string)
         sub = {symb: obj[1]}
         par = None
     elif isinstance(obj, (float, int)):
         string = name
-        symb = PHSCore.symbols(string)
+        symb = Core.symbols(string)
         sub = {symb: obj}
         par = None
     elif isinstance(obj, str):
         string = obj
-        symb = PHSCore.symbols(string)
+        symb = Core.symbols(string)
         sub = {}
         par = symb
     else:
         types.scalar_test(obj)
         string = name
-        symb = PHSCore.symbols(string)
+        symb = Core.symbols(string)
         sub = {symb: obj}
         par = None
 
@@ -77,7 +77,7 @@ for parameters in component expression 'dicpars' and for parameters in phs \
     subs = {}
     for key in kwargs.keys():
         symb, sub, par = form(graph.label + '_' + str(key), kwargs[key])
-        dicpars.update({PHSCore.symbols(key): symb})
+        dicpars.update({Core.symbols(key): symb})
         subs.update(sub)
         if par is not None:
             graph.core.add_parameters(par)

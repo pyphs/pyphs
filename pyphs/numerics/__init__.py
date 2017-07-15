@@ -1,9 +1,9 @@
 #
 
-from .numerical_method._method import PHSCoreMethod
-from .tools import PHSNumericalEval, PHSNumericalOperation, lambdify
-from .numerical_core._numerical_core import PHSNumericalCore
+from .numerical_method._method import Method
+from .tools import Evaluation, Operation, lambdify
+from .numerical_core._numerical_core import Numeric
 
-__all__ = ['PHSCoreMethod', 'PHSNumericalCore',
-           'PHSNumericalEval', 'PHSNumericalOperation',
+__all__ = ['Method', 'Numeric',
+           'Evaluation', 'Operation',
            'lambdify']

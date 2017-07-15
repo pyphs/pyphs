@@ -168,7 +168,7 @@ def subsinverse_core(core):
 
     Parameters
     -----------
-    core : PHSCore
+    core : Core
     """
 
     # substitutions in core's list of expressions and symbols

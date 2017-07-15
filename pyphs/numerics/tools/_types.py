@@ -23,16 +23,17 @@ def matrix_test(obj, metadata=(None, None)):
     information display.
     """
     if not isinstance(obj, matrix_types):
-        message = 'In func{}, name {}: \nexpected {}, \
-            \ngot {}'.format(metadata[0], metadata[1], matrix_types, type(obj))
+        message = 'In func{0}, name {1}: \nexpected {2}, \
+            \ngot {3}'.format(metadata[0], metadata[1],
+                              matrix_types, type(obj))
         raise MatrixTypeError(message, obj)
     elif not len(obj.shape) == 2:
-        message = 'In {}, name {}: matrix must be 2D (i, j), \
-            got shape {}.'.format(metadata[0], metadata[1], obj.shape)
+        message = 'In {0}, name {1}: matrix must be 2D (i, j), \
+            got shape {2}.'.format(metadata[0], metadata[1], obj.shape)
         raise MatrixTypeError(message, obj)
     elif not obj.dtype.type == DTYPE:
-        message = 'In {}, name {}: Data type must be {}, \
-            got {}.'.format(metadata[0], metadata[1], DTYPE, obj.dtype)
+        message = 'In {0}, name {1}: Data type must be {2}, \
+            got {3}.'.format(metadata[0], metadata[1], DTYPE, obj.dtype)
         raise MatrixTypeError(message, obj)
 
 

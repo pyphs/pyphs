@@ -9,24 +9,26 @@ Created on Sat May 13 17:00:14 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import (netlist2core, PHSSimulation, signalgenerator,
-                   PHSNetlist, PHSGraph)
-from pyphs.misc.signals.analysis import transferFunction
-import matplotlib.pyplot as plt
-import numpy as np
-
+from pyphs import (netlist2core, Netlist, Graph)
 label = 'fractional_integrator_ec'
 
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = path + os.sep + label + '.net'
-netlist = PHSNetlist(netlist_filename)
-graph = PHSGraph(netlist=netlist)
+netlist = Netlist(netlist_filename)
+graph = Graph(netlist=netlist)
 core = netlist2core(netlist_filename)
 
-if __name__ == '__main__':
-    # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
-    # !!! Very long simulation with numpy
+# UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
+# !!! Very long simulation with numpy
+#
+#if __name__ == '__main__':
+#
+#    from pyphs import  Simulation, signalgenerator
+#    from pyphs.misc.signals.analysis import transferFunction
+#    import matplotlib.pyplot as plt
+#    import numpy as np
+#
 #    config = {'fs': 48e3,
 #              'split': True,
 #              'pbar': True,
@@ -34,7 +36,7 @@ if __name__ == '__main__':
 #              'lang': 'python'
 #              }
 #
-#    simu = PHSSimulation(core, config=config)
+#    simu = Simulation(core, config=config)
 #
 #    dur = 10.
 #    u = signalgenerator(which='noise', tsig=dur, fs=simu.fs)
@@ -60,5 +62,4 @@ if __name__ == '__main__':
 #    plt.xlabel('freq (Hz)')
 #    plt.ylabel(r'$\mathrm{abs}(y(f)/u(f))$ ($\Omega$)')
 #    plt.title('Transfer function')
-#    
-    pass
+#

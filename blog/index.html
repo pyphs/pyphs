@@ -147,7 +147,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This class herits from the PHSCore class. It implements the symbolic expression of several numerical methods for the simulation of PHSCore. Below are the additional class attributes and class methods that differ from the parent PHSCore.</p>
 <h2 id="Recall-of-the-Port-Hamiltonian-structure">Recall of the Port-Hamiltonian structure<a class="anchor-link" href="../posts/docs/pyphs-method/#Recall-of-the-Port-Hamiltonian-structure">¶</a>
-</h2>\begin{equation}
+</h2>$$
 \left( 
 \begin{array}{c}
 \frac{\mathrm{d}\mathbf{x}_{\mathrm{}}}{\mathrm{d} t} \\
@@ -172,7 +172,7 @@
 \end{array}
 \right).
 \qquad (1)
-\end{equation}<p>The quantites considered as arguments are</p>
+$$<p>The quantites considered as arguments are</p>
 <ul>
 <li>the states $\mathbf{x}(t)$,</li>
 <li>the dissipation variables $\mathbf{w}(t)$,</li>
@@ -262,28 +262,27 @@ The significances of the <em>control parameters</em>  and <em>observed quantites
 <li>the structure matrix $\mathbf M \leftarrow \overline{\mathbf M}(\mathbf{args}_{\mathrm{}})$, </li>
 <li>the dissipation function $\mathbf z \leftarrow \overline{\mathbf z}(\mathbf{args}_{\mathrm{}})$.</li>
 </ul>
-<p>This yield the following <strong>discrete system</strong>
-\begin{equation}
+<p>This yields the following <strong>discrete system</strong></p>
+$$
 \left( 
 \begin{array}{c}
-\frac{\delta\mathbf{x}^k_{\mathrm{}}}{\mathrm{T<em>s}} \
-\mathbf{w}^k</em>{\mathrm{}} \
-\mathbf{y}^k_{\mathrm{}} \
-\end{array}</p>
-<h2 id="\right)">\right)<a class="anchor-link" href="../posts/docs/pyphs-method/#%5Cright)">¶</a>
-</h2>
-<p>\overline{\mathbf{M}}(\mathbf{args}^k<em>{\mathrm{}})
+\frac{\delta\mathbf{x}^k_{\mathrm{}}}{\mathrm{T_s}} \\
+\mathbf{w}^k_{\mathrm{}} \\
+\mathbf{y}^k_{\mathrm{}}
+\end{array}
+\right)
+=
+\overline{\mathbf{M}}(\mathbf{args}^k_{\mathrm{}})
 \cdot
 \left( 
 \begin{array}{c}
-\overline{\nabla}\mathrm{H}(\mathbf{args}^k</em>{\mathrm{}})\
-\overline{\mathbf z}(\mathbf{args}^k<em>{\mathrm{}})\
-\mathbf{u}^k</em>{\mathrm{}}\
+\overline{\nabla}\mathrm{H}(\mathbf{args}^k_{\mathrm{}})\\
+\overline{\mathbf z}(\mathbf{args}^k_{\mathrm{}})\\
+\mathbf{u}^k_{\mathrm{}}
 \end{array}
 \right).
 \qquad (5)
-\end{equation}</p>
-<p>Now, provided</p>
+$$<p>Now, provided</p>
 <ul>
 <li>a state initialization {$\mathbf{x}^k\}_{k = 0}$,</li>
 <li>an input sequence {$\mathbf{u}^k\}_{0\leq k \leq K}$,</li>

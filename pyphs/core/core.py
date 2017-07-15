@@ -843,8 +843,8 @@ add the connector'.format(i)
             If True, every function are vectorized with numpy.vectorize.
             The default is True.
         """
-        from pyphs.numerics.tools._evaluation import NumericalEval
-        setattr(self, 'eval', NumericalEval(self, vectorize=vectorize))
+        from pyphs.numerics.tools._evaluation import Evaluation
+        setattr(self, 'eval', Evaluation(self, vectorize=vectorize))
 
     # =========================================================================
 

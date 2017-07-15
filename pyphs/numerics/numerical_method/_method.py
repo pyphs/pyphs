@@ -17,7 +17,7 @@ from pyphs.config import (GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER,
                           VERBOSE)
 from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
 from pyphs import Core
-from ..tools import NumericalOperation
+from ..tools import Operation
 from ._discrete_calculus import (discrete_gradient, gradient_theta,
                                  gradient_trapez)
 import copy
@@ -90,8 +90,8 @@ class Method(Core):
 
         # ------------- CLASSES ------------- #
 
-        # recover NumericalOperation class
-        self.Operation = NumericalOperation
+        # recover Operation class
+        self.Operation = Operation
 
         # ------------- ARGUMENTS ------------- #
 
@@ -233,7 +233,7 @@ class Method(Core):
         self.funcs_names.append(name)
 
     def setoperation(self, name, op):
-        "set NumericalOperation 'op' as the attribute 'name'."
+        "set Operation 'op' as the attribute 'name'."
         setattr(self, name+'_op', op)
         setattr(self, name+'_deps', op.freesymbols)
         self.ops_names.append(name)

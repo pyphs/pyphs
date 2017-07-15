@@ -12,7 +12,7 @@ from pyphs.core.tools import free_symbols
 from ._lambdify import lambdify
 
 
-class NumericalEval(object):
+class Evaluation(object):
     """
     Class that serves as a container for numerical evaluation of all
     functions from a given Core.

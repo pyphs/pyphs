@@ -16,7 +16,7 @@ from __future__ import division, print_function, absolute_import
 import numpy  # numerical tools
 import matplotlib.pyplot as plt  # plot tools
 
-# load the pyphs.NumericalEval class in the current namespace
+# load the pyphs.Evaluation class in the current namespace
 from pyphs import Core, Method, Numeric
 
 # instantiate a pyphs.Core object
@@ -47,7 +47,7 @@ subs = {L: L_value,
 core.subs.update(subs)
 
 core.linear_nonlinear()
-# instantiate a pyphs.NumericalEval object associated with a pyphs.Core
+# instantiate a pyphs.Evaluation object associated with a pyphs.Core
 method = Method(core)
 
 # Explicit Euler update:

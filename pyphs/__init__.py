@@ -7,7 +7,7 @@ from .graphs.graph import Graph
 from .graphs import netlist2core, netlist2graph
 from .graphs.netlists import Netlist
 from .numerics import (Method, Numeric,
-                       NumericalEval, NumericalOperation)
+                       Evaluation, Operation)
 from .numerics.simulations.simulation import Simulation
 from .misc.signals.synthesis import signalgenerator
 from .misc.latex import core2tex, netlist2tex, graphplot2tex, texdocument
@@ -28,8 +28,8 @@ __version__ = '0.1.9.9.4'
 __author_email__ = 'antoine.falaize@ircam.fr'
 
 __all__ = ['Core', 'Netlist', 'Simulation', 'Graph',
-           'signalgenerator', 'NumericalOperation', 'Method',
-           'Numeric', 'NumericalEval',
+           'signalgenerator', 'Operation', 'Method',
+           'Numeric', 'Evaluation',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
            'numcore2cpp', 'simu2cpp', 'netlist2core',
            'path_to_configuration_file', 'netlist2graph',

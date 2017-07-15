@@ -14,7 +14,7 @@ import sympy                     # CAS tools
 import numpy                     # numerical tools
 import matplotlib.pyplot as plt  # plot tools
 
-# load the pyphs.NumericalEval class in the current namespace
+# load the pyphs.Evaluation class in the current namespace
 from pyphs import Simulation
 
 # retrieve the pyphs.Core of a nonlinear RLC from the tutorial on Core

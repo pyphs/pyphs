@@ -14,11 +14,11 @@ from __future__ import division, print_function, absolute_import
 # retrieve the pyphs.Core of a simple RLC from the previous tutorial
 from pyphs.tutorials.phscore import core
 
-# load the pyphs.NumericalEval class in the current namespace
-from pyphs import NumericalEval
+# load the pyphs.Evaluation class in the current namespace
+from pyphs import Evaluation
 
-# instantiate a pyphs.NumericalEval object associated with a pyphs.Core
-evals = NumericalEval(core)
+# instantiate a pyphs.Evaluation object associated with a pyphs.Core
+evals = Evaluation(core)
 
 # values for arguments
 x = [5e-4, 2e-2]

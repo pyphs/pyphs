@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 from pyphs.core.tools import types as core_types
 from ..tools import types as num_types
 from pyphs.misc.tools import remove_duplicates
-from ..tools import lambdify, NumericalOperation
+from ..tools import lambdify, Operation
 from ..numerical_method._method import Method
 from pyphs.config import simulations, VERBOSE
 import numpy
@@ -183,7 +183,7 @@ class Numeric(object):
         # build for sympy.expression
         if name in self.method.funcs_names:
             self._build_func(name)
-        # build for NumericalOperation
+        # build for Operation
         elif name in self.method.ops_names:
             #  build of dependencies before hand
             deps = getattr(self.method, name + '_deps')
@@ -326,7 +326,7 @@ def evalop_generator(nums, name, op):
     """
     args = list()
     for arg in op.args:
-        if isinstance(arg, NumericalOperation):
+        if isinstance(arg, Operation):
             args.append(evalop_generator(nums, name, arg))
         elif isinstance(arg, str):
             args.append(getattr(nums, arg))
@@ -335,7 +335,7 @@ def evalop_generator(nums, name, op):
         else:
             assert isinstance(arg, (int, float))
             args.append(arg)
-    func = NumericalOperation(op.operation, args)
+    func = Operation(op.operation, args)
 
     def eval_func():
         return func()

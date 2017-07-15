@@ -10,7 +10,7 @@ from pyphs.config import VERBOSE
 from pyphs.misc.tools import geteval, find
 from pyphs.core.tools import free_symbols
 from ._lambdify import lambdify
-
+import numpy
 
 class NumericalEval(object):
     """
@@ -50,7 +50,7 @@ class NumericalEval(object):
                 self.core.p + self.core.o())
 
     @staticmethod
-    def expr_to_numeric(core, name, allargs, theano=False):
+    def expr_to_numeric(core, name, allargs, theano=False, vectorize=True):
         """
         Return an evaluator of the function :code:`getarg(nums.method, names + '_expr')`,
         with a mapping to some of the arguments in :code:`nums.args`, using
@@ -64,6 +64,8 @@ class NumericalEval(object):
         name : str
 
         theano : bool
+        
+        vectorize : bool
 
         Return
         ------
@@ -77,6 +79,7 @@ class NumericalEval(object):
             args, inds = find(symbs, allargs)  # args are symbs reorganized
             func = lambdify(args, expr, subs=core.subs,
                             theano=theano)
+            func = numpy.vectorize(func)
             func.func_doc = """
     Evaluate `{0}`.
 

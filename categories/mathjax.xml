@@ -1,10 +1,492 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>PyPHS (mathjax)</title><link>https://afalaize.github.io/pyphs/</link><description></description><atom:link href="https://afalaize.github.io/pyphs/categories/mathjax.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Wed, 08 Mar 2017 02:01:24 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Port-Hamiltonian Systems</title><link>https://afalaize.github.io/pyphs/posts/port-hamiltonian-systems/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;p&gt;In this tutorial, we recall the &lt;em&gt;port-Hamiltonian systems (PHS)&lt;/em&gt; formalism in section 1, and we give an example with the standard serial resistor-coil-capacitor (RLC) circuit in section 2.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/port-hamiltonian-systems/"&gt; click to read the rest of the article …&lt;/a&gt; (7 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>theory</category><guid>https://afalaize.github.io/pyphs/posts/port-hamiltonian-systems/</guid><pubDate>Sat, 11 Feb 2017 17:19:33 GMT</pubDate></item><item><title>Diode PN</title><link>https://afalaize.github.io/pyphs/posts/diode/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;img alt="/dico/elec/diode.jpg" class="align-center" src="https://afalaize.github.io/pyphs/dico/elec/diode.jpg" style="width: 150px;"&gt;
-&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/diode/"&gt;Read more…&lt;/a&gt; (2 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>components</category><category>dissipatives</category><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/diode/</guid><pubDate>Wed, 16 Nov 2016 19:38:46 GMT</pubDate></item><item><title>Resistor</title><link>https://afalaize.github.io/pyphs/posts/resistor/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;img alt="/dico/elec/inductor.jpg" class="align-center" src="https://afalaize.github.io/pyphs/dico/elec/inductor.jpg" style="width: 150px;"&gt;
-&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/resistor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>components</category><category>dissipatives</category><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/resistor/</guid><pubDate>Wed, 16 Nov 2016 17:12:37 GMT</pubDate></item><item><title>Inductor</title><link>https://afalaize.github.io/pyphs/posts/inductor/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;img alt="/dico/elec/inductor.jpg" class="align-center" src="https://afalaize.github.io/pyphs/dico/elec/inductor.jpg" style="width: 150px;"&gt;
-&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/inductor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>components</category><category>mathjax</category><category>storages</category><guid>https://afalaize.github.io/pyphs/posts/inductor/</guid><pubDate>Wed, 16 Nov 2016 17:12:27 GMT</pubDate></item><item><title>Capacitor</title><link>https://afalaize.github.io/pyphs/posts/capacitor/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;img alt="/dico/elec/capacitor.jpg" class="align-center" src="https://afalaize.github.io/pyphs/dico/elec/capacitor.jpg" style="width: 150px;"&gt;
-&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/capacitor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>components</category><category>mathjax</category><category>storages</category><guid>https://afalaize.github.io/pyphs/posts/capacitor/</guid><pubDate>Wed, 16 Nov 2016 17:12:20 GMT</pubDate></item><item><title>Automated graph analysis</title><link>https://afalaize.github.io/pyphs/posts/tuto1/</link><dc:creator>afalaize</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0"><channel><title>PyPHS (Posts about mathjax)</title><link>https://afalaize.github.io/pyphs/</link><description></description><atom:link rel="self" type="application/rss+xml" href="https://afalaize.github.io/pyphs/categories/mathjax.xml"></atom:link><language>en</language><lastBuildDate>Sat, 15 Jul 2017 00:51:58 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>The class PyPHS.Method</title><link>https://afalaize.github.io/pyphs/posts/docs/pyphs-method/</link><dc:creator>afalaize</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
+    &lt;div class="container" id="notebook-container"&gt;
+
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;This class herits from the PHSCore class. It implements the symbolic expression of several numerical methods for the simulation of PHSCore. Below are the additional class attributes and class methods that differ from the parent PHSCore.&lt;/p&gt;
+&lt;h2 id="Recall-of-the-Port-Hamiltonian-structure"&gt;Recall of the Port-Hamiltonian structure&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#Recall-of-the-Port-Hamiltonian-structure"&gt;¶&lt;/a&gt;&lt;/h2&gt;\begin{equation}
+\left( 
+\begin{array}{c}
+\frac{\mathrm{d}\mathbf{x}_{\mathrm{}}}{\mathrm{d} t} \\
+\mathbf{w}_{\mathrm{}} \\
+\mathbf{y}_{\mathrm{}} \\
+\end{array}
+\right)
+=
+\underbrace{\left( 
+\begin{array}{ccc}
+\mathbf{M}_{\mathrm{xx}} &amp;amp; \mathbf{M}_{\mathrm{xw}} &amp;amp; \mathbf{M}_{\mathrm{xy}} \\
+\mathbf{M}_{\mathrm{wx}} &amp;amp; \mathbf{M}_{\mathrm{ww}} &amp;amp; \mathbf{M}_{\mathrm{wy}} \\
+\mathbf{M}_{\mathrm{yx}} &amp;amp; \mathbf{M}_{\mathrm{yw}} &amp;amp; \mathbf{M}_{\mathrm{yy}} \\
+\end{array}
+\right)}_{\mathbf M}
+\cdot
+\left( 
+\begin{array}{c}
+\nabla\mathrm{H}\\
+\mathbf{z}_{\mathrm{}}\\
+\mathbf{u}_{\mathrm{}}\\
+\end{array}
+\right).
+\qquad (1)
+\end{equation}&lt;p&gt;The quantites considered as arguments are&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the states $\mathbf{x}(t)$,&lt;/li&gt;
+&lt;li&gt;the dissipation variables $\mathbf{w}(t)$,&lt;/li&gt;
+&lt;li&gt;the inputs $\mathbf{u}(t)$,&lt;/li&gt;
+&lt;li&gt;the control parmameters $\mathbf{p}(t)$&lt;/li&gt;
+&lt;li&gt;the observed quantites $\mathbf{o}(t)$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The significances of the &lt;em&gt;control parameters&lt;/em&gt;  and &lt;em&gt;observed quantites&lt;/em&gt; are described latter (consider $\mathbf{p}=\mathbf{o}=\emptyset$ for the moment).&lt;/p&gt;
+&lt;p&gt;The system functions are&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the Hamiltonian's gradient $\nabla \mathrm H \equiv \mathrm \nabla \mathrm H(\mathbf{x})$,&lt;/li&gt;
+&lt;li&gt;the structure matrix $\mathbf M \equiv \mathbf M(\mathbf{x}, \mathbf{w}, \mathbf{u}, \mathbf{p}, \mathbf{o})$, &lt;/li&gt;
+&lt;li&gt;the dissipation function $\mathbf z \equiv \mathbf z(\mathbf{x}, \mathbf{w}, \mathbf{u}, \mathbf{p}, \mathbf{o})$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h2 id="Discrete-state-derivative-and-update"&gt;Discrete state derivative and update&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#Discrete-state-derivative-and-update"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;In the sequel, we denote $\mathbf x^k \equiv \mathbf x(t^k)$ on the regular temporal grid $t^k = k\,\mathrm{T_s}$ for the sample period $\mathrm{T_s}$ with associated sample rate $\mathrm{F_s}=\mathrm{T}_\mathrm{s}^{-1}$. Then, a one-stage progressive finite difference approximation of the state derivative is 
+$$\frac{\mathrm{d}\mathbf{x}_{\mathrm{}}(t^k)}{\mathrm{d} t} \simeq \frac{\delta\mathbf{x}^k_{\mathrm{}}}{\mathrm{T_s}}, \qquad (2)$$ 
+where
+$$\delta\mathbf{x}^k_{\mathrm{}} \triangleq \mathbf{x}_{\mathrm{}}^{k+1} - \mathbf{x}_{\mathrm{}}^{k}, \qquad (3)$$ 
+Now, the update is simply given by
+$$\mathbf{x}_{\mathrm{}}^{k+1} = \mathbf{x}_{\mathrm{}}^{k}+\delta\mathbf{x}^k_{\mathrm{}}. \qquad (4)$$&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h2 id="Discrete-arguments"&gt;Discrete arguments&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#Discrete-arguments"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Quantites considered as &lt;strong&gt;arguments&lt;/strong&gt; are now&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the states $\mathbf{x}^k$,&lt;/li&gt;
+&lt;li&gt;the states increments $\delta\mathbf{x}^k$,&lt;/li&gt;
+&lt;li&gt;the dissipation variables $\mathbf{w}^k$,&lt;/li&gt;
+&lt;li&gt;the inputs $\mathbf{u}^k$,&lt;/li&gt;
+&lt;li&gt;the control parmameters $\mathbf{p}^k$,&lt;/li&gt;
+&lt;li&gt;the observed quantites $\mathbf{o}^k$,&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;which are collected in a single vector
+$$
+\mathbf{args^k}_{\mathrm{}} \triangleq \left( 
+\begin{array}{c}
+\mathbf{x}^k\\
+\delta\mathbf{x}^k\\
+\mathbf{w}^k\\
+\mathbf{u}^k\\
+\mathbf{p}^k\\
+\mathbf{o}^k
+\end{array}
+\right).\qquad
+\begin{array}{l}
+\mathrm{States}\\
+\mathrm{States~increments}\\
+\mathrm{Dissipation~variables}\\
+\mathrm{Inputs}\\
+\mathrm{Control~parameters}\\
+\mathrm{Observed~quantities}
+\end{array}
+$$
+The significances of the &lt;em&gt;control parameters&lt;/em&gt;  and &lt;em&gt;observed quantites&lt;/em&gt; are described latter (consider $\mathbf{p}^k=\mathbf{o}^k=\emptyset$ for the moment).&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h2 id="Numerical-methods"&gt;Numerical methods&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#Numerical-methods"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A &lt;strong&gt;numerical method&lt;/strong&gt; consists in the prescription of a numerical equivalent to system (1), that is, in the prescription of numerical equivalents for&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the Hamiltonian's gradient $\nabla \mathrm H \leftarrow \overline{\nabla}\mathrm{H}(\mathbf{args}_{\mathrm{}})$,&lt;/li&gt;
+&lt;li&gt;the structure matrix $\mathbf M \leftarrow \overline{\mathbf M}(\mathbf{args}_{\mathrm{}})$, &lt;/li&gt;
+&lt;li&gt;the dissipation function $\mathbf z \leftarrow \overline{\mathbf z}(\mathbf{args}_{\mathrm{}})$.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This yield the following &lt;strong&gt;discrete system&lt;/strong&gt;
+\begin{equation}
+\left( 
+\begin{array}{c}
+\frac{\delta\mathbf{x}^k_{\mathrm{}}}{\mathrm{T&lt;em&gt;s}} \
+\mathbf{w}^k&lt;/em&gt;{\mathrm{}} \
+\mathbf{y}^k_{\mathrm{}} \
+\end{array}&lt;/p&gt;
+&lt;h2 id="\right)"&gt;\right)&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#%5Cright)"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;\overline{\mathbf{M}}(\mathbf{args}^k&lt;em&gt;{\mathrm{}})
+\cdot
+\left( 
+\begin{array}{c}
+\overline{\nabla}\mathrm{H}(\mathbf{args}^k&lt;/em&gt;{\mathrm{}})\
+\overline{\mathbf z}(\mathbf{args}^k&lt;em&gt;{\mathrm{}})\
+\mathbf{u}^k&lt;/em&gt;{\mathrm{}}\
+\end{array}
+\right).
+\qquad (5)
+\end{equation}&lt;/p&gt;
+&lt;p&gt;Now, provided&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a state initialization {$\mathbf{x}^k\}_{k = 0}$,&lt;/li&gt;
+&lt;li&gt;an input sequence {$\mathbf{u}^k\}_{0\leq k \leq K}$,&lt;/li&gt;
+&lt;li&gt;a control sequence {$\mathbf{p}^k\}_{0\leq k \leq K}$,&lt;/li&gt;
+&lt;li&gt;an observed sequence {$\mathbf{o}^k\}_{0\leq k \leq K}$,&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;the simulation is performed by solving (5) iteratively for the state increment $\delta\mathbf{x}^k$ and the dissipation variable $\mathbf{w}^k$ (which are the only unknown in $\mathbf{args}^k$), and then updating according to (4).&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="The-Theta-method"&gt;The Theta method&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#The-Theta-method"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;For a standard dynamical system, this method reads 
+$$ \dot{\mathbf{x}}=\mathbf{f}(\mathbf{x}) \longrightarrow \frac{\delta\mathbf{x}^{k}}{\mathrm{T_s}} = \mathbf{f}(\mathbf{x}^k + \theta \, \delta\mathbf{x}^k).$$
+It includes the explicit (respectively implicit) Euler scheme for $\theta = 0$ (respectively $\theta = 1$), and the midpoint rule for $\theta = \mbox{½}$.&lt;/p&gt;
+&lt;p&gt;Applying this scheme to the system (1) yields the following numerical equivalents:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\overline{\nabla}\mathrm{H}(\mathbf{args}^k_{\mathrm{}}) \triangleq {\nabla}\mathrm{H}(\mathbf x^k+ \theta \, \delta\mathbf{x}^k)$,&lt;/li&gt;
+&lt;li&gt;$\overline{\mathbf M}(\mathbf{args}^k_{\mathrm{}}) \triangleq \mathbf M(\mathbf x^k+ \theta \, \delta\mathbf{x}^k, \mathbf{w}^k, \mathbf{u}^k, \mathbf{p}^k, \mathbf{o}^k)$, &lt;/li&gt;
+&lt;li&gt;$\overline{\mathbf z}(\mathbf{args}^k_{\mathrm{}}) \triangleq \mathbf z(\mathbf x^k+ \theta \, \delta\mathbf{x}^k, \mathbf{w}^k, \mathbf{u}^k, \mathbf{p}^k, \mathbf{o}^k)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="The-Trapezoidal-method"&gt;The Trapezoidal method&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#The-Trapezoidal-method"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;For a standard dynamical system, this method reads 
+$$ \dot{\mathbf{x}} = \mathbf{f}(\mathbf{x}) \longrightarrow  \frac{\delta\mathbf{x}^{k}}{\mathrm{T_s}} = \frac{1}{2} \Big(\mathbf{f}(\mathbf{x}^k) + \mathbf{f}(\mathbf{x}^k+ \delta\mathbf x^k)\Big).$$&lt;/p&gt;
+&lt;p&gt;Applying this scheme to the system (1) yields the following numerical equivalents:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\overline{\nabla}\mathrm{H}(\mathbf{args}^k_{\mathrm{}}) \triangleq \frac{1}{2} \Big({\nabla}\mathrm{H}(\mathbf x^k) + {\nabla}\mathrm{H}(\mathbf x^k+ \delta\mathbf{x}^k)\Big)$,&lt;/li&gt;
+&lt;li&gt;$\overline{\mathbf M}(\mathbf{args}^k_{\mathrm{}}) \triangleq 
+\frac{1}{2} \Big(\mathbf M(\mathbf{x}^k, \mathbf{w}^k, \mathbf{u}^k, \mathbf{p}^k, \mathbf{o}^k) + \mathbf M(\mathbf{x}^k+ \delta\mathbf x^k, \mathbf{w}^k, \mathbf{u}^k, \mathbf{p}^k, \mathbf{o}^k)\Big)$, &lt;/li&gt;
+&lt;li&gt;$\overline{\mathbf z}(\mathbf{args}^k_{\mathrm{}}) \triangleq 
+\frac{1}{2} \Big(\mathbf z(\mathbf{x}^k, \mathbf{w}^k, \mathbf{u}^k, \mathbf{p}^k, \mathbf{o}^k) + \mathbf z(\mathbf{x}^k+ \delta\mathbf x^k, \mathbf{w}^k, \mathbf{u}^k, \mathbf{p}^k, \mathbf{o}^k)\Big)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="The-Discrete-Gradient-method"&gt;The Discrete Gradient method&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#The-Discrete-Gradient-method"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;For a standard Hamiltonian system with a separate Hamiltonian $\mathrm H(\mathbf x) = \sum_{i=1}^{\mathrm{dim}(\mathbf x)} \mathrm H_i(x_i)$, this method reads 
+$$ \dot{\mathbf{x}} = \mathbf J(\mathbf x)\cdot \nabla\mathrm{H}(\mathbf{x})
+\longrightarrow \frac{\delta\mathbf{x}^{k}}{\mathrm{T_s}} = \mathbf J(\mathbf x^k+\theta\, \delta\mathbf x^k)\cdot \overline \nabla \mathrm H (\mathbf x^k, \delta \mathbf x^k),$$
+with 
+$$ 
+\left[\overline \nabla \mathrm H (\mathbf x, \delta \mathbf x)\right]_i =
+\left\{
+\begin{array}{l}
+\frac{\mathrm H_i(x_i+\delta x_i)- \mathrm H_i (x_i)}{\delta x_i} \text{ if } \delta x_i \geq 0, \\
+\mathrm H_i^\prime(x_i) \mbox{ else},
+\end{array}
+\right.
+ \quad \mbox{for  } {1\leq i \leq \mathrm{dim}(x)}. \qquad (6)
+$$&lt;/p&gt;
+&lt;p&gt;Applying this scheme to the system (1) yields the following numerical equivalents:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\overline{\nabla}\mathrm{H}(\mathbf{args}^k_{\mathrm{}})$ is given by ( 6),&lt;/li&gt;
+&lt;li&gt;$\overline{\mathbf M}(\mathbf{args}^k_{\mathrm{}}) \triangleq \mathbf M(\mathbf x^k+ \theta \, \delta\mathbf{x}^k, \mathbf{w}^k, \mathbf{u}^k, \mathbf{p}^k, \mathbf{o}^k)$ (same as Theta method), &lt;/li&gt;
+&lt;li&gt;$\overline{\mathbf z}(\mathbf{args}^k_{\mathrm{}}) \triangleq \mathbf z(\mathbf x^k+ \theta \, \delta\mathbf{x}^k, \mathbf{w}^k, \mathbf{u}^k, \mathbf{p}^k, \mathbf{o}^k)$ (same as Theta method).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="Resolution"&gt;Resolution&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#Resolution"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;h4 id="Arguments"&gt;Arguments&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#Arguments"&gt;¶&lt;/a&gt;&lt;/h4&gt;&lt;p&gt;The values for&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the states $\mathbf{x}^k$,&lt;/li&gt;
+&lt;li&gt;the inputs $\mathbf{u}^k$,&lt;/li&gt;
+&lt;li&gt;the control parmameters $\mathbf{p}^k$,&lt;/li&gt;
+&lt;li&gt;the observed quantites $\mathbf{o}^k$,&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;are known at the begining of each time step. These quantities are constant over a time-step, and are collected in a singe vector:
+$$
+\mathbf{c}_{\mathrm{}} \triangleq \left( 
+\begin{array}{c}
+\mathbf{x} \\
+\mathbf{u} \\
+\mathbf{p} \\
+\mathbf{o} \\
+\end{array}
+\right).
+$$
+The only unknown quantities in (5) and $\mathbf{args}$ are&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the states increments $\delta\mathbf{x}^k$,&lt;/li&gt;
+&lt;li&gt;the dissipation variables $\mathbf{w}^k$.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These unknown quantities are collected in a singe vector:
+$$
+\mathbf{v}_{\mathrm{}} \triangleq \left( 
+\begin{array}{c}
+\delta\mathbf{x} \\
+\mathbf{w}_{\mathrm{}}
+\end{array}
+\right),\qquad (7)
+$$
+and $\mathbf{args} \equiv (\mathbf{v}, \mathbf{c})$.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h4 id="Update"&gt;Update&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#Update"&gt;¶&lt;/a&gt;&lt;/h4&gt;&lt;p&gt;Similarly, the constitutive relations are collected in a single vector valued function:
+$$
+\mathbf{f}_{\mathrm{}}(\mathbf{v}, \mathbf{c}) \triangleq \left( 
+\begin{array}{c}
+\overline \nabla\mathrm{H}(\mathbf{v}, \mathbf{c})\\
+\overline{\mathbf{z}}_{\mathrm{}}(\mathbf{v}, \mathbf{c})
+\end{array}
+\right), \qquad (8)
+$$
+and we define the following matrices (without expressing the dependance on $\mathbf{args} \equiv (\mathbf{v}, \mathbf{c})$):
+$$
+\begin{array}{llc}
+\overline{\mathbf{M}}_{\mathrm{vv}}= \left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{xx}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{xw}}  \\
+\overline{\mathbf{M}}_{\mathrm{wx}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{ww}}
+\end{array}
+\right), 
+&amp;amp;
+\overline{\mathbf{M}}_{\mathrm{vy}} = \left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{xy}}\\
+\overline{\mathbf{M}}_{\mathrm{wy}}
+\end{array}
+\right), 
+&amp;amp; (9) 
+\\
+\overline{\mathbf{M}}_{\mathrm{yv}} = \left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{yx}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{yw}}
+\end{array}
+\right), 
+&amp;amp;
+\overline{\mathbf{I}}= \left( 
+\begin{array}{ccc}
+\mathrm{F_s}\,\mathbf{I_d}(n_\mathbf{x}) &amp;amp; \mathbf 0 \\
+\mathbf 0  &amp;amp; \mathbf{I_d}(n_\mathbf{w})
+\end{array}
+\right),
+&amp;amp; (10)
+\end{array}
+$$
+where $n_\mathbf{x}=\mathrm{dim}(\mathbf x)$ and $n_\mathbf{w}=\mathrm{dim}(\mathbf w)$. Then, system (2) is rewritten as&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Solve $\mathbf{F}(\mathbf v^k, \mathbf c^k)=\mathbf 0 $ for $\mathbf v^k$, where $$\mathbf{F}(\mathbf v^k, \mathbf c^k) \triangleq  \overline{\mathbf{I}}\cdot\mathbf v^k - \mathbf M_{\mathrm{vv}}\cdot\mathbf{f}_{\mathrm{}}(\mathbf v^k, \mathbf c^k) - \mathbf M_{\mathrm{vy}}\cdot\mathbf u^k, \qquad (11)$$&lt;/li&gt;
+&lt;li&gt;Set $$\mathbf y^k =  \mathbf M_{\mathrm{yv}}\cdot\mathbf{f}_{\mathrm{}}(\mathbf{v}^k, \mathbf c^k) + \mathbf M_{\mathrm{yy}}\cdot\mathbf u^k, \qquad (12)$$&lt;/li&gt;
+&lt;li&gt;Set $$\mathbf x^{k+1} =  \mathbf x^k + \delta\mathbf x^k. \qquad (13)$$&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="Explicit-and-implicit-updates"&gt;Explicit and implicit updates&lt;a class="anchor-link" href="https://afalaize.github.io/pyphs/posts/docs/pyphs-method/#Explicit-and-implicit-updates"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Depending on the original system (1) and on the chosen numerical method, some components of the implicit function $\mathbf{F}(\mathbf v)$ in (11) may be explicited up to a matrix inversion. In order to detect these &lt;em&gt;explicit&lt;/em&gt; components, we analyse the structure of the &lt;strong&gt;jacobian matrix&lt;/strong&gt; of $\mathcal J_{\mathbf{F},\mathbf v}(\mathbf v)$ defined by
+$$\Big[\mathcal J_{\mathbf{F},\mathbf v}(\mathbf v, \mathbf c)\Big]_{i,j} = \frac{\partial \mathbf F_i (\mathbf v, \mathbf c)}{\partial \mathbf v_j}.
+$$
+The result is the following spliting:
+$$\mathbf x = \left( 
+\begin{array}{c}
+\mathbf x_\mathrm{E} \\
+\mathbf x_\mathrm{I}
+\end{array}
+\right), \quad \mathbf w = \left( 
+\begin{array}{c}
+\mathbf w_\mathrm{E} \\
+\mathbf w_\mathrm{I}
+\end{array}
+\right), \qquad (14)
+$$
+and 
+$$\mathbf v_\mathrm{E} = \left( 
+\begin{array}{c}
+\delta \mathbf x_\mathrm{E} \\
+\mathbf w_\mathrm{E}
+\end{array}
+\right), \quad \mathbf v_\mathrm{I} = \left( 
+\begin{array}{c}
+\delta \mathbf x_\mathrm{I} \\
+\mathbf w_\mathrm{I}
+\end{array}
+\right), \qquad (15)
+$$
+such that the columns of $\mathcal J_{\mathbf{F}, \mathbf v_\mathrm{E}}(\mathbf v, \mathbf c)$ associated with $\mathbf v_\mathrm{E}$ does no depend on $\mathbf v\equiv(\mathbf v_\mathrm{E}, \mathbf v_\mathrm{I})$.&lt;/p&gt;
+&lt;p&gt;According to (7-11), we define the following expressions (without expressing the dependance on $\mathbf{args} \equiv (\mathbf{v}, \mathbf{c})$):
+$$
+\mathbf{f}_\mathrm{E} \triangleq \left( 
+\begin{array}{c}
+\overline \nabla\mathrm{H}_\mathrm{E}\\
+\overline{\mathbf{z}}_\mathrm{E}
+\end{array}
+\right), \quad \mathbf{f}_\mathrm{I} \triangleq \left( 
+\begin{array}{c}
+\overline \nabla\mathrm{H}_\mathrm{I}\\
+\overline{\mathbf{z}}_\mathrm{I}
+\end{array}
+\right)\qquad (16)
+$$
+$$
+\begin{array}{llc}
+\overline{\mathbf{M}}_{\mathrm{vEvE}} = \left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{xExE}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{xEwE}}  \\
+\overline{\mathbf{M}}_{\mathrm{wExE}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{wEwE}}
+\end{array}
+\right), 
+&amp;amp;
+\overline{\mathbf{M}}_{\mathrm{vIvI}} = \left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{xIxI}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{xIwI}}  \\
+\overline{\mathbf{M}}_{\mathrm{wIxI}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{wIwI}}
+\end{array}
+\right), 
+&amp;amp;
+(17) 
+\\
+\overline{\mathbf{M}}_{\mathrm{vEvI}} = \left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{xExI}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{xEwI}} \\
+\overline{\mathbf{M}}_{\mathrm{wExI}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{wEwI}}
+\end{array}
+\right), 
+&amp;amp;
+\overline{\mathbf{M}}_{\mathrm{vIvE}} = \left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{xIxE}} &amp;amp; \overline{\mathbf{M}}_{\mathrm{xIwE}}  \\
+\overline{\mathbf{M}}_{\mathrm{wIxE}}&amp;amp; \overline{\mathbf{M}}_{\mathrm{wIwE}}
+\end{array}
+\right), 
+&amp;amp;
+(18) 
+\\
+\overline{\mathbf{M}}_{\mathrm{vEy}}= 
+\left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{xEy}}\\
+\overline{\mathbf{M}}_{\mathrm{wEy}}
+\end{array}
+\right), 
+&amp;amp;
+\overline{\mathbf{M}}_{\mathrm{vIy}}= \left( 
+\begin{array}{ccc}
+\overline{\mathbf{M}}_{\mathrm{xIy}}\\
+\overline{\mathbf{M}}_{\mathrm{wIy}}
+\end{array}
+\right), 
+&amp;amp;
+(19)
+\\
+\overline{\mathbf{I}}_{\mathrm{E}}= \left( 
+\begin{array}{ccc}
+\mathrm{F_s}\,\mathbf{I_d}(n_{\mathbf{x}_{\mathrm E}}) &amp;amp; \mathbf 0 \\
+\mathbf 0  &amp;amp; \mathbf{I_d}(n_{\mathbf{w}_{\mathrm E}})
+\end{array}
+\right),
+&amp;amp; 
+\overline{\mathbf{I}}_{\mathrm{I}}= \left( 
+\begin{array}{ccc}
+\mathrm{F_s}\,\mathbf{I_d}(n_{\mathbf{x}_{\mathrm I}}) &amp;amp; \mathbf 0 \\
+\mathbf 0  &amp;amp; \mathbf{I_d}(n_{\mathbf{w}_{\mathrm I}})
+\end{array}
+\right), 
+&amp;amp; (20)
+\end{array}
+$$
+where $n_{\mathbf{x}_{\mathrm E}}=\mathrm{dim}(\mathbf x_{\mathrm E})$, $n_{\mathbf{x}_{\mathrm I}}=\mathrm{dim}(\mathbf x_{\mathrm I})$, $n_{\mathbf{w}_{\mathrm I}}=\mathrm{dim}(\mathbf w_{\mathrm I})$ and $n_{\mathbf{w}_{\mathrm E}}=\mathrm{dim}(\mathbf w_{\mathrm E})$, and
+$$\mathbf{F}_{\mathrm{E}}(\mathbf v,  \mathbf{c}) \triangleq  \overline{\mathbf{I}}_{\mathrm{E}}\cdot\mathbf v_{\mathrm{E}} - \mathbf M_{\mathrm{vEvE}}\cdot\mathbf{f}_{\mathrm{E}}(\mathbf v,  \mathbf{c})- \mathbf M_{\mathrm{vEvI}}\cdot\mathbf{f}_{\mathrm{I}}(\mathbf v,  \mathbf{c}) - \mathbf M_{\mathrm{vEy}}\cdot\mathbf u, \qquad (21)$$
+$$\mathbf{F}_{\mathrm{I}}(\mathbf v,  \mathbf{c}) \triangleq  \overline{\mathbf{I}}_{\mathrm{I}}\cdot\mathbf v_{\mathrm{I}} - \mathbf M_{\mathrm{vIvE}}\cdot\mathbf{f}_{\mathrm{E}}(\mathbf v,  \mathbf{c})- \mathbf M_{\mathrm{vIvI}}\cdot\mathbf{f}_{\mathrm{I}}(\mathbf v,  \mathbf{c}) - \mathbf M_{\mathrm{vEy}}\cdot\mathbf u. \qquad (22)$$&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Now, define $\mathbf{G}(\mathbf v, \mathbf c)$ as the local deviation of $\mathbf{F}(\mathbf v, \mathbf c)$ from its linear behavior w.r.t $\mathbf v_\mathrm{E}$:
+$$\mathbf{G}(\mathbf v, \mathbf c) \triangleq  \mathbf{F}(\mathbf v, \mathbf c) - \mathcal J_{\mathbf{F},\mathbf v_{\mathrm{E}}}(\mathbf v, \mathbf c) \cdot\mathbf v_{\mathrm{E}}, \qquad (23)$$
+and correspondingly
+$$\mathbf{G}_{\mathrm{E}}(\mathbf v, \mathbf c) \triangleq  \mathbf{F}_{\mathrm{E}}(\mathbf v, \mathbf c) - \mathcal J_{\mathbf{F}_{\mathrm{E}}, \mathbf v_{\mathrm{E}}}(\mathbf v, \mathbf c)\cdot\mathbf v_{\mathrm{E}}, \qquad (24)$$
+$$\mathbf{G}_{\mathrm{I}}(\mathbf v, \mathbf c) \triangleq  \mathbf{F}_{\mathrm{I}}(\mathbf v, \mathbf c) - \mathcal J_{\mathbf{F}_{\mathrm{I}}, \mathbf v_{\mathrm{E}}}(\mathbf v, \mathbf c) \cdot\mathbf v_{\mathrm{E}}. \qquad (25)$$&lt;/p&gt;
+&lt;p&gt;Notice that by definition $\mathcal J_{\mathbf{F}_{\mathrm{E}}, \mathbf v_{\mathrm{E}}}(\mathbf v, \mathbf c)\equiv \mathcal J_{\mathbf{F}_{\mathrm{E}}, \mathbf v_{\mathrm{E}}}(\mathbf c)$ is constant over a time-step. This yields $\mathbf{G}_{\mathrm{E}}(\mathbf v, \mathbf c) \equiv \mathbf{G}_{\mathrm{E}}(\mathbf v_{\mathrm{I}}, \mathbf c) $ for the root $\mathbf{F}_{\mathrm{E}}(\mathbf v^*, \mathbf c)=\mathbf 0$:
+$$\mathbf v_{\mathrm{E}}^* =  -\mathcal J_{\mathbf{F}_{\mathrm{E}}, \mathbf v_{\mathrm{E}}}^{-1}(\mathbf c) \cdot \mathbf{G}_{\mathrm{E}}(\mathbf v_{\mathrm{I}}^*, \mathbf c).\qquad (26)$$&lt;/p&gt;
+&lt;p&gt;Now, rewrite $\mathbf{F}_{\mathrm{I}}(\mathbf v, \mathbf c)$ as
+$$\begin{array}{rcl}
+\mathbf{F}_{\mathrm{I}}(\mathbf v, \mathbf c) &amp;amp;=&amp;amp; \mathbf{G}_{\mathrm{I}}(\mathbf v_{\mathrm{I}}, \mathbf c) + \mathcal J_{\mathbf{F}_{\mathrm{I}}, \mathbf v_{\mathrm{E}}}(\mathbf c)\cdot\mathbf v_{\mathrm{E}} \\
+&amp;amp;=&amp;amp;\mathbf{G}_{\mathrm{I}}(\mathbf v_{\mathrm{I}}, \mathbf c) - \mathcal J_{\mathbf{F}_{\mathrm{I}}, \mathbf v_{\mathrm{E}}}(\mathbf c)\cdot\mathcal J_{\mathbf{F}_{\mathrm{E}}, \mathbf v_{\mathrm{E}}}^{-1}(\mathbf c) \cdot \mathbf{G}_{\mathrm{E}}(\mathbf v_{\mathrm{I}}, \mathbf c)\equiv \mathbf{F}_{\mathrm{I}}(\mathbf v_{\mathrm{I}}, \mathbf c),
+\end{array}$$
+with
+$$
+\mathcal J_{\mathbf{F}_{\mathrm{I}}, \mathbf v_{\mathrm{I}}}(\mathbf v_{\mathrm{I}}) = \mathcal J_{\mathbf{G}_{\mathrm{I}}, \mathbf v_{\mathrm{I}}}(\mathbf v_{\mathrm{I}}) - \mathcal J_{\mathbf{F}_{\mathrm{I}}, \mathbf v_{\mathrm{E}}}\cdot\mathcal J_{\mathbf{F}_{\mathrm{E}}, \mathbf v_{\mathrm{E}}}^{-1} \cdot \mathcal J_{\mathbf{G}_{\mathrm{E}}, \mathbf v_{\mathrm{I}}}(\mathbf v_{\mathrm{I}}).
+$$&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Then, the resolution algorithm for the system (2) is&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;$\mathbf x^k \leftarrow \mathbf x^{-1} + \delta\mathbf x^{k-1}$,&lt;/li&gt;
+&lt;li&gt;$\mathbf c^k \leftarrow (\mathbf x^k, \mathbf u^k, \mathbf p^k, \mathbf o^k)$,&lt;/li&gt;
+&lt;li&gt;$\mathbf v_{\mathrm{I}}^k\leftarrow \mathbf v_{\mathrm{I}}^*$ such that $\mathbf{F}_{\mathrm{I}}(\mathbf v_{\mathrm{I}}^*, \mathbf c^k)=0$,&lt;/li&gt;
+&lt;li&gt;$\mathbf v_{\mathrm{E}}^k\leftarrow-\mathcal J_{\mathbf{F}_{\mathrm{E}}, \mathbf v_{\mathrm{E}}}^{-1}(\mathbf c^k) \cdot \mathbf{G}_{\mathrm{E}}(\mathbf v_{\mathrm{I}}^k, \mathbf c^k)$,&lt;/li&gt;
+&lt;li&gt;$\mathbf y^k\leftarrow\mathbf M_{\mathrm{yv}}\cdot\mathbf{f}_{\mathrm{}}(\mathbf{v}^k, \mathbf c^k) + \mathbf M_{\mathrm{yy}}\cdot\mathbf u^k$.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+</description><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/docs/pyphs-method/</guid><pubDate>Fri, 14 Jul 2017 18:34:12 GMT</pubDate></item><item><title>Port-Hamiltonian Systems</title><link>https://afalaize.github.io/pyphs/posts/docs/port-hamiltonian-systems/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;p&gt;In this tutorial, we recall the &lt;em&gt;port-Hamiltonian systems (PHS)&lt;/em&gt; formalism in section 1, and we give an example with the standard serial resistor-coil-capacitor (RLC) circuit in section 2.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/docs/port-hamiltonian-systems/"&gt; click to read the rest of the article …&lt;/a&gt; (7 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>theory</category><guid>https://afalaize.github.io/pyphs/posts/docs/port-hamiltonian-systems/</guid><pubDate>Sat, 11 Feb 2017 17:19:33 GMT</pubDate></item><item><title>Diode PN</title><link>https://afalaize.github.io/pyphs/posts/dicos/electronics/diode/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;img alt="/dico/elec/diode.jpg" class="align-center" src="https://afalaize.github.io/pyphs/dico/elec/diode.jpg" style="width: 150px;"&gt;
+&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/dicos/electronics/diode/"&gt;Read more…&lt;/a&gt; (2 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>components</category><category>dissipatives</category><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/dicos/electronics/diode/</guid><pubDate>Wed, 16 Nov 2016 19:38:46 GMT</pubDate></item><item><title>Resistor</title><link>https://afalaize.github.io/pyphs/posts/dicos/electronics/resistor/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;img alt="/dico/elec/inductor.jpg" class="align-center" src="https://afalaize.github.io/pyphs/dico/elec/inductor.jpg" style="width: 150px;"&gt;
+&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/dicos/electronics/resistor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>components</category><category>dissipatives</category><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/dicos/electronics/resistor/</guid><pubDate>Wed, 16 Nov 2016 17:12:37 GMT</pubDate></item><item><title>Inductor</title><link>https://afalaize.github.io/pyphs/posts/dicos/electronics/inductor/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;img alt="/dico/elec/inductor.jpg" class="align-center" src="https://afalaize.github.io/pyphs/dico/elec/inductor.jpg" style="width: 150px;"&gt;
+&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/dicos/electronics/inductor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>components</category><category>mathjax</category><category>storages</category><guid>https://afalaize.github.io/pyphs/posts/dicos/electronics/inductor/</guid><pubDate>Wed, 16 Nov 2016 17:12:27 GMT</pubDate></item><item><title>Capacitor</title><link>https://afalaize.github.io/pyphs/posts/dicos/electronics/capacitor/</link><dc:creator>afalaize</dc:creator><description>&lt;div&gt;&lt;img alt="/dico/elec/capacitor.jpg" class="align-center" src="https://afalaize.github.io/pyphs/dico/elec/capacitor.jpg" style="width: 150px;"&gt;
+&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/dicos/electronics/capacitor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>components</category><category>mathjax</category><category>storages</category><guid>https://afalaize.github.io/pyphs/posts/dicos/electronics/capacitor/</guid><pubDate>Wed, 16 Nov 2016 17:12:20 GMT</pubDate></item><item><title>Automated graph analysis</title><link>https://afalaize.github.io/pyphs/posts/tutos/pyphs-graph/</link><dc:creator>afalaize</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
     &lt;div class="container" id="notebook-container"&gt;
 
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;
@@ -22,7 +504,7 @@
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;This tutorial explains the use of the automated graph analysis method of the &lt;strong&gt;pyphs&lt;/strong&gt; module that translates a &lt;strong&gt;netlist&lt;/strong&gt; into a set of governing &lt;strong&gt;differential-algebraic equations&lt;/strong&gt;. &lt;/p&gt;&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/tuto1/"&gt;Read more…&lt;/a&gt; (7 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>mathjax</category><category>tutorial</category><guid>https://afalaize.github.io/pyphs/posts/tuto1/</guid><pubDate>Sun, 13 Nov 2016 09:30:33 GMT</pubDate></item><item><title>The PHSSimulation class</title><link>https://afalaize.github.io/pyphs/posts/phssimulation/</link><dc:creator>afalaize</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
+&lt;p&gt;This tutorial explains the use of the automated graph analysis method of the &lt;strong&gt;pyphs&lt;/strong&gt; module that translates a &lt;strong&gt;netlist&lt;/strong&gt; into a set of governing &lt;strong&gt;differential-algebraic equations&lt;/strong&gt;. &lt;/p&gt;&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/tutos/pyphs-graph/"&gt;Read more…&lt;/a&gt; (7 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/tutos/pyphs-graph/</guid><pubDate>Sun, 13 Nov 2016 09:30:33 GMT</pubDate></item><item><title>The PyPHS.Simulation class</title><link>https://afalaize.github.io/pyphs/posts/tutos/pyphs-simulation/</link><dc:creator>afalaize</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
     &lt;div class="container" id="notebook-container"&gt;
 
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;
@@ -31,7 +513,7 @@
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;p&gt;In this tutorial, we cover the &lt;code&gt;pyphs.PHSSimulation&lt;/code&gt; object for the numerical simulation of &lt;code&gt;pyphs.PHSCore&lt;/code&gt; objects. The core object from the previous tutorial on &lt;a href="https://afalaize.github.io/pyphs/posts/phscore/"&gt;&lt;code&gt;pyphs.PHSCore&lt;/code&gt;&lt;/a&gt; is used as an example.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/phssimulation/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/phssimulation/</guid><pubDate>Sat, 05 Nov 2016 14:30:35 GMT</pubDate></item><item><title>The PHSNumericalEval class</title><link>https://afalaize.github.io/pyphs/posts/phsnumericaleval/</link><dc:creator>afalaize</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
+&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/tutos/pyphs-simulation/"&gt;Read more…&lt;/a&gt; (3 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/tutos/pyphs-simulation/</guid><pubDate>Sat, 05 Nov 2016 14:30:35 GMT</pubDate></item><item><title>The PyPHS.Evaluation class</title><link>https://afalaize.github.io/pyphs/posts/tutos/pyphs-evaluation/</link><dc:creator>afalaize</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
     &lt;div class="container" id="notebook-container"&gt;
 
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;
@@ -40,13 +522,4 @@
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;p&gt;In this tutorial, we cover the &lt;code&gt;pyphs.PHSNumericalEval&lt;/code&gt; object for the numerical evaluation of &lt;code&gt;pyphs.PHSCore&lt;/code&gt; objects. The core object from the previous tutorial on &lt;a href="https://afalaize.github.io/pyphs/posts/phscore/"&gt;&lt;code&gt;pyphs.PHSCore&lt;/code&gt;&lt;/a&gt; is used as an example.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/phsnumericaleval/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/phsnumericaleval/</guid><pubDate>Sat, 05 Nov 2016 14:30:34 GMT</pubDate></item><item><title>The PHSCore class</title><link>https://afalaize.github.io/pyphs/posts/phscore/</link><dc:creator>afalaize</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
-    &lt;div class="container" id="notebook-container"&gt;
-
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;In this tutorial, we firstly recall the &lt;em&gt;port-Hamiltonian systems (PHS)&lt;/em&gt; formalism in parallel with a description of the &lt;code&gt;pyphs.PHSCore&lt;/code&gt; object. Secondly, we build the &lt;code&gt;pyphs.PHSCore&lt;/code&gt; object associated with a nonlinear serial RLC-like circuit with a linear coil, a nonlinear capacitor, and a modulated resistor.
-&lt;/p&gt;&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/phscore/"&gt;Read more…&lt;/a&gt; (8 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/phscore/</guid><pubDate>Sat, 05 Nov 2016 14:30:33 GMT</pubDate></item></channel></rss>
+&lt;p&gt;&lt;a href="https://afalaize.github.io/pyphs/posts/tutos/pyphs-evaluation/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>mathjax</category><guid>https://afalaize.github.io/pyphs/posts/tutos/pyphs-evaluation/</guid><pubDate>Sat, 05 Nov 2016 14:30:34 GMT</pubDate></item></channel></rss>

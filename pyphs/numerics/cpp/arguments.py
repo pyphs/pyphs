@@ -10,23 +10,23 @@ from __future__ import absolute_import, division, print_function
 from .tools import indent, matrix_type
 from sympy.printing import ccode
 from pyphs.core.tools import types
-from .tools import dereference
+from .tools import dereference, linesplit
 
 
-def append_args(nums, files, objlabel):
+def append_args(method, files, objlabel):
     """
     add all pointers, accessors_vector, accessors_matrix, mutators_vectors,
     mutators_matrix for arguments from method.args_names to the cpp files for
     object with name objlabel.
     """
-    _append_args_pointers(nums.method, files)
-    _append_args_accessors_vector(nums.method, files, objlabel)
-    _append_args_accessors_matrix(nums.method, files, objlabel)
-    _append_args_mutators_vectors(nums.method, files, objlabel)
-    _append_args_mutators_matrix(nums.method, files, objlabel)
-    _append_args_mutators_elements(nums.method, files, objlabel)
-    _append_args_data(nums, files, objlabel)
-    _append_args_init(nums, files, objlabel)
+    _append_args_pointers(method, files)
+    _append_args_accessors_vector(method, files, objlabel)
+    _append_args_accessors_matrix(method, files, objlabel)
+    _append_args_mutators_vectors(method, files, objlabel)
+    _append_args_mutators_matrix(method, files, objlabel)
+    _append_args_mutators_elements(method, files, objlabel)
+    _append_args_data(method, files, objlabel)
+    _append_args_init(method, files, objlabel)
 
 
 def _append_args_pointers(method, files):
@@ -34,10 +34,10 @@ def _append_args_pointers(method, files):
     add all pointers for arguments from method.args_names to the cpp files for
     object with name objlabel. pointers to 'args(i, 0)' for i in range(nargs)
     """
-    title = "\n\n// Arguments\n"
+    title = linesplit + "\n// Arguments"
     files['h']['private'] += title
     files['h']['private'] += \
-        '\n{0} args;\n'.format(matrix_type(len(method.args()), 1))
+        '\n{0} args;'.format(matrix_type(len(method.args()), 1))
     for i, arg in enumerate(method.args()):
         files['h']['private'] += \
             '\ndouble * {0} = & args({1}, 0);'.format(str(arg), i)
@@ -48,7 +48,7 @@ def _append_args_accessors_vector(method, files, objlabel):
     add all accessors for arguments from method.args_names to the cpp files for
     object with name objlabel. return vector<double>
     """
-    title = "\n\n// Acessors to Arguments, return vector<double>\n"
+    title = linesplit + "\n// Acessors to Arguments, return vector<double>"
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
@@ -57,7 +57,7 @@ def _append_args_accessors_vector(method, files, objlabel):
         files['h']['public'] += \
             '\nvector<double> {0}_vector() const;'.format(name)
         files['cpp']['public'] += \
-            "\n\nvector<double> " + \
+            "\nvector<double> " + \
             "{0}::{1}".format(objlabel, name) + \
             "_vector() const {"
         files['cpp']['public'] += \
@@ -74,7 +74,7 @@ def _append_args_accessors_matrix(method, files, objlabel):
     add all accessors for arguments from method.args_names to the cpp files for
     object with name objlabel. return Matrix<double, n, m>
     """
-    title = "\n\n// Acessors to Arguments, return Matrix<double, n, m>\n"
+    title = linesplit + "\n// Acessors to Arguments, return Matrix<double, n, m>"
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
@@ -103,7 +103,7 @@ def _append_args_mutators_matrix(method, files, objlabel):
     add all mutators for arguments from method.args_names to the cpp files for
     object with name objlabel. input is Matrix<double, n, m>
     """
-    title = "\n\n// Mutators for Arguments, type = Matrix<double, n, m>\n"
+    title = linesplit + "\n// Mutators for Arguments, type = Matrix<double, n, m>"
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
@@ -129,7 +129,7 @@ def _append_args_mutators_vectors(method, files, objlabel):
     add all mutators for arguments from method.args_names to the cpp files for
     object with name objlabel. input is vector<double>
     """
-    title = "\n\n// Mutators for Arguments, type = vector<double>\n"
+    title = linesplit + "\n// Mutators for Arguments, type = vector<double>"
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
@@ -150,7 +150,7 @@ def _append_args_mutators_elements(method, files, objlabel):
     add all mutators for arguments from method.args_names to the cpp files for
     object with name objlabel. input is double and int index.
     """
-    title = "\n\n// Mutators for Arguments, type is double with int index\n"
+    title = linesplit + "\n// Mutators for Arguments, type is double with int index"
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
@@ -180,16 +180,16 @@ def _append_args_mutators_elements(method, files, objlabel):
 ###############################################################################
 # DATA
 
-def _append_args_data(nums, files, objlabel):
-    title = "\n\n// Arguments Initialisation Data"
-    files['cpp']['data'] += title
-    for name in nums.inits.keys():
-        cpp = _str_args_init_data(nums, name)
-        files['cpp']['data'] += '\n' + cpp
+def _append_args_data(method, files, objlabel):
+    title = linesplit + "\n// Arguments Initialisation Data"
+    files['cpp']['init'] += title
+    for name in method.inits.keys():
+        cpp = _str_args_init_data(method, name)
+        files['cpp']['init'] += '\n' + cpp
 
 
-def _str_args_init_data(nums, name):
-    mat = types.matrix_types[0](nums.inits[name])
+def _str_args_init_data(method, name):
+    mat = types.matrix_types[0](method.inits[name])
     mat_dic = dict((((i, j), e) for i, j, e in mat.row_list()))
     init_data = 'vector<double> {0}_data ='.format(name) + ' {'
     crop = False
@@ -200,8 +200,8 @@ def _str_args_init_data(nums, name):
             if (m, n) in mat_dic.keys():
                 expr = mat[m, n]
                 symbs = expr.free_symbols
-                if not any(symb in nums.method.args() for symb in symbs):
-                    c = ccode(expr, dereference=dereference(nums.method))
+                if not any(symb in method.args() for symb in symbs):
+                    c = ccode(expr, dereference=dereference(method))
                     data = 'float({0}), '.format(c)
             init_data += data
     if crop:
@@ -212,9 +212,9 @@ def _str_args_init_data(nums, name):
 ###############################################################################
 # INIT
 
-def _append_args_init(nums, files, objlabel):
-    title = "\n\n// Arguments Initialisation\n"
+def _append_args_init(method, files, objlabel):
+    title = linesplit + "\n// Arguments Initialisation"
     files['cpp']['init'] += title
-    for name in nums.inits.keys():
+    for name in method.inits.keys():
         cpp = '\nset_{0}({0}_data);'.format(name)
         files['cpp']['init'] += cpp

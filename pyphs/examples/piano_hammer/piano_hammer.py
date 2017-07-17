@@ -24,7 +24,7 @@ graph = Graph(netlist=netlist)
 
 
 # ---------------------------  CORE  ---------------------------------------- #
-core = graph.buildCore()
+core = graph.to_core()
 
 
 ## ---------------------------  SIMULATION  ---------------------------------- #
@@ -55,7 +55,7 @@ core = graph.buildCore()
 #              }
 #
 #    # Instanciate Simulation class
-#    simu = Simulation(core, config=config)
+#    simu = Simulation(core.to_method(), config=config)
 #
 #    def ordering(name, *args):
 #        def get_index(e):

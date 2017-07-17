@@ -11,10 +11,7 @@ from __future__ import absolute_import, division, print_function
 import sympy as sp
 from pyphs.core.maths import matvecprod, jacobian, sumvecs
 from pyphs.core.tools import free_symbols, types
-from pyphs.config import (GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER,
-                          FILES, EPS, MAXIT, SPLIT, EIGEN_PATH,
-                          LOAD_OPTS, PBAR, FS, FS_SYMBS, simulations,
-                          VERBOSE)
+from pyphs.config import CONFIG_METHOD, VERBOSE, EPS_DG, FS_SYMBS, FS
 from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
 from pyphs import Core
 from ..tools import Operation
@@ -28,7 +25,7 @@ class Method(Core):
     Base class for pyphs numerical methods (defined symbolically).
     """
 
-    def __init__(self, core, config=None, args=None):
+    def __init__(self, core, config=None, label=None):
         """
         Parameters
         -----------
@@ -38,37 +35,30 @@ class Method(Core):
 
         config: dict or None
             A dictionary of simulation parameters. If None, the standard
-            pyphs.config.simulations is used (the default is None):
-            config has 'fs': {},
-                      'grad': {},
-                      'theta': {},
-                      'path': {},
-                      'lang': {},
-                      'timer': {},
-                      'pbar': {},
-                      'files': {},
-                      'eps': {},
-                      'maxit': {},
-                      'split': {},
-                      'eigen': {},
-                      'load': {}
+            pyphs.config.simulations is used (the default is None).
+            keys and default values are
 
-
-
-        args: list of strings or None
-            A list of symbols string names for symbols considered as arguments.
-            If None, core.args() is used (the default is None).
-
-        """.format(FS, GRADIENT, THETA, SIMULATION_PATH, LANGUAGE, TIMER, PBAR,
-                   FILES, EPS, int(MAXIT), SPLIT, EIGEN_PATH,
-                   LOAD_OPTS)
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+        """
+        if label is None:
+            label = core.label
 
         if VERBOSE >= 1:
-            print('Build numerical method...')
+            print('Build method {}...'.format(label))
         if VERBOSE >= 2:
             print('    Init Method...')
+
         # INIT Core object
-        Core.__init__(self, label=core.label+'_method')
+        Core.__init__(self, label=label)
+
+        # Save core
+        self._core = core
+
         # Copy core content
         for name in (list(set().union(
                           core.attrstocopy,
@@ -96,11 +86,16 @@ class Method(Core):
         # ------------- ARGUMENTS ------------- #
 
         # Configuration parameters
-        self.config = simulations.copy()
+        self.config = CONFIG_METHOD.copy()
 
         # update config
         if config is None:
             config = {}
+        else:
+            for k in config.keys():
+                if not k in self.config.keys():
+                    text = 'Configuration key "{0}" unknown.'.format(k)
+                    raise AttributeError(text)
         self.config.update(config)
 
         # list of the method arguments names
@@ -117,13 +112,6 @@ class Method(Core):
 
         # set sample rate as a symbol...
         self.fs = self.symbols(FS_SYMBS)
-
-        # ...  with associated parameter...
-        if self.config['fs'] is None:
-            self.add_parameters(self.fs)
-        # ... or subs if an object is provided
-        else:
-            self.subs.update({self.fs: self.config['fs']})
 
         if self.config['split']:
             if VERBOSE >= 2:
@@ -253,6 +241,46 @@ class Method(Core):
         criterion = list(zip(mats, args))
         self.linear_nonlinear(criterion=criterion)
 
+    def to_numeric(self, inits=None, config=None):
+        """
+        Return a Numeric object for the evaluation of the PHS numerical method.
+        
+        Parameter
+        ---------
+        
+        inits : dict or None (optional)
+            Dictionary with variable name as keys and initialization values
+            as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
+            with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
+            
+        Return
+        ------
+        numeric : pyphs.Numeric
+            Object for the numerical evaluation of the PHS numerical method.
+        """
+        from pyphs import Numeric
+        return Numeric(self, inits=inits, config=config)
+    
+    def to_simulation(self, config=None, inits=None):
+        """
+        Return a Numeric object for the evaluation of the PHS numerical method.
+        
+        Parameter
+        ---------
+        
+        inits : dict or None (optional)
+            Dictionary with variable name as keys and initialization values
+            as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
+            with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
+            
+        Return
+        ------
+        numeric : pyphs.Simulation
+            Object for the numerical evaluation of the PHS numerical method.
+        """
+        from pyphs import Simulation
+        return Simulation(self, inits=inits, config=config)
+    
 
 def set_structure(method):
     set_getters_I(method)
@@ -477,7 +505,7 @@ def set_getters_I(method):
     def I(suffix):
         dimx, dimw = (getattr(method.dims, 'x'+suffix)(),
                       getattr(method.dims, 'w'+suffix)())
-        out = types.matrix_types[0](sp.diag(sp.eye(dimx)*method.config['fs'],
+        out = types.matrix_types[0](sp.diag(sp.eye(dimx)*method.fs,
                                             sp.eye(dimw)))
         return types.matrix_types[0](out)
     setattr(method, 'I', I)
@@ -621,7 +649,7 @@ dictionary.
         dxHl = list(types.matrix_types[0](method.Q)*(types.matrix_types[0](method.xl()) +
                     0.5*types.matrix_types[0](method.dxl())))
         dxHnl = discrete_gradient(method.H, method.xnl(), method.dxnl(),
-                                  method.config['eps'])
+                                  EPS_DG)
         method._dxH = dxHl + dxHnl
 
     elif method.config['grad'] == 'theta':

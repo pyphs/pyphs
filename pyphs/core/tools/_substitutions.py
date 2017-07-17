@@ -7,6 +7,7 @@ Created on Thu May 18 21:39:29 2017
 """
 from ..tools import types, free_symbols
 from ..tools import simplify as simplify_func
+from pyphs.misc.tools import geteval
 import sympy
 
 
@@ -207,7 +208,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
                        list(core.symbs_names) +
                        ['M', '_dxH', 'observers'])
     for name in attrs_to_sub:
-        expr = getattr(core, name)
+        expr = geteval(core, name)
         keys = free_symbols(expr).intersection(set(subs.keys()))
         # recast the elements of the substitution dictionary as sympy objects
         subs_e = dict(map(lambda k, v: (k, v),

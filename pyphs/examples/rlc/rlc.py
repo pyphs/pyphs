@@ -9,14 +9,15 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import netlist2core
+import pyphs as phs
 
 label = 'rlc'
 
 here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = os.path.join(here, label + '.net')
-core = netlist2core(netlist_filename)
+
+netlist = phs.Netlist(netlist_filename)
 
 if __name__ == '__main__':
 
@@ -31,9 +32,9 @@ if __name__ == '__main__':
 
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
-              'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
-              'theta': .5,             # theta-scheme for the structure
-              'split': False,           # apply core.split_linear() beforehand
+              'grad': 'theta',    # in {'discret', 'theta', 'trapez'}
+              'theta': 0.5,             # theta-scheme for the structure
+              'split': True,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
               'eps': 1e-30,          # Global numerical tolerance
               'path': None,             # Path to the results folder
@@ -42,13 +43,12 @@ if __name__ == '__main__':
               'lang': 'python',     # in {'python', 'c++'}
               'theano': False
               }
-
+#    # Define initialization values
 #    x0 = np.zeros(core.dims.x())
 #    x0[0] = 1
 #    x0_expr = list(map(sp.sympify, x0))    
 #    inits = {'x': x0_expr}
-#    simu = Simulation(core, config=config, inits=inits)
-    simu = Simulation(core, config=config)
+    simu = netlist.to_simulation(config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])

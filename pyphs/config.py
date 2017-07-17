@@ -36,6 +36,9 @@ GMIN = 1e-12
 # Define the numerical tolerance such that |x|<EPS <=> x ~ 0
 EPS = numpy.finfo(float).eps
 
+# Define the numerical tolerance for the discrete gradient |x|<EPS <=> dxH ~ H'
+EPS_DG = numpy.finfo(float).eps
+
 # Define the data type (defualt is float 32bi)
 DTYPE = numpy.finfo(float).dtype.type
 
@@ -168,21 +171,23 @@ LOAD_OPTS = {'imin': 0, 'imax': None, 'decim': 1}
 # Maximum number of iterations for implicit functions solvers
 MAXIT = 100
 
-simulations = {'fs': FS,
-               'grad': GRADIENT,
-               'theta': THETA,
-               'path': SIMULATION_PATH,
-               'lang': LANGUAGE,
-               'timer': TIMER,
-               'pbar': PBAR,
-               'files': FILES,
-               'eps': EPS,
-               'maxit': int(MAXIT),
-               'split': SPLIT,
-               'eigen': EIGEN_PATH,
-               'cmake': CMAKE_PATH,
-               'load': LOAD_OPTS,
-               'theano': THEANO}
+CONFIG_METHOD = {'grad': GRADIENT,
+                 'theta': THETA,
+                 'split': SPLIT}
+
+CONFIG_NUMERIC = {'fs': FS,
+                  'eps': EPS,
+                  'maxit': int(MAXIT),
+                  'theano': THEANO}
+
+CONFIG_SIMULATION = {'path': SIMULATION_PATH,
+                     'lang': LANGUAGE,
+                     'timer': TIMER,
+                     'pbar': PBAR,
+                     'files': FILES,
+                     'eigen': EIGEN_PATH,
+                     'cmake': CMAKE_PATH,
+                     'load': LOAD_OPTS}
 
 ###############################################################################
 

@@ -6,7 +6,8 @@ Created on Tue May 24 11:20:26 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from pyphs.config import simulations, VERBOSE
+from pyphs.config import (CONFIG_METHOD, CONFIG_SIMULATION, 
+                          CONFIG_NUMERIC, VERBOSE)
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.numcore2cpp import numcore2cpp
 from .. import Numeric
@@ -17,14 +18,13 @@ import progressbar
 import time
 import os
 import sys
-import numpy as np
 
 
 class Simulation:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
-    def __init__(self, core, config=None, inits=None):
+    def __init__(self, method, config=None, inits=None):
         """
         Parameters
         -----------
@@ -56,10 +56,17 @@ class Simulation:
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
         """
 
+        self.method = method
+        
         # init config with standard configuration options
-        self.config = simulations.copy()
+        self.config = CONFIG_SIMULATION
+        self.config.update(CONFIG_NUMERIC)
+        self.config.update(CONFIG_METHOD)
+        
+        # Update with method config
+        self.config.update(self.method.config)
 
-        # update with provided opts
+        # update with config arguments
         if config is None:
             config = {}
         else:
@@ -67,17 +74,16 @@ class Simulation:
                 if not k in self.config.keys():
                     text = 'Configuration key "{0}" unknown.'.format(k)
                     raise AttributeError(text)
-
         self.config.update(config)        
+
+        # Rebuild method if parameters are differents
+        self.init_method()
 
         if self.config['path'] is None:
             self.config['path'] = os.getcwd()
 
         if not os.path.exists(self.config['path']):
             os.mkdir(self.config['path'])
-
-        # store Core
-        setattr(self, '_core', core.__copy__())
 
         # Define inits
         self.inits = {}        
@@ -92,28 +98,40 @@ class Simulation:
         Build the Numeric from the Core.
         Additionnally, generate the c++ code if config['lang'] == 'c++'.
         """
-        setattr(self, 'nums', Numeric(self._core, 
-                                               config=self.config,
-                                               inits=self.inits))
         if not self.config['lang'] in ['c++', 'python']:
             raise AttributeError('Unknows language {}'.format(self.config['lang']))
-        if self.config['lang'] == 'c++':
-            objlabel = self.nums.label.upper()
+        elif self.config['lang'] == 'python':
+            config = {'fs': self.config['fs'],
+                      'theano': self.config['theano']}
+            setattr(self, 'nums', Numeric(self.method, 
+                                          inits=self.inits,
+                                          config=config))        
+        elif self.config['lang'] == 'c++':
+            objlabel = self.method.label.upper()
             self.cpp_path = os.path.join(main_path(self), objlabel.lower())
             self.src_path = os.path.join(self.cpp_path, 'src')
             if not os.path.exists(self.src_path):
                 os.mkdir(self.cpp_path)
             if not os.path.exists(self.cpp_path):
                 os.mkdir(self.src_path)
-            numcore2cpp(self.nums, objlabel=objlabel, path=self.src_path,
+            numcore2cpp(self.method, objlabel=objlabel, path=self.src_path,
                         eigen_path=self.config['eigen'])
 
-        self.data = Data(self.nums.method, self.config) 
+        self.data = Data(self.method, self.config) 
+
+    def init_method(self):
+        """
+        Build the numerical method.
+        """
+        keys = self.method.config.keys()
+        config_method = dict([(k, self.config[k]) for k in keys])
+        if config_method != self.method.config:
+            self.method.__init__(self.method._core, config=config_method)
 
 ###############################################################################
 
 
-    def init(self, nt=None, u=None, p=None,  inits=None):
+    def init(self, nt=None, u=None, p=None,  inits=None,  config=None):
         """
     init
     ****
@@ -149,6 +167,13 @@ class Simulation:
         if inits is not None and inits != self.inits:
             self.inits = inits
             self.init_numericalCore()
+            
+        if config is not None and any([config[k] != self.method.config[k] 
+                                       for k in self.method.config]):
+            self.config.update(config)
+            self.init_method()
+            self.init_numericalCore()
+            
         self.data.init_data(u, p, nt)
 
     def process(self):

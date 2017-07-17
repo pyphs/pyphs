@@ -829,7 +829,7 @@ add the connector'.format(i)
         sympy.pprint([b, self.M, a], **settings)
 
     # =========================================================================
-
+    # Evaluation
     def build_eval(self, vectorize=True):
         """
         Add an attribute object 'eval' for the numerical evaluation of core
@@ -840,12 +840,88 @@ add the connector'.format(i)
         ---------
 
         vectorize : boll (optional)
-            If True, every function are vectorized with numpy.vectorize.
+            If True, every functions are vectorized with numpy.vectorize.
             The default is True.
         """
         from pyphs.numerics.tools._evaluation import Evaluation
         setattr(self, 'eval', Evaluation(self, vectorize=vectorize))
 
+    # =========================================================================
+        
+    def to_method(self, config=None):
+        """
+        Return the PHS numerical method associated with the PHS core for the 
+        specified configuration.
+        
+        Parameter
+        ---------
+
+        config: dict or None
+            A dictionary of simulation parameters. If None, the standard
+            pyphs.config.simulations is used (the default is None).
+            keys and default values are
+            
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+              
+        Output
+        ------
+        
+        method : pyphs.Method
+            The PHS numerical method associated with the PHS core for the 
+            specified configuration.
+        
+        """
+        
+        from pyphs import Method
+        return Method(self, config=config)
+    
+    # =========================================================================
+
+    def to_simulation(self, config=None, inits=None):
+        """
+        Return the PHS numerical method associated with the PHS core for the 
+        specified configuration.
+        
+        Parameter
+        ---------
+
+        config: dict or None
+            A dictionary of simulation parameters. If None, the standard
+            pyphs.config.simulations is used (the default is None).
+            keys and default values are
+            
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+              
+        Output
+        ------
+        
+        method : pyphs.Method
+            The PHS numerical method associated with the PHS core for the 
+            specified configuration.
+        
+        """
+        
+        from pyphs import Method
+        from pyphs.config import CONFIG_METHOD
+        config_method = CONFIG_METHOD.copy()
+        if config is None:
+            config = {}
+        for k in CONFIG_METHOD.keys():
+            if k in config.keys():
+                config_method.update({k: config[k]})
+        method = Method(self, config=config_method)        
+        return method.to_simulation(config=config, inits=inits)
+    
     # =========================================================================
 
     def _struc_getset(self, dims_names=None):

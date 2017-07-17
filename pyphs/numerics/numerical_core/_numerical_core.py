@@ -8,10 +8,8 @@ Created on Fri Jun  3 15:27:55 2016
 from __future__ import absolute_import, division, print_function
 from pyphs.core.tools import types as core_types
 from ..tools import types as num_types
-from pyphs.misc.tools import remove_duplicates
 from ..tools import lambdify, Operation
-from ..numerical_method._method import Method
-from pyphs.config import simulations, VERBOSE
+from pyphs.config import VERBOSE, CONFIG_NUMERIC
 import numpy
 
 
@@ -23,74 +21,49 @@ class Numeric(object):
     method is applied symbolically to a core, then every relevant functions
     for simulations are lambdified and organized into the object.
     """
-    def __init__(self, core, config=None, inits=None, build=True):
+    def __init__(self, method, inits=None, label=None, config=None):
         """
-    Instanciate a Numeric.
-
-    Parameters
-    ----------
-
-    core : Core
-        Base system to descretize and lambdify.
-
-        config: dict or None (optional)
-            A dictionary of simulation parameters. If None, the standard
-            pyphs.config.simulations is used (the default is None):
-            config = {'fs': {},
-                      'grad': {},
-                      'theta': {},
-                      'path': {},
-                      'lang': {},
-                      'timer': {},
-                      'pbar': {},
-                      'files': {},
-                      'eps': {},
-                      'maxit': {},
-                      'split': {},
-                      'eigen': {},
-                      'load': {}
-                      }
-
+        Instanciate a Numeric.
+    
+        Parameters
+        ----------
+    
+        method : pyphs.Method
+            Symbolic numerical method to lambdify.
+        
         inits : dict or None (optional)
             Dictionary with variable name as keys and initialization values
             as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
             
-        build : bool (optional)
-            If False, the object is not built at instanciation. Then the method
-            :code:`build()` must be called before any usage.
-
         Return
         ------
-
-        mums : Numeric
+        numeric : pyphs.Numeric
         """
-        self.label = core.label
+        # Save method object
+        self.method = method
+        
+        if label is None:
+            label = self.method.label
+        self.label = label
 
         # Manage configuration
-        self.config = simulations.copy()  # init with standard
-
+        self.config = CONFIG_NUMERIC.copy()
         if config is None:
             config = {}
-        else:
-            for k in config.keys():
-                if not k in self.config.keys():
-                    text = 'Configuration key "{0}" unknown.'.format(k)
-                    raise AttributeError(text)
+        for k in config.keys():
+            if k not in self.config.keys():
+                raise AttributeError('Unknown parameter {}.'.format(k))
         self.config.update(config)
+        self.method.subs.update({self.method.fs: self.config['fs']})
 
-        # Save Core object
-        self.method = Method(core, config=config)
-        
         # Define inits
         self.inits = {}        
         if inits is not None:
             self.inits.update(inits)
             
-        # Build... or not
-        if build:
-            self.build()
-
+        self.build()
+            
     def init(self):
         """
         Set initilization values of self (and subsequently of the 
@@ -116,7 +89,7 @@ class Numeric(object):
     def build(self):
 
         if VERBOSE >= 1:
-            print('Build numerical core...')
+            print('Build numeric {}...'.format(self.label))
 
         # init args values with 0
         self.args = numpy.array([0., ]*self.method.dims.args())

@@ -9,31 +9,119 @@ from __future__ import absolute_import, division, print_function
 
 from .preamble import str_preamble
 from .arguments import append_args
-from .functions import append_funcs
+from .functions import append_funcs, append_funcs_constructors
 from .operations import append_ops
-from .tools import indent, matrix_type, SEP, formatPath
+from .tools import indent, SEP, formatPath
 from pyphs.config import EIGEN_PATH as config_eigen_path
-from pyphs.config import VERBOSE
+from pyphs.config import VERBOSE, CONFIG_NUMERIC
+from pyphs.misc.tools import geteval
+from pyphs.core.tools import substitute, free_symbols
+from .tools import linesplit
+import numpy
+import sympy
 import os
+import copy
 
 standard_config = {'path': os.getcwd()}
 
 
-def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
+def init_eval(method, name):
+
+    if not name in method.inits_evals.keys():
+        if VERBOSE >= 2:
+            print('    Init value for {}'.format(name))
+
+        if name in method.ops_names:
+            obj = copy.copy(getattr(method, name+'_op'))
+            sobj = eval_op(method, obj)
+        elif name == 'y':
+            obj = copy.copy(geteval(method, 'output'))
+            sobj = substitute(obj, method.subscpp)
+            sobj = numpy.asarray(sobj, dtype=float)
+        else:
+            obj = copy.copy(geteval(method, name))
+            sobj = substitute(obj, method.subscpp)
+            while not len(free_symbols(sobj)) == 0:
+                sobj = substitute(sobj, method.subscpp)
+            if not isinstance(sobj, (float, list)):
+                sobj = numpy.asarray(sobj.tolist(), dtype=float)
+            else:
+                sobj = numpy.asarray(sobj, dtype=float)
+        method.inits_evals[name] = sobj
+
+
+def eval_op(method, op):
+
+    def evaluate(args):
+        return op.call[0](*args)
+
+    args = []
+    for arg in op.args:
+        if isinstance(arg, method.Operation):
+            args.append(eval_op(method, arg))
+        elif isinstance(arg, str):
+            init_eval(method, arg)
+            args.append(method.inits_evals[arg])
+        else:
+            if not isinstance(arg, (float, int)):
+                raise TypeError
+            args.append(arg)
+
+    return evaluate(args)
+
+
+def method2cpp(method, objlabel=None, path=None, eigen_path=None,
+               inits=None, config=None):
+
     if VERBOSE >= 1:
-        print('Generate core C++ object...')
+        print('Prepare method {} for C++ generation...'.format(method.label))
+
+    if inits is None:
+        inits = {}
+
+    if config is None:
+        config = {}
+
+    method.configcpp = CONFIG_NUMERIC.copy()
+    method.configcpp.update(config)
+
+    args_names = ['x', 'dx', 'w', 'u', 'p', 'o']
+    for name in args_names:
+        if not name in inits.keys():
+            inits[name] = list(sympy.zeros(len(geteval(method, name)), 1))
+
+    method.inits = inits
+    method.inits_evals = {}
+
+    method.subscpp = method.subs.copy()
+
+    method.subscpp[method.fs] = method.configcpp['fs']
+    for name in args_names:
+        for i, a in enumerate(geteval(method, name)):
+            method.subscpp[a] = method.inits[name][i]
+
+    for name in method.update_actions_deps():
+        init_eval(method, name)
+
+    if VERBOSE >= 1:
+        print('Generate core C++ object {}...'.format(method.label))
+
     if objlabel is None:
         objlabel = 'phscore'.upper()
     else:
         objlabel = objlabel.upper()
+
     if path is None:
         path = os.getcwd() + os.sep + objlabel
+
     if not os.path.exists(path):
         os.makedirs(path)
+
     if eigen_path is None:
         eigen_path = config_eigen_path
     files = {}
     exts = ['cpp', 'h']
+
     for name in exts:
         files.update({name: {'public': '',
                              'private': '',
@@ -54,25 +142,25 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
     files['h']['public'] += '\npublic:'
     if VERBOSE >= 2:
         print('    Build parameters...')
-    append_parameters(nums.method, files, objlabel)
+    append_parameters(method, files, objlabel)
     if VERBOSE >= 2:
         print('    Build update...')
-    append_update(nums.method, files, objlabel)
+    append_update(method, files, objlabel)
     if VERBOSE >= 2:
         print('    Build arguments...')
-    append_args(nums, files, objlabel)
+    append_args(method, files, objlabel)
     if VERBOSE >= 2:
         print('    Build functions...')
-    append_funcs(nums, files, objlabel)
+    append_funcs(method, files, objlabel)
     if VERBOSE >= 2:
         print('    Build operations...')
-    append_ops(nums, files, objlabel)
+    append_ops(method, files, objlabel)
     if VERBOSE >= 2:
         print('    Build initialisation...')
     append_init(objlabel, files)
     if VERBOSE >= 2:
         print('    Build constructors...')
-    append_constructor(objlabel, files)
+    append_constructor(method, objlabel, files)
 #    append_constructor_init_vector(objlabel, files)
 #    append_constructor_init_matrix(nums.method, objlabel, files)
     if VERBOSE >= 2:
@@ -84,9 +172,9 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
             print('    Write {}...'.format(filename))
 
         string = files[e]['starting']
-        string += '\n\n// PUBLIC'
+        string += linesplit + '\n// PUBLIC'
         string += indent(files[e]['public'])
-        string += '\n\n\n// PRIVATE'
+        string += '\n' + linesplit + '\n// PRIVATE'
         string += indent(files[e]['private'])
         string += files[e]['closing']
 
@@ -94,7 +182,7 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
         _file.write(string)
         _file.close()
 
-    parameters_files = parameters(nums.method.subs, objlabel)
+    parameters_files = parameters(method.subs, objlabel)
     for e in exts:
         filename = path + os.sep + 'parameters.{0}'.format(e)
         if VERBOSE >= 1:
@@ -109,26 +197,24 @@ def numcore2cpp(nums, objlabel=None, path=None, eigen_path=None):
 # parameters
 
 def append_parameters(method, files, objlabel):
-    files['h']['private'] += "\n\n// Parameters\n"
-    files['h']['private'] += '\nconst unsigned int indexParameters = 0;' + '\n'
+    files['h']['private'] += linesplit + "\n// Sample Rate"
+    files['h']['private'] += \
+        '\ndouble sampleRate = {};'.format(method.subscpp[method.fs])
+    files['h']['private'] += \
+        '\nconst double * F_S = & sampleRate;'
+    files['h']['public'] += linesplit + "\n// Sample Rate"
+    files['h']['public'] += \
+        '\nvoid set_sampleRate(double &);'
+    files['cpp']['public'] += linesplit + "\n// Sample Rate"
+    files['cpp']['public'] += \
+        "\nvoid {0}::set_sampleRate(double & value)".format(objlabel) +\
+        " {\n" + indent('sampleRate = value;') + '\n}'
+    files['h']['private'] += linesplit + "\n// Parameters"
+    files['h']['private'] += '\nconst unsigned int indexParameters = 0;  // See file "parameters.cpp".'
     for i, sub in enumerate(method.subs):
-        if str(sub) == 'F_S':
-            files['h']['private'] += "\n\n// Sample Rate"
-            files['h']['private'] += \
-                '\n\ndouble sampleRate = {};'.format(method.subs[sub])
-            files['h']['private'] += \
-                '\nconst double * F_S = & sampleRate;'
-            files['h']['public'] += "\n\n// Sample Rate\n"
-            files['h']['public'] += \
-                '\nvoid set_sampleRate(double &);'
-            files['cpp']['public'] += "\n\n// Sample Rate\n"
-            files['cpp']['public'] += \
-                "\nvoid {0}::set_sampleRate(double & value)".format(objlabel) +\
-                " {\n" + indent('sampleRate = value;') + '\n}'                
-        else:
             files['h']['private'] += \
                 '\nconst double * {0} = & subs[indexParameters][{1}];'.format(str(sub), i)
-            
+
 
 def parameters(subs, objlabel):
     """
@@ -160,24 +246,30 @@ def _append_subs(subs, files):
     """
     Used in .parameters()
     """
-    dim = len(subs)
-    if dim > 0:
+    if isinstance(subs, (tuple, list)):
+        nsubs = len(subs)
+    else:
+        nsubs = 1
+        subs = [subs, ]
+    npars = len(subs[0])
+    if npars > 0:
         files['h'] += """\n
-extern const double subs[1][""" + str(dim) + """];"""
+extern const double subs[{0}][{1}];""".format(nsubs, npars)
         files['cpp'] += """\n
 // Correspondance is
 """
-        for i, k in enumerate(subs):
+        for i, k in enumerate(subs[0].keys()):
             if not str(k) == 'F_S':
-                files['cpp'] += '// subs[i][{}] = {}\n'.format(i, k)
-                
+                files['cpp'] += '// subs[key][{}] = {}\n'.format(i, k)
         files['cpp'] += """\n
-const double subs[1][""" + str(dim) + """] = {
+const double subs[{}][{}]""".format(nsubs, npars) + """ = { """
+        for i, s in enumerate(subs):
+            files['cpp'] += indent(linesplit + '\n// key {}'.format(i))
+            files['cpp'] += """
     {"""
-        for k in subs:
-            if not str(k) == 'F_S':
-                files['cpp'] += str(float(subs[k])) + ', '
-        files['cpp'] = files['cpp'][:-2] + """},
+            for k in s.keys():
+                files['cpp'] += str(float(s[k])) + ', '
+            files['cpp'] = files['cpp'][:-2] + """},
 };"""
 
 
@@ -185,21 +277,20 @@ const double subs[1][""" + str(dim) + """] = {
 # Constructors
 
 def append_init(objlabel, files):
-    title = "\n\n// Initialization\n\n"
+    title = linesplit + "\n// Initialization\n"
     files['h']['private'] += "{0}void {1}();".format(title, 'init')
     files['cpp']['private'] += title
     string = 'void {0}::{1}()'.format(objlabel, 'init') + '{'
-    string += indent(files['cpp']['data'])
     string += indent(files['cpp']['init'])
     string += '\n};'
     files['cpp']['private'] += string
 
 
 def append_initParameters(objlabel, files):
-    title = "\n\n// Initialization\n\n"
+    title = linesplit + "\n// Initialization\n"
     files['h']['private'] += "{0}void {1}(int &);".format(title, 'initParameters')
     files['cpp']['private'] += title
-    string = 'void {0}::{1}(int & i)'.format(objlabel, 
+    string = 'void {0}::{1}(int & i)'.format(objlabel,
                                                            'init') + '{'
     string += indent('\nindexParameters = i;')
     string += indent('\ninit();')
@@ -209,12 +300,18 @@ def append_initParameters(objlabel, files):
 
 # ----------------------------------------------------------------------- #
 
-def append_constructor(objlabel, files):
-    title = "\n\n// Default Constructor\n\n"
+def append_constructor(method, objlabel, files):
+    title = linesplit + "\n// Default Constructor\n"
     files['h']['public'] += "{0}{1}();".format(title, objlabel)
     files['cpp']['public'] += title
     string = '{0}::{0}()'.format(objlabel)
-    string += '{\n' + indent('init();') + '\n};'
+    string += '{'
+    string += indent(files['cpp']['data'])
+    files['cpp']['public'] += string
+    append_funcs_constructors(method, files, objlabel)
+    string = indent(linesplit + "\n// Initialization")
+    string += indent('\ninit();')
+    string += '\n};'
     files['cpp']['public'] += string
 
 
@@ -247,7 +344,7 @@ def append_constructor(objlabel, files):
 
 
 def append_destructuor(objlabel, files):
-    title = "\n\n// Default Destructor\n\n"
+    title = linesplit + "\n// Default Destructor\n"
     files['h']['public'] += "{0}~{1}();".format(title, objlabel)
     files['cpp']['public'] += title
     string = '{0}::~{0}()'.format(objlabel) + '{\n};'
@@ -296,9 +393,9 @@ def iterate(method, actions, res_label, step_label):
     string = ''
     string += "\nunsigned int iter_{0} = 0;".format(res_label)
     string += "\n_{0} = 1;".format(step_label)
-    it = "(iter_{0}<{1})".format(res_label, method.config['maxit'])
-    res = "({0}()>{1})".format(res_label, method.config['eps'])
-    step = "({0}()>{1})".format(step_label, method.config['eps'])
+    it = "(iter_{0}<{1})".format(res_label, method.configcpp['maxit'])
+    res = "({0}()>{1})".format(res_label, method.configcpp['eps'])
+    step = "({0}()>{1})".format(step_label, method.configcpp['eps'])
     string += \
         "\nwhile ({0} & {1} & {2})".format(it, res, step) + '{'
     string += \
@@ -310,15 +407,15 @@ def append_update(method, files, objlabel):
     string_h = ""
     string_cpp = ""
     string_h += "\nvoid update();"
-    string_cpp += """\n
-void """ + objlabel + '::' + """update(){\n"""
+    string_cpp += """
+void """ + objlabel + '::' + """update(){"""
     for action in method.update_actions:
         if action[0] == 'exec':
-            string_cpp += '\n' + indent(execs(action[1]))
+            string_cpp += indent(execs(action[1]))
         elif action[0] == 'iter':
-            string_cpp += '\n' + indent(iterate(method, *action[1]))
+            string_cpp += indent(iterate(method, *action[1]))
     string_cpp += "\n}"
-    files['h']['public'] += "\n\n// Core update\n"
+    files['h']['public'] += linesplit + "\n// Core update"
     files['h']['public'] += string_h
-    files['cpp']['public'] += "\n\n// Core update\n"
+    files['cpp']['public'] += linesplit + "\n// Core update"
     files['cpp']['public'] += string_cpp

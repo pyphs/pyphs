@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 from pyphs.config import (CONFIG_METHOD, CONFIG_SIMULATION, 
                           CONFIG_NUMERIC, VERBOSE)
 from ..cpp.simu2cpp import simu2cpp, main_path
-from ..cpp.numcore2cpp import numcore2cpp
+from ..cpp.method2cpp import method2cpp, parameters
 from .. import Numeric
 from .data import Data
 from pyphs.misc.io import dump_files, with_files
@@ -24,7 +24,7 @@ class Simulation:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
-    def __init__(self, method, config=None, inits=None):
+    def __init__(self, method, config=None, inits=None, label=None):
         """
         Parameters
         -----------
@@ -57,9 +57,12 @@ class Simulation:
         """
 
         self.method = method
+        if label is None:
+            label = method.label
+        self.label = label            
         
         # init config with standard configuration options
-        self.config = CONFIG_SIMULATION
+        self.config = CONFIG_SIMULATION.copy()
         self.config.update(CONFIG_NUMERIC)
         self.config.update(CONFIG_METHOD)
         
@@ -92,6 +95,23 @@ class Simulation:
             
         self.init_numericalCore()
         
+    def config_numeric(self):
+        dic = dict()
+        for k in CONFIG_NUMERIC.keys():
+            dic[k] = self.config[k]
+        return dic
+        
+    def config_method(self):
+        dic = dict()
+        for k in CONFIG_METHOD.keys():
+            dic[k] = self.config[k]
+        return dic
+        
+    def config_simulation(self):
+        dic = dict()
+        for k in CONFIG_SIMULATION.keys():
+            dic[k] = self.config[k]
+        return dic
         
     def init_numericalCore(self):
         """
@@ -100,12 +120,11 @@ class Simulation:
         """
         if not self.config['lang'] in ['c++', 'python']:
             raise AttributeError('Unknows language {}'.format(self.config['lang']))
+
         elif self.config['lang'] == 'python':
-            config = {'fs': self.config['fs'],
-                      'theano': self.config['theano']}
             setattr(self, 'nums', Numeric(self.method, 
                                           inits=self.inits,
-                                          config=config))        
+                                          config=self.config_numeric()))        
         elif self.config['lang'] == 'c++':
             objlabel = self.method.label.upper()
             self.cpp_path = os.path.join(main_path(self), objlabel.lower())
@@ -114,8 +133,9 @@ class Simulation:
                 os.mkdir(self.cpp_path)
             if not os.path.exists(self.cpp_path):
                 os.mkdir(self.src_path)
-            numcore2cpp(self.method, objlabel=objlabel, path=self.src_path,
-                        eigen_path=self.config['eigen'])
+            method2cpp(self.method, objlabel=objlabel, path=self.src_path,
+                        eigen_path=self.config['eigen'], inits=self.inits,
+                        config=self.config_numeric())
 
         self.data = Data(self.method, self.config) 
 
@@ -123,15 +143,14 @@ class Simulation:
         """
         Build the numerical method.
         """
-        keys = self.method.config.keys()
-        config_method = dict([(k, self.config[k]) for k in keys])
-        if config_method != self.method.config:
-            self.method.__init__(self.method._core, config=config_method)
+        if self.config_method() != self.method.config:
+            self.method.__init__(self.method._core, config=self.config_method())
 
 ###############################################################################
 
 
-    def init(self, nt=None, u=None, p=None,  inits=None,  config=None):
+    def init(self, nt=None, u=None, p=None,  inits=None,  
+             config=None, subs=None):
         """
     init
     ****
@@ -163,17 +182,46 @@ class Simulation:
         as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
         with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
         """
+            
+        init_numeric = False
+        init_parameters = False
+        
+        if config is None:
+            config = {}
+        
+        if inits is None:
+            inits = {}
+        
+        if subs is None:
+            subs = {}
+        else:
+            for k in subs.keys():
+                if not k in self.method.subs.keys():
+                    init_numeric = True
+            if not init_numeric:
+                init_parameters = True
+        self.method.subs.update(subs)
+        if init_parameters:
+            self.init_parameters()
 
-        if inits is not None and inits != self.inits:
-            self.inits = inits
-            self.init_numericalCore()
-            
-        if config is not None and any([config[k] != self.method.config[k] 
-                                       for k in self.method.config]):
-            self.config.update(config)
-            self.init_method()
-            self.init_numericalCore()
-            
+        c = self.config_method()
+        c.update(self.config_numeric())
+        c.update(self.config_simulation())
+        
+        c.update(config)
+        
+        if inits is not None and any([any(v1!=v2 for (v1, v2) in zip(self.inits[k], inits[k])) for k in inits.keys()]):
+            self.inits.update(inits)
+            init_numeric = True
+        
+        if any([self.config[k] != c[k] for k in list(self.config_numeric().keys()) + 
+                                                list(self.config_method().keys())]):
+            self.config.update(c)
+            self.init_method()            
+        
+        if init_numeric:
+            self.init_numericalCore()        
+        
         self.data.init_data(u, p, nt)
 
     def process(self):
@@ -218,6 +266,22 @@ class Simulation:
 
         if VERBOSE >= 1:
             print('Simulation: Done')
+
+    def init_parameters(self, subs=None):
+        """
+        Generate a new parameters.cpp based on a given substitution dictionary.
+        """
+        if subs is None:
+            subs = self.method.subs
+        path = self.src_path
+        parameters_files = parameters(subs, 'rhodes'.upper())
+        for e in ['cpp', 'h']:
+            filename = path + os.sep + 'parameters.{0}'.format(e)
+            string = parameters_files[e]
+            _file = open(filename, 'w')
+            _file.write(string)
+            _file.close()
+        print('Parameters Files generated in \n{}'.format(path))
 
     def _init_pb(self):
         pb_widgets = ['\n', 'Simulation: ',

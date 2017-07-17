@@ -8,12 +8,12 @@ Created on Mon Jun 27 16:01:13 2016
 from __future__ import absolute_import, division, print_function
 import os
 
+linesplit = '\n//' + '='*74
 
 def make_executable(path):
     """
     """
     os.chmod(path, 0b111101101)
-
 
 def formatPath(path):
     r"""
@@ -36,7 +36,7 @@ Return a formated string associated with the path in simu.config['path']
 
 
 def dereference(method):
-    return method.args() + [k for k in method.subs]
+    return method.args() + [k for k in method.subscpp]
 
 
 def matrix_type(dim1, dim2):

@@ -66,8 +66,7 @@ class Numeric(object):
             
     def init(self):
         """
-        Set initilization values of self (and subsequently of the 
-        generated c++ object).
+        Set initilization values of self.
         
         """
         for k in self.inits.keys():

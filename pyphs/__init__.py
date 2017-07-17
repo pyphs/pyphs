@@ -11,7 +11,7 @@ from .numerics import (Method, Numeric,
 from .numerics.simulations.simulation import Simulation
 from .misc.signals.synthesis import signalgenerator
 from .misc.latex import core2tex, netlist2tex, graphplot2tex, texdocument
-from .numerics.cpp.numcore2cpp import numcore2cpp
+from .numerics.cpp.method2cpp import method2cpp
 from .numerics.cpp.simu2cpp import simu2cpp
 
 from .config import path_to_configuration_file

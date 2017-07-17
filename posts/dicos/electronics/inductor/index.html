@@ -15,13 +15,13 @@
 <meta name="theme-color" content="#618AC8">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../rss.xml">
-<link rel="canonical" href="https://afalaize.github.io/pyphs/posts/dicos/electronics/inductor/">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/posts/dicos/electronics/inductor/">
 <!--[if lt IE 9]><script src="../../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
 <link rel="prev" href="../capacitor/" title="Capacitor" type="text/html">
 <link rel="next" href="../resistor/" title="Resistor" type="text/html">
 <meta property="og:site_name" content="PyPHS">
 <meta property="og:title" content="Inductor">
-<meta property="og:url" content="https://afalaize.github.io/pyphs/posts/dicos/electronics/inductor/">
+<meta property="og:url" content="https://pyphs.github.io/pyphs/posts/dicos/electronics/inductor/">
 <meta property="og:description" content="Description
 Linear voltage-controlled iductor with total magnetic flux $p$, inductance $L$, voltage $v$ and current $i$:
 $$
@@ -48,7 +48,7 @@ $$
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="https://afalaize.github.io/pyphs/">
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
                 <img src="../../../../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
             </a>
         </div>
@@ -175,13 +175,13 @@ $$</p>
 <ul class="simple">
 <li>In script.py</li>
 </ul>
-<pre class="code python"><a name="rest_code_1b1f9ad304284671860332914347ecf9-1"></a><span class="c1"># inductor</span>
-<a name="rest_code_1b1f9ad304284671860332914347ecf9-2"></a><span class="n">inductor</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'dictionary'</span><span class="p">:</span> <span class="s1">'electronics'</span><span class="p">,</span>
-<a name="rest_code_1b1f9ad304284671860332914347ecf9-3"></a>            <span class="s1">'component'</span><span class="p">:</span> <span class="s1">'inductor'</span><span class="p">,</span>
-<a name="rest_code_1b1f9ad304284671860332914347ecf9-4"></a>            <span class="s1">'label'</span><span class="p">:</span> <span class="s1">'myL'</span><span class="p">,</span>
-<a name="rest_code_1b1f9ad304284671860332914347ecf9-5"></a>            <span class="s1">'nodes'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">),</span>
-<a name="rest_code_1b1f9ad304284671860332914347ecf9-6"></a>            <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'L'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'L1'</span><span class="p">,</span> <span class="mf">5e-2</span><span class="p">)}}</span>
-<a name="rest_code_1b1f9ad304284671860332914347ecf9-7"></a><span class="n">phs</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">netlist</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">inductor</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_8193c3274967465985a5fe314b0dee70-1"></a><span class="c1"># inductor</span>
+<a name="rest_code_8193c3274967465985a5fe314b0dee70-2"></a><span class="n">inductor</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'dictionary'</span><span class="p">:</span> <span class="s1">'electronics'</span><span class="p">,</span>
+<a name="rest_code_8193c3274967465985a5fe314b0dee70-3"></a>            <span class="s1">'component'</span><span class="p">:</span> <span class="s1">'inductor'</span><span class="p">,</span>
+<a name="rest_code_8193c3274967465985a5fe314b0dee70-4"></a>            <span class="s1">'label'</span><span class="p">:</span> <span class="s1">'myL'</span><span class="p">,</span>
+<a name="rest_code_8193c3274967465985a5fe314b0dee70-5"></a>            <span class="s1">'nodes'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">),</span>
+<a name="rest_code_8193c3274967465985a5fe314b0dee70-6"></a>            <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'L'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'L1'</span><span class="p">,</span> <span class="mf">5e-2</span><span class="p">)}}</span>
+<a name="rest_code_8193c3274967465985a5fe314b0dee70-7"></a><span class="n">phs</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">netlist</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">inductor</span><span class="p">)</span>
 </pre>
 </div>
 </div>

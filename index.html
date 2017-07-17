@@ -15,11 +15,11 @@
 <meta name="theme-color" content="#618AC8">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
-<link rel="canonical" href="https://afalaize.github.io/pyphs/">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/">
 <!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
 <meta property="og:site_name" content="PyPHS">
 <meta property="og:title" content="PyPHS: Passive modeling and simulation in python">
-<meta property="og:url" content="https://afalaize.github.io/pyphs/">
+<meta property="og:url" content="https://pyphs.github.io/pyphs/">
 <meta property="og:description" content="Welcome to PyPHS!
 PyPHS is a Python (2.7-3.6) package that implements a set of numerical methods for the simulation of multi-physical systems with the Port-Hamiltonian Systems approach.
 
@@ -43,7 +43,7 @@ It provides:
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="https://afalaize.github.io/pyphs/">
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
                 <img src="MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
             </a>
         </div>
@@ -142,7 +142,7 @@ It provides:
 <ul class="simple">
 <li>From sources with <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a>:</li>
 </ul>
-<pre class="code text"><a name="rest_code_fd4887b890a34a489ce65fddd5bd3151-1"></a>pip install pyphs
+<pre class="code text"><a name="rest_code_bfec721499ad4df5bdaff5ee64e6fa6b-1"></a>pip install pyphs
 </pre>
 <ul class="simple">
 <li>From a download of the <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a> package from the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>, execute in the package folder (that contains a <cite>setup.py</cite> file):</li>
@@ -151,13 +151,13 @@ It provides:
 <li>with <a class="reference external" href="https://setuptools.readthedocs.io/en/latest/">setuptools</a>
 </li>
 </ul>
-<pre class="code text"><a name="rest_code_63aae0656cd049ed9e5f335bdb174287-1"></a>python setup.py install
+<pre class="code text"><a name="rest_code_8eed7b4cbe33497aac55d6d626372ffb-1"></a>python setup.py install
 </pre>
 <ul class="simple">
 <li>with <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a>
 </li>
 </ul>
-<pre class="code text"><a name="rest_code_7800f5f630bf4e9984a51920145b2ab6-1"></a>pip install .
+<pre class="code text"><a name="rest_code_b4d35d0d18bd4e808d72e7ffbf0b1d8f-1"></a>pip install .
 </pre>
 </div>
 <div class="section" id="typical-use">
@@ -221,23 +221,23 @@ It provides:
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_ea52a744347640b0a77309d19d38d7c6-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-2"></a>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNetlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-5"></a>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSGraph</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-8"></a>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
-<a name="rest_code_ea52a744347640b0a77309d19d38d7c6-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">buildCore</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_6bd05e676c1047b7b913702782db6384-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-2"></a>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNetlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-5"></a>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSGraph</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-8"></a>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
+<a name="rest_code_6bd05e676c1047b7b913702782db6384-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">buildCore</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export $\LaTeX$</h3>
-<pre class="code python"><a name="rest_code_d46c9a2994fc4986b7b829731282c5b1-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_d46c9a2994fc4986b7b829731282c5b1-2"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_d46c9a2994fc4986b7b829731282c5b1-3"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">texdocument</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_6b1cee2ead1545648c9a04db9ad65c86-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_6b1cee2ead1545648c9a04db9ad65c86-2"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+<a name="rest_code_6b1cee2ead1545648c9a04db9ad65c86-3"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">texdocument</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
@@ -250,14 +250,14 @@ It provides:
 </div>
 <div class="section" id="export-mathrm-c">
 <h3>4. Export $\mathrm{C_{++}}$</h3>
-<pre class="code python"><a name="rest_code_3f5cc57f49da4119b62e185150b20614-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
-<a name="rest_code_3f5cc57f49da4119b62e185150b20614-2"></a><span class="n">method</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalMethod</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_3f5cc57f49da4119b62e185150b20614-3"></a>
-<a name="rest_code_3f5cc57f49da4119b62e185150b20614-4"></a><span class="c1"># Numerical evaluation of 'method'</span>
-<a name="rest_code_3f5cc57f49da4119b62e185150b20614-5"></a><span class="n">numcore</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalCore</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-<a name="rest_code_3f5cc57f49da4119b62e185150b20614-6"></a>
-<a name="rest_code_3f5cc57f49da4119b62e185150b20614-7"></a><span class="c1"># Export the set of C++ file for simulation</span>
-<a name="rest_code_3f5cc57f49da4119b62e185150b20614-8"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">numcore2cpp</span><span class="p">(</span><span class="n">numcore</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
+<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-2"></a><span class="n">method</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalMethod</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-3"></a>
+<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-4"></a><span class="c1"># Numerical evaluation of 'method'</span>
+<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-5"></a><span class="n">numcore</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalCore</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-6"></a>
+<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-7"></a><span class="c1"># Export the set of C++ file for simulation</span>
+<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-8"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">numcore2cpp</span><span class="p">(</span><span class="n">numcore</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">

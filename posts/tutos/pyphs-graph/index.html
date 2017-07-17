@@ -15,13 +15,13 @@
 <meta name="theme-color" content="#618AC8">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.xml">
-<link rel="canonical" href="https://afalaize.github.io/pyphs/posts/tutos/pyphs-graph/">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/posts/tutos/pyphs-graph/">
 <!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
 <link rel="prev" href="../pyphs-simulation/" title="The PyPHS.Simulation class" type="text/html">
 <link rel="next" href="../../dicos/electronics/capacitor/" title="Capacitor" type="text/html">
 <meta property="og:site_name" content="PyPHS">
 <meta property="og:title" content="Automated graph analysis">
-<meta property="og:url" content="https://afalaize.github.io/pyphs/posts/tutos/pyphs-graph/">
+<meta property="og:url" content="https://pyphs.github.io/pyphs/posts/tutos/pyphs-graph/">
 <meta property="og:description" content="This tutorial explains the use of the automated graph analysis method of the pyphs module that translates a netlist into a set of governing differential-algebraic equations. 
 The method exactly implem">
 <meta property="og:type" content="article">
@@ -42,7 +42,7 @@ The method exactly implem">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="https://afalaize.github.io/pyphs/">
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
                 <img src="../../../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
             </a>
         </div>
@@ -134,9 +134,7 @@ The method exactly implem">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p></p>
 <div id="toc-static"></div>
-
 </div>
 </div>
 </div>
@@ -229,6 +227,7 @@ The method exactly implements <strong>algorithm 1</strong> of the academic refer
 <div class="prompt output_prompt">Out[2]:</div>
 
 
+
 <div class="output_text output_subarea output_execute_result">
 <pre>'#'</pre>
 </div>
@@ -317,6 +316,7 @@ electronics.capacitor C1 ('C', 'ref'): C=('C1', 2e-06);</code></pre>
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Read netlist rlc.net
 from folder 
@@ -407,6 +407,7 @@ from folder
 <div class="prompt output_prompt">Out[5]:</div>
 
 
+
 <div class="output_text output_subarea output_execute_result">
 <pre>"electronics.source out ('#', 'A'): type=voltage;"</pre>
 </div>
@@ -445,6 +446,7 @@ from folder
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>electronics.source out ('#', 'A'): type=voltage;
 </pre>
@@ -475,7 +477,7 @@ from folder
               <span class="s1">'component'</span><span class="p">:</span> <span class="s1">'resistor'</span><span class="p">,</span>
               <span class="s1">'label'</span><span class="p">:</span> <span class="s1">'R1'</span><span class="p">,</span>
               <span class="s1">'nodes'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">),</span>
-              <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'R'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'R1'</span><span class="p">,</span> <span class="mi">1</span><span class="n">e3</span><span class="p">)}}</span>
+              <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'R'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'R1'</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">)}}</span>
 <span class="n">net</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">resistance</span><span class="p">)</span>
 
 <span class="c1"># inductor</span>
@@ -483,7 +485,7 @@ from folder
             <span class="s1">'component'</span><span class="p">:</span> <span class="s1">'inductor'</span><span class="p">,</span>
             <span class="s1">'label'</span><span class="p">:</span> <span class="s1">'L1'</span><span class="p">,</span>
             <span class="s1">'nodes'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'B'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">),</span>
-            <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'L'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'L1'</span><span class="p">,</span> <span class="mi">5</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">)}}</span>
+            <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'L'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'L1'</span><span class="p">,</span> <span class="mf">5e-2</span><span class="p">)}}</span>
 <span class="n">net</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">inductor</span><span class="p">)</span>
 
 <span class="c1"># capacitor</span>
@@ -491,7 +493,7 @@ from folder
              <span class="s1">'component'</span><span class="p">:</span> <span class="s1">'capacitor'</span><span class="p">,</span>
              <span class="s1">'label'</span><span class="p">:</span> <span class="s1">'C1'</span><span class="p">,</span>
              <span class="s1">'nodes'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'C'</span><span class="p">,</span> <span class="n">datum</span><span class="p">),</span>
-             <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'C'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'C1'</span><span class="p">,</span> <span class="mi">2</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">)}}</span>
+             <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'C'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'C1'</span><span class="p">,</span> <span class="mf">2e-6</span><span class="p">)}}</span>
 <span class="n">net</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">capacitor</span><span class="p">)</span>
 </pre></div>
 
@@ -529,6 +531,7 @@ from folder
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>{'arguments': {'type': 'voltage'}, 'label': 'out', 'component': 'source', 'nodes': ('#', 'A'), 'dictionary': 'electronics'}
 {'arguments': {'R': ('R1', 1000.0)}, 'label': 'R1', 'component': 'resistor', 'nodes': ('A', 'B'), 'dictionary': 'electronics'}
@@ -570,6 +573,7 @@ from folder
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>electronics.source out ('#', 'A'): type=voltage;
 electronics.resistor R1 ('A', 'B'): R=('R1', 1000.0);
@@ -638,6 +642,7 @@ electronics.capacitor C1 ('C', '#'): C=('C1', 2e-06);
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Build graph out...
 Build graph R1...
@@ -731,6 +736,7 @@ Build core rlc...
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>x=
 </pre>
@@ -739,6 +745,7 @@ Build core rlc...
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[13]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -770,6 +777,7 @@ $$\left [ xL_{1}, \quad xC_{1}\right ]$$
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>w=
 </pre>
@@ -778,6 +786,7 @@ $$\left [ xL_{1}, \quad xC_{1}\right ]$$
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[14]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -809,6 +818,7 @@ $$\left [ wR_{1}\right ]$$
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>u=
 </pre>
@@ -817,6 +827,7 @@ $$\left [ wR_{1}\right ]$$
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[15]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -848,6 +859,7 @@ $$\left [ uout\right ]$$
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>y=
 </pre>
@@ -856,6 +868,7 @@ $$\left [ uout\right ]$$
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[16]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -887,6 +900,7 @@ $$\left [ yout\right ]$$
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>p=
 </pre>
@@ -895,6 +909,7 @@ $$\left [ yout\right ]$$
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[17]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -926,6 +941,7 @@ $$\left [ \right ]$$
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>H=
 </pre>
@@ -934,6 +950,7 @@ $$\left [ \right ]$$
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[18]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -965,6 +982,7 @@ $$\frac{0.5 xL_{1}^{2}}{L_{1}} + \frac{0.5 xC_{1}^{2}}{C_{1}}$$
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>z=
 </pre>
@@ -973,6 +991,7 @@ $$\frac{0.5 xL_{1}^{2}}{L_{1}} + \frac{0.5 xC_{1}^{2}}{C_{1}}$$
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[19]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -1004,6 +1023,7 @@ $$\left [ R_{1} wR_{1}\right ]$$
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>M=
 </pre>
@@ -1012,6 +1032,7 @@ $$\left [ R_{1} wR_{1}\right ]$$
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[20]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -1043,6 +1064,7 @@ $$\left[\begin{matrix}0 &amp; -1.0 &amp; -1.0 &amp; -1.0\\1.0 &amp; 0 &amp; 0 &a
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>J=
 </pre>
@@ -1051,6 +1073,7 @@ $$\left[\begin{matrix}0 &amp; -1.0 &amp; -1.0 &amp; -1.0\\1.0 &amp; 0 &amp; 0 &a
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[21]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -1082,6 +1105,7 @@ $$\left[\begin{matrix}0 &amp; -1.0 &amp; -1.0 &amp; -1.0\\1.0 &amp; 0 &amp; 0 &a
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>R=
 </pre>
@@ -1090,6 +1114,7 @@ $$\left[\begin{matrix}0 &amp; -1.0 &amp; -1.0 &amp; -1.0\\1.0 &amp; 0 &amp; 0 &a
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[22]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -1121,6 +1146,7 @@ $$\left[\begin{matrix}0 &amp; 0 &amp; 0 &amp; 0\\0 &amp; 0 &amp; 0 &amp; 0\\0 &a
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>parameters :
 </pre>
@@ -1129,6 +1155,7 @@ $$\left[\begin{matrix}0 &amp; 0 &amp; 0 &amp; 0\\0 &amp; 0 &amp; 0 &amp; 0\\0 &a
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[23]:</div>
+
 
 
 <div class="output_latex output_subarea output_execute_result">
@@ -1163,7 +1190,7 @@ $$\left \{ C_{1} : 2e-06, \quad L_{1} : 0.05, \quad R_{1} : 1000.0\right \}$$
 
 
 <span class="c1"># Simulation options</span>
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'fs'</span><span class="p">:</span> <span class="mi">48</span><span class="n">e3</span><span class="p">,</span>  <span class="c1"># Samplerate (Hz)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'fs'</span><span class="p">:</span> <span class="mf">48e3</span><span class="p">,</span>  <span class="c1"># Samplerate (Hz)</span>
           <span class="s1">'split'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
           <span class="s1">'grad'</span><span class="p">:</span> <span class="s1">'theta'</span><span class="p">,</span>
           <span class="s1">'theta'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
@@ -1215,6 +1242,7 @@ $$\left \{ C_{1} : 2e-06, \quad L_{1} : 0.05, \quad R_{1} : 1000.0\right \}$$
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Build numerical method...
 Build numerical core...
@@ -1227,6 +1255,7 @@ Simulation: Done
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>/home/tristan/anaconda3/lib/python3.5/site-packages/matplotlib/font_manager.py:1297: UserWarning: findfont: Font family ['serif'] not found. Falling back to DejaVu Sans
   (prop.get_family(), self.defaultFamily[fontext]))
@@ -1236,6 +1265,7 @@ Simulation: Done
 
 <div class="output_area">
 <div class="prompt"></div>
+
 
 
 <div class="output_png output_subarea ">

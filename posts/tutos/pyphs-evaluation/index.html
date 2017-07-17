@@ -15,12 +15,12 @@
 <meta name="theme-color" content="#618AC8">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.xml">
-<link rel="canonical" href="https://afalaize.github.io/pyphs/posts/tutos/pyphs-evaluation/">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/posts/tutos/pyphs-evaluation/">
 <!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
 <link rel="next" href="../pyphs-simulation/" title="The PyPHS.Simulation class" type="text/html">
 <meta property="og:site_name" content="PyPHS">
 <meta property="og:title" content="The PyPHS.Evaluation class">
-<meta property="og:url" content="https://afalaize.github.io/pyphs/posts/tutos/pyphs-evaluation/">
+<meta property="og:url" content="https://pyphs.github.io/pyphs/posts/tutos/pyphs-evaluation/">
 <meta property="og:description" content="In this tutorial, we cover the pyphs.Evaluation object for the numerical evaluation of pyphs.Core objects. The core object from the previous tutorial on pyphs.Core is used as an example.
 
 
@@ -43,7 +43,7 @@ The corresp">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="https://afalaize.github.io/pyphs/">
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
                 <img src="../../../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
             </a>
         </div>
@@ -171,6 +171,7 @@ The corresp">
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Remove Inverse of Parameters...
 Build numerical evaluations...
@@ -212,6 +213,7 @@ Build numerical evaluations...
 <div class="prompt output_prompt">Out[2]:</div>
 
 
+
 <div class="output_text output_subarea output_execute_result">
 <pre>[xL, xK, xM, dxL, dxK, dxM, v1]</pre>
 </div>
@@ -228,9 +230,9 @@ Build numerical evaluations...
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># values for arguments</span>
-<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-<span class="n">dx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="n">e</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="p">]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5e-4</span><span class="p">,</span> <span class="mf">2e-2</span><span class="p">]</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5e-3</span><span class="p">,</span> <span class="mf">2e-1</span><span class="p">]</span>
+<span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5e-3</span><span class="p">,</span> <span class="p">]</span>
 <span class="n">u</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="p">]</span>
 
 <span class="c1"># collect all arguments</span>
@@ -255,6 +257,7 @@ Build numerical evaluations...
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>H(xL, xK, xM) = 8000.000669258373
 </pre>
@@ -310,6 +313,7 @@ Build numerical evaluations...
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>H(xL, xK, xM) = 8000.000669258373
 
@@ -334,6 +338,7 @@ Rxx() =
 
 <div class="output_area">
 <div class="prompt output_prompt">Out[4]:</div>
+
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -365,6 +370,7 @@ Rxx() =
 
 <div class="output_area">
 <div class="prompt"></div>
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 Vectorized (not parallel) evaluation:

@@ -15,13 +15,13 @@
 <meta name="theme-color" content="#618AC8">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../rss.xml">
-<link rel="canonical" href="https://afalaize.github.io/pyphs/posts/dicos/electronics/diode/">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/posts/dicos/electronics/diode/">
 <!--[if lt IE 9]><script src="../../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
 <link rel="prev" href="../source/" title="Source" type="text/html">
 <link rel="next" href="../electronics/" title="Electronics" type="text/html">
 <meta property="og:site_name" content="PyPHS">
 <meta property="og:title" content="Diode PN">
-<meta property="og:url" content="https://afalaize.github.io/pyphs/posts/dicos/electronics/diode/">
+<meta property="og:url" content="https://pyphs.github.io/pyphs/posts/dicos/electronics/diode/">
 <meta property="og:description" content="Description
 
 Non-linear semiconductor PN junction.
@@ -54,7 +54,7 @@ a resistor $R$ wit">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="https://afalaize.github.io/pyphs/">
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
                 <img src="../../../../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
             </a>
         </div>
@@ -252,16 +252,16 @@ a resistor $R$ wit">
 <ul class="simple">
 <li>In script.py</li>
 </ul>
-<pre class="code python"><a name="rest_code_05d9c72028cd4c648963017a1a25ba07-1"></a><span class="c1"># diode</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-2"></a><span class="n">diode</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'dictionary'</span><span class="p">:</span> <span class="s1">'electronics'</span><span class="p">,</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-3"></a>         <span class="s1">'component'</span><span class="p">:</span> <span class="s1">'diodepn'</span><span class="p">,</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-4"></a>         <span class="s1">'label'</span><span class="p">:</span> <span class="s1">'D1'</span><span class="p">,</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-5"></a>         <span class="s1">'nodes'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'OUT'</span><span class="p">,</span> <span class="n">datum</span><span class="p">),</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-6"></a>         <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'Is'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'Is'</span><span class="p">,</span> <span class="mf">2e-9</span><span class="p">),</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-7"></a>                       <span class="s1">'v0'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'v0'</span><span class="p">,</span> <span class="mf">26e-3</span><span class="p">),</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-8"></a>                       <span class="s1">'R'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'Rd1'</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-9"></a>                       <span class="s1">'mu'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'mu'</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">)}}</span>
-<a name="rest_code_05d9c72028cd4c648963017a1a25ba07-10"></a><span class="n">phs</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">netlist</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">diode</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-1"></a><span class="c1"># diode</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-2"></a><span class="n">diode</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'dictionary'</span><span class="p">:</span> <span class="s1">'electronics'</span><span class="p">,</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-3"></a>         <span class="s1">'component'</span><span class="p">:</span> <span class="s1">'diodepn'</span><span class="p">,</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-4"></a>         <span class="s1">'label'</span><span class="p">:</span> <span class="s1">'D1'</span><span class="p">,</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-5"></a>         <span class="s1">'nodes'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'OUT'</span><span class="p">,</span> <span class="n">datum</span><span class="p">),</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-6"></a>         <span class="s1">'arguments'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'Is'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'Is'</span><span class="p">,</span> <span class="mf">2e-9</span><span class="p">),</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-7"></a>                       <span class="s1">'v0'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'v0'</span><span class="p">,</span> <span class="mf">26e-3</span><span class="p">),</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-8"></a>                       <span class="s1">'R'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'Rd1'</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-9"></a>                       <span class="s1">'mu'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'mu'</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">)}}</span>
+<a name="rest_code_fe5be8c917024b96b49b207d43cc4c96-10"></a><span class="n">phs</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">netlist</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">diode</span><span class="p">)</span>
 </pre>
 </div>
 <div class="section" id="references">

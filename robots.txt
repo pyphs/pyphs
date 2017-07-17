@@ -1,4 +1,4 @@
-Sitemap: https://afalaize.github.io/pyphs/sitemapindex.xml
+Sitemap: https://pyphs.github.io/pyphs/sitemapindex.xml
 
 User-Agent: *
-Host: afalaize.github.io
+Host: pyphs.github.io

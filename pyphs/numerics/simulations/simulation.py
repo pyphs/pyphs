@@ -6,7 +6,7 @@ Created on Tue May 24 11:20:26 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from pyphs.config import (CONFIG_METHOD, CONFIG_SIMULATION, 
+from pyphs.config import (CONFIG_METHOD, CONFIG_SIMULATION,
                           CONFIG_NUMERIC, VERBOSE)
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.method2cpp import method2cpp, parameters
@@ -59,13 +59,13 @@ class Simulation:
         self.method = method
         if label is None:
             label = method.label
-        self.label = label            
-        
+        self.label = label
+
         # init config with standard configuration options
         self.config = CONFIG_SIMULATION.copy()
         self.config.update(CONFIG_NUMERIC)
         self.config.update(CONFIG_METHOD)
-        
+
         # Update with method config
         self.config.update(self.method.config)
 
@@ -77,7 +77,7 @@ class Simulation:
                 if not k in self.config.keys():
                     text = 'Configuration key "{0}" unknown.'.format(k)
                     raise AttributeError(text)
-        self.config.update(config)        
+        self.config.update(config)
 
         # Rebuild method if parameters are differents
         self.init_method()
@@ -89,30 +89,30 @@ class Simulation:
             os.mkdir(self.config['path'])
 
         # Define inits
-        self.inits = {}        
+        self.inits = {}
         if inits is not None:
             self.inits.update(inits)
-            
+
         self.init_numericalCore()
-        
+
     def config_numeric(self):
         dic = dict()
         for k in CONFIG_NUMERIC.keys():
             dic[k] = self.config[k]
         return dic
-        
+
     def config_method(self):
         dic = dict()
         for k in CONFIG_METHOD.keys():
             dic[k] = self.config[k]
         return dic
-        
+
     def config_simulation(self):
         dic = dict()
         for k in CONFIG_SIMULATION.keys():
             dic[k] = self.config[k]
         return dic
-        
+
     def init_numericalCore(self):
         """
         Build the Numeric from the Core.
@@ -122,9 +122,9 @@ class Simulation:
             raise AttributeError('Unknows language {}'.format(self.config['lang']))
 
         elif self.config['lang'] == 'python':
-            setattr(self, 'nums', Numeric(self.method, 
+            setattr(self, 'nums', Numeric(self.method,
                                           inits=self.inits,
-                                          config=self.config_numeric()))        
+                                          config=self.config_numeric()))
         elif self.config['lang'] == 'c++':
             objlabel = self.method.label.upper()
             self.cpp_path = os.path.join(main_path(self), objlabel.lower())
@@ -137,7 +137,7 @@ class Simulation:
                         eigen_path=self.config['eigen'], inits=self.inits,
                         config=self.config_numeric())
 
-        self.data = Data(self.method, self.config) 
+        self.data = Data(self.method, self.config)
 
     def init_method(self):
         """
@@ -149,7 +149,7 @@ class Simulation:
 ###############################################################################
 
 
-    def init(self, nt=None, u=None, p=None,  inits=None,  
+    def init(self, nt=None, u=None, p=None,  inits=None,
              config=None, subs=None):
         """
     init
@@ -182,16 +182,16 @@ class Simulation:
         as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
         with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
         """
-            
+
         init_numeric = False
         init_parameters = False
-        
+
         if config is None:
             config = {}
-        
+
         if inits is None:
             inits = {}
-        
+
         if subs is None:
             subs = {}
         else:
@@ -207,21 +207,21 @@ class Simulation:
         c = self.config_method()
         c.update(self.config_numeric())
         c.update(self.config_simulation())
-        
+
         c.update(config)
-        
+
         if inits is not None and any([any(v1!=v2 for (v1, v2) in zip(self.inits[k], inits[k])) for k in inits.keys()]):
             self.inits.update(inits)
             init_numeric = True
-        
-        if any([self.config[k] != c[k] for k in list(self.config_numeric().keys()) + 
+
+        if any([self.config[k] != c[k] for k in list(self.config_numeric().keys()) +
                                                 list(self.config_method().keys())]):
             self.config.update(c)
-            self.init_method()            
-        
+            self.init_method()
+
         if init_numeric:
-            self.init_numericalCore()        
-        
+            self.init_numericalCore()
+
         self.data.init_data(u, p, nt)
 
     def process(self):
@@ -290,7 +290,7 @@ class Simulation:
                       progressbar.ETA()
                       ]
         self._pbar = progressbar.ProgressBar(widgets=pb_widgets,
-                                             maxval=self.data.config['nt'])
+                                             max_value=self.data.config['nt'])
         self._pbar.start()
 
     def _update_pb(self):

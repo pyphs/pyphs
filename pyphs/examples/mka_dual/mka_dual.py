@@ -16,7 +16,7 @@ path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 netlist_filename = path + os.sep + label + '.net'
 netlist = Netlist(netlist_filename)
 graph = Graph(netlist=netlist)
-core = graph.buildCore()
+core = graph.to_core()
 
 #if __name__ == '__main__':
 #
@@ -30,7 +30,7 @@ core = graph.buildCore()
 #    config = {'fs': 48e3,
 #              'progressbar': True,
 #              }
-#    simu = Simulation(core, config)
+#    simu = Simulation(core.to_method(), config)
 #
 #    sig = signalgenerator(which='sin', f0=500., A=200., tsig=tsig, fs=fs)
 #

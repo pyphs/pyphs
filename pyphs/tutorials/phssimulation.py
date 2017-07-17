@@ -42,8 +42,8 @@ config = {'fs': 48e3,           # Sample rate (Hz)
 # !!! must be numpy array with shape (core.dims.x(), )
 x0 = list(map(sympy.sympify, [0., ]*core.dims.x()))
 
-# Instantiate a pyphs.Simulation object associated with a given core 
-simu = Simulation(core, config=config, inits={'x': x0})
+# Instantiate a pyphs.Simulation object associated with a given core
+simu = Simulation(core.to_method(), config=config, inits={'x': x0})
 
 # def simulation time
 tmax = 1e-2

@@ -20,7 +20,7 @@ netlist_filename = os.path.join(here, label + '.net')
 
 graph = netlist2graph(netlist_filename)
 
-core = graph.buildCore()
+core = graph.to_core()
 
 #if __name__ == '__main__':
 #    from pyphs import (Simulation, signalgenerator, Graph)
@@ -43,7 +43,7 @@ core = graph.buildCore()
 #              'theano': False
 #              }
 #
-#    simu = Simulation(core, config=config)
+#    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 0.01
 #    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])

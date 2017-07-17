@@ -99,7 +99,7 @@ def plot_Graph():
 def plot_GraphAnalysis():
     netlist = NetlistThieleSmallNL()
     graph = Graph(netlist=netlist)
-    graph.buildCore()
+    graph.to_core()
     graph.analysis.plot(show=False)
     os.remove(path)
     return True

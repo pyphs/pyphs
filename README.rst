@@ -17,7 +17,7 @@ A Python software (Py) dedicated to the simulation of multiphysical Port-Hamilto
 1. Inputs are netlist description of network systems (very similar to SPICE netlists).
 2. The associated graphs are analyzed to produce the system's dynamics equations in the PHS formalism.
 3. Simulations (i.e. numerical solving of DAE equations) are performed based on a variety of numerical methods (can be extended with new ones).
-4. The corresponding C++ simulation code is automatically generated and called from python (can also be used in biger applications).
+4. The corresponding C++ simulation code is automatically generated and called from python (can also be used in bigger applications).
 5. LaTeX description files can be generated (for documentation, publication, etc.).
 
 ![alt text](https://pyphs.github.io/pyphs/figures/synopsys.png)
@@ -101,9 +101,9 @@ If you plan to use the package as a developer, clone the Git repository::
 
     git clone --recursive https://github.com/afalaize/pyphs.git
 
-    Then you can simply install the package locally (from the git repo location)::
+Then you can simply install the package in development mode::
 
-    pip install --user .
+    python setup.py develop --user
 
 To run the included tests::
 
@@ -114,17 +114,16 @@ Configuration
 
 After installation, it is recommended to configure the `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ to your needs. Particularly, this is where the local path to the CMake binary and `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified.
 
-Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS` package, which can be recovered with::
+Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS` package, which can be recovered in a Python interpreter with::
 
     >>> from pyphs import path_to_configuration_file
-
     >>>  print(path_to_configuration_file)
 
 
 Upgrade of existing installations
 ---------------------------------
 
-To upgrade the package, please use the same mechanism (pip vs. source) as you did for installation. In each case, it is recommended to uninstall the package first.
+To upgrade the package, please use the same mechanism (pip vs. source) as you did for installation.
 
 Upgrade a package
 ~~~~~~~~~~~~~~~~~
@@ -149,76 +148,48 @@ Package structure
 The package is divided into the following folders:
 
 `/pyphs/tutorials <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials>`_
-
     Tutorials for the main `PyPHS` classes (executable programs).
-
 `/pyphs/examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_
-
     Various real-life applications (executable programs).
-
 `/pyphs/core <https://github.com/pyphs/pyphs/tree/master/pyphs/core>`_
-
     `PHSCore` class :
-
         This is the central object of the `PyPHS` package. It implements the core PHS structure and provides several methods for its manipulation (reorganization, connection, simplification, etc.).
-
 `/pyphs/graphs <https://github.com/pyphs/pyphs/tree/master/pyphs/graphs>`_
-
     `Netlist` class :
-
         Management of netlist description files.
-
     `Graph` class :
-
         (1) Construction and manipulation of network systems,
         (2) Analysis of network realizability,
         (3) Generation of PHS equations (`Core`).
-
 `/pyphs/dictionary <https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary>`_
-
     - The dictionary is organized in thematic sub-packages (*electronics*, *thermics*, *fractional calculus*, etc.).
     - Each theme is organized in component sub-packages (`electronics.resistor`, `thermics.transfer`, `fraccalc.fracderec`, etc.).
     - Components are `Graph` objects.
-
 `/pyphs/numerics <https://github.com/pyphs/pyphs/tree/master/pyphs/numerics>`_
-
     `Evaluation` class :
-    
         Numerical evaluation of a given `Core`.
-
     `Method` object :
-
         Construction of the *symbolic* expressions associated with several numerical methods (theta-schemes, trapezoidal rule, discret gradient, etc.).
-
     `Simulation` object :
-
         Manage the iterative evaluation and associated results data for a given `Method`.
-
     `Numeric` object :
-
         Python evaluation of a given `Method`.
-
     `Data` object :
-
         Methods for writing, reading and rendering `Simulation` file results.
-
 `/pyphs/tests <https://github.com/pyphs/pyphs/tree/master/pyphs/tests>`_
-
     Test programs executed by `nose` (see above).
-
 `/pyphs/misc <https://github.com/pyphs/pyphs/tree/master/pyphs/misc>`_
-
     Miscellaneous tools (plots, LaTeX code generation, signal processing, files I/O).
 
 Documentation
 ==============
 
-Most of the documentation can be found is in the `website <https://pyp.github.io/pyphs/>`_.
+Most of the documentation can be found in the `website <https://pyphs.github.io/pyphs/>`_.
 
 Theoretical overview
 --------------------
 
-The package began as an implementation of the methods proposed in the reference [1]_, in which the port-Hamiltonian formalism, the graph analysis and the numerical method are exposed. This is worth to read before using the `pyphs` package.
+The development of `PyPHS` started as an implementation of the methods proposed in the reference [1]_, in which the port-Hamiltonian formalism, the graph analysis and the numerical method are exposed. This is worth to read before using the package.
 
 Q&A Mailing list
 -----------------
@@ -230,9 +201,9 @@ Tutorials and examples
 
 The package comes with a set of tutorials for the use of the main functionalities (`definition <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/core.py>`_, `evaluation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/evaluation.py>`_, and `simulation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/simulation.py>`_ of a core PHS structure). More tutorials are to come. Additionally, you can see the `examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_ scripts. Both the *tutorials* and the *examples* folders are located at your package root, which can be recovered in Python interpreter with::
 
-    >>> import pyphs
-
-    >>> help(pyphs)
+    >>> from pyphs import path_to_examples, path_to_tutorials
+    >>> print(path_to_examples)
+    >>> print(path_to_tutorials)
 
 Reference
 =========

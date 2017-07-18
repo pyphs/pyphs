@@ -13,20 +13,21 @@ PyPHS
 
 A Python software (Py) dedicated to the simulation of multiphysical Port-Hamiltonian Systems (PHS) described by graph structures.
 
+1. Inputs are **netlist** descriptions of network systems (very similar to SPICE netlists).
+2. The associated **graphs** are analyzed to produce the **core system's dynamics equations** in the PHS formalism.
+3. **Simulations** (i.e. numerical solving of DAE equations) are performed based on a variety of **numerical methods** (can be extended with new ones).
+4. The corresponding **C++** simulation code is automatically generated and called from python (can also be used in bigger applications).
+5. **LaTeX** description files can be generated (for documentation, publication, etc.).
+
 .. image:: https://pyphs.github.io/pyphs/figures/synopsys.png
     :width: 800
     :align: center
 
-1. Inputs are netlist description of network systems (very similar to SPICE netlists).
-2. The associated graphs are analyzed to produce the system's dynamics equations in the PHS formalism.
-3. Simulations (i.e. numerical solving of DAE equations) are performed based on a variety of numerical methods (can be extended with new ones).
-4. The corresponding C++ simulation code is automatically generated and called from python (can also be used in bigger applications).
-5. LaTeX description files can be generated (for documentation, publication, etc.).
-
 Authors and Affiliations
 ========================
 
-PyPHS is mainly developed by `Antoine Falaize <https://afalaize.github.io/>`_ and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, respectively in 
+PyPHS is mainly developed by `Antoine Falaize <https://afalaize.github.io/>`_ and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, respectively in
+
 - the `Team M2N <http://lasie.univ-larochelle.fr/Axe-AB-17>`_ (Mathematical and Numerical Methods), `LaSIE Research Lab <http://lasie.univ-larochelle.fr>`_ (CNRS UMR 7356), hosted by the `University of La Rochelle <http://www.univ-larochelle.fr/>`_,
 - the `Team S3AM <http://s3.ircam.fr/?lang=en>`_ (Sound Systems and Signals: Audio/Acoustics, InstruMents) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`_ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`_ in Paris.
 

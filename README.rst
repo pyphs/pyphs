@@ -20,7 +20,9 @@ A Python software (Py) dedicated to the simulation of multiphysical Port-Hamilto
 4. The corresponding C++ simulation code is automatically generated and called from python (can also be used in bigger applications).
 5. LaTeX description files can be generated (for documentation, publication, etc.).
 
-![alt text](https://pyphs.github.io/pyphs/figures/synopsys.png)
+.. image:: https://pyphs.github.io/pyphs/figures/synopsys.png
+    :width: 800
+    :align: center
 
 Affiliations
 =============

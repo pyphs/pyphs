@@ -49,8 +49,8 @@ This package is in development status Beta. The continuous integration is checke
 .. image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/pyphs/pyphs
 
-.. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/master?svg=true
-    :target: https://ci.appveyor.com/project/pyphs/pyphs 
+.. image:: https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true
+    :target: https://ci.appveyor.com/project/pyphsadmin/pyphs
 
 .. image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/pyphs/pyphs

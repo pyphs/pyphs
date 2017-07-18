@@ -8,7 +8,6 @@ PyPHS
     :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
 .. |python versions| image:: https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg
     :target: https://www.travis-ci.org/pyphs/pyphs
-   :target: https://gitter.im/sympy/sympy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 .. |Website badge| image:: https://img.shields.io/badge/documentation-website-blue.svg
     :target: https://pyphs.github.io/pyphs/
 

@@ -13,7 +13,7 @@ PyPHS
 
 A Python software (Py) dedicated to the simulation of multiphysical Port-Hamiltonian Systems (PHS) described by graph structures.
 
-1. Inputs are **netlists** (text description of network systems, very similar to SPICE netlists).
+1. Inputs are **netlist** descriptions of network systems (very similar to SPICE netlists).
 2. The associated **graphs** are analyzed to produce the **core system's dynamics equations** in the PHS formalism.
 3. **Simulations** (i.e. numerical solving of DAE equations) are performed based on a variety of **numerical methods** (can be extended with new ones).
 4. The corresponding **C++** simulation code is automatically generated and called from python (can also be used in bigger applications).
@@ -41,8 +41,8 @@ This package is in development status Beta. The continuous integration is checke
 .. image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/pyphs/pyphs
 
-.. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/master?svg=true
-	:target: https://ci.appveyor.com/project/pyphs/pyphs
+.. image:: https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn/branch/master?svg=true
+	:target: https://ci.appveyor.com/project/pyphsadmin/pyphs
 
 .. image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/pyphs/pyphs

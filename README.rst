@@ -1,15 +1,15 @@
 PyPHS
 ======
-|pypi version| |Licence| |Python| |Website|
+|pypi version| |Licence badge| |python versions| |Website badge|
 
 .. |pypi version| image:: https://badge.fury.io/py/pyphs.svg
     :target: https://badge.fury.io/py/pyphs
-.. |Licence| image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
+.. |Licence badge| image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
     :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
-.. |Python| image:: https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg
+.. |python versions| image:: https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg
     :target: https://www.travis-ci.org/pyphs/pyphs
    :target: https://gitter.im/sympy/sympy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-.. |Website| image:: https://img.shields.io/badge/documentation-website-blue.svg
+.. |Website badge| image:: https://img.shields.io/badge/documentation-website-blue.svg
     :target: https://pyphs.github.io/pyphs/
 
 A Python software (Py) dedicated to the simulation of multiphysical Port-Hamiltonian Systems (PHS) described by graph structures.
@@ -24,19 +24,18 @@ A Python software (Py) dedicated to the simulation of multiphysical Port-Hamilto
     :width: 800
     :align: center
 
-Affiliations
-=============
+Authors and Affiliations
+========================
 
-PyPHS is developed by `Antoine Falaize <https://afalaize.github.io/>`_ in the `Team M2N <http://lasie.univ-larochelle.fr/Axe-AB-17>`_ (Mathematical and Numerical Methods) at the `LaSIE Research Lab <http://lasie.univ-larochelle.fr>`_ (CNRS UMR 7356), hosted by `Université de La Rochelle <http://www.univ-larochelle.fr/>`_, and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, `Project/team S3 <http://s3.ircam.fr/?lang=en>`_ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`_ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`_, Paris.
+PyPHS is mainly developed by `Antoine Falaize <https://afalaize.github.io/>`_ and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, respectively in 
+- the `Team M2N <http://lasie.univ-larochelle.fr/Axe-AB-17>`_ (Mathematical and Numerical Methods), `LaSIE Research Lab <http://lasie.univ-larochelle.fr>`_ (CNRS UMR 7356), hosted by the `University of La Rochelle <http://www.univ-larochelle.fr/>`_,
+- the `Team S3AM <http://s3.ircam.fr/?lang=en>`_ (Sound Systems and Signals: Audio/Acoustics, InstruMents) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`_ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`_ in Paris.
 
-See the AUTHORS file for the complete list of authors.
-
-Short History
-==============
-PyPHS was initially developed between 2012 and 2016 through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`_ (UPMC ED-130) and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`_, as a part of the PhD thesis of `Antoine Falaize <https://afalaize.github.io/>`_ under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_.
+See the `AUTHORS <https://github.com/pyphs/pyphs/blob/master/AUTHORS>`_ file for the complete list of authors.
 
 Status
-=======
+======
+
 This package is in development status Beta. The continuous integration is checked with Travis for Unix systems and AppVeyor for Windows systems (see build status below).
 
 .. image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
@@ -145,7 +144,7 @@ Pull the latest sources::
     git pull
 
 Package structure
------------------
+=================
 
 The package is divided into the following folders:
 
@@ -154,7 +153,7 @@ The package is divided into the following folders:
 `/pyphs/examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_
     Various real-life applications (executable programs).
 `/pyphs/core <https://github.com/pyphs/pyphs/tree/master/pyphs/core>`_
-    `PHSCore` class :
+    `Core` class :
         This is the central object of the `PyPHS` package. It implements the core PHS structure and provides several methods for its manipulation (reorganization, connection, simplification, etc.).
 `/pyphs/graphs <https://github.com/pyphs/pyphs/tree/master/pyphs/graphs>`_
     `Netlist` class :
@@ -164,9 +163,9 @@ The package is divided into the following folders:
         (2) Analysis of network realizability,
         (3) Generation of PHS equations (`Core`).
 `/pyphs/dictionary <https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary>`_
+    - Components are `Graph` objects.
     - The dictionary is organized in thematic sub-packages (*electronics*, *thermics*, *fractional calculus*, etc.).
     - Each theme is organized in component sub-packages (`electronics.resistor`, `thermics.transfer`, `fraccalc.fracderec`, etc.).
-    - Components are `Graph` objects.
 `/pyphs/numerics <https://github.com/pyphs/pyphs/tree/master/pyphs/numerics>`_
     `Evaluation` class :
         Numerical evaluation of a given `Core`.
@@ -206,6 +205,10 @@ The package comes with a set of tutorials for the use of the main functionalitie
     >>> from pyphs import path_to_examples, path_to_tutorials
     >>> print(path_to_examples)
     >>> print(path_to_tutorials)
+
+Short History
+==============
+PyPHS was initially developed between 2012 and 2016 as a part of the PhD thesis of `Antoine Falaize <https://afalaize.github.io/>`_ under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, through a funding from  the French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`_ (UPMC ED-130) and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`_.
 
 Reference
 =========

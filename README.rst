@@ -13,7 +13,7 @@ PyPHS
 
 A Python software (Py) dedicated to the simulation of multiphysical Port-Hamiltonian Systems (PHS) described by graph structures.
 
-The PHS formalism decomposes network systems intro conservative parts, dissipative parts and source parts:
+The PHS formalism decomposes network systems into **conservative** parts, **dissipative** parts and **source** parts. This permits to formulate ultiphysical systems dynamics into a **structured set of differential-algebraic equations**. This structure permits to prove the **passivity** of the system. Moreover, it guarantees the **stability** of the numerical simulation for an adapted structure preserving numerical method.
 
 .. image:: https://pyphs.github.io/pyphs/figures/home2.png
 	:width: 650

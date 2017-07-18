@@ -13,7 +13,7 @@ PyPHS
 
 A Python software (Py) dedicated to the simulation of multiphysical Port-Hamiltonian Systems (PHS) described by graph structures.
 
-1. Inputs are **netlist** descriptions of network systems (very similar to SPICE netlists).
+1. Inputs are **netlists** (text description of network systems, very similar to SPICE netlists).
 2. The associated **graphs** are analyzed to produce the **core system's dynamics equations** in the PHS formalism.
 3. **Simulations** (i.e. numerical solving of DAE equations) are performed based on a variety of **numerical methods** (can be extended with new ones).
 4. The corresponding **C++** simulation code is automatically generated and called from python (can also be used in bigger applications).

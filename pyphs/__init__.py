@@ -17,7 +17,7 @@ from .numerics.cpp.simu2cpp import simu2cpp
 from .config import path_to_configuration_file
 
 from .examples import path_to_examples
-
+from .tutorials import path_to_tutorials
 
 __licence__ = \
     "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
@@ -25,12 +25,12 @@ __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2017"
 __version__ = '0.1.10'
-__author_email__ = 'antoine.falaize@ircam.fr'
+__author_email__ = 'antoine.falaize@gmail.fr'
 
 __all__ = ['Core', 'Netlist', 'Simulation', 'Graph',
            'signalgenerator', 'Operation', 'Method',
            'Numeric', 'Evaluation',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
-           'numcore2cpp', 'simu2cpp', 'netlist2core',
+           'method2cpp', 'simu2cpp', 'netlist2core',
            'path_to_configuration_file', 'netlist2graph',
-           'path_to_examples']
+           'path_to_examples', 'path_to_tutorials']

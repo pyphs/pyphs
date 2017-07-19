@@ -128,8 +128,9 @@ After installation, it is recommended to configure the `config.py <https://githu
 
 Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package, which can be recovered in a Python interpreter with::
 
-    >>> from pyphs import path_to_configuration_file
-    >>>  print(path_to_configuration_file)
+.. code:: python
+    from pyphs import path_to_configuration_file
+    print(path_to_configuration_file)
 
 
 Upgrade of existing installations
@@ -201,7 +202,7 @@ Most of the documentation can be found in the `website <https://pyphs.github.io/
 Theoretical overview
 --------------------
 
-The development of `PyPHS <https://github.com/pyphs/pyphs/>`_ started as an implementation of the methods proposed in the reference [1]_, in which the port-Hamiltonian formalism, the graph analysis and the numerical method are exposed. This is worth to read before using the package.
+The development of `PyPHS <https://github.com/pyphs/pyphs/>`_ started as an implementation of the methods proposed in the reference [GraphAnalysis2016]_, in which the port-Hamiltonian formalism, the graph analysis and the numerical method are exposed. This is worth to read before using the package.
 
 Q&A Mailing list
 -----------------
@@ -213,9 +214,10 @@ Tutorials and examples
 
 The package comes with a set of tutorials for the use of the main functionalities (`definition <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/core.py>`_, `evaluation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/evaluation.py>`_, and `simulation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/simulation.py>`_ of a core PHS structure). More tutorials are to come. Additionally, you can see the `examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_ scripts. Both the *tutorials* and the *examples* folders are located at your package root, which can be recovered in Python interpreter with::
 
-    >>> from pyphs import path_to_examples, path_to_tutorials
-    >>> print(path_to_examples)
-    >>> print(path_to_tutorials)
+.. code:: python
+    from pyphs import path_to_examples, path_to_tutorials
+    print(path_to_examples)
+    print(path_to_tutorials)
 
 Typical use
 ===========
@@ -246,7 +248,7 @@ with the following physical parameters:
 
 
 1. Define the Netlist
-~~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 Put the following content in a text file with **.net** extension, (here *dlc.net*):
 
@@ -258,7 +260,7 @@ Put the following content in a text file with **.net** extension, (here *dlc.net
 
 
 2. Perform graph analysis
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 Run the following python code from the netlist file directory:
 
@@ -276,7 +278,7 @@ Run the following python code from the netlist file directory:
 
 
 3. Export $\\LaTeX$
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 .. code:: python
     # Add netlist to LaTeX content
@@ -301,7 +303,7 @@ which is compiled to produce the following **pdf** file:
 
 
 4. Export $\\mathrm{C_{++}}$
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 .. code:: python
     # Numerical method for time discretization of 'core'

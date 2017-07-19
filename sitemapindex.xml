@@ -7,70 +7,74 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/authors/afalaize.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-19T01:01:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://pyphs.github.io/pyphs/authors/pyphs-project.xml</loc>
+  <lastmod>2017-07-19T01:01:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/authors/tlebrun.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/cat_documentation.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/cat_electronics.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/cat_tutorial.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/components.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/dissipatives.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/mathjax.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/storages.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/theory.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/thiele-small-mathjax.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-17T02:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/galleries/intro/rss.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-19T01:01:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/galleries/intro1/rss.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-19T01:01:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/galleries/intro2/rss.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-19T01:01:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/galleries/rss.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-19T01:01:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/rss.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-19T01:01:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/sitemap.xml</loc>
-  <lastmod>2017-07-17T01:41:00Z</lastmod>
+  <lastmod>2017-07-19T01:01:00Z</lastmod>
  </sitemap>
 </sitemapindex>

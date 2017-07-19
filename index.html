@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PyPHS: Passive modeling and simulation in python | PyPHS</title>
+<title>PyPHS</title>
 <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="assets/css/html4css1.css" rel="stylesheet" type="text/css">
 <link href="assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
@@ -16,15 +16,13 @@
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="https://pyphs.github.io/pyphs/">
-<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><meta name="author" content="PyPHS project">
 <meta property="og:site_name" content="PyPHS">
-<meta property="og:title" content="PyPHS: Passive modeling and simulation in python">
+<meta property="og:title" content="PyPHS">
 <meta property="og:url" content="https://pyphs.github.io/pyphs/">
-<meta property="og:description" content="Welcome to PyPHS!
-PyPHS is a Python (2.7-3.6) package that implements a set of numerical methods for the simulation of multi-physical systems with the Port-Hamiltonian Systems approach.
-
-It provides:
-">
+<meta property="og:description" content="pypi version Licence badge python versions Website badge
+A Python software (Py) dedicated to the simulation of multi-physical Port-Hamiltonian Systems (PHS) described by graph structures.
+The PHS form">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2016-11-13T20:05:17+01:00">
 <meta property="article:tag" content="mathjax">
@@ -113,57 +111,209 @@ It provides:
         <div class="row">
             
             
-<article class="post-text storypage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">PyPHS: Passive modeling and simulation in python</a></h1>
+<article class="post-text storypage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">PyPHS</a></h1>
 
         
 
     </header><div class="e-content entry-content" itemprop="articleBody text">
     <div>
-<div class="section" id="welcome-to-pyphs">
-<h2>Welcome to PyPHS!</h2>
-<p>PyPHS is a Python (2.7-3.6) package that implements a set of numerical methods for the simulation of multi-physical systems with the <em>Port-Hamiltonian Systems</em> approach.</p>
-<img alt="/figures/home2.png" class="align-center" src="figures/home2.png" style="width: 650px;"><p>It provides:</p>
+<p><a class="reference external" href="https://badge.fury.io/py/pyphs"><object data="https://badge.fury.io/py/pyphs.svg" type="image/svg+xml">pypi version</object></a> <a class="reference external" href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html"><object data="https://img.shields.io/badge/licence-CeCILL--B-blue.svg" type="image/svg+xml">Licence badge</object></a> <a class="reference external" href="https://www.travis-ci.org/pyphs/pyphs"><object data="https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg" type="image/svg+xml">python versions</object></a> <a class="reference external" href="https://pyphs.github.io/pyphs/"><object data="https://img.shields.io/badge/documentation-website-blue.svg" type="image/svg+xml">Website badge</object></a></p>
+<p>A Python software (Py) dedicated to the simulation of multi-physical Port-Hamiltonian Systems (PHS) described by graph structures.</p>
+<p>The PHS formalism decomposes network systems into <strong>conservative</strong> parts, <strong>dissipative</strong> parts and <strong>source</strong> parts, which are combined according to an <strong>energy conserving interconnection</strong>. This approach permits to formulate the dynamics of multi-physical systems as a <strong>set of differential-algebraic equations</strong> structured according to energy flows. This <strong>structure</strong> proves the <strong>passivity</strong> of the system, including the nonlinear cases. Moreover, it guarantees the <strong>stability</strong> of the numerical simulations for an adapted structure preserving numerical method.</p>
+<img alt="https://pyphs.github.io/pyphs/figures/home2.png" class="align-center" src="https://pyphs.github.io/pyphs/figures/home2.png" style="width: 650px;"><p>The standard workflow is as follows.</p>
 <ol class="arabic simple">
-<li>A python class <cite>pyphs.PHSCore</cite> that encodes the core <strong>Port-Hamiltonian structure</strong>.</li>
-<li>An automated generation of PHS cores from <strong>netlists</strong> through</li>
+<li>Inputs are <strong>netlist descriptions</strong> of network systems (very similar to SPICE netlists).</li>
+<li>The associated <strong>graphs</strong> are analyzed to produce the <strong>core system's dynamics equations</strong> in the PHS formalism.</li>
+<li>
+<strong>Simulations</strong> (i.e. numerical solving of DAE equations) are performed based on a variety of <strong>numerical methods</strong> (can be extended with new ones).</li>
+<li>The corresponding <strong>C++</strong> simulation code is automatically generated and called from python (can also be used in bigger applications).</li>
+<li>
+<strong>LaTeX</strong> description files can be generated (for documentation, publication, etc.).</li>
 </ol>
-<ol class="lowerroman simple">
-<li>the implementation of a specially designed <strong>graph analysis</strong> (see <a class="citation-reference" href="#graphanalysis2016" id="id1">[GraphAnalysis2016]</a>), and</li>
-<li>a set of elementary <strong>components</strong> compiled in a <strong>dictionary</strong>.</li>
-</ol>
-<ol class="arabic simple" start="3">
-<li>A python class <cite>pyphs.PHSSimulation</cite> that runs the simulation of a discrete-time port-Hamiltonian structure, derived from a structure preserving numerical method (see <a class="citation-reference" href="#numericalmethod2015" id="id2">[NumericalMethod2015]</a>).</li>
-<li>An automated C++ and $LaTeX$ code generation.</li>
-</ol>
-<img alt="/figures/synopsys.png" class="align-center" src="figures/synopsys.png" style="width: 800px;">
+<img alt="https://pyphs.github.io/pyphs/figures/synopsys.png" class="align-center" src="https://pyphs.github.io/pyphs/figures/synopsys.png" style="width: 800px;"><p><a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> provides:</p>
+<ul class="simple">
+<li>The Python class <strong>Core</strong> defines symbolically a <em>continuous-time Port-Hamiltonian structure</em>.</li>
+<li>The Python class <strong>Method</strong> defines symbolically a <em>discrete-time port-Hamiltonian structure</em> derived from a given <cite>Core</cite> object and for several numerical schemes. It includes a structure preserving numerical method (see <a class="citation-reference" href="#numericalmethod2015" id="id1">[NumericalMethod2015]</a>).</li>
+<li>The Python class <strong>Netlist</strong> reads and writes the descriptions of network systems.</li>
+<li>The Python class <strong>Graph</strong> defines a network structure for the automated generation of <cite>Core</cite> from <cite>Netlist</cite>, based on (i) the implementation of a specially designed <strong>graph analysis</strong> (see <a class="citation-reference" href="#graphanalysis2016" id="id2">[GraphAnalysis2016]</a>), and (ii) a set of elementary <strong>components</strong> compiled in the <strong>Dictionary</strong>.</li>
+<li>The Python class <strong>Simulation</strong> evaluates iteratively a given <cite>Method</cite> object to produce the data result in text files. The evaluation can run in pure Python code with the <strong>Numerical</strong> object, or can run in C++ through the generated C++ files.</li>
+</ul>
+<div class="section" id="status">
+<h2>Status</h2>
+<p>This package is in development status Beta. The continuous integration is checked with Travis for Unix systems and AppVeyor for Windows systems (see build status below).</p>
+<a class="reference external image-reference" href="https://www.travis-ci.org/pyphs/pyphs"><img alt="https://www.travis-ci.org/pyphs/pyphs.svg?branch=master" src="https://www.travis-ci.org/pyphs/pyphs.svg?branch=master"></a>
+<a class="reference external image-reference" href="https://ci.appveyor.com/project/pyphsadmin/pyphs"><img alt="https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true" src="https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true"></a>
+<a class="reference external image-reference" href="https://codecov.io/gh/pyphs/pyphs"><object data="https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg" type="image/svg+xml">https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg</object></a>
+<a class="reference external image-reference" href="https://landscape.io/github/pyphs/pyphs/master"><img alt="Health" src="https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat"></a>
+</div>
+<div class="section" id="licence">
+<h2>Licence</h2>
+<p><a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> is distributed under the french <a class="reference external" href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html">CeCILL-B</a> licence.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation</h2>
+<p>It is possible to install <a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> from package (if you just want to use it) or source (if you plan to use it for development). Whichever method you choose, make sure that all prerequisites are installed.</p>
+<div class="section" id="python-prerequisites">
+<h3>Python prerequisites</h3>
+<p>The <a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> package run on Python 2.7 and Python
+3.5 or newer (3.4 is no longer tested), with the following packages installed:</p>
 <ul class="simple">
-<li>From sources with <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a>:</li>
+<li><a class="reference external" href="http://www.sympy.org/fr/">sympy</a></li>
+<li><a class="reference external" href="http://www.numpy.org">numpy</a></li>
+<li><a class="reference external" href="http://www.scipy.org">scipy</a></li>
+<li><a class="reference external" href="http://matplotlib.org/">matplotlib</a></li>
+<li><a class="reference external" href="http://networkx.github.io/">networkx</a></li>
+<li><a class="reference external" href="https://pypi.python.org/pypi/stopit">stopit</a></li>
+<li><a class="reference external" href="https://pypi.python.org/pypi/progressbar2">progressbar2</a></li>
+<li>
+<a class="reference external" href="https://github.com/nose-devs/nose">nose</a> (to run the tests)</li>
 </ul>
-<pre class="code text"><a name="rest_code_bfec721499ad4df5bdaff5ee64e6fa6b-1"></a>pip install pyphs
+<p>Please refer to the <a class="reference external" href="requirements.txt">requirements.txt</a> file for the required
+versions and make sure that these modules are up to date.</p>
+<p>Additionally, <a class="reference external" href="http://deeplearning.net/software/theano/">theano</a> is used if it can be found on the system, for faster numerical evaluation of symbolic expressions.</p>
+</div>
+<div class="section" id="c-prerequisites">
+<h3>C++ prerequisites</h3>
+<p>The generated C++ sources build with <a class="reference external" href="https://cmake.org/">CMake</a> &gt;= 3.1 (see <strong>Configuration</strong> below). The code relies on the <a class="reference external" href="http://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen library</a> (not needed for pure Python usage).</p>
+</div>
+<div class="section" id="install-from-package">
+<h3>Install from package</h3>
+<p>The easiest way to install the package is via <cite>pip</cite> from the <a class="reference external" href="https://pypi.python.org/pypi">PyPI (Python
+Package Index)</a>:</p>
+<pre class="literal-block">
+pip install pyphs
 </pre>
-<ul class="simple">
-<li>From a download of the <a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a> package from the <a class="reference external" href="https://github.com/afalaize/pyphs/">GitHub repository</a>, execute in the package folder (that contains a <cite>setup.py</cite> file):</li>
-</ul>
-<ul class="simple">
-<li>with <a class="reference external" href="https://setuptools.readthedocs.io/en/latest/">setuptools</a>
-</li>
-</ul>
-<pre class="code text"><a name="rest_code_8eed7b4cbe33497aac55d6d626372ffb-1"></a>python setup.py install
+<p>This includes the latest code and should install all dependencies automatically. If it complains about some missing dependencies, install them the same way with <cite>pip</cite> beforehand.</p>
+<p>You might need higher privileges (use su or sudo) to install the package globally. Alternatively you can install the package locally
+(i.e. only for you) by adding the <cite>--user</cite> argument:</p>
+<pre class="literal-block">
+pip install --user pyphs
 </pre>
-<ul class="simple">
-<li>with <a class="reference external" href="https://pypi.python.org/pypi/pip/">pip</a>
-</li>
-</ul>
-<pre class="code text"><a name="rest_code_b4d35d0d18bd4e808d72e7ffbf0b1d8f-1"></a>pip install .
+</div>
+<div class="section" id="install-from-source">
+<h3>Install from source</h3>
+<p>If you plan to use the package as a developer, clone the Git repository:</p>
+<pre class="literal-block">
+git clone --recursive https://github.com/pyphs/pyphs.git
 </pre>
+<p>Then you can simply install the package in development mode:</p>
+<pre class="literal-block">
+python setup.py develop --user
+</pre>
+<p>To run the included tests:</p>
+<pre class="literal-block">
+python setup.py test
+</pre>
+</div>
+<div class="section" id="configuration">
+<h3>Configuration</h3>
+<p>After installation, it is recommended to configure the <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/config.py">config.py</a> to your needs. Particularly, this is where the local path to the CMake binary and <a class="reference external" href="http://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen library</a> is specified.</p>
+<p>Your local <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/config.py">config.py</a> file is located at the root of the <a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> package, which can be recovered in a Python interpreter with</p>
+<pre class="code python"><a name="rest_code_a0dded70dcb44fd59f314d9128352478-1"></a><span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">path_to_configuration_file</span>
+<a name="rest_code_a0dded70dcb44fd59f314d9128352478-2"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_configuration_file</span><span class="p">)</span>
+</pre>
+</div>
+<div class="section" id="upgrade-of-existing-installations">
+<h3>Upgrade of existing installations</h3>
+<p>To upgrade the package, please use the same mechanism (pip vs. source) as you did for installation.</p>
+<div class="section" id="upgrade-a-package">
+<h4>Upgrade a package</h4>
+<p>First, manually uninstall the package:</p>
+<pre class="literal-block">
+pip uninstall pyphs
+</pre>
+<p>and reinstall as explained above.</p>
+</div>
+<div class="section" id="upgrade-from-source">
+<h4>Upgrade from source</h4>
+<p>Pull the latest sources:</p>
+<pre class="literal-block">
+git pull
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="package-structure">
+<h2>Package structure</h2>
+<p>The package is divided into the following folders:</p>
+<dl class="docutils">
+<dt><a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials">/pyphs/tutorials</a></dt>
+<dd>Tutorials for the main <a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> classes (executable programs).</dd>
+<dt><a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/examples">/pyphs/examples</a></dt>
+<dd>Various real-life applications (executable programs).</dd>
+<dt><a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/core">/pyphs/core</a></dt>
+<dd><dl class="first last docutils">
+<dt>
+<cite>Core</cite> class :</dt>
+<dd>This is the central object of the <a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> package. It implements the core PHS structure and provides several methods for its manipulation (reorganization, connection, simplification, etc.).</dd>
+</dl></dd>
+<dt><a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/graphs">/pyphs/graphs</a></dt>
+<dd><dl class="first last docutils">
+<dt>
+<cite>Netlist</cite> class :</dt>
+<dd>Management of netlist description files.</dd>
+<dt>
+<cite>Graph</cite> class :</dt>
+<dd><ol class="first last arabic simple">
+<li>Construction and manipulation of network systems,</li>
+<li>Analysis of network realizability,</li>
+<li>Generation of PHS equations (<cite>Core</cite>).</li>
+</ol></dd>
+</dl></dd>
+<dt><a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary">/pyphs/dictionary</a></dt>
+<dd><ul class="first last simple">
+<li>Components are <cite>Graph</cite> objects.</li>
+<li>The dictionary is organized in thematic sub-packages (<em>electronics</em>, <em>thermics</em>, <em>fractional calculus</em>, etc.).</li>
+<li>Each theme is organized in component sub-packages (<cite>electronics.resistor</cite>, <cite>thermics.transfer</cite>, <cite>fraccalc.fracderec</cite>, etc.).</li>
+</ul></dd>
+<dt><a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/numerics">/pyphs/numerics</a></dt>
+<dd><dl class="first last docutils">
+<dt>
+<cite>Evaluation</cite> class :</dt>
+<dd>Numerical evaluation of a given <cite>Core</cite>.</dd>
+<dt>
+<cite>Method</cite> object :</dt>
+<dd>Construction of the <em>symbolic</em> expressions associated with several numerical methods (theta-schemes, trapezoidal rule, discret gradient, etc.).</dd>
+<dt>
+<cite>Simulation</cite> object :</dt>
+<dd>Manage the iterative evaluation and associated results data for a given <cite>Method</cite>.</dd>
+<dt>
+<cite>Numeric</cite> object :</dt>
+<dd>Python evaluation of a given <cite>Method</cite>.</dd>
+<dt>
+<cite>Data</cite> object :</dt>
+<dd>Methods for writing, reading and rendering <cite>Simulation</cite> file results.</dd>
+</dl></dd>
+<dt><a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/tests">/pyphs/tests</a></dt>
+<dd>Test programs executed by <cite>nose</cite> (see above).</dd>
+<dt><a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/misc">/pyphs/misc</a></dt>
+<dd>Miscellaneous tools (plots, LaTeX code generation, signal processing, files I/O).</dd>
+</dl>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation</h2>
+<p>Most of the documentation can be found in the <a class="reference external" href="https://pyphs.github.io/pyphs/">website</a>.</p>
+<div class="section" id="theoretical-overview">
+<h3>Theoretical overview</h3>
+<p>The development of <a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> started as an implementation of the methods proposed in the reference <a class="citation-reference" href="#graphanalysis2016" id="id12">[GraphAnalysis2016]</a>, in which the port-Hamiltonian formalism, the graph analysis and the numerical method are exposed. This is worth to read before using the package.</p>
+</div>
+<div class="section" id="q-a-mailing-list">
+<h3>Q&amp;A Mailing list</h3>
+<p>The package mailing list is at <a class="reference external" href="https://groups.google.com/forum/#!forum/pyphs">https://groups.google.com/forum/#!forum/pyphs</a>.</p>
+</div>
+<div class="section" id="tutorials-and-examples">
+<h3>Tutorials and examples</h3>
+<p>The package comes with a set of tutorials for the use of the main functionalities (<a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/core.py">definition</a>, <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/evaluation.py">evaluation</a>, and <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/simulation.py">simulation</a> of a core PHS structure). More tutorials are to come. Additionally, you can see the <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/examples">examples</a> scripts. Both the <em>tutorials</em> and the <em>examples</em> folders are located at your package root, which can be recovered in Python interpreter with</p>
+<pre class="code python"><a name="rest_code_95c821a6981e4b45877e53a52c0f6bf9-1"></a><span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">path_to_examples</span><span class="p">,</span> <span class="n">path_to_tutorials</span>
+<a name="rest_code_95c821a6981e4b45877e53a52c0f6bf9-2"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_examples</span><span class="p">)</span>
+<a name="rest_code_95c821a6981e4b45877e53a52c0f6bf9-3"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_tutorials</span><span class="p">)</span>
+</pre>
+</div>
 </div>
 <div class="section" id="typical-use">
 <h2>Typical use</h2>
 <p>Consider the following serial diode-inductor-capacitor (DLC) electronic circuit:</p>
-<img alt="/figures/DLC.jpg" class="align-center" src="figures/DLC.jpg" style="width: 300px;"><p>with the following physical parameters:</p>
+<img alt="https://pyphs.github.io/pyphs/figures/DLC.jpg" class="align-center" src="https://pyphs.github.io/pyphs/figures/DLC.jpg" style="width: 300px;"><p>with the following physical parameters:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%">
@@ -177,32 +327,32 @@ It provides:
 <td>Typical value</td>
 </tr>
 <tr>
-<td>$I_s$</td>
+<td>Is</td>
 <td>Diode saturation current (A)</td>
 <td>2e-9</td>
 </tr>
 <tr>
-<td>$v_0$</td>
+<td>v0</td>
 <td>Diode thermal voltage (V)</td>
 <td>26e-3</td>
 </tr>
 <tr>
-<td>$\mu$</td>
+<td>mu</td>
 <td>Diode ideality factor (dimensionless)</td>
 <td>1.7</td>
 </tr>
 <tr>
-<td>$R$</td>
-<td>Diode connectors resistance ($\Omega$)</td>
+<td>R</td>
+<td>Diode connectors resistance (Ohms)</td>
 <td>0.5</td>
 </tr>
 <tr>
-<td>$L$</td>
+<td>L</td>
 <td>Inductance value (H)</td>
 <td>0.05</td>
 </tr>
 <tr>
-<td>$C$</td>
+<td>C</td>
 <td>Capacitance value (F)</td>
 <td>2e-06</td>
 </tr>
@@ -220,63 +370,72 @@ It provides:
 </div>
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
-<p>Run the following python code from the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_6bd05e676c1047b7b913702782db6384-1"></a><span class="kn">import</span> <span class="nn">pyphs</span>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-2"></a>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNetlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-5"></a>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSGraph</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-8"></a>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
-<a name="rest_code_6bd05e676c1047b7b913702782db6384-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">buildCore</span><span class="p">()</span>
+<p>Run the following in a Python interpreter in the netlist file directory:</p>
+<pre class="code python"><a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-1"></a><span class="kn">import</span> <span class="nn">pyphs</span> <span class="kn">as</span> <span class="nn">phs</span>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-2"></a>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">Netlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-5"></a>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">to_graph</span><span class="p">()</span>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-8"></a>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
+<a name="rest_code_a30daae6dee94abdaaf231d78f7e471e-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">to_core</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
-<h3>3. Export $\LaTeX$</h3>
-<pre class="code python"><a name="rest_code_6b1cee2ead1545648c9a04db9ad65c86-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_6b1cee2ead1545648c9a04db9ad65c86-2"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_6b1cee2ead1545648c9a04db9ad65c86-3"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">texdocument</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
+<h3>3. Export LaTeX</h3>
+<pre class="code python"><a name="rest_code_6c544aa900ff4aa799c61b2113471adb-1"></a><span class="c1"># Add netlist to LaTeX content</span>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-2"></a><span class="n">content</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-3"></a>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-4"></a><span class="c1"># Add PHS core to LaTeX content</span>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-5"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">phs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-6"></a>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-7"></a><span class="c1"># Write ready-to-use .tex document</span>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-8"></a><span class="n">phs</span><span class="o">.</span><span class="n">texdocument</span><span class="p">(</span><span class="n">content</span><span class="p">,</span>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-9"></a>                <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span>
+<a name="rest_code_6c544aa900ff4aa799c61b2113471adb-10"></a>                <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
-<li><a class="reference external" href="pyphs_outputs/dlc/tex/dlc.tex">dlc.tex</a></li>
+<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.tex">dlc.tex</a></li>
 </ul>
 <p>which is compiled to produce the following <strong>pdf</strong> file:</p>
 <ul class="simple">
-<li><a class="reference external" href="pyphs_outputs/dlc/tex/dlc.pdf">dlc.pdf</a></li>
+<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.pdf">dlc.pdf</a></li>
 </ul>
 </div>
-<div class="section" id="export-mathrm-c">
-<h3>4. Export $\mathrm{C_{++}}$</h3>
-<pre class="code python"><a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
-<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-2"></a><span class="n">method</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalMethod</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-3"></a>
-<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-4"></a><span class="c1"># Numerical evaluation of 'method'</span>
-<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-5"></a><span class="n">numcore</span> <span class="o">=</span> <span class="n">pyphs</span><span class="o">.</span><span class="n">PHSNumericalCore</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-6"></a>
-<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-7"></a><span class="c1"># Export the set of C++ file for simulation</span>
-<a name="rest_code_ad74198420b84f02b1f9b17ce14b880d-8"></a><span class="n">pyphs</span><span class="o">.</span><span class="n">numcore2cpp</span><span class="p">(</span><span class="n">numcore</span><span class="p">)</span>
+<div class="section" id="export-c-code">
+<h3>4. Export C++ code</h3>
+<pre class="code python"><a name="rest_code_840c22f2939d44e9b76fc5fae98e7b47-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
+<a name="rest_code_840c22f2939d44e9b76fc5fae98e7b47-2"></a><span class="c1"># with default configuration</span>
+<a name="rest_code_840c22f2939d44e9b76fc5fae98e7b47-3"></a><span class="n">method</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">to_method</span><span class="p">()</span>
+<a name="rest_code_840c22f2939d44e9b76fc5fae98e7b47-4"></a>
+<a name="rest_code_840c22f2939d44e9b76fc5fae98e7b47-5"></a><span class="c1"># Export the set of C++ file for simulation</span>
+<a name="rest_code_840c22f2939d44e9b76fc5fae98e7b47-6"></a><span class="n">phs</span><span class="o">.</span><span class="n">method2cpp</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">
-<li><a class="reference external" href="pyphs_outputs/dlc/cpp/core.cpp">core.cpp</a></li>
-<li><a class="reference external" href="pyphs_outputs/dlc/cpp/core.h">core.h</a></li>
-<li><a class="reference external" href="pyphs_outputs/dlc/cpp/data.cpp">data.cpp</a></li>
-<li><a class="reference external" href="pyphs_outputs/dlc/cpp/data.h">data.h</a></li>
+<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.cpp">core.cpp</a></li>
+<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.h">core.h</a></li>
+<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.cpp">data.cpp</a></li>
+<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.h">data.h</a></li>
 </ul>
-<p>The <cite>core.h</cite> defines a class of <cite>DLC</cite> systems with a passive update method to be called for the simulations.</p>
+<p>The <cite>core.h</cite> defines a class of <cite>DLC</cite> systems with an update method to be called at each iteration for the simulations.</p>
 </div>
 </div>
-<div class="section" id="licence">
-<h2>Licence</h2>
-<p><a class="reference external" href="https://github.com/afalaize/pyphs/">PyPHS</a> is distributed under the french <a class="reference external" href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html">CeCILL-B</a> licence.</p>
+<div class="section" id="authors-and-affiliations">
+<h2>Authors and Affiliations</h2>
+<p>PyPHS is mainly developed by <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a> and <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>, respectively in</p>
+<ul class="simple">
+<li>the <a class="reference external" href="http://lasie.univ-larochelle.fr/Axe-AB-17">Team M2N</a> (Mathematical and Numerical Methods), <a class="reference external" href="http://lasie.univ-larochelle.fr">LaSIE Research Lab</a> (CNRS UMR 7356), hosted by the <a class="reference external" href="http://www.univ-larochelle.fr/">University of La Rochelle</a>,</li>
+<li>the <a class="reference external" href="http://s3.ircam.fr/?lang=en">Team S3AM</a> (Sound Systems and Signals: Audio/Acoustics, InstruMents) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a> in Paris.</li>
+</ul>
+<p>See the <a class="reference external" href="https://github.com/pyphs/pyphs/blob/master/AUTHORS">AUTHORS</a> file for the complete list of authors.</p>
 </div>
-<div class="section" id="acknowledgement">
-<h2>Acknowledgement</h2>
-<p>This software is currently developped by <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a> (LaSIE, CNRS UMR 7356, ULR) in association with the <a class="reference external" href="http://s3.ircam.fr/?lang=en">project/team S3</a> (Sound Signals and Systems) at <a class="reference external" href="http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/">STMS Research Lab</a> (CNRS UMR 9912), hosted by <a class="reference external" href="http://www.ircam.fr/">IRCAM</a>.</p>
-<p>The developpement of PyPHS began as a part of the PhD project of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a>, under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>,  through a funding from French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130), and in connection with the French National Research Agency project <a class="reference external" href="https://hamecmopsys.ens2m.fr/">HaMecMoPSys</a> between 2012 and 2016.</p>
+<div class="section" id="short-history">
+<h2>Short History</h2>
+<p>PyPHS was initially developed between 2012 and 2016 as a part of the PhD thesis of <a class="reference external" href="https://afalaize.github.io/">Antoine Falaize</a> under the direction of <a class="reference external" href="http://recherche.ircam.fr/anasyn/helie/">Thomas Hélie</a>, through a funding from  the French doctoral school <a class="reference external" href="http://edite-de-paris.fr/spip/">EDITE</a> (UPMC ED-130) and in connection with the French National Research Agency project <a class="reference external" href="https://hamecmopsys.ens2m.fr/">HaMecMoPSys</a>.</p>
 </div>
 <div class="section" id="references">
 <h2>References</h2>
@@ -286,8 +445,9 @@ It provides:
 <col>
 </colgroup>
 <tbody valign="top"><tr>
-<td class="label"><a class="fn-backref" href="#id1">[GraphAnalysis2016]</a></td>
-<td>Falaize, A., &amp; Hélie, T. (2016). Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach. Applied Sciences, 6(10), 273.</td>
+<td class="label">[GraphAnalysis2016]</td>
+<td>
+<em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id12">2</a>)</em> Falaize, A., &amp; Hélie, T. (2016). Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach. Applied Sciences, 6(10), 273.</td>
 </tr></tbody>
 </table>
 <table class="docutils citation" frame="void" id="numericalmethod2015" rules="none">
@@ -296,7 +456,7 @@ It provides:
 <col>
 </colgroup>
 <tbody valign="top"><tr>
-<td class="label"><a class="fn-backref" href="#id2">[NumericalMethod2015]</a></td>
+<td class="label"><a class="fn-backref" href="#id1">[NumericalMethod2015]</a></td>
 <td>Lopes, N., Hélie, T., &amp; Falaize, A. (2015). Explicit second-order accurate method for the passive guaranteed simulation of port-Hamiltonian systems. IFAC-PapersOnLine, 48(13), 223-228.</td>
 </tr></tbody>
 </table>
@@ -322,7 +482,7 @@ MathJax.Hub.Config({
         <!--End of body content-->
 
         <footer id="footer">
-            Contents © 2017         <a href="mailto:antoine.falaize@gmail.com">afalaize</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2017         <a href="mailto:pyphs.project@gmail.com">PyPHS project</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
 </div>

@@ -221,6 +221,13 @@ class TestSignals(TestCase):
         self.assertTrue(signal_waves())
 
 
+class TestImportTutorials(TestCase):
+
+    def test_tutorial_evaluation(self):
+        from pyphs.tutorials import evaluation
+        self.assertTrue(True)
+
+
 class TestCorefunctions(TestCase):
 
     def test_build_eval(self):

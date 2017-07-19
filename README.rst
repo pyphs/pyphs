@@ -19,7 +19,7 @@ The PHS formalism decomposes network systems into **conservative** parts, **diss
 	:width: 650
 	:align: center
 
-`PyPHS <https://github.com/pyphs/pyphs/>` provides:
+`PyPHS <https://github.com/pyphs/pyphs/>`_ provides:
 
 - A Python class `pyphs.Core` that encodes the core **Port-Hamiltonian structure**.
 - An automated generation of PHS cores from **netlists** through
@@ -60,16 +60,16 @@ This package is in development status Beta. The continuous integration is checke
 
 Licence
 =======
-`PyPHS <https://github.com/afalaize/pyphs/>`__ is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`__ licence.
+`PyPHS <https://github.com/pyphs/pyphs/>`_ is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`_ licence.
 
 Installation
 ==============
-It is possible to install ``PyPHS <https://github.com/pyphs/pyphs/>`` from package (if you just want to use it) or source (if you plan to use it for development). Whichever method you choose, make sure that all prerequisites are installed.
+It is possible to install `PyPHS <https://github.com/pyphs/pyphs/>`_ from package (if you just want to use it) or source (if you plan to use it for development). Whichever method you choose, make sure that all prerequisites are installed.
 
 Python prerequisites
 --------------------
 
-The ``PyPHS <https://github.com/pyphs/pyphs/>`` package run on Python 2.7 and Python
+The `PyPHS <https://github.com/pyphs/pyphs/>`_ package run on Python 2.7 and Python
 3.5 or newer (3.4 is no longer tested), with the following packages installed:
 
 - `sympy <http://www.sympy.org/fr/>`_
@@ -94,15 +94,15 @@ The generated C++ sources build with `CMake <https://cmake.org/>`_ >= 3.1 (see *
 Install from package
 --------------------
 
-The easiest way to install the package is via ``pip`` from the `PyPI (Python
+The easiest way to install the package is via `pip` from the `PyPI (Python
 Package Index) <https://pypi.python.org/pypi>`_::
 
     pip install pyphs
 
-This includes the latest code and should install all dependencies automatically. If it complains about some missing dependencies, install them the same way with ``pip`` beforehand.
+This includes the latest code and should install all dependencies automatically. If it complains about some missing dependencies, install them the same way with `pip` beforehand.
 
 You might need higher privileges (use su or sudo) to install the package globally. Alternatively you can install the package locally
-(i.e. only for you) by adding the ``--user`` argument::
+(i.e. only for you) by adding the `--user` argument::
 
     pip install --user pyphs
 
@@ -111,7 +111,7 @@ Install from source
 
 If you plan to use the package as a developer, clone the Git repository::
 
-    git clone --recursive https://github.com/afalaize/pyphs.git
+    git clone --recursive https://github.com/pyphs/pyphs.git
 
 Then you can simply install the package in development mode::
 
@@ -126,7 +126,7 @@ Configuration
 
 After installation, it is recommended to configure the `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ to your needs. Particularly, this is where the local path to the CMake binary and `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified.
 
-Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS <https://github.com/pyphs/pyphs/>` package, which can be recovered in a Python interpreter with::
+Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package, which can be recovered in a Python interpreter with::
 
     >>> from pyphs import path_to_configuration_file
     >>>  print(path_to_configuration_file)
@@ -160,12 +160,12 @@ Package structure
 The package is divided into the following folders:
 
 `/pyphs/tutorials <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials>`_
-    Tutorials for the main `PyPHS <https://github.com/pyphs/pyphs/>` classes (executable programs).
+    Tutorials for the main `PyPHS <https://github.com/pyphs/pyphs/>`_ classes (executable programs).
 `/pyphs/examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_
     Various real-life applications (executable programs).
 `/pyphs/core <https://github.com/pyphs/pyphs/tree/master/pyphs/core>`_
     `Core` class :
-        This is the central object of the `PyPHS <https://github.com/pyphs/pyphs/>` package. It implements the core PHS structure and provides several methods for its manipulation (reorganization, connection, simplification, etc.).
+        This is the central object of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package. It implements the core PHS structure and provides several methods for its manipulation (reorganization, connection, simplification, etc.).
 `/pyphs/graphs <https://github.com/pyphs/pyphs/tree/master/pyphs/graphs>`_
     `Netlist` class :
         Management of netlist description files.
@@ -201,7 +201,7 @@ Most of the documentation can be found in the `website <https://pyphs.github.io/
 Theoretical overview
 --------------------
 
-The development of `PyPHS <https://github.com/pyphs/pyphs/>` started as an implementation of the methods proposed in the reference [1]_, in which the port-Hamiltonian formalism, the graph analysis and the numerical method are exposed. This is worth to read before using the package.
+The development of `PyPHS <https://github.com/pyphs/pyphs/>`_ started as an implementation of the methods proposed in the reference [1]_, in which the port-Hamiltonian formalism, the graph analysis and the numerical method are exposed. This is worth to read before using the package.
 
 Q&A Mailing list
 -----------------
@@ -293,11 +293,11 @@ Run the following python code from the netlist file directory:
 
 This yields the following **tex** file:
 
-* `dlc.tex <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.tex>`__
+* `dlc.tex <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.tex>`_
 
 which is compiled to produce the following **pdf** file:
 
-* `dlc.pdf <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.pdf>`__
+* `dlc.pdf <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.pdf>`_
 
 
 4. Export $\\mathrm{C_{++}}$
@@ -314,10 +314,10 @@ which is compiled to produce the following **pdf** file:
 
 This yields the following **cpp** files:
 
-* `core.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.cpp>`__
-* `core.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.h>`__
-* `data.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.cpp>`__
-* `data.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.h>`__
+* `core.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.cpp>`_
+* `core.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.h>`_
+* `data.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.cpp>`_
+* `data.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.h>`_
 
 The `core.h` defines a class of `DLC` systems with an update method to be called at each iteration for the simulations.
 

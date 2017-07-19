@@ -251,11 +251,11 @@ with the following physical parameters:
 Put the following content in a text file with **.net** extension, (here *dlc.net*):
 
 .. line-block::
-
     electronics.source in ('#', 'n1'): type='voltage';
     electronics.diode D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);
     electronics.inductor L ('n2', 'n3'): L=('L', 0.05);
     electronics.capacitor C ('n3', '#'): C=('C', 2e-06);
+
 
 2. Perform graph analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -263,7 +263,6 @@ Put the following content in a text file with **.net** extension, (here *dlc.net
 Run the following python code from the netlist file directory:
 
 .. code:: python
-
     import pyphs as phs
 
     # Read the 'dlc_netlist.net'
@@ -275,11 +274,11 @@ Run the following python code from the netlist file directory:
     # Construct the core Port-Hamiltonian System from 'graph'
     core = graph.to_core()
 
+
 3. Export $\\LaTeX$
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
-
     # Add netlist to LaTeX content
     content = phs.netlist2tex(netlist)
 
@@ -290,6 +289,7 @@ Run the following python code from the netlist file directory:
     phs.texdocument(content,
                     title='DLC',
                     filename='dlc.tex')
+
 
 This yields the following **tex** file:
 
@@ -304,13 +304,13 @@ which is compiled to produce the following **pdf** file:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
-
     # Numerical method for time discretization of 'core'
     # with default configuraiton
     method = core.to_method()
 
     # Export the set of C++ file for simulation
     phs.method2cpp(method)
+
 
 This yields the following **cpp** files:
 
@@ -320,6 +320,7 @@ This yields the following **cpp** files:
 * `data.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.h>`_
 
 The `core.h` defines a class of `DLC` systems with an update method to be called at each iteration for the simulations.
+
 
 Authors and Affiliations
 ========================
@@ -331,10 +332,12 @@ PyPHS is mainly developed by `Antoine Falaize <https://afalaize.github.io/>`_ an
 
 See the `AUTHORS <https://github.com/pyphs/pyphs/blob/master/AUTHORS>`_ file for the complete list of authors.
 
+
 Short History
 ==============
 
 PyPHS was initially developed between 2012 and 2016 as a part of the PhD thesis of `Antoine Falaize <https://afalaize.github.io/>`_ under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, through a funding from  the French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`_ (UPMC ED-130) and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`_.
+
 
 References
 ==========

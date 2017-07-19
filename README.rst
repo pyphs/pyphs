@@ -223,8 +223,8 @@ Typical use
 Consider the following serial diode-inductor-capacitor (DLC) electronic circuit:
 
 .. image:: /figures/DLC.jpg
-:width: 300
-:align: center
+    :width: 300
+    :align: center
 
 with the following physical parameters:
 

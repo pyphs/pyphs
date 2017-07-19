@@ -228,7 +228,7 @@ Typical use
 
 Consider the following serial diode-inductor-capacitor (DLC) electronic circuit:
 
-.. image:: /figures/DLC.jpg
+.. image:: https://pyphs.github.io/pyphs/figures/DLC.jpg
     :width: 300
     :align: center
 
@@ -266,9 +266,10 @@ Put the following content in a text file with **.net** extension, (here *dlc.net
 2. Perform graph analysis
 -------------------------
 
-Run the following python code from the netlist file directory:
+Run the following in a Python interpreter in the netlist file directory:
 
 .. code:: python
+
     import pyphs as phs
 
     # Read the 'dlc_netlist.net'

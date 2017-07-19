@@ -314,7 +314,7 @@ which is compiled to produce the following **pdf** file:
 .. code:: python
 
     # Numerical method for time discretization of 'core'
-    # with default configuraiton
+    # with default configuration
     method = core.to_method()
 
     # Export the set of C++ file for simulation

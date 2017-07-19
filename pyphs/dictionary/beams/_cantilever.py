@@ -124,7 +124,7 @@ def waveNumbers(N, Lb, Kb, Mb):
     k = k[:, Indices]
     # [Hz] Frequencies associated to k
     fk = sqrt((k**4)*Kb/Mb)/(2*pi)
-    return k, fk
+    return k[0][:N], fk[0][:N]
 
 
 def omega_cosine(zp, wp, Lb, k):
@@ -225,8 +225,8 @@ class Cantilever(Graph):
         # fk = fk[(fk < pars['fs']/2).nonzero()]
 
         # [#] number of simulated modes
-        pars.update({'kmodes': k[0],
-                     'fmodes': fk[0]})
+        pars.update({'kmodes': k,
+                     'fmodes': fk})
         pars['N'] = len(pars['kmodes'])
 
         # [N/m**1] Modal damping coefficient

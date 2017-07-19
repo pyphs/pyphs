@@ -21,7 +21,7 @@ generate_netlist()
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 netlist_path = os.path.join(path, netlist_name + '.net')
 graph = Graph(netlist=netlist_path, label=netlist_name)
-core = graph.buildCore()
+core = graph.to_core()
 
 #if __name__ == '__main__':
 #    import sympy as sp

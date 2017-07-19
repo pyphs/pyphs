@@ -40,7 +40,7 @@ def plot_power_balance_rlc_with_split():
 
     rlc_ = rlc.__copy__()
     rlc_.reduce_z()
-    simu = Simulation(rlc_, config=config)
+    simu = Simulation(rlc_.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -80,7 +80,7 @@ def plot_power_balance_nlcore_with_split():
     # the tutorial on Core
     from pyphs.tutorials.core import core as nlcore
     nlcore.reduce_z()
-    simu = Simulation(nlcore, config=config)
+    simu = Simulation(nlcore.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -121,7 +121,7 @@ def plot_rlc_with_split():
     print(rlc.w)
     print(rlc.z)
 
-    simu = Simulation(rlc, config=config)
+    simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])

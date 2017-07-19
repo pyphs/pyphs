@@ -12,7 +12,6 @@ from .analysis import GraphAnalysis
 from .build import buildCore
 from ..core.core import Core
 from ..misc.plots.graphs import plot
-from ..graphs import Netlist
 from .tools import serial_edges, parallel_edges
 from .exceptions import UndefinedPotential
 from ..config import datum, VERBOSE
@@ -33,6 +32,7 @@ port-Hamiltonian systems.
         self.core = Core()
 
         if netlist is not None:
+            from ..graphs import Netlist
 
             if isinstance(netlist, str):
                 netlist = Netlist(netlist)
@@ -60,14 +60,45 @@ port-Hamiltonian systems.
         self._idpar = 0
         self._idser = 0
 
-    def _set_analysis(self, verbose=False, plot=False):
+    def _build_analysis(self, verbose=False, plot=False):
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
-    def buildCore(self, verbose=False, plot=False, connect=True):
+    def to_core(self, label=None, verbose=False, plot=False, connect=True):
+        """
+        Return the core PHS object associated with the graph.
+
+        Parameters
+        ----------
+
+        label : str (optional)
+            String label for the Core object (default None recovers the label
+            from the graph).
+
+        verbose : bool (optional)
+            If True, the system pauses at each iteration of the graph analysis
+            algorithm and a short description of the iteration is printed.
+            Default is False.
+
+        plot : bool (optional)
+            If True, plot the graph at each iteration of the graph analysis
+            algorithm. The color scheme for the edges and nodes reflects the
+            state of the analysis process. Default is False.
+
+        connect : bool (optional)
+            If True, the method core.connect() is called before returning, so
+            that the transformers and gyrators are resolved in the structure
+            matrix. Default is True.
+
+        Output
+        ------
+
+        core : pyphs.Core
+            The PHS core object associated with the graph.
+        """
         if VERBOSE >= 1:
             print('Build core {}...'.format(self.label))
 
-        self._set_analysis(verbose=verbose, plot=plot)
+        self._build_analysis(verbose=verbose, plot=plot)
 
         self.analysis.perform()
 
@@ -78,9 +109,85 @@ port-Hamiltonian systems.
         if connect:
             core.connect()
 
-        core.label = self.label
+        if label is None:
+            label = self.label
+
+        if not isinstance(label, str):
+            raise TypeError('Core label not understood:\n{}'.format(label))
+
+        core.label = label
 
         return core
+
+    def to_method(self, label=None, config=None):
+        """
+        Return the PHS numerical method associated with the PHS graph for the
+        specified configuration.
+
+        Parameter
+        ---------
+
+        label : str (optional)
+            String label for the Core object (default None recovers the label
+            from the graph).
+
+        config : dict or None
+            A dictionary of simulation parameters. If None, the standard
+            pyphs.config.simulations is used (the default is None).
+            keys and default values are
+
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+
+        Output
+        ------
+
+        method : pyphs.Method
+            The PHS numerical method associated with the PHS graph for the
+            specified configuration.
+        """
+
+        core = self.to_core(label=label)
+        return core.to_method(config=config)
+
+    def to_simulation(self, label=None, config=None, inits=None):
+        """
+        Return the PHS simulation object associated with the PHS graph for the
+        specified configuration.
+
+        Parameter
+        ---------
+
+        label : str (optional)
+            String label for the Core object (default None recovers the label
+            from the graph).
+
+        config : dict or None
+            A dictionary of simulation parameters. If None, the standard
+            pyphs.config.simulations is used (the default is None).
+            keys and default values are
+
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+
+        Output
+        ------
+
+        method : pyphs.Simulation
+            The PHS simulation object associated with the PHS graph for the
+            specified configuration.
+        """
+
+        core = self.to_core(label=label)
+        return core.to_simulation(config=config, inits=inits)
 
     def _build_from_netlist(self):
         """
@@ -118,7 +225,7 @@ port-Hamiltonian systems.
                                                      'ctrl': '?',
                                                      'label': n})
             sg.add_edges_from(edges[0])
-            sg._set_analysis()
+            sg._build_analysis()
             self._idser += 1
             self.add_edge(edges[1], edges[2],
                           attr_dict={'type': 'graph',
@@ -146,7 +253,7 @@ port-Hamiltonian systems.
             pg = Graph()
             pg.add_edges_from(edges)
 
-            pg._set_analysis()
+            pg._build_analysis()
             self._idpar += 1
             for n in (n1, n2):
                 if not n == datum:

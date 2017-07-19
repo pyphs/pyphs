@@ -26,7 +26,7 @@ The PHS formalism decomposes network systems into **conservative** parts, **diss
     (i) the implementation of a specially designed **graph analysis** (see [GraphAnalysis2016]_), and
     (ii) a set of elementary **components** compiled in a **dictionary**.
 - A Python class `pyphs.Simulation` that runs the simulation of a discrete-time port-Hamiltonian structure, derived from a structure preserving numerical method (see [NumericalMethod2015]_).
-- Automated C++ and $\LaTeX$ code generation.
+- Automated C++ and LaTeX code generation.
 
 The standard workflow is as follows.
 
@@ -126,9 +126,11 @@ Configuration
 
 After installation, it is recommended to configure the `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ to your needs. Particularly, this is where the local path to the CMake binary and `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified.
 
-Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package, which can be recovered in a Python interpreter with::
+Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package, which can be recovered in a Python interpreter with
+
 
 .. code:: python
+
     from pyphs import path_to_configuration_file
     print(path_to_configuration_file)
 
@@ -212,9 +214,11 @@ The package mailing list is at https://groups.google.com/forum/#!forum/pyphs.
 Tutorials and examples
 -----------------------
 
-The package comes with a set of tutorials for the use of the main functionalities (`definition <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/core.py>`_, `evaluation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/evaluation.py>`_, and `simulation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/simulation.py>`_ of a core PHS structure). More tutorials are to come. Additionally, you can see the `examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_ scripts. Both the *tutorials* and the *examples* folders are located at your package root, which can be recovered in Python interpreter with::
+The package comes with a set of tutorials for the use of the main functionalities (`definition <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/core.py>`_, `evaluation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/evaluation.py>`_, and `simulation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/simulation.py>`_ of a core PHS structure). More tutorials are to come. Additionally, you can see the `examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_ scripts. Both the *tutorials* and the *examples* folders are located at your package root, which can be recovered in Python interpreter with
+
 
 .. code:: python
+
     from pyphs import path_to_examples, path_to_tutorials
     print(path_to_examples)
     print(path_to_tutorials)
@@ -233,17 +237,17 @@ with the following physical parameters:
 +------------+------------------------------------------+----------------+
 | Parameter  | Description (SI unit)                    | Typical value  |
 +------------+------------------------------------------+----------------+
-| $I_s$      | Diode saturation current (A)             | 2e-9           |
+| Is         | Diode saturation current (A)             | 2e-9           |
 +------------+------------------------------------------+----------------+
-| $v_0$      |  Diode thermal voltage (V)               | 26e-3          |
+| v0         |  Diode thermal voltage (V)               | 26e-3          |
 +------------+------------------------------------------+----------------+
-| $\\mu$     |  Diode ideality factor (dimensionless)   | 1.7            |
+| mu         |  Diode ideality factor (dimensionless)   | 1.7            |
 +------------+------------------------------------------+----------------+
-| $R$        |  Diode connectors resistance ($\\Omega$) | 0.5            |
+| R          |  Diode connectors resistance (Ohms)      | 0.5            |
 +------------+------------------------------------------+----------------+
-| $L$        |  Inductance value (H)                    | 0.05           |
+| L          |  Inductance value (H)                    | 0.05           |
 +------------+------------------------------------------+----------------+
-| $C$        |  Capacitance value (F)                   | 2e-06          |
+| C          |  Capacitance value (F)                   | 2e-06          |
 +------------+------------------------------------------+----------------+
 
 
@@ -277,10 +281,11 @@ Run the following python code from the netlist file directory:
     core = graph.to_core()
 
 
-3. Export $\\LaTeX$
+3. Export LaTeX
 ----------------------------
 
 .. code:: python
+
     # Add netlist to LaTeX content
     content = phs.netlist2tex(netlist)
 
@@ -302,10 +307,11 @@ which is compiled to produce the following **pdf** file:
 * `dlc.pdf <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.pdf>`_
 
 
-4. Export $\\mathrm{C_{++}}$
+4. Export C++ code
 ----------------------------
 
 .. code:: python
+
     # Numerical method for time discretization of 'core'
     # with default configuraiton
     method = core.to_method()

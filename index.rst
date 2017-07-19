@@ -38,8 +38,6 @@ The standard workflow is as follows.
     :width: 800
     :align: center
 
-`PyPHS <https://github.com/pyphs/pyphs/>`_ provides:
-
 - The Python class **Core** defines symbolically a *continuous-time Port-Hamiltonian structure*.
 - The Python class **Method** defines symbolically a *discrete-time port-Hamiltonian structure* derived from a given `Core` object and for several numerical schemes. It includes a structure preserving numerical method (see [NumericalMethod2015]_).
 - The Python class **Netlist** reads and writes the descriptions of network systems.
@@ -51,18 +49,23 @@ Status
 
 This package is in development status Beta. The continuous integration is checked with Travis for Unix systems and AppVeyor for Windows systems (see build status below).
 
-.. image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
+|Travis| |Appveyor| |Codecov| |Landscape|
+
+.. |Travis| image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/pyphs/pyphs
 
-.. image:: https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true
+.. |Appveyor| image:: https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true
     :target: https://ci.appveyor.com/project/pyphsadmin/pyphs
 
-.. image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
+
+.. |Codecov| image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/pyphs/pyphs
 
-.. image:: https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat
+
+.. |Landscape| image:: https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat
    :target: https://landscape.io/github/pyphs/pyphs/master
    :alt: Health
+
 
 Licence
 =======
@@ -210,7 +213,7 @@ Most of the documentation can be found in the `website <https://pyphs.github.io/
 Theoretical overview
 --------------------
 
-The development of `PyPHS <https://github.com/pyphs/pyphs/>`_ started as an implementation of the methods proposed in the reference [GraphAnalysis2016]_, in which the port-Hamiltonian formalism, the graph analysis and the numerical method are exposed. This is worth to read before using the package.
+The development of `PyPHS <https://github.com/pyphs/pyphs/>`_ started as an implementation of the methods proposed in the reference [GraphAnalysis2016], in which the port-Hamiltonian formalism, the graph analysis and the structure preserving numerical method are exposed. This is worth to read before using the package.
 
 Q&A Mailing list
 -----------------
@@ -357,6 +360,6 @@ PyPHS was initially developed between 2012 and 2016 as a part of the PhD thesis 
 References
 ==========
 
-.. [GraphAnalysis2016] Falaize, A., & Hélie, T. (2016). Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach. Applied Sciences, 6(10), 273.
-
 .. [NumericalMethod2015] Lopes, N., Hélie, T., & Falaize, A. (2015). Explicit second-order accurate method for the passive guaranteed simulation of port-Hamiltonian systems. IFAC-PapersOnLine, 48(13), 223-228.
+
+.. [GraphAnalysis2016] Falaize, A., & Hélie, T. (2016). Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach. Applied Sciences, 6(10), 273.

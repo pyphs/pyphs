@@ -17,7 +17,7 @@ def test_simplify():
 
 def test_build_eval():
     from pyphs.examples.rlc.rlc import core
-    core.build_eval()
+    core.to_evaluation()
     return True
 
 

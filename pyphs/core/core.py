@@ -822,7 +822,7 @@ add the connector'.format(i)
                                   self.cy)
 
         a = types.matrix_types[0](self.g() +
-                                  self.a() +
+                                  self.symbols(['z'+str(w)[1:] for w in self.w]) +
                                   self.u +
                                   self.cu)
 

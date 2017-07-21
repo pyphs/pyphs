@@ -24,7 +24,7 @@ __licence__ = \
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2017"
-__version__ = '0.1.10'
+__version__ = '0.1.11'
 __author_email__ = 'antoine.falaize@gmail.fr'
 
 __all__ = ['Core', 'Netlist', 'Simulation', 'Graph',

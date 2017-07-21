@@ -65,7 +65,7 @@
 <a href=".">PyPHS.Core <span class="sr-only">(active)</span></a>
                     </li>
 <li>
-<a href="../pyphs-evaluation/">PyPHS.Evaluation</a>
+<a href="../evaluation/">PyPHS.Evaluation</a>
                     </li>
 <li>
 <a href="../pyphs-graph/">PyPHS.Graph</a>
@@ -1459,7 +1459,7 @@ f_3
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It is possible to replace the constant parameters $BL$ by a function that depends on $x_K$:
-$BLnl = Be^{-x_k^2}$</p>
+$\mathrm{BLnl}(x_k) \triangleq \mathrm{B}\,e^{-x_k^2}$</p>
 
 </div>
 </div>
@@ -1471,7 +1471,7 @@ $BLnl = Be^{-x_k^2}$</p>
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define the new expression</span>
 <span class="n">B</span> <span class="o">=</span> <span class="n">SPK</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">'B'</span><span class="p">)</span>
-<span class="n">BLnl</span> <span class="o">=</span> <span class="n">B</span><span class="o">*</span><span class="n">sympy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">SPK</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">BLnl</span> <span class="o">=</span> <span class="n">B</span><span class="o">*</span><span class="n">sympy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">SPK</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="c1">#Associate the expression to BL</span>
 <span class="n">SPK</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">subs</span><span class="o">=</span><span class="p">{</span><span class="n">BL</span><span class="p">:</span> <span class="n">BLnl</span><span class="p">})</span>
@@ -1545,6 +1545,48 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ShapeError</span>                                Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-33-8a3ca33a54dc&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>SPK<span class="ansi-blue-fg">.</span>reduce_z<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/Users/afalaize/Developement/repos/pyphs/pyphs/core/structure/R.py</span> in <span class="ansi-cyan-fg">reduce_z</span><span class="ansi-blue-fg">(core)</span>
+<span class="ansi-green-intense-fg ansi-bold">     83</span>         Mi <span class="ansi-blue-fg">=</span> types<span class="ansi-blue-fg">.</span>matrix_types<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">.</span>hstack<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>mati<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     84</span>         mat<span class="ansi-blue-fg">.</span>append<span class="ansi-blue-fg">(</span>Mi<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">---&gt; 85</span><span class="ansi-red-fg">     </span>Mnl <span class="ansi-blue-fg">=</span> types<span class="ansi-blue-fg">.</span>matrix_types<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">.</span>vstack<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>mat<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     86</span>     <span class="ansi-red-fg"># Set M to Mnew</span>
+<span class="ansi-green-intense-fg ansi-bold">     87</span>     core<span class="ansi-blue-fg">.</span>M <span class="ansi-blue-fg">=</span> Mnlwl<span class="ansi-blue-fg">*</span>core<span class="ansi-blue-fg">.</span>Zl<span class="ansi-blue-fg">*</span>Dl<span class="ansi-blue-fg">*</span>Mwlnl <span class="ansi-blue-fg">+</span> Mnl
+
+<span class="ansi-green-fg">/Users/afalaize/Developement/anaconda3/lib/python3.6/site-packages/sympy/matrices/common.py</span> in <span class="ansi-cyan-fg">vstack</span><span class="ansi-blue-fg">(cls, *args)</span>
+<span class="ansi-green-intense-fg ansi-bold">    602</span> 
+<span class="ansi-green-intense-fg ansi-bold">    603</span>         kls <span class="ansi-blue-fg">=</span> type<span class="ansi-blue-fg">(</span>args<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">--&gt; 604</span><span class="ansi-red-fg">         </span><span class="ansi-green-fg">return</span> reduce<span class="ansi-blue-fg">(</span>kls<span class="ansi-blue-fg">.</span>col_join<span class="ansi-blue-fg">,</span> args<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    605</span> 
+<span class="ansi-green-intense-fg ansi-bold">    606</span> 
+
+<span class="ansi-green-fg">/Users/afalaize/Developement/anaconda3/lib/python3.6/site-packages/sympy/matrices/sparse.py</span> in <span class="ansi-cyan-fg">col_join</span><span class="ansi-blue-fg">(self, other)</span>
+<span class="ansi-green-intense-fg ansi-bold">    990</span>         A<span class="ansi-blue-fg">,</span> B <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">,</span> other
+<span class="ansi-green-intense-fg ansi-bold">    991</span>         <span class="ansi-green-fg">if</span> <span class="ansi-green-fg">not</span> A<span class="ansi-blue-fg">.</span>cols <span class="ansi-blue-fg">==</span> B<span class="ansi-blue-fg">.</span>cols<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 992</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">raise</span> ShapeError<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    993</span>         A <span class="ansi-blue-fg">=</span> A<span class="ansi-blue-fg">.</span>copy<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    994</span>         <span class="ansi-green-fg">if</span> <span class="ansi-green-fg">not</span> isinstance<span class="ansi-blue-fg">(</span>B<span class="ansi-blue-fg">,</span> SparseMatrix<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-red-fg">ShapeError</span>: </pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -1560,7 +1602,7 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [34]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SPK</span><span class="o">.</span><span class="n">R</span><span class="p">()</span>
@@ -1570,32 +1612,10 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt output_prompt">Out[34]:</div>
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Matrix([
-[1.0*R, 0,     0, 0],
-[    0, 0,     0, 0],
-[    0, 0, 1.0*A, 0],
-[    0, 0,     0, 0]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [35]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SPK</span><span class="o">.</span><span class="n">M</span>
@@ -1605,56 +1625,16 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt output_prompt">Out[35]:</div>
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Matrix([
-[            -R,  0, B*exp(-xK**2), -1],
-[             0,  0,             1,  0],
-[-B*exp(-xK**2), -1,            -A,  0],
-[             1,  0,             0,  0]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [36]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SPK</span><span class="o">.</span><span class="n">z</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt output_prompt">Out[36]:</div>
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[]</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -1673,7 +1653,7 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [37]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SPK</span><span class="o">.</span><span class="n">subsinverse</span><span class="p">()</span>
@@ -1683,26 +1663,10 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt"></div>
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Remove Inverse of Parameters...
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [38]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SPK</span><span class="o">.</span><span class="n">H</span>
@@ -1712,58 +1676,16 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt output_prompt">Out[38]:</div>
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>K*xK**2/2 + invL*xL**2/2 + invM*xM**2/2</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [39]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SPK</span><span class="o">.</span><span class="n">subs</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt output_prompt">Out[39]:</div>
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{K: 40000000.0,
- M: 0.019,
- L: 0.011,
- A: 0.406,
- R: 5.7,
- invL: 90.90909090909092,
- invM: 52.631578947368425}</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -1782,7 +1704,7 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [40]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SPK</span><span class="o">.</span><span class="n">texwrite</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">authors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">affiliations</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1815,39 +1737,13 @@ $BLnl = Be^{-x_k^2}$</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [41]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SPK</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt"></div>
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>⎡       ⎡                    2    ⎤       ⎤
-⎢       ⎢                 -xK     ⎥       ⎥
-⎢⎡dxL⎤, ⎢   -R     0   B⋅ℯ      -1⎥, ⎡gxL⎤⎥
-⎢⎢   ⎥  ⎢                         ⎥  ⎢   ⎥⎥
-⎢⎢dxK⎥  ⎢   0      0      1     0 ⎥  ⎢gxK⎥⎥
-⎢⎢   ⎥  ⎢                         ⎥  ⎢   ⎥⎥
-⎢⎢dxM⎥  ⎢       2                 ⎥  ⎢gxM⎥⎥
-⎢⎢   ⎥  ⎢    -xK                  ⎥  ⎢   ⎥⎥
-⎢⎣i₁ ⎦  ⎢-B⋅ℯ      -1    -A     0 ⎥  ⎣v₁ ⎦⎥
-⎢       ⎢                         ⎥       ⎥
-⎣       ⎣   1      0      0     0 ⎦       ⎦
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 

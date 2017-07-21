@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>intro1 | PyPHS</title>
+<title>Posts about phs | PyPHS</title>
 <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="../../assets/css/html4css1.css" rel="stylesheet" type="text/css">
 <link href="../../assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
@@ -15,16 +15,8 @@
 <meta name="theme-color" content="#618AC8">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
-<link rel="canonical" href="https://pyphs.github.io/pyphs/galleries/intro1/">
-<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
-<style type="text/css">
-    .image-block {
-        display: inline-block;
-    }
-    .flowr_row {
-        width: 100%;
-    }
-    </style>
+<link rel="canonical" href="https://pyphs.github.io/pyphs/categories/phs/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><link rel="alternate" type="application/rss+xml" title="RSS for tag phs" href="../phs.xml">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -104,31 +96,22 @@
         <div class="row">
             
             
-    
-<nav class="breadcrumbs"><ul class="breadcrumb">
-<li><a href="../">galleries</a></li>
-                <li>intro1</li>
-</ul></nav><h1>intro1</h1>
-
-<div id="gallery_container"></div>
-<noscript>
-<ul class="thumbnails">
-<li>
-<a href="TS.jpg" class="thumbnail image-reference" title="Ts">
-            <img src="TS.thumbnail.jpg" alt="Ts"></a>
-        </li>
-<li>
-<a href="crybaby.jpg" class="thumbnail image-reference" title="Crybaby">
-            <img src="crybaby.thumbnail.jpg" alt="Crybaby"></a>
-        </li>
-<li>
-<a href="rhodes.jpg" class="thumbnail image-reference" title="Rhodes">
-            <img src="rhodes.thumbnail.jpg" alt="Rhodes"></a>
-</li>
-</ul>
-</noscript>
+<article class="tagpage"><header><h1>Posts about phs</h1>
+        <div class="metadata">
+            
+            <p class="feedlink">
+                    <a href="../phs.xml" type="application/rss+xml">RSS feed</a>
+            </p>
 
         </div>
+        
+
+    </header><ul class="postlist">
+<li>
+<time class="listdate" datetime="2017-02-11T18:19:33+01:00" title="2017-02-11 18:19">2017-02-11 18:19</time><a href="../../posts/docs/port-hamiltonian-systems/" class="listtitle">Port-Hamiltonian Systems</a><a></a>
+</li>
+        </ul></article>
+</div>
         <!--End of body content-->
 
         <footer id="footer">
@@ -142,43 +125,6 @@
             <script src="../../assets/js/jquery.min.js"></script><script src="../../assets/js/bootstrap.min.js"></script><script src="../../assets/js/moment-with-locales.min.js"></script><script src="../../assets/js/fancydates.js"></script><script src="../../assets/js/jquery.colorbox-min.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
     moment.locale("en");
     fancydates(0, "YYYY-MM-DD HH:mm");
-    </script><!-- end fancy dates --><script src="../../assets/js/flowr.plugin.js"></script><script>
-jsonContent = [{"size": {"h": 200, "w": 200}, "title": "Ts", "url": "TS.jpg", "url_thumb": "TS.thumbnail.jpg"}, {"size": {"h": 161, "w": 200}, "title": "Crybaby", "url": "crybaby.jpg", "url_thumb": "crybaby.thumbnail.jpg"}, {"size": {"h": 133, "w": 200}, "title": "Rhodes", "url": "rhodes.jpg", "url_thumb": "rhodes.thumbnail.jpg"}];
-$("#gallery_container").flowr({
-        data : jsonContent,
-        height : 200*.6,
-        padding: 5,
-        rows: -1,
-        render : function(params) {
-            // Just return a div, string or a dom object, anything works fine
-            img = $("<img />").attr({
-                'src': params.itemData.url_thumb,
-                'width' : params.width,
-                'height' : params.height
-            }).css('max-width', '100%');
-            link = $( "<a></a>").attr({
-                'href': params.itemData.url,
-                'class': 'image-reference'
-            });
-            div = $("<div />").addClass('image-block').attr({
-                'title': params.itemData.title,
-                'data-toggle': "tooltip",
-            });
-            link.append(img);
-            div.append(link);
-            div.hover(div.tooltip());
-            return div;
-        },
-        itemWidth : function(data) { return data.size.w; },
-        itemHeight : function(data) { return data.size.h; },
-        complete : function(params) {
-            if( jsonContent.length > params.renderedItems ) {
-                nextRenderList = jsonContent.slice( params.renderedItems );
-            }
-        }
-    });
-$("a.image-reference").colorbox({rel:"gal", maxWidth:"100%",maxHeight:"100%",scalePhotos:true});
-$('a.image-reference[href="'+window.location.hash.substring(1,1000)+'"]').click();
-</script>
+    </script><!-- end fancy dates -->
 </body>
 </html>

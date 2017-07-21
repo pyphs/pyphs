@@ -24,10 +24,9 @@ netlist = Netlist(netlist_filename)
 
 graph = Graph(netlist=netlist)
 
-core = graph.buildCore(verbose=False)
+core = graph.to_core(verbose=False)
 
 core.reduce_z()
-
 
 #if __name__ == '__main__':
 #
@@ -39,7 +38,7 @@ core.reduce_z()
 #              'timer': True,
 #              }
 #
-#    simu = Simulation(core, config=config)
+#    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 0.01
 #

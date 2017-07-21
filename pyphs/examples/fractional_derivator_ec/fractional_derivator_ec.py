@@ -35,7 +35,7 @@ core = netlist2core(netlist_filename)
 #              'lang': 'python'
 #              }
 #
-#    simu = Simulation(core, config=config)
+#    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 10.
 #    u = signalgenerator(which='noise', tsig=dur, fs=simu.fs)

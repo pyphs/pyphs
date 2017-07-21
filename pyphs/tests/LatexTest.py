@@ -18,7 +18,7 @@ path = os.path.join(here, 'test_core2tex.tex')
 def TestCore2Tex():
     netlist = NetlistThieleSmallNL()
     graph = Graph(netlist=netlist)
-    core = graph.buildCore()
+    core = graph.to_core()
     content = netlist2tex(netlist)
     content += graphplot2tex(graph)
     content += core2tex(core)

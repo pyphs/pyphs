@@ -12,4 +12,4 @@ def netlist2graph(netlist):
 
 
 def netlist2core(netlist):
-    return netlist2graph(netlist).buildCore()
+    return netlist2graph(netlist).to_core()

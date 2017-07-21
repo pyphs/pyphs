@@ -8,17 +8,16 @@ Created on Sat Dec 31 14:37:48 2016
 
 from __future__ import absolute_import, division, print_function
 
-from .tools import matrix_type, indent
+from .tools import matrix_type, indent, linesplit
 import numpy
 
 
-def append_ops(nums, files, objlabel):
-    _append_ops_defs(nums, files)
-    _append_ops_get(nums, files, objlabel)
-    _append_ops_get_vector(nums, files, objlabel)
-    _append_ops_updates(nums, files, objlabel)
-    _append_ops_data(nums, files, objlabel)
-    _append_ops_init(nums, files, objlabel)
+def append_ops(method, files, objlabel):
+    _append_ops_defs(method, files)
+    _append_ops_get(method, files, objlabel)
+    _append_ops_get_vector(method, files, objlabel)
+    _append_ops_updates(method, files, objlabel)
+    _append_ops_init(method, files, objlabel)
 
 
 ###############################################################################
@@ -47,20 +46,19 @@ def op2cpp(op):  # used in place of lambda s: '({0}) + ({1})'.format
 ###############################################################################
 # DEF
 
-def _append_ops_defs(nums, files):
-    title = "\n\n// Operations Results Definition\n"
+def _append_ops_defs(method, files):
+    title = linesplit + "\n// Operations Results Definition"
     files['h']['private'] += title
-    for name in nums.method.ops_names:
-        attr = getattr(nums, name)()
+    for name in method.ops_names:
+        attr = method.inits_evals[name]
         if len(attr.shape) > 0:
-            h = _str_mat_op_def(nums, name)
+            h = _str_mat_op_def(method, name, attr)
         else:
             h = _str_scal_op_def(name)
         files['h']['private'] += h
 
 
-def _str_mat_op_def(nums, name):
-    mat = getattr(nums, name)()
+def _str_mat_op_def(method, name, mat):
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
     if not bool(numpy.prod(mat.shape)):
@@ -78,18 +76,18 @@ def _str_scal_op_def(name):
 ###############################################################################
 # UPDATE
 
-def _append_ops_updates(nums, files, objlabel):
-    title = "\n\n// Oprations Results Updates\n"
+def _append_ops_updates(method, files, objlabel):
+    title = linesplit + "\n// Oprations Results Updates"
     files['h']['private'] += title
     files['cpp']['private'] += title
-    for name in nums.method.ops_names:
-        h, cpp = _str_op_update(nums, name, objlabel)
+    for name in method.ops_names:
+        h, cpp = _str_op_update(method, name, objlabel)
         files['h']['private'] += h
         files['cpp']['private'] += cpp
 
 
-def _str_op_update(nums, name, objlabel):
-    op = getattr(nums.method, name + '_op')
+def _str_op_update(method, name, objlabel):
+    op = getattr(method, name + '_op')
     update_h = '\nvoid {0}_update();'.format(name)
     update_cpp = '\nvoid {0}::{1}_update()'.format(objlabel, name) + '{'
     update_cpp += '\n'+indent('_{0} = {1};'.format(name, op2cpp(op)))
@@ -100,36 +98,36 @@ def _str_op_update(nums, name, objlabel):
 ###############################################################################
 # GET
 
-def _append_ops_get(nums, files, objlabel):
-    title = "\n\n// Oprations Results Accessors\n"
+def _append_ops_get(method, files, objlabel):
+    title = linesplit + "\n// Oprations Results Accessors"
     files['h']['public'] += title
     files['cpp']['public'] += title
-    for name in nums.method.ops_names:
-        attr = getattr(nums, name)()
+    for name in method.ops_names:
+        attr = method.inits_evals[name]
         if len(attr.shape) > 0:
-            h, cpp = _str_mat_op_get(nums, name, objlabel)
+            h, cpp = _str_mat_op_get(method, name, objlabel)
         else:
             h, cpp = _str_scal_op_get(name, objlabel)
         files['h']['public'] += h
         files['cpp']['public'] += cpp
 
 
-def _append_ops_get_vector(nums, files, objlabel):
-    title = "\n\n// Oprations Results Accessors\n"
+def _append_ops_get_vector(method, files, objlabel):
+    title = linesplit + "\n// Oprations Results Accessors"
     files['h']['public'] += title
     files['cpp']['public'] += title
-    for name in nums.method.ops_names:
-        attr = getattr(nums, name)()
+    for name in method.ops_names:
+        attr = method.inits_evals[name]
         if len(attr.shape) == 1:
-            getvec = _str_mat_op_get_vector(nums, name, objlabel)
+            getvec = _str_mat_op_get_vector(method, name, objlabel)
             h = getvec[0]
             cpp = getvec[1]
             files['h']['public'] += h
             files['cpp']['public'] += cpp
 
 
-def _str_mat_op_get(nums, name, objlabel):
-    mat = getattr(nums, name)()
+def _str_mat_op_get(method, name, objlabel):
+    mat = method.inits_evals[name]
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
     if not bool(numpy.prod(mat.shape)):
@@ -144,8 +142,8 @@ def _str_mat_op_get(nums, name, objlabel):
     return get_h, get_cpp
 
 
-def _str_mat_op_get_vector(nums, name, objlabel):
-    mat = getattr(nums, name)()
+def _str_mat_op_get_vector(method, name, objlabel):
+    mat = method.inits_evals[name]
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
     mtype = 'vector<double>'
@@ -169,67 +167,12 @@ def _str_scal_op_get(name, objlabel):
 
 
 ###############################################################################
-# DATA
-
-def _append_ops_data(nums, files, objlabel):
-    title = "\n\n// Oprations Results Initialisation Data"
-    files['cpp']['data'] += title
-    for name in nums.method.ops_names:
-        attr = getattr(nums, name)()
-        if len(attr.shape) > 0:
-            h = _str_mat_op_init_data(nums, name)
-        else:
-            h = _str_scal_op_init_data(nums, name)
-        files['cpp']['data'] += '\n' + h
-
-
-def _str_mat_op_init_data(nums, name):
-    mat = getattr(nums, name)()
-    if len(mat.shape) == 1:
-        mat = numpy.matrix(mat).T
-    init_data = 'double {0}_data[] = '.format(name) + '{'
-    for n in range(mat.shape[1]):
-        for m in range(mat.shape[0]):
-            init_data += '{0}, '.format(mat[m, n])
-    if numpy.prod(mat.shape) > 0:
-        end = -2
-    else:
-        end = None
-    init_data = '{0}'.format(init_data[:end]) + '};'
-    return init_data
-
-
-def _str_scal_op_init_data(nums, name):
-    init_data = 'double {0}_data = 0.;'.format(name)
-    return init_data
-
-
-###############################################################################
 # INIT
 
-def _append_ops_init(nums, files, objlabel):
-    title = "\n\n// Operations Results Initialisation\n"
+def _append_ops_init(method, files, objlabel):
+    title = linesplit + "\n// Operations Results Initialisation"
     files['cpp']['init'] += title
-    for name in nums.method.ops_names:
-        attr = getattr(nums, name)()
-        if len(attr.shape) > 0:
-            cpp = _str_mat_op_init_cpp(nums, name)
-        else:
-            cpp = _str_scal_op_init_cpp(name)
-        files['cpp']['init'] += '\n' + cpp
+    for name in method.update_actions_deps():
+        if name in method.ops_names:
+            files['cpp']['init'] += '\n' + '{0}_update();'.format(name)
 
-
-def _str_mat_op_init_cpp(nums, name):
-    mat = getattr(nums, name)()
-    if len(mat.shape) == 1:
-        mat = numpy.matrix(mat).T
-    if not bool(numpy.prod(mat.shape)):
-        shape = (0, 0)
-    else:
-        shape = mat.shape
-    mtype = matrix_type(shape[0], shape[1])
-    return '_{0} = Map<{1}> ({0}_data);'.format(name, mtype)
-
-
-def _str_scal_op_init_cpp(name):
-    return '_{0} = {0}_data;'.format(name)

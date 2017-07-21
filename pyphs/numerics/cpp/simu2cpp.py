@@ -5,14 +5,14 @@ Created on Tue Jun 28 14:31:08 2016
 @author: Falaize
 """
 
-from .tools import indent, main_path, SEP, make_executable
+from .tools import indent, main_path, SEP, make_executable, linesplit
 from .preamble import str_preamble
 from .cmake import cmake_write
 import os
 
 
 def simu2cpp(simu):
-    objlabel = simu.nums.label
+    objlabel = simu.label
     path = simu.cpp_path
     src_path = simu.src_path
 
@@ -64,7 +64,7 @@ def main(simu, objlabel):
     string += _str_includes()
     string += _str_namespaces()
     string += _str_timer()
-    string += "\n\n\nint main() {"
+    string += '\n' + linesplit+'\n// Main' + "\n\nint main() {"
     string += _str_body(simu, objlabel)
     string += "\n    return 0;\n}\n"
     return string
@@ -81,8 +81,10 @@ def _str_body(simu, objlabel):
     string = ""
     string += _str_initvecs(simu)
     string += _str_open_files(simu)
+    string += _init_files(simu)
     string += _str_instanciate(simu, objlabel)
-    string += """\n\n    int barWidth = 20;
+    string += '\n' + indent(linesplit+'\n// ProgressBar data')
+    string += """\n    int barWidth = 20;
     int ETA, ETAm, ETAs;
     float progress = 0.0;
     timer t;"""
@@ -95,7 +97,7 @@ def _str_includes():
     return piece of cpp code.
     includes for main.cpp
     """
-    string = """\n
+    string = linesplit + """\n
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -129,7 +131,7 @@ def _str_timer():
     return piece of cpp code.
     timer for process in main.cpp
     """
-    string = """\n
+    string = '\n' + linesplit + '\n// Define timer object'+"""\n
 class timer {
 private:
     unsigned long begTime;
@@ -149,20 +151,24 @@ CLOCKS_PER_SEC;
 
 
 def _str_initvecs(simu):
-    string = "\nconst unsigned int nt = {0};\n".format(simu.data.config['nt'])
+    string = '\n' + linesplit + '\n// Number of time-steps to process'
+    string += "\nconst unsigned int nt = {0};".format(simu.data.config['nt'])
+
+    string += '\n' + linesplit + '\n// Initialize vectors'
     names = ('u', 'p')
     for name in names:
-        dim = getattr(simu.nums, name[0])().shape[0]
-        string += "\nvector<double> {0}Vector({1});".format(name, dim)
-    string += "\n"
+        dim = len(getattr(simu.method, name))
+        if dim > 0:
+            string += "\nvector<double> {0}Vector({1});".format(name, dim)
     names = simu.config['files']
     for name in names:
-        val = getattr(simu.nums, name)()
+        val = simu.method.inits_evals[name]
         if len(val.shape) == 0:
             dim = 1
         else:
             dim = val.shape[0]
-        string += "\nvector<double> {0}Vector({1});".format(name, dim)
+        if dim > 0:
+            string += "\nvector<double> {0}Vector({1});".format(name, dim)
     return indent(string)
 
 
@@ -171,29 +177,30 @@ def _str_open_files(simu):
     return piece of cpp code.
     open files 'u.txt' and 'p.txt'
     """
-    string = "\n"
+    string = ""
     names = ('u', 'p')
     for name in names:
-        string += r"""
+        dim = len(getattr(simu.method, name))
+        if dim > 0:
+            string += '\n' + indent(linesplit + '\n// Open file for {} data'.format(name)) +  r"""
     ifstream {0}File;
     {0}File.open("{1}{2}data{2}{0}.txt");
 
     if ({0}File.fail()) """.format(name, main_path(simu), SEP)
-        string += "{" + """
+            string += "{" + """
         cerr << "Failed opening {0} file" << endl;
         exit(1);""".format(name) + "}"
     return string
 
 
-
 def _str_readdata(simu):
     string = ""
-    dimu = simu.nums.u().shape[0]
-    dimp = simu.nums.p().shape[0]
+    dimu = len(simu.method.u)
+    dimp = len(simu.method.p)
     if dimu + dimp > 0:
         string = ""
         if dimu > 0:
-            string += """\n
+            string += """
         // Get input data
         for (unsigned int i=0; i<{0}; i++) """.format(dimu)
             string += """{
@@ -215,7 +222,7 @@ def _init_file(simu, name):
     """
     open files for saving data
     """
-    string = """
+    string = '\n' + indent(linesplit + '\n// Open file for {} data'.format(name)) + """
     ofstream {0}File;
     {0}File.open("{1}{2}data{2}{0}.txt");""".format(name, main_path(simu), SEP)
     return string
@@ -236,9 +243,8 @@ def _init_files(phs):
 
 
 def _str_instanciate(simu, objlabel):
-    string = ""
-    string += """\n
-    // Instance of Py numerical core
+    string = '\n' + indent(linesplit) + """
+    // Instanciate a PHS C++ core object
     {0} {1};""".format(objlabel.upper(), objlabel.lower())
     return string
 
@@ -246,43 +252,74 @@ def _str_instanciate(simu, objlabel):
 # -----------------------------------------------------------------------------
 
 
-def _str_process(simu, objlabel):
-    string = """\n
-    // Process
-    t.start();\n"""
-    string += _init_files(simu)
-    string += """\n\n
-    for (unsigned int n = 0; n < nt; n++) {\n""" + _str_readdata(simu) + """
-        std::cout << "[";
-        int pos = barWidth * progress;
-        for (int i = 0; i < barWidth; ++i) {
-            if (i < pos) std::cout << "=";
-            else if (i == pos) std::cout << ">";
+def pbar(simu):
+    string = '\n' + indent(indent(linesplit)) + """
+        // Progressbar
+        if({0})""".format(int(simu.config['pbar'])) + """{
+            
+            // Progressbar position
+            int position = barWidth * progress;
+            
+            // Print Progressbar
+            std::cout << "[";
+            for (int i = 0; i < barWidth; ++i) {
+            if (i < position) std::cout << "=";
+            else if (i == position) std::cout << ">";
             else std::cout << " ";
-        }
-        progress = float(n)/float(nt);
-        if(1){
-            ETA = (float(nt)/float(n+1)-1.)*(t.elapsedTime());
+            }
+
+            // Update progress for Progressbar
+            progress = float(n+1)/float(nt);
+
+            // Estimated Time of Arrival
+            ETA = (float(nt)/(n+1)-1.)*(t.elapsedTime());
+
+            // Estimated Time of Arrival in minutes
             ETAm = int(floor(ETA))/60;
+
+            // Estimated Time of Arrival rest in seconds
             ETAs = floor(ETA%60);
+
+            // Print Estimated Time of Arrival
             std::cout << "] " << int(progress * 100.0) << "% done, ETA: " \
 << ETAm << "m" << ETAs << "s\\r" << endl ;
+
+            // Flush output
             std::cout.flush();
         }"""
-    string += """\n
+    return string
+
+
+
+def _str_process(simu, objlabel):
+    string = '\n' + indent(linesplit) + """
+    // Process
+    t.start();\n"""    
+    string += """
+    for (unsigned int n = 0; n < nt; n++) {\n""" + _str_readdata(simu)
+    if len(simu.method.u) > 0:
+        string += '\n' + indent(indent(linesplit)) + """
         // Update Input
-        """ + objlabel.lower() + """.set_u(uVector);
-
+        """ + objlabel.lower() + """.set_u(uVector);"""
+    if len(simu.method.p) > 0:
+        string += '\n' + indent(indent(linesplit)) + """
         // Update Parameters
-        """ + objlabel.lower() + """.set_p(pVector);
-
+        """ + objlabel.lower() + """.set_p(pVector);"""
+    string += '\n' + indent(indent(linesplit)) + """
         // Process update
-        """ + objlabel.lower() + """.update();\n\n        // Get quantities"""
+        """ + objlabel.lower() + """.update();\n"""
     string += indent(indent(_gets(simu, objlabel)))
-    string += "\n    }"
-    string += '\n    uFile.close();'
-    string += '\n    pFile.close();'
+    string += pbar(simu)
+    string += "\n    }\n"
+    if len(simu.method.u) > 0:        
+        string += '\n' + indent(linesplit + '\n// Close file for {} data'.format('u')) 
+        string += '\n    uFile.close();'
+    if len(simu.method.p) > 0:
+        string += '\n' + indent(linesplit + '\n// Close file for {} data'.format('p')) 
+        string += '\n    pFile.close();'
     string += indent(_close(simu))
+
+    string += '\n' + indent(linesplit + '\n// Print path to data') 
     string += """
     cout << endl;
     cout << "Data written at" << endl;
@@ -297,17 +334,19 @@ def _gets(simu, objlabel):
     string = ''
     names = simu.config['files']
     for name in names:
-        val = getattr(simu.nums, name)()
+        val = simu.method.inits_evals[name]
         if len(val.shape) == 0:
             dim = 1
         else:
             dim = val.shape[0]
-        string += ("\n\n{0}Vector = ".format(name)) + \
-            objlabel.lower() + (".{0}_vector();".format(name))
-        string += """
-for (unsigned int i = 0; i<{0}; i++)""".format(dim) + "{" + """
-    {0}File << {0}Vector[i] << " ";""".format(name) + "\n}"
-        string += "\n{0}File << endl;\n".format(name)
+        string += '\n' + linesplit+ '\n// Get data values for {}'.format(name)
+        if dim > 0:
+            string += ("\n{0}Vector = ".format(name)) + \
+                objlabel.lower() + (".{0}_vector();".format(name))
+            string += """
+    for (unsigned int i = 0; i<{0}; i++)""".format(dim) + "{" + """
+        {0}File << {0}Vector[i] << " ";""".format(name) + "\n}"
+        string += "\n{0}File << endl;".format(name)
     return string
 
 
@@ -315,5 +354,6 @@ def _close(simu):
     string = ''
     names = simu.config['files']
     for name in names:
+        string += '\n' + linesplit + '\n// Close file for {} data'.format(name)
         string += "\n{0}File.close();".format(name)
     return string

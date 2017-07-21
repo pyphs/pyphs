@@ -16,7 +16,7 @@ path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 netlist_filename = path + os.sep + label + '.net'
 netlist = Netlist(netlist_filename)
 graph = Graph(netlist=netlist)
-core = graph.buildCore()
+core = graph.to_core()
 
 core.reduce_z()
 core.subsinverse()
@@ -37,7 +37,7 @@ core.subsinverse()
 #              'eps': 1e-9,
 #              'pbar': True
 #              }
-#    simu = Simulation(core, config)
+#    simu = Simulation(core.to_method(), config)
 #
 #    nt = int(fs*tsig)
 #

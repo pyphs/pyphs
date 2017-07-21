@@ -17,7 +17,7 @@ netlist_filename = path + os.sep + label + '.net'
 netlist = Netlist(netlist_filename)
 
 graph = Graph(netlist=netlist)
-core = graph.buildCore()
+core = graph.to_core()
 
 #    # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
 #if __name__ == '__main__':
@@ -34,7 +34,7 @@ core = graph.buildCore()
 #              'lang': 'c++'
 #              }
 #    core.subsinverse()
-#    simu = Simulation(core, config=config)
+#    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 10.
 #    u = signalgenerator(which='noise', tsig=dur, fs=config['fs'])

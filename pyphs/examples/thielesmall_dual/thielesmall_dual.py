@@ -21,7 +21,7 @@ netlist = Netlist(netlist_filename)
 
 graph = Graph(netlist=netlist)
 
-core = graph.buildCore()
+core = graph.to_core()
 
 #if __name__ == '__main__':
 #
@@ -33,7 +33,7 @@ core = graph.buildCore()
 #              'path': path
 #              }
 #
-#    simu = Simulation(core, config=config)
+#    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 0.01
 #    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.fs)

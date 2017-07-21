@@ -43,7 +43,7 @@ def simulation_rlc_with_split():
               'lang': 'python',     # in {'python', 'c++'}
               'eigen': None,}       # path to Eigen library
 
-    simu = Simulation(rlc, config=config)
+    simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800.,
@@ -54,11 +54,11 @@ def simulation_rlc_with_split():
             yield (el, )
 
     simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
-    
+
     simu.process()
-    
+
     simu.data.wavwrite('y', 0)
-    
+
     if not os.name.lower().startswith('nt'):
         shutil.rmtree(path)
     return True
@@ -79,7 +79,7 @@ def simulation_rlc_cpp():
               'lang': 'c++',     # in {'python', 'c++'}
               }
 
-    simu = Simulation(rlc, config=config)
+    simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -113,7 +113,7 @@ def simulation_rlc_without_split():
               'eigen': None,       # path to Eigen library
               }
 
-    simu = Simulation(rlc, config=config)
+    simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -147,7 +147,7 @@ def simulation_rlc_without_split_trapez():
               'eigen': None,       # path to Eigen library
               }
 
-    simu = Simulation(rlc, config=config)
+    simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -181,7 +181,7 @@ def simulation_rlc_without_split_theta():
               'eigen': None,       # path to Eigen library
               }
 
-    simu = Simulation(rlc, config=config)
+    simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -215,7 +215,7 @@ def simulation_rlc_plot():
               'eigen': None,       # path to Eigen library
               }
 
-    simu = Simulation(rlc, config=config)
+    simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -254,9 +254,9 @@ def simulation_nlcore_full():
     # state initialization
     # !!! must be array with shape (core.dims.x(), )
     x0 = list(map(sympy.sympify, (0., 0., 0.)))
-    
-    # Instantiate a pyphs.Simulation object associated with a given core 
-    simu = Simulation(nlcore, config=config, inits={'x': x0})
+
+    # Instantiate a pyphs.Simulation object associated with a given core
+    simu = Simulation(nlcore.to_method(), config=config, inits={'x': x0})
 
     # def simulation time
     tmax = 0.02

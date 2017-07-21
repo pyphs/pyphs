@@ -96,7 +96,7 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True, label=None):
     """
 
     if label is None:
-        label = data.core.label
+        label = data.method.label
 
     datax = list(data.t(imin=imin, imax=imax, decim=decim))
     datay = list()
@@ -112,7 +112,7 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True, label=None):
         sig = [el for el in generator(ind=index, imin=imin,
                                       imax=imax, decim=decim)]
         datay.append(sig)
-        labels.append(nice_label(data.core, (name, index)))
+        labels.append(nice_label(data.method, (name, index)))
     dimsmap = {'x': 'x',
                'dx': 'x',
                'dtx': 'x',
@@ -128,7 +128,7 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True, label=None):
             filelabel += '_'+var[0]+str(var[1])
         elif isinstance(var, str):
             dim = dimsmap[var]
-            for i in range(getattr(data.core.dims, dim)()):
+            for i in range(getattr(data.method.dims, dim)()):
                 append_sig(var, i)
                 filelabel += '_'+var+str(i)
         else:

@@ -22,7 +22,7 @@ netlist = Netlist(netlist_filename)
 graph = Graph(netlist=netlist)
 
 # ---------------------------  CORE  ---------------------------------------- #
-core = graph.buildCore()
+core = graph.to_core()
 core.reduce_z()
 core.substitute(selfall=True)
 
@@ -31,7 +31,7 @@ core.substitute(selfall=True)
 #    from pyphs import Simulation, Netlist, Graph
 #    from pyphs.misc.signals.waves import wavread
 #    import matplotlib.pyplot as plt
-#    import numpy 
+#    import numpy
 #    # recover normalized hammer force from wave file
 #    fs, hammer_force = wavread(os.path.join(here, 'hammer_force.wav'))
 #
@@ -54,7 +54,7 @@ core.substitute(selfall=True)
 #              }
 #
 #    # Instanciate Simulation class
-#    simu = Simulation(core, config=config)
+#    simu = Simulation(core.to_method(), config=config)
 #
 #    def ordering(name, *args):
 #        def get_index(e):

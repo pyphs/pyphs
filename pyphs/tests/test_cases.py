@@ -59,7 +59,7 @@ class TestGraph(TestCase):
         self.assertTrue(all(res))
 
     def test_graph_build_core(self):
-        graph.buildCore()
+        graph.to_core()
         graph.core.connect()
         if not graph.core.x[:2] == graph.core.symbols(['xM', 'xL']):
             i = graph.core.x.index(graph.core.symbols('xM'))
@@ -219,6 +219,13 @@ class TestSignals(TestCase):
 
     def test_signal_waves(self):
         self.assertTrue(signal_waves())
+
+
+class TestImportTutorials(TestCase):
+
+    def test_tutorial_evaluation(self):
+        from pyphs.tutorials import evaluation
+        self.assertTrue(True)
 
 
 class TestCorefunctions(TestCase):

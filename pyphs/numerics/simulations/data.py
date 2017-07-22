@@ -23,13 +23,13 @@ except ImportError:
     pass
 
 
-class PHSData:
+class Data:
     """
 =======
-PHSData
+Data
 =======
 
-Interface for pyphs.PHSSimulation data files.
+Interface for pyphs.Simulation data files.
 
 Generators
 -----------
@@ -47,7 +47,7 @@ plot:
 plot_powerbal:
     Plot the power balance.
     """
-    def __init__(self, core, config):
+    def __init__(self, method, config):
 
         if VERBOSE >= 1:
             print('Build data i/o...')
@@ -55,10 +55,15 @@ plot_powerbal:
         # init configuration options
         self.config = config
 
-        # init core
-        self.core = core
+        # init method
+        self.method = method
 
         self._build_generators()
+        
+    def subs(self):
+        d = self.method.subs.copy() 
+        d[self.method.fs] = self.config['fs']
+        return d
 
     def _build_generators(self):
         def build_generator(name):
@@ -199,24 +204,24 @@ dtE_generator: generator
                    'decim': options['decim'] if decim is None else decim}
 
         if DtE == 'deltaH':
-            H_expr = self.core.H.subs(self.core.subs)
+            H_expr = self.method.H.subs(self.method.subs)
             H_symbs = free_symbols(H_expr)
-            H_args, H_inds = find(H_symbs, self.core.args())
+            H_args, H_inds = find(H_symbs, self.method.args())
             H = lambdify(H_args, H_expr, theano=self.config['theano'])
-            H_args = lambdify(self.core.args(), H_args,
+            H_args = lambdify(self.method.args(), H_args,
                               theano=self.config['theano'])
 
-            Hpost_expr = self.core.H.subs(self.core.subs)
+            Hpost_expr = self.method.H.subs(self.subs())
             subs = {}
-            for x, dx in zip(self.core.x, self.core.dx()):
+            for x, dx in zip(self.method.x, self.method.dx()):
                 subs.update({x: x+dx})
 
             Hpost_expr = Hpost_expr.subs(subs)
             Hpost_symbs = free_symbols(Hpost_expr)
-            Hpost_args, Hpost_inds = find(Hpost_symbs, self.core.args())
+            Hpost_args, Hpost_inds = find(Hpost_symbs, self.method.args())
             Hpost = lambdify(Hpost_args, Hpost_expr,
                              theano=self.config['theano'])
-            Hpost_args = lambdify(self.core.args(), Hpost_args,
+            Hpost_args = lambdify(self.method.args(), Hpost_args,
                                   theano=self.config['theano'])
             for args, o in zip(self.args(**options), self.o(**options)):
                 a = (list(args)+list(o))
@@ -258,14 +263,14 @@ pd_generator: generator
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
 
-        R_expr = self.core.R().subs(self.core.subs)
+        R_expr = self.method.R().subs(self.subs())
 
         R_symbs = free_symbols(R_expr)
 
-        R_args, R_inds = find(R_symbs, self.core.args())
+        R_args, R_inds = find(R_symbs, self.method.args())
 
         R = lambdify(R_args, R_expr, theano=self.config['theano'])
-        R_args = lambdify(self.core.args(), R_args,
+        R_args = lambdify(self.method.args(), R_args,
                           theano=self.config['theano'])
         for w, z, a, b, args, o in zip(self.w(**options),
                                        self.z(**options),
@@ -342,16 +347,15 @@ ps_generator: generator
         options = {'imin': options['imin'] if imin is None else imin,
                    'imax': options['imax'] if imax is None else imax,
                    'decim': options['decim'] if decim is None else decim}
-
-        obs_expr = [e.subs(self.core.subs) for e in self.core.observers.values()]
+        obs_expr = [e.subs(self.subs()) for e in self.method.observers.values()]
 
         obs_symbs = free_symbols(obs_expr)
-        index = len(self.core.args())-len(obs_expr)
+        index = len(self.method.args())-len(obs_expr)
 
-        obs_args, obs_inds = find(obs_symbs, self.core.args()[:index])
+        obs_args, obs_inds = find(obs_symbs, self.method.args()[:index])
 
         obs = lambdify(obs_args, obs_expr, theano=self.config['theano'])
-        obs_args = lambdify(self.core.args()[:index], obs_args,
+        obs_args = lambdify(self.method.args()[:index], obs_args,
                             theano=self.config['theano'])
 
         for arg in self.args(**options):
@@ -529,13 +533,13 @@ Parameters
 ----------
 
 sequ: iterable or None, optional
-    Input sequence wich elements are arrays with shape (core.dims.y(), ). If
+    Input sequence wich elements are arrays with shape (method.dims.y(), ). If
     the lenght nt of the sequence is known (e.g. sequ is a list), the number of
     simulation time steps is set to nt. If None, a sequence with length nt of
     zeros with appropriate shape is used (default).
 
 seqp: iterable or None, optional
-    Input sequence wich elements are arrays with shape (core.dims.p(), ). If
+    Input sequence wich elements are arrays with shape (method.dims.p(), ). If
     (i) the lenght of sequ is not known, and (ii) the length nt of seqp is
     known (e.g. seqp is a list), the number of simulation time steps is set to
     nt=len(seqp). If None, a sequence with length nt of zeros with appropriate
@@ -562,8 +566,8 @@ nt: int or None:
         if sequ is None:
             def generator_u():
                 for _ in range(nt):
-                    if self.core.dims.y() > 0:
-                        yield [0, ]*self.core.dims.y()
+                    if self.method.dims.y() > 0:
+                        yield [0, ]*self.method.dims.y()
                     else:
                         yield ""
             sequ = generator_u()
@@ -571,8 +575,8 @@ nt: int or None:
         if seqp is None:
             def generator_p():
                 for _ in range(nt):
-                    if self.core.dims.p() > 0:
-                        yield [0, ]*self.core.dims.p()
+                    if self.method.dims.p() > 0:
+                        yield [0, ]*self.method.dims.p()
                     else:
                         yield ""
             seqp = generator_p()

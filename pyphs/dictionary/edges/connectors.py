@@ -4,17 +4,17 @@ Created on Tue Jun  7 19:06:45 2016
 
 @author: Falaize
 """
-from pyphs import PHSGraph
+from pyphs import Graph
 from pyphs.dictionary.tools import mappars, nicevarlabel
 
 
-class PHSConnector(PHSGraph):
+class Connector(Graph):
     """
     class for gyrators and transformers
     """
     def __init__(self, label, nodes, **kwargs):
         # init PortHamiltonianObject
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
         # pop connector type
         connector_type = kwargs.pop('connector_type')
         # build correspondance between labels in subs and pars (dicpars)...

@@ -6,11 +6,11 @@ Created on Sun Apr  2 20:18:13 2017
 @author: Falaize
 """
 
-from pyphs import PHSGraph
-from pyphs.dictionary.tools import PHSArgument, mappars
+from pyphs import Graph
+from pyphs.dictionary.tools import Argument, mappars
 
 
-class PHSGeneric(PHSGraph):
+class Generic(Graph):
     """
 Generic component class.
 
@@ -47,7 +47,7 @@ kwargs: dictionary of component parameters
     """
     def __init__(self, label, edges, **kwargs):
         # init PortHamiltonianObject
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
         # build correspondance between labels in subs and pars (dicpars)...
         # ... and build the correspondance between symbols and subs (subs)
         dicpars, subs = mappars(self, **kwargs)

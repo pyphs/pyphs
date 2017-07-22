@@ -11,7 +11,7 @@ import numpy
 from ..misc.tools import myrange, pause
 from ..config import datum, EPS
 from ..misc.plots.graphs import plot_analysis
-from .exceptions import PHSUndefinedPotential, PHSCanNotUnlock
+from .exceptions import UndefinedPotential, CanNotUnlock
 
 
 class GraphAnalysis:
@@ -124,7 +124,7 @@ First, it is checked that the correponding row of matrix graph.analysis.la
         for n in self.ic_nodes:
             # assert the potential on node n can be defined
             if self.Lambda[n, :].sum() == 0:
-                raise PHSUndefinedPotential(self.nodes[n])
+                raise UndefinedPotential(self.nodes[n])
 
             # test for definite node
             if self.Lambda[n, :].sum() == 1:
@@ -232,7 +232,7 @@ define it as effort-controlled (0 column in lambda).
                         still_locked = False
                         break
         if still_locked:
-            raise PHSCanNotUnlock
+            raise CanNotUnlock
         self.verbose('unlock')
 
     def get_edges_data(self, key):

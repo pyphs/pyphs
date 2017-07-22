@@ -8,10 +8,10 @@ Created on Sun Jun 18 23:24:06 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges import PHSDissipativeLinear
+from ..edges import DissipativeLinear
 
 
-class Resistor(PHSDissipativeLinear):
+class Resistor(DissipativeLinear):
     """
     Linear magnetic resistor (unconstrained control).
 
@@ -34,7 +34,7 @@ class Resistor(PHSDissipativeLinear):
             coeff = 0
         else:
             coeff = kwargs['R']
-        PHSDissipativeLinear.__init__(self, label, nodes, coeff=coeff)
+        DissipativeLinear.__init__(self, label, nodes, coeff=coeff)
 
     @staticmethod
     def metadata():

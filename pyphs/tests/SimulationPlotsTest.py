@@ -9,7 +9,7 @@ Created on Sun Apr 16 20:24:57 2017
 # Support for Python 2.x and Python 3.x
 from __future__ import division
 
-from pyphs import PHSSimulation, signalgenerator
+from pyphs import Simulation, signalgenerator
 from pyphs.misc.signals.analysis import transferFunction, spectrogram
 from pyphs.misc.signals.processing import lowpass
 import numpy as np
@@ -35,12 +35,12 @@ def plot_power_balance_rlc_with_split():
               'eigen': None,       # path to Eigen library
               }
 
-    # retrieve the pyphs.PHSCore of a linear RLC from the examples
+    # retrieve the pyphs.Core of a linear RLC from the examples
     from pyphs.examples.rlc.rlc import core as rlc
 
     rlc_ = rlc.__copy__()
-    rlc_.build_R()
-    simu = PHSSimulation(rlc_, config=config)
+    rlc_.reduce_z()
+    simu = Simulation(rlc_.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -76,11 +76,11 @@ def plot_power_balance_nlcore_with_split():
               }
 
 
-    # retrieve the pyphs.PHSCore of a nonlinear RLC from
-    # the tutorial on PHSCore
-    from pyphs.tutorials.phscore import core as nlcore
-    nlcore.build_R()
-    simu = PHSSimulation(nlcore, config=config)
+    # retrieve the pyphs.Core of a nonlinear RLC from
+    # the tutorial on Core
+    from pyphs.tutorials.core import core as nlcore
+    nlcore.reduce_z()
+    simu = Simulation(nlcore.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
@@ -115,13 +115,13 @@ def plot_rlc_with_split():
               'eigen': None,       # path to Eigen library
               }
 
-    # retrieve the pyphs.PHSCore of a linear RLC from the examples
+    # retrieve the pyphs.Core of a linear RLC from the examples
     from pyphs.examples.rlc.rlc import core as rlc
 
     print(rlc.w)
     print(rlc.z)
 
-    simu = PHSSimulation(rlc, config=config)
+    simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])

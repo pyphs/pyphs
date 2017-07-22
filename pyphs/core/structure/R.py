@@ -11,7 +11,7 @@ from pyphs.core.tools import types
 from pyphs.core.maths import inverse
 
 
-def build_R(core):
+def reduce_z(core):
     """
 Incorporate the linear dissipative elements in the interconnection by \
 redefining the structure matrix \
@@ -78,8 +78,10 @@ after this operation, and :code:`core.z()=core.znl()`.
     for namei in names:
         mati = []
         for namej in names:
-            mati.append(geteval(core, 'M'+namei+namej))
-        mat.append(types.matrix_types[0].hstack(*mati))
+            Mij = geteval(core, 'M'+namei+namej)
+            mati.append(Mij)
+        Mi = types.matrix_types[0].hstack(*mati)
+        mat.append(Mi)
     Mnl = types.matrix_types[0].vstack(*mat)
     # Set M to Mnew
     core.M = Mnlwl*core.Zl*Dl*Mwlnl + Mnl

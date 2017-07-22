@@ -153,7 +153,7 @@ def draw_edges(graph, ax):
 
 def plot(graph, filename=None, ax=None, layout=None, show=True):
     """
-    plot of a PHSGraph
+    plot of a Graph
     """
     if ax is None:
         fig = plt.figure()

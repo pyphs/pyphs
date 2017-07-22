@@ -36,10 +36,13 @@ GMIN = 1e-12
 # Define the numerical tolerance such that |x|<EPS <=> x ~ 0
 EPS = numpy.finfo(float).eps
 
+# Define the numerical tolerance for the discrete gradient |x|<EPS <=> dxH ~ H'
+EPS_DG = numpy.finfo(float).eps
+
 # Define the data type (defualt is float 32bi)
 DTYPE = numpy.finfo(float).dtype.type
 
-# Symbol for sample rate in symbolic numerical scheme PHSCoreMethod
+# Symbol for sample rate in symbolic numerical scheme Method
 FS_SYMBS = 'F_S'
 ###############################################################################
 
@@ -104,16 +107,16 @@ special_chars = ['#']
 # EIGEN_PATH = r'/roor/path/subpath/eigen', PyPHS will include the following in
 # the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
 # !!! This should be a raw string (especially for Windows user) !!!!
-# Example MacOSX: r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen'
+# Example MacOSX: r'/Users/afalaize/Developement/libs/eigen'
 # Example Linux: r'/home/afalaize/Documents/DEV/C++/bibliotheques/eigen'
-EIGEN_PATH = r'/Users/Falaize/Documents/DEV/c++/bibliotheques/eigen'
+EIGEN_PATH = r'/Users/afalaize/Developement/libs/eigen'
 
 # We use the CMAKE build system to build the generated c++ sources. Below is
 # the path to cmake executable (as returned e.g. on UNIX by `which cmake`).
-# Example Linux: r'/usr/bin/cmake'
+# Example Linux: r'/usr/local/bin/cmake'
 # Example MaOSX: r'/opt/local/bin/cmake'
 
-CMAKE_PATH = r'/opt/local/bin/cmake'
+CMAKE_PATH = r'/usr/local/bin/cmake'
 
 
  ###############################################################################
@@ -150,8 +153,8 @@ LANGUAGE = 'python'
 SPLIT = True
 
 # Names of the files to save in PATH/data.
-# Should be known elements of PHSNumericalCore
-# !!!    For ploting with the PHSData object, FILES must    !!!
+# Should be known elements of Numeric
+# !!!    For ploting with the Data object, FILES must    !!!
 # !!!   contain at least ('x', 'dx', 'dxH', 'w', 'z', 'y')  !!!
 FILES = ('x', 'dx', 'dxH', 'w', 'z', 'y')
 
@@ -168,21 +171,23 @@ LOAD_OPTS = {'imin': 0, 'imax': None, 'decim': 1}
 # Maximum number of iterations for implicit functions solvers
 MAXIT = 100
 
-simulations = {'fs': FS,
-               'grad': GRADIENT,
-               'theta': THETA,
-               'path': SIMULATION_PATH,
-               'lang': LANGUAGE,
-               'timer': TIMER,
-               'pbar': PBAR,
-               'files': FILES,
-               'eps': EPS,
-               'maxit': int(MAXIT),
-               'split': SPLIT,
-               'eigen': EIGEN_PATH,
-               'cmake': CMAKE_PATH,
-               'load': LOAD_OPTS,
-               'theano': THEANO}
+CONFIG_METHOD = {'grad': GRADIENT,
+                 'theta': THETA,
+                 'split': SPLIT}
+
+CONFIG_NUMERIC = {'fs': FS,
+                  'eps': EPS,
+                  'maxit': int(MAXIT),
+                  'theano': THEANO}
+
+CONFIG_SIMULATION = {'path': SIMULATION_PATH,
+                     'lang': LANGUAGE,
+                     'timer': TIMER,
+                     'pbar': PBAR,
+                     'files': FILES,
+                     'eigen': EIGEN_PATH,
+                     'cmake': CMAKE_PATH,
+                     'load': LOAD_OPTS}
 
 ###############################################################################
 

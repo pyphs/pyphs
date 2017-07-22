@@ -6,11 +6,11 @@ Created on Sat May 21 16:29:43 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import PHSStorageNonLinear
+from ..edges import StorageNonLinear
 from ..tools import symbols
 
 
-class Springcubic(PHSStorageNonLinear):
+class Springcubic(StorageNonLinear):
     """
     Spring with cubic nonlinearity F(q)=K0*(q + K2*q**3)
 
@@ -53,7 +53,7 @@ class Springcubic(PHSStorageNonLinear):
         edge = (N1, N2, data)
 
         # init component
-        PHSStorageNonLinear.__init__(self, label, [edge],
+        StorageNonLinear.__init__(self, label, [edge],
                                      x, H, **kwargs)
 
     @staticmethod

@@ -51,7 +51,7 @@ def movematrixcols(matrix, indi, indf):
     Parameters
     ----------
 
-    core : PHSCore
+    core : Core
 
     indi, indf : intergers
         Initial and final column/row indices in [0, shape(M)[1]-1].
@@ -63,12 +63,12 @@ def movematrixcols(matrix, indi, indf):
 
 def moveCoreMcolnrow(core, indi, indf):
     """
-    Move column/row of PHSCore.M from indi to column/row indf.
+    Move column/row of Core.M from indi to column/row indf.
 
     Parameters
     ----------
 
-    core : PHSCore
+    core : Core
 
     indi, indf : intergers
         Initial and final column/row indices in [0, core.dims.tot()-1].
@@ -79,12 +79,12 @@ def moveCoreMcolnrow(core, indi, indf):
 
 def move_stor(core, indi, indf):
     """
-    Move storage of PHSCore from initial position indi to final position indf.
+    Move storage of Core from initial position indi to final position indf.
 
     Parameters
     ----------
 
-    core : PHSCore
+    core : Core
 
     indi, indf : intergers
         Initial and final storage indices in the set of storages.
@@ -98,12 +98,12 @@ def move_stor(core, indi, indf):
 
 def move_diss(core, indi, indf):
     """
-    Move dissipation of PHSCore from initial position indi to final position indf.
+    Move dissipation of Core from initial position indi to final position indf.
 
     Parameters
     ----------
 
-    core : PHSCore
+    core : Core
 
     indi, indf : intergers
         Initial and final dissipation indices in the set of dissipations.
@@ -118,12 +118,12 @@ def move_diss(core, indi, indf):
 
 def move_port(core, indi, indf):
     """
-    Move port of PHSCore from initial position indi to final position indf.
+    Move port of Core from initial position indi to final position indf.
 
     Parameters
     ----------
 
-    core : PHSCore
+    core : Core
 
     indi, indf : intergers
         Initial and final port indices in the set of ports.
@@ -137,12 +137,12 @@ def move_port(core, indi, indf):
 
 def move_connector(core, indi, indf):
     """
-    Move connector of PHSCore from initial position indi to final position indf.
+    Move connector of Core from initial position indi to final position indf.
 
     Parameters
     ----------
 
-    core : PHSCore
+    core : Core
 
     indi, indf : intergers
         Initial and final connector indices in the set of connectors.

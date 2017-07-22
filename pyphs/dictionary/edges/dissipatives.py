@@ -7,17 +7,17 @@ Created on Tue Dec 27 13:34:26 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs import PHSGraph
-from pyphs.dictionary.tools import PHSArgument, nicevarlabel, mappars
+from pyphs import Graph
+from pyphs.dictionary.tools import Argument, nicevarlabel, mappars
 
 
 ###############################################################
 # LINEAR
 ###############################################################
 
-class PHSDissipativeLinear(PHSGraph):
+class DissipativeLinear(Graph):
     """
-    Class of linear dissipative edges on PHSGraph.
+    Class of linear dissipative edges on Graph.
 
     Arguments
     ----------
@@ -33,15 +33,15 @@ class PHSDissipativeLinear(PHSGraph):
                      - 'e' for effort-controlled,
                      - 'f' for flux-controlled,
                      - '?' for indeterminate control (default).
-             'coeff': PHSArgument,
+             'coeff': Argument,
                  The dissipative relation is effort = coeff.symb * flux
             }
 
     """
     def __init__(self, label, nodes, **kwargs):
-        PHSGraph.__init__(self, label=label)
-        if not isinstance(kwargs['coeff'], PHSArgument):
-            coeff = PHSArgument(label + 'coeff', kwargs['coeff'])
+        Graph.__init__(self, label=label)
+        if not isinstance(kwargs['coeff'], Argument):
+            coeff = Argument(label + 'coeff', kwargs['coeff'])
         else:
             coeff = kwargs['coeff']
         w_label = nicevarlabel("w", label)
@@ -65,7 +65,7 @@ class PHSDissipativeLinear(PHSGraph):
 # LINEAR
 ###############################################################
 
-class PHSDissipativeNonLinear(PHSGraph):
+class DissipativeNonLinear(Graph):
     """
     nonlinear dissipative componen class.
 
@@ -108,7 +108,7 @@ keys of the kwargs arguments.
         assert len(w) == len(z),\
             'len(z)={0!s} is not equal to len(w)={1!s}.'.format(len(z), len(w))
         # init PortHamiltonianObject
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
         # build correspondance between labels in subs and pars (dicpars)...
         # ... and build the correspondance between symbols and subs (subs)
         dicpars, subs = mappars(self, **kwargs)

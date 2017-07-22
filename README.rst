@@ -1,55 +1,73 @@
-.. image:: https://badge.fury.io/py/pyphs.svg
-    :target: https://badge.fury.io/py/pyphs
-
-.. image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
-    :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
-
-.. image:: https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg
-    :target: https://www.travis-ci.org/afalaize/pyphs
-    
-.. image:: https://img.shields.io/badge/documentation-website-blue.svg
-    :target: https://afalaize.github.io/pyphs/
-
 PyPHS
 ======
-A python software dedicated to the simulation of multiphysical systems in the Port-Hamiltonian Systems (PHS) formalism.
 
-.. image:: https://www.travis-ci.org/afalaize/pyphs.svg?branch=master
-    :target: https://www.travis-ci.org/afalaize/pyphs
- 
+|pypi version| |Licence badge| |python versions| |Website badge|
 
-.. image:: https://ci.appveyor.com/api/projects/status/lmj2m2hfbo0bdqku/branch/master?svg=true
-	:target: https://ci.appveyor.com/project/afalaize/pyphs
+.. |pypi version| image:: https://badge.fury.io/py/pyphs.svg
+    :target: https://badge.fury.io/py/pyphs
+.. |Licence badge| image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
+    :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+.. |python versions| image:: https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg
+    :target: https://www.travis-ci.org/pyphs/pyphs
+.. |Website badge| image:: https://img.shields.io/badge/documentation-website-blue.svg
+    :target: https://pyphs.github.io/pyphs/
 
-.. image:: https://codecov.io/gh/afalaize/pyphs/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/afalaize/pyphs
+A Python software (Py) dedicated to the simulation of multi-physical Port-Hamiltonian Systems (PHS) described by graph structures.
 
-.. image:: https://www.quantifiedcode.com/api/v1/project/0c1fbf5b44e94b4085a24c18a1895947/badge.svg?branch=master
-  :target: https://www.quantifiedcode.com/app/project/0c1fbf5b44e94b4085a24c18a1895947
-  :alt: issues   
+The PHS formalism decomposes network systems into **conservative** parts, **dissipative** parts and **source** parts, which are combined according to an **energy conserving interconnection**. This approach permits to formulate the dynamics of multi-physical systems as a **set of differential-algebraic equations** structured according to energy flows. This **structure** proves the **passivity** of the system, including the nonlinear cases. Moreover, it guarantees the **stability** of the numerical simulations for an adapted structure preserving numerical method.
 
-.. image:: https://landscape.io/github/afalaize/pyphs/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/afalaize/pyphs/master
+.. image:: https://pyphs.github.io/pyphs/figures/home2.png
+	:width: 650
+	:align: center
+
+The standard workflow is as follows.
+
+1. Inputs are **netlist descriptions** of network systems (very similar to SPICE netlists).
+2. The associated **graphs** are analyzed to produce the **core system's dynamics equations** in the PHS formalism.
+3. **Simulations** (i.e. numerical solving of DAE equations) are performed based on a variety of **numerical methods** (can be extended with new ones).
+4. The corresponding **C++** simulation code is automatically generated and called from python (can also be used in bigger applications).
+5. **LaTeX** description files can be generated (for documentation, publication, etc.).
+
+.. image:: https://pyphs.github.io/pyphs/figures/synopsys.png
+    :width: 800
+    :align: center
+
+- The Python class **Core** defines symbolically a *continuous-time Port-Hamiltonian structure*.
+- The Python class **Method** defines symbolically a *discrete-time port-Hamiltonian structure* derived from a given `Core` object and for several numerical schemes. It includes a structure preserving numerical method (see [NumericalMethod2015]_).
+- The Python class **Netlist** reads and writes the descriptions of network systems.
+- The Python class **Graph** defines a network structure for the automated generation of `Core` from `Netlist`, based on (i) the implementation of a specially designed **graph analysis** (see [GraphAnalysis2016]_), and (ii) a set of elementary **components** compiled in the **Dictionary**.
+- The Python class **Simulation** evaluates iteratively a given `Method` object to produce the data result in text files. The evaluation can run in pure Python code with the **Numerical** object, or can run in C++ through the generated C++ files.
+
+Status
+======
+
+This package is in development status Beta. The continuous integration is checked with Travis for Unix systems and AppVeyor for Windows systems (see build status below).
+
+.. image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
+    :target: https://www.travis-ci.org/pyphs/pyphs
+
+.. image:: https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true
+    :target: https://ci.appveyor.com/project/pyphsadmin/pyphs
+
+.. image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/pyphs/pyphs
+
+.. image:: https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/pyphs/pyphs/master
    :alt: Health
 
-1. Inputs are netlist description of network systems.
-2. The associated graphs are analyzed to produce the system's dynamics equations in the PHS formalism.
-3. Simulations (i.e. solving DAE equations) are performed based on a variety of numerical methods (can be extended with new ones).
-4. The corresponding C++ simulation code is automatically generated and called from python (but can be used in other applications).
-5. LaTeX description files can be generated (for documentation, publication, etc.).
+Licence
+=======
+`PyPHS <https://github.com/pyphs/pyphs/>`_ is distributed under the french `CeCILL-B <http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html>`_ licence.
 
-It is developped by `Antoine Falaize <https://afalaize.github.io/>`_ in the `Team M2N <http://lasie.univ-larochelle.fr/Axe-AB-17>`_ (Mathematical and Numerical Methods) at the `LaSIE Research Lab <http://lasie.univ-larochelle.fr>`_ (CNRS UMR 7356), hosted by `Université de La Rochelle <http://www.univ-larochelle.fr/>`_, and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, `Project/team S3 <http://s3.ircam.fr/?lang=en>`_ (Sound Signals and Systems) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`_ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`_, Paris. 
-
-It was initially developed between 2012 and 2016 through a funding from French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`_ (UPMC ED-130) and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`_, as a part of the PhD thesis of `Antoine Falaize <https://afalaize.github.io/>`_ under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_.
-       
 Installation
 ==============
-It is possible to install ``PyPHS`` from package (if you just want to use it) or source (if you plan to use it for development). Whichever method you choose, make sure that all prerequisites are installed.
+It is possible to install `PyPHS <https://github.com/pyphs/pyphs/>`_ from package (if you just want to use it) or source (if you plan to use it for development). Whichever method you choose, make sure that all prerequisites are installed.
 
-Prerequisites
--------------
+Python prerequisites
+--------------------
 
-The ``PyPHS`` package run on Python 2.7 and Python
+The `PyPHS <https://github.com/pyphs/pyphs/>`_ package run on Python 2.7 and Python
 3.5 or newer (3.4 is no longer tested), with the following packages installed:
 
 - `sympy <http://www.sympy.org/fr/>`_
@@ -61,27 +79,28 @@ The ``PyPHS`` package run on Python 2.7 and Python
 - `progressbar2 <https://pypi.python.org/pypi/progressbar2>`_
 - `nose <https://github.com/nose-devs/nose>`_ (to run the tests)
 
-Please refer to the `requirements.txt <requirements.txt>`_ file for the minimum
-required versions and make sure that these modules are up to date.
+Please refer to the `requirements.txt <requirements.txt>`_ file for the required
+versions and make sure that these modules are up to date.
 
-Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if installed (for faster numerical evaluation of symbolic expressions).
+Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if it can be found on the system, for faster numerical evaluation of symbolic expressions.
+
+C++ prerequisites
+------------------
 
 The generated C++ sources build with `CMake <https://cmake.org/>`_ >= 3.1 (see **Configuration** below). The code relies on the `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ (not needed for pure Python usage).
 
 Install from package
 --------------------
 
-The instructions given here should be used if you just want to install the package, e.g. to run the bundled programs or use some functionality for your own project. If you intend to change anything within the `PyPHS` package, please follow the steps in the next section.
-
-The easiest way to install the package is via ``pip`` from the `PyPI (Python
+The easiest way to install the package is via `pip` from the `PyPI (Python
 Package Index) <https://pypi.python.org/pypi>`_::
 
     pip install pyphs
 
-This includes the latest code and should install all dependencies automatically. If this is not the case, each dependency can be install the same way with ``pip``.
+This includes the latest code and should install all dependencies automatically. If it complains about some missing dependencies, install them the same way with `pip` beforehand.
 
 You might need higher privileges (use su or sudo) to install the package globally. Alternatively you can install the package locally
-(i.e. only for you) by adding the ``--user`` argument::
+(i.e. only for you) by adding the `--user` argument::
 
     pip install --user pyphs
 
@@ -90,7 +109,7 @@ Install from source
 
 If you plan to use the package as a developer, clone the Git repository::
 
-    git clone --recursive https://github.com/afalaize/pyphs.git
+    git clone --recursive https://github.com/pyphs/pyphs.git
 
 Then you can simply install the package in development mode::
 
@@ -103,110 +122,233 @@ To run the included tests::
 Configuration
 --------------
 
-After installation, it is recommanded to configure the `config.py </pyphs/config.py>`_ to your needs. Particularily, this is where the local path to the CMake binary and `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified.
+After installation, it is recommended to configure the `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ to your needs. Particularly, this is where the local path to the CMake binary and `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified.
 
-Your local `config.py </pyphs/config.py>`_ file is located at the root of the `PyPHS` package, which can be recovered with:
-    
-    >>> from pyphs import path_to_configuration_file
-    >>> print(path_to_configuration_file)
+Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package, which can be recovered in a Python interpreter with
+
+
+.. code:: python
+
+    from pyphs import path_to_configuration_file
+    print(path_to_configuration_file)
 
 
 Upgrade of existing installations
 ---------------------------------
 
-To upgrade the package, please use the same mechanism (pip vs. source) as you did for installation. In each case, it is recommanded to uninstall the package first.
+To upgrade the package, please use the same mechanism (pip vs. source) as you did for installation.
 
 Upgrade a package
 ~~~~~~~~~~~~~~~~~
 
-Simply upgrade the package via pip:
-
-    pip install --upgrade pyphs [--user]
-
-In some cases, you will need to manually uninstall the package:
+First, manually uninstall the package::
 
     pip uninstall pyphs
-    pip install pyphs [--user]
+
+and reinstall as explained above.
 
 
 Upgrade from source
 ~~~~~~~~~~~~~~~~~~~
 
-Simply pull the latest sources::
+Pull the latest sources::
 
     git pull
 
 Package structure
------------------
+=================
 
 The package is divided into the following folders:
 
-`/pyphs/tutorials </pyphs/tutorials>`_
-  Tutorials for the main `PyPHS` classes (executable programs).
-
-`/pyphs/examples </pyphs/examples>`_
-  Various applications (executable programs).
-
-`/pyphs/core </pyphs/core>`_
-
-    `PHSCore` class :
-        This is the core PHS structure. It provides several methods for the manipulation of symbolic expression (reorganization, connection, simplification, etc.). It is passed as an argument to the constructor of most of others PyPHS objects.
-
-`/pyphs/graphs </pyphs/graphs>`_     
-
-    `PHSNetlist` class : 
+`/pyphs/tutorials <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials>`_
+    Tutorials for the main `PyPHS <https://github.com/pyphs/pyphs/>`_ classes (executable programs).
+`/pyphs/examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_
+    Various real-life applications (executable programs).
+`/pyphs/core <https://github.com/pyphs/pyphs/tree/master/pyphs/core>`_
+    `Core` class :
+        This is the central object of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package. It implements the core PHS structure and provides several methods for its manipulation (reorganization, connection, simplification, etc.).
+`/pyphs/graphs <https://github.com/pyphs/pyphs/tree/master/pyphs/graphs>`_
+    `Netlist` class :
         Management of netlist description files.
-
-    `PHSGraph` class :
+    `Graph` class :
         (1) Construction and manipulation of network systems,
         (2) Analysis of network realizability,
-        (3) Generation of PHS equations (`PHSCore`).
-
-`/pyphs/dictionary </pyphs/dictionary>`_
-    Components are `PHSGraph` objects. The dictionary is organized in thematic sub-packages (*electronics*, *thermics*, *fractional calculus*, etc.). Each theme is organized in component sub-packages (`electronics.resistor`, `thermics.transfer`, `fraccalc.fracderec`, etc.).
-
-`/pyphs/numerics </pyphs/numerics>`_
-
-    `PHSNumericalEval` class :
-        Numerical evaluation of a given `PHSCore`.
-
-    `PHSCoreMethod` object :
+        (3) Generation of PHS equations (`Core`).
+`/pyphs/dictionary <https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary>`_
+    - Components are `Graph` objects.
+    - The dictionary is organized in thematic sub-packages (*electronics*, *thermics*, *fractional calculus*, etc.).
+    - Each theme is organized in component sub-packages (`electronics.resistor`, `thermics.transfer`, `fraccalc.fracderec`, etc.).
+`/pyphs/numerics <https://github.com/pyphs/pyphs/tree/master/pyphs/numerics>`_
+    `Evaluation` class :
+        Numerical evaluation of a given `Core`.
+    `Method` object :
         Construction of the *symbolic* expressions associated with several numerical methods (theta-schemes, trapezoidal rule, discret gradient, etc.).
-
-    `PHSNumericalCore` object :
-        Numerical evaluation of a given `PHSCore` associated with a given `PHSCoreMethod`.
-
-    `PHSSimulation` object :
-        Perform the simulation of a given `PHSCore` associated with a given `PHSCoreMethod` through the execution of the resulting `PHSNumericalCore`.
-
-    `PHSData` object :
-        Methods for writing, reading and rendering `PHSSimulation` file results.
-
-`/pyphs/tests </pyphs/tests>`_
+    `Simulation` object :
+        Manage the iterative evaluation and associated results data for a given `Method`.
+    `Numeric` object :
+        Python evaluation of a given `Method`.
+    `Data` object :
+        Methods for writing, reading and rendering `Simulation` file results.
+`/pyphs/tests <https://github.com/pyphs/pyphs/tree/master/pyphs/tests>`_
     Test programs executed by `nose` (see above).
+`/pyphs/misc <https://github.com/pyphs/pyphs/tree/master/pyphs/misc>`_
+    Miscellaneous tools (plots, LaTeX code generation, signal processing, files I/O).
 
-`/pyphs/misc </pyphs/misc>`_
-
-    Miscelaneous tools (plots, LaTeX code generation, signal processing, iles I/O).
-  
 Documentation
 ==============
 
-Implemented methods
+Most of the documentation can be found in the `website <https://pyphs.github.io/pyphs/>`_.
+
+Theoretical overview
 --------------------
-The package began as an implementation of the methods proposed in the reference [1]_, in which the port-Hamiltonian formalism, the graph analaysis and the numerical method are exposed. This is worth to read before using the `pyphs` package. 
+
+The development of `PyPHS <https://github.com/pyphs/pyphs/>`_ started as an implementation of the methods proposed in the reference [GraphAnalysis2016], in which the port-Hamiltonian formalism, the graph analysis and the structure preserving numerical method are exposed. This is worth to read before using the package.
+
+Q&A Mailing list
+-----------------
+
+The package mailing list is at https://groups.google.com/forum/#!forum/pyphs.
 
 Tutorials and examples
 -----------------------
 
-The package comes with a serie of tutorials for the use of the main functionalities (`definition </pyphs/tutorials/phscore.py>`_, `evaluation </pyphs/tutorials/phsnumericaleval.py>`_, and `simulation </pyphs/tutorials/phssimulation.py>`_ of a core PHS structure). More tutorials are to come. Additionally, you can see the `examples </pyphs/examples>`_ scripts. Both the *tutorials* and the *examples* folders are located at your package root, which can be recovered in Python interpreter with:
-
-    >>> import pyphs
-    >>> help(pyphs)
-
-The `website <https://afalaize.github.io/pyphs/>`_ is not currently up-to-date.
+The package comes with a set of tutorials for the use of the main functionalities (`definition <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/core.py>`_, `evaluation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/evaluation.py>`_, and `simulation <https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/simulation.py>`_ of a core PHS structure). More tutorials are to come. Additionally, you can see the `examples <https://github.com/pyphs/pyphs/tree/master/pyphs/examples>`_ scripts. Both the *tutorials* and the *examples* folders are located at your package root, which can be recovered in Python interpreter with
 
 
-Reference
-=========
-.. [1] Falaize, A., & Hélie, T. (2016). `Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach <https://hal.archives-ouvertes.fr/hal-01390501>`_. Applied Sciences, 6(10), 273.
+.. code:: python
+
+    from pyphs import path_to_examples, path_to_tutorials
+    print(path_to_examples)
+    print(path_to_tutorials)
+
+Typical use
+===========
+
+Consider the following serial diode-inductor-capacitor (DLC) electronic circuit:
+
+.. image:: https://pyphs.github.io/pyphs/figures/DLC.jpg
+    :width: 300
+    :align: center
+
+with the following physical parameters:
+
++------------+------------------------------------------+----------------+
+| Parameter  | Description (SI unit)                    | Typical value  |
++------------+------------------------------------------+----------------+
+| Is         | Diode saturation current (A)             | 2e-9           |
++------------+------------------------------------------+----------------+
+| v0         |  Diode thermal voltage (V)               | 26e-3          |
++------------+------------------------------------------+----------------+
+| mu         |  Diode ideality factor (dimensionless)   | 1.7            |
++------------+------------------------------------------+----------------+
+| R          |  Diode connectors resistance (Ohms)      | 0.5            |
++------------+------------------------------------------+----------------+
+| L          |  Inductance value (H)                    | 0.05           |
++------------+------------------------------------------+----------------+
+| C          |  Capacitance value (F)                   | 2e-06          |
++------------+------------------------------------------+----------------+
+
+
+1. Define the Netlist
+---------------------
+
+Put the following content in a text file with **.net** extension, (here *dlc.net*):
+
+.. line-block::
+    electronics.source in ('#', 'n1'): type='voltage';
+    electronics.diode D ('n1', 'n2'): Is=('Is', 2e-9); v0=('v0', 26e-3); mu=('mu', 1.7); R=('Rd', 0.5);
+    electronics.inductor L ('n2', 'n3'): L=('L', 0.05);
+    electronics.capacitor C ('n3', '#'): C=('C', 2e-06);
+
+
+2. Perform graph analysis
+-------------------------
+
+Run the following in a Python interpreter in the netlist file directory:
+
+.. code:: python
+
+    import pyphs as phs
+
+    # Read the 'dlc_netlist.net'
+    netlist = phs.Netlist('dlc.net')
+
+    # Construct the graph associated with 'netlist'
+    graph = netlist.to_graph()
+
+    # Construct the core Port-Hamiltonian System from 'graph'
+    core = graph.to_core()
+
+
+3. Export LaTeX
+----------------------------
+
+.. code:: python
+
+    # Add netlist to LaTeX content
+    content = phs.netlist2tex(netlist)
+
+    # Add PHS core to LaTeX content
+    content += phs.core2tex(core)
+
+    # Write ready-to-use .tex document
+    phs.texdocument(content,
+                    title='DLC',
+                    filename='dlc.tex')
+
+
+This yields the following **tex** file:
+
+* `dlc.tex <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.tex>`_
+
+which is compiled to produce the following **pdf** file:
+
+* `dlc.pdf <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/tex/dlc.pdf>`_
+
+
+4. Export C++ code
+----------------------------
+
+.. code:: python
+
+    # Numerical method for time discretization of 'core'
+    # with default configuration
+    method = core.to_method()
+
+    # Export the set of C++ file for simulation
+    phs.method2cpp(method)
+
+
+This yields the following **cpp** files:
+
+* `core.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.cpp>`_
+* `core.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.h>`_
+* `data.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.cpp>`_
+* `data.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.h>`_
+
+The `core.h` defines a class of `DLC` systems with an update method to be called at each iteration for the simulations.
+
+
+Authors and Affiliations
+========================
+
+PyPHS is mainly developed by `Antoine Falaize <https://afalaize.github.io/>`_ and `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, respectively in
+
+- the `Team M2N <http://lasie.univ-larochelle.fr/Axe-AB-17>`_ (Mathematical and Numerical Methods), `LaSIE Research Lab <http://lasie.univ-larochelle.fr>`_ (CNRS UMR 7356), hosted by the `University of La Rochelle <http://www.univ-larochelle.fr/>`_,
+- the `Team S3AM <http://s3.ircam.fr/?lang=en>`_ (Sound Systems and Signals: Audio/Acoustics, InstruMents) at `STMS Research Lab <http://www.ircam.fr/recherche/lunite-mixte-de-recherche-stms/>`_ (CNRS UMR 9912), hosted by `IRCAM <http://www.ircam.fr/>`_ in Paris.
+
+See the `AUTHORS <https://github.com/pyphs/pyphs/blob/master/AUTHORS>`_ file for the complete list of authors.
+
+
+Short History
+==============
+
+PyPHS was initially developed between 2012 and 2016 as a part of the PhD thesis of `Antoine Falaize <https://afalaize.github.io/>`_ under the direction of `Thomas Hélie <http://recherche.ircam.fr/anasyn/helie/>`_, through a funding from  the French doctoral school `EDITE <http://edite-de-paris.fr/spip/>`_ (UPMC ED-130) and in connection with the French National Research Agency project `HaMecMoPSys <https://hamecmopsys.ens2m.fr/>`_.
+
+
+References
+==========
+
+.. [NumericalMethod2015] Lopes, N., Hélie, T., & Falaize, A. (2015). Explicit second-order accurate method for the passive guaranteed simulation of port-Hamiltonian systems. IFAC-PapersOnLine, 48(13), 223-228.
+
+.. [GraphAnalysis2016] Falaize, A., & Hélie, T. (2016). Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach. Applied Sciences, 6(10), 273.

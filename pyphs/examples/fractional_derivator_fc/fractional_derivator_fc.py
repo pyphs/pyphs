@@ -9,15 +9,15 @@ Created on Sat May 13 17:00:14 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import (netlist2core, PHSNetlist, PHSGraph)
+from pyphs import (netlist2core, Netlist, Graph)
 
 label = 'fractional_derivator_fc'
 
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = path + os.sep + label + '.net'
-netlist = PHSNetlist(netlist_filename)
-graph = PHSGraph(netlist=netlist)
+netlist = Netlist(netlist_filename)
+graph = Graph(netlist=netlist)
 core = netlist2core(netlist_filename)
 
 # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
@@ -25,7 +25,7 @@ core = netlist2core(netlist_filename)
 
 #if __name__ == '__main__':
 #
-#    from pyphs import PHSSimulation, signalgenerator
+#    from pyphs import Simulation, signalgenerator
 #    from pyphs.misc.signals.analysis import transferFunction
 #    import matplotlib.pyplot as plt
 #    import numpy as np
@@ -37,7 +37,7 @@ core = netlist2core(netlist_filename)
 #              'lang': 'python'
 #              }
 #
-#    simu = PHSSimulation(core, config=config)
+#    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 10.
 #    u = signalgenerator(which='noise', tsig=dur, fs=simu.fs)

@@ -225,7 +225,7 @@ def simplify_core(core):
     substitute_core
     ***************
 
-    Apply simplifications to every expressions of a PHSCore.
+    Apply simplifications to every expressions of a Core.
 
     """
 

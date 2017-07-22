@@ -9,7 +9,7 @@ import numpy
 from ._operators import norm
 
 
-class PHSNumericalOperation:
+class Operation:
 
     def __init__(self, operation, args):
 
@@ -22,7 +22,7 @@ class PHSNumericalOperation:
         self.freesymbols = set()
 
         for i, arg in enumerate(args):
-            if isinstance(arg, PHSNumericalOperation):
+            if isinstance(arg, Operation):
                 symbs = arg.freesymbols
                 arg = arg.call
             elif isinstance(arg, str):
@@ -44,7 +44,7 @@ class PHSNumericalOperation:
 
 # =========================================================================== #
 
-# Dictionary of numerical methods callable by PHSNumericalOperations
+# Dictionary of numerical methods callable by Operations
 PARSER = {'add': numpy.add,
           'prod': lambda a1, a2: a1*a2,
           'dot': numpy.dot,

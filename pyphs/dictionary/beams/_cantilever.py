@@ -9,7 +9,7 @@ from numpy import (sqrt, sin, cos, cosh, sinh, array, pi, linspace,
                    nonzero, diff, sign, newaxis)
 from pyphs.dictionary.mechanics import Mass, Stiffness, Damper
 from pyphs.dictionary.connectors import Transformer
-from pyphs import PHSGraph
+from pyphs import Graph
 from pyphs.graphs import datum
 
 
@@ -124,7 +124,7 @@ def waveNumbers(N, Lb, Kb, Mb):
     k = k[:, Indices]
     # [Hz] Frequencies associated to k
     fk = sqrt((k**4)*Kb/Mb)/(2*pi)
-    return k, fk
+    return k[0][:N], fk[0][:N]
 
 
 def omega_cosine(zp, wp, Lb, k):
@@ -166,7 +166,7 @@ def omega_cosine(zp, wp, Lb, k):
     return omega
 
 
-class Cantilever(PHSGraph):
+class Cantilever(Graph):
     """
     Cantilever Beam
     ================
@@ -201,7 +201,7 @@ class Cantilever(PHSGraph):
             if k not in pars.keys() and str(k)[0] not in 'zw':
                 raise AttributeError('parameter {} unknown'.format(k))
 
-        PHSGraph.__init__(self, label=label)
+        Graph.__init__(self, label=label)
 
         pars.update(kwargs)
         pars.update({
@@ -225,8 +225,8 @@ class Cantilever(PHSGraph):
         # fk = fk[(fk < pars['fs']/2).nonzero()]
 
         # [#] number of simulated modes
-        pars.update({'kmodes': k[0],
-                     'fmodes': fk[0]})
+        pars.update({'kmodes': k,
+                     'fmodes': fk})
         pars['N'] = len(pars['kmodes'])
 
         # [N/m**1] Modal damping coefficient

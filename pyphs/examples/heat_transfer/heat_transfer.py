@@ -9,21 +9,21 @@ Created on Sat Jan 14 11:50:23 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph
+from pyphs import Netlist, Graph
 
 label = 'heat_transfer'
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 netlist_filename = path + os.sep + label + '.net'
-netlist = PHSNetlist(netlist_filename)
-graph = PHSGraph(netlist=netlist)
-core = graph.buildCore()
+netlist = Netlist(netlist_filename)
+graph = Graph(netlist=netlist)
+core = graph.to_core()
 
-core.build_R()
+core.reduce_z()
 core.subsinverse()
 
 #if __name__ == '__main__':
 #
-#    from pyphs import PHSSimulation
+#    from pyphs import Simulation
 #    from pyphs.misc.plots.singleplots import singleplot
 #    import numpy as np
 #
@@ -37,7 +37,7 @@ core.subsinverse()
 #              'eps': 1e-9,
 #              'pbar': True
 #              }
-#    simu = PHSSimulation(core, config)
+#    simu = Simulation(core.to_method(), config)
 #
 #    nt = int(fs*tsig)
 #

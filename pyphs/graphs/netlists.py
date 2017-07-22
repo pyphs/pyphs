@@ -16,7 +16,7 @@ def sep():
     return ','
 
 
-class PHSNetlist:
+class Netlist:
     """
     Data structure for netlist elements. Each line of the netlist describes a\
  component, with data structured a follows
@@ -183,8 +183,115 @@ components).
 
         value = line['arguments']
         self.arguments[n] = value
+        
+    def to_graph(self, label=None):
+        """
+        Return the graph associated with the netlist.
+        
+        Parameter
+        ---------
+        
+        label : str (optional)
+            String label for the returned graph object.
+            
+        Output
+        ------
+        
+        graph : pyphs.Graph
+            The graph object associated with the netlist.
+        """
+        from .graph import Graph
+        return Graph(netlist=self, label=label)
 
+    def to_core(self, label=None):
+        """
+        Return the graph associated with the netlist.
+        
+        Parameter
+        ---------
+        
+        label : str (optional)
+            String label for the returned graph object.
+            
+        Output
+        ------
+        
+        graph : pyphs.Core
+            The PHS core object associated with the netlist.
+        """
+        graph = self.to_graph(label=label)
+        return graph.to_core(label=label)
+    
+    def to_method(self, label=None, config=None):
+        """
+        Return the PHS numerical method associated with the PHS graph for the 
+        specified configuration.
+        
+        Parameter
+        ---------
 
+        label : str (optional)
+            String label for the Core object (default None recovers the label 
+            from the graph).
+            
+        config : dict or None
+            A dictionary of simulation parameters. If None, the standard
+            pyphs.config.simulations is used (the default is None).
+            keys and default values are
+            
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+              
+        Output
+        ------
+        
+        method : pyphs.Method
+            The PHS numerical method associated with the PHS graph for the 
+            specified configuration.
+        """
+        
+        core = self.to_core(label=label)
+        return core.to_method(config=config)
+
+    def to_simulation(self, label=None, config=None, inits=None):
+        """
+        Return the PHS simulation object associated with the PHS netlist for the 
+        specified configuration.
+        
+        Parameter
+        ---------
+
+        label : str (optional)
+            String label for the Core object (default None recovers the label 
+            from the graph).
+            
+        config : dict or None
+            A dictionary of simulation parameters. If None, the standard
+            pyphs.config.simulations is used (the default is None).
+            keys and default values are
+            
+              'fs': 48e3,           # Sample rate (Hz)
+              'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
+              'theta': 0.,          # Theta-scheme for the structure
+              'split': False,       # split implicit from explicit part
+              'maxit': 10,          # Max number of iterations for NL solvers
+              'eps': 1e-16,         # Global numerical tolerance
+              
+        Output
+        ------
+        
+        method : pyphs.Simulation
+            The PHS simulation object associated with the PHS netlist for the 
+            specified configuration.
+        """
+        
+        core = self.to_core(label=label)
+        return core.to_simulation(config=config, inits=inits)    
+    
 def print_netlist_line(dic):
     """
     Return the line of the pyphs netlist associated to

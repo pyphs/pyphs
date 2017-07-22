@@ -10,7 +10,7 @@ Uncomment below to regenerate the netlist.
 """
 
 
-from pyphs import PHSGraph
+from pyphs import Graph
 import os
 from pyphs.examples.pwl.data_generator import (netlist_name,
                                                generate_data,
@@ -20,8 +20,8 @@ generate_data()
 generate_netlist()
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 netlist_path = os.path.join(path, netlist_name + '.net')
-graph = PHSGraph(netlist=netlist_path, label=netlist_name)
-core = graph.buildCore()
+graph = Graph(netlist=netlist_path, label=netlist_name)
+core = graph.to_core()
 
 #if __name__ == '__main__':
 #    import sympy as sp

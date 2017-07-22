@@ -12,10 +12,10 @@ import sympy
 from ..tools import symbols
 from pyphs.config import GMIN
 from pyphs.core.tools import types
-from ..edges import PHSDissipativeNonLinear
+from ..edges import DissipativeNonLinear
 
 
-class Bjt(PHSDissipativeNonLinear):
+class Bjt(DissipativeNonLinear):
     """
     bipolar junction transistor of NPN type according to the Ebers-Moll model.
 
@@ -105,7 +105,7 @@ transistor#Ebers.E2.80.93Moll_model
                  (Nc, iNc, data_rc),
                  (Ne, iNe, data_re)]
         # init component
-        PHSDissipativeNonLinear.__init__(self, label, edges, wbjt + wR,
+        DissipativeNonLinear.__init__(self, label, edges, wbjt + wR,
                                          list(zbjt) + list(zR), **kwargs)
 
     @staticmethod

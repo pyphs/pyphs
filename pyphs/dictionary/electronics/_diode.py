@@ -11,10 +11,10 @@ from __future__ import absolute_import, division, print_function
 import sympy
 from ..tools import symbols
 from pyphs.config import GMIN
-from ..edges import PHSDissipativeNonLinear
+from ..edges import DissipativeNonLinear
 
 
-class Diode(PHSDissipativeNonLinear):
+class Diode(DissipativeNonLinear):
     """
     Electronic nonlinear dissipative component: diode PN
 
@@ -88,7 +88,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         edge_gmin = (N1, iN2, data_gmin)
 
         # init component
-        PHSDissipativeNonLinear.__init__(self, label,
+        DissipativeNonLinear.__init__(self, label,
                                          [edge_diode,
                                           edge_resistor,
                                           edge_gmin],

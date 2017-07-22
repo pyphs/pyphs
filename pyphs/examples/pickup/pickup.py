@@ -9,30 +9,30 @@ Created on Wed May 24 23:01:21 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import PHSNetlist, PHSGraph
+from pyphs import Netlist, Graph
 
 # ---------------------------  NETLIST  ------------------------------------- #
 label = 'pickup'
 this_script = os.path.realpath(__file__)
 here = this_script[:this_script.rfind(os.sep)]
 netlist_filename = here + os.sep + label + '.net'
-netlist = PHSNetlist(netlist_filename)
+netlist = Netlist(netlist_filename)
 
 # ---------------------------  GRAPH  --------------------------------------- #
-graph = PHSGraph(netlist=netlist, label=label)
+graph = Graph(netlist=netlist, label=label)
 
 # ---------------------------  CORE  ---------------------------------------- #
-core = graph.buildCore()
+core = graph.to_core()
 
 ## ---------------------------  SIMULATION  ---------------------------------- #
 #if __name__ == '__main__':
 #
 #    import numpy
 #    import matplotlib.pyplot as plt
-#    from pyphs import PHSNetlist, PHSGraph
+#    from pyphs import Netlist, Graph
 #    from pyphs.misc.tools import interleave
 #
-#    core.build_R()
+#    core.reduce_z()
 #
 #    # Define the simulation parameters
 #    config = {'fs': 48e3,           # Sample rate (Hz)
@@ -52,8 +52,8 @@ core = graph.buildCore()
 #                       'decim': None}
 #              }
 #
-#    # Instanciate PHSSimulation class
-#    simu = PHSSimulation(core, config=config)
+#    # Instanciate Simulation class
+#    simu = Simulation(core.to_method(), config=config)
 #    def ordering(name, *args):
 #        def get_index(e):
 #            symb = simu.nums.method.symbols(e)
@@ -78,10 +78,10 @@ core = graph.buildCore()
 #        amp = 100.
 #        return amp if start <= tn < start + dur else 0.
 #
-#    # def generator for sequence of inputs to feed in the PHSSimulation object
+#    # def generator for sequence of inputs to feed in the Simulation object
 #    def sequ():
 #        """
-#        generator of input sequence for PHSSimulation
+#        generator of input sequence for Simulation
 #        """
 #        for un in signalgenerator(which='sin', tsig=tmax, fs=simu.config['fs'],
 #                                  A=10, f0=100., ramp_on=True)():

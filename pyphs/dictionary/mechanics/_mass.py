@@ -6,11 +6,11 @@ Created on Sat May 21 16:29:43 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import PHSStorageLinear
+from ..edges import StorageLinear
 from pyphs.graphs import datum
 
 
-class Mass(PHSStorageLinear):
+class Mass(StorageLinear):
     """
     Mass moving in 1D space
 
@@ -34,7 +34,7 @@ class Mass(PHSStorageLinear):
                   'value': par_val,
                   'inv_coeff': True,
                   'ctrl': 'f'}
-        PHSStorageLinear.__init__(self, label, (datum, nodes[0]), **kwargs)
+        StorageLinear.__init__(self, label, (datum, nodes[0]), **kwargs)
 
     @staticmethod
     def metadata():

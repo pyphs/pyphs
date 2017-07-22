@@ -1,15 +1,15 @@
 
-from .netlists import PHSNetlist
-from .graph import PHSGraph, datum
+from .netlists import Netlist
+from .graph import Graph, datum
 
-__all__ = ['PHSNetlist', 'PHSGraph', 'datum']
+__all__ = ['Netlist', 'Graph', 'datum']
 
 
 def netlist2graph(netlist):
-    if not isinstance(netlist, PHSNetlist):
-        netlist = PHSNetlist(netlist)
-    return PHSGraph(netlist=netlist)
+    if not isinstance(netlist, Netlist):
+        netlist = Netlist(netlist)
+    return Graph(netlist=netlist)
 
 
 def netlist2core(netlist):
-    return netlist2graph(netlist).buildCore()
+    return netlist2graph(netlist).to_core()

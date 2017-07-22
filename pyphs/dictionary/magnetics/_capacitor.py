@@ -9,10 +9,10 @@ Created on Sun Jun 18 23:23:08 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges import PHSStorageLinear
+from ..edges import StorageLinear
 
 
-class Capacitor(PHSStorageLinear):
+class Capacitor(StorageLinear):
     """
     Linear capacitor
 
@@ -37,7 +37,7 @@ class Capacitor(PHSStorageLinear):
                   'value': par_val,
                   'inv_coeff': True,
                   'ctrl': 'f'}
-        PHSStorageLinear.__init__(self, label, nodes, **kwargs)
+        StorageLinear.__init__(self, label, nodes, **kwargs)
 
     @staticmethod
     def metadata():

@@ -7,6 +7,7 @@ Created on Thu May 18 21:39:29 2017
 """
 from ..tools import types, free_symbols
 from ..tools import simplify as simplify_func
+from pyphs.misc.tools import geteval
 import sympy
 
 
@@ -161,7 +162,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
     substitute_core
     ***************
 
-    Apply substitutions to every expressions of a PHSCore.
+    Apply substitutions to every expressions of a Core.
 
     Parameters
     -----------
@@ -172,12 +173,12 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
         or a sympy expression. Default is None.
 
     selfall : bool
-        If True, every substitutions in the dictionary :code:`PHSCore.subs`
+        If True, every substitutions in the dictionary :code:`Core.subs`
          are applied and the dictionary is reinitialized to :code:`{}`. Default
          is False.
 
     selfexprs : bool
-        If True, only substitutions in the dictionary :code:`PHSCore.subs`
+        If True, only substitutions in the dictionary :code:`Core.subs`
         that are not numerical values are applied to the core's expressions.
 
     simplify : bool
@@ -207,7 +208,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
                        list(core.symbs_names) +
                        ['M', '_dxH', 'observers'])
     for name in attrs_to_sub:
-        expr = getattr(core, name)
+        expr = geteval(core, name)
         keys = free_symbols(expr).intersection(set(subs.keys()))
         # recast the elements of the substitution dictionary as sympy objects
         subs_e = dict(map(lambda k, v: (k, v),

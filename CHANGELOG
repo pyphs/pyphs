@@ -1,5 +1,12 @@
+0.1.10
+  - 
+  - Change Core.build_R to Core.reduce_z.
   - Initialization of PHSSimulation is made at object instanciation by passing a dictionnary of list of sympy expressions.
-
+  - Rename PHSCoreMethod in PHSMethod.
+  - Rename PHSNumericalEval in Eval.
+  - Rename PHSCoreMethod in Method.
+  - Rename PHSNumericalCore in Numeric.
+  - Remove 'PHS' prefix in classes names.
 
 0.1.9.9.5
   - changes in PHSCore:

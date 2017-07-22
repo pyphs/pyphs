@@ -2,18 +2,20 @@
 """
 Copyright or © or Copr. Antoine Falaize and Thomas Hélie
 
-Affiliation:
-Project-Team S3 (Sound Signals and Systems), Analysis/Synthesis team,
-Laboratory of Sciences and Technologies of Music and Sound (UMR 9912),
-IRCAM-CNRS-UPMC,
-1 place Igor Stravinsky, F-75004 Paris
+Affiliations:
+Team M2N, LaSIE (CNRS, UMR 7356), La Rochelle.
+Team S3AM, IRCAM (CNRS, UMR 9912), Paris.
 
-contributor(s) : Antoine Falaize, Thomas Hélie, Thu Jul 9 23:11:37 2015
-corresponding contributor: antoine.falaize@ircam.fr
+contributors:
+Antoine Falaize, Thomas Hélie.
 
-This software (pypHs) is a computer program whose purpose is to generate C++
-code for the simulation of multiphysics system described by graph structures.
-It is composed of a library (pypHs.py) and a dictionnary (Dictionnary.py)
+corresponding contributor:
+antoine.falaize@gmail.fr
+
+----------------------------------------------------------------------------
+
+This software (pypHs) is a Python (Py) package dedicated to the simulation of
+multiphysical Port-Hamiltonian Systems (PHS) described by graph structures.
 
 This software is governed by the CeCILL-B license under French law and
 abiding by the rules of distribution of free software.  You can  use,
@@ -21,8 +23,9 @@ modify and/ or redistribute the software under the terms of the CeCILL-B
 license as circulated by CEA, CNRS and INRIA at the following URL
 "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
+As a counterpart to the access to the source code and rights to copy,
+modify and redistribute granted by the license, users have to properly cite
+this package whenever they use it. Additionally, the user is provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights, and the successive licensors  have only  limited liability.
 
@@ -45,26 +48,31 @@ Created on Thu Jun  2 21:33:07 2016
 @author: Antoine Falaize
 """
 
+# Python 2 back-portability
 from __future__ import absolute_import
 
+# PyPI setup tools
 from setuptools import setup, find_packages
 
 # To use a consistent encoding
 from codecs import open
 
+# Os specific methods to manage paths
 from os import path
 
+# Recover metadata from pyphs.__init__.py
 from pyphs import __author__, __version__, __licence__, __author_email__
 
-
-###############################################################################
+# ----------------------------------------------------------------------
+# Recover README from source
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(here, 'README.rst'),
+          encoding='utf-8') as f:
     long_description = f.read()
 
-###############################################################################
-
+# ----------------------------------------------------------------------
+# Define PyPI setup configuration
 
 setup(name='pyphs',
       version=__version__,
@@ -72,7 +80,7 @@ setup(name='pyphs',
       long_description=long_description,
       classifiers=[
         'Natural Language :: English',
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Operating System :: Unix',
         'Operating System :: MacOS',
         'Operating System :: MacOS :: MacOS X',
@@ -89,23 +97,23 @@ setup(name='pyphs',
         'Topic :: Scientific/Engineering :: Physics'
       ],
       keywords='dynamical systems, numerical analysis, \
-      passive systems, port-hamiltonian systems',
-      url='https://github.com/aFalaize/pyphs',
+      passive systems, port-hamiltonian systems, C++, Latex',
+      url='https://github.com/pyphs/pyphs',
       author=__author__,
       author_email=__author_email__,
       license=__licence__,
       packages=find_packages(exclude=['docs', ]),
       zip_safe=False,
       include_package_data=True,
-      install_requires=[
-          'numpy',
-          'scipy',
-          'sympy',
-          'networkx',
-          'progressbar2',
-          'matplotlib',
-          'stopit',
-      ],
+      install_requires=['numpy>=1.9.3',
+                        'scipy>=0.16.0',
+                        'sympy==1.0',
+                        'networkx>=1.11',
+                        'progressbar2>=2.3',
+                        'matplotlib>=2.0.0',
+                        'stopit>=1.1.1',
+                        'nose>=1.3.7'
+                        ],
       test_suite='nose.collector',
       tests_require=['nose'],
       )

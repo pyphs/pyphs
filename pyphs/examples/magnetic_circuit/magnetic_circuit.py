@@ -8,9 +8,9 @@ Created on Sat Jan 14 11:50:23 2017
 
 from __future__ import absolute_import, division, print_function
 
-import os
-from pyphs import netlist2graph
+from pyphs import Netlist
 
+import os
 
 label = 'magnetic_circuit'
 
@@ -18,9 +18,10 @@ here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = os.path.join(here, label + '.net')
 
-graph = netlist2graph(netlist_filename)
+netlist = Netlist(netlist_filename)
 
-core = graph.to_core()
+core = netlist.to_core()
+
 
 #if __name__ == '__main__':
 #    from pyphs import (Simulation, signalgenerator, Graph)

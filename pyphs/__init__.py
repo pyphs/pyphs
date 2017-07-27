@@ -4,7 +4,6 @@ from __future__ import print_function
 
 from .core.core import Core
 from .graphs.graph import Graph
-from .graphs import netlist2core, netlist2graph
 from .graphs.netlists import Netlist
 from .numerics import (Method, Numeric,
                        Evaluation, Operation)
@@ -31,6 +30,5 @@ __all__ = ['Core', 'Netlist', 'Simulation', 'Graph',
            'signalgenerator', 'Operation', 'Method',
            'Numeric', 'Evaluation',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
-           'method2cpp', 'simu2cpp', 'netlist2core',
-           'path_to_configuration_file', 'netlist2graph',
+           'method2cpp', 'simu2cpp', 'path_to_configuration_file',
            'path_to_examples', 'path_to_tutorials']

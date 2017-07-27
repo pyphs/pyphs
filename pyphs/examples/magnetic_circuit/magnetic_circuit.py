@@ -22,7 +22,6 @@ netlist = Netlist(netlist_filename)
 
 core = netlist.to_core()
 
-
 #if __name__ == '__main__':
 #    from pyphs import (Simulation, signalgenerator, Graph)
 #    import shutil

@@ -27,7 +27,9 @@ standard_config = {'path': os.getcwd()}
 
 def init_eval(method, name):
 
-    if not name in method.inits_evals.keys():
+    if (name not in method.inits_evals.keys() or
+            method.inits_evals[name] is None):
+
         if VERBOSE >= 2:
             print('    Init value for {}'.format(name))
 
@@ -72,6 +74,39 @@ def eval_op(method, op):
 
 def method2cpp(method, objlabel=None, path=None, eigen_path=None,
                inits=None, config=None):
+    """
+    Writes all files that define the c++ class associated with a given
+    pyphs.Method.
+
+    Parameters
+    ----------
+
+
+    method : pyphs.Method
+        The object that will be converted to c++.
+
+
+    objlabel : string (default is None)
+        Name of the c++ class.
+
+
+    path : string (default is None)
+        Path to the folder where the source files will be generated.
+
+
+    eigen_path : string (default is None)
+        Path to the Eigen library (see also the configuration file at
+        pyphs.path_to_configuration_file).
+
+
+    inits : dictionary (default is None)
+        Dictionary of initialization values `{name: array}` with `name` in
+        ('x', 'dx', 'w', 'u', 'p', 'o') and `array` an vector of floats with
+        appropriate shape.
+
+    config : string (default is None)
+        Dictionary of configuration options (see pyphs.config.CONFIG_NUMERIC).
+    """
 
     if VERBOSE >= 1:
         print('Prepare method {} for C++ generation...'.format(method.label))
@@ -87,7 +122,7 @@ def method2cpp(method, objlabel=None, path=None, eigen_path=None,
 
     args_names = ['x', 'dx', 'w', 'u', 'p', 'o']
     for name in args_names:
-        if not name in inits.keys():
+        if name not in inits.keys() or inits[name] is None:
             inits[name] = list(sympy.zeros(len(geteval(method, name)), 1))
 
     method.inits = inits

@@ -8,8 +8,41 @@ Created on Sat Jul  8 22:32:59 2017
 
 import os
 from pyphs.numerics.cpp.tools import indent
+from pyphs.config import VERBOSE
 
-def snippetAudioProcessorHDeclare(objlabel):
+
+def snippets(objlabel, src_folder, InputIndex, OutputIndex):
+
+    if VERBOSE >= 1:
+        print('Generate Juce C++ snippets rlc...')
+
+    def write(name, content):
+        path = os.path.join(src_folder, name + '.txt')
+        if VERBOSE >= 1:
+            print('    Write {}'.format(path))
+        with open(path, 'w') as file:
+            for line in content.splitlines():
+                file.write(line + '\n')
+
+    content = snippetAudioProcessorHDeclare(objlabel,
+                                            InputIndex,
+                                            OutputIndex)
+    write('Processor_H_1-Declare', content)
+
+    content = snippetAudioProcessorHInclude(src_folder)
+    write('Processor_H_2-Include', content)
+
+    content = snippetAudioProcessorCppInstanciation(objlabel)
+    write('Processor_CPP_1-Instanciation', content)
+
+    content = snippetAudioProcessorCppProcessBlock(objlabel)
+    write('Processor_CPP_2-ProcessBlock', content)
+
+    content = snippetAudioProcessorCppPrepareToPlay(objlabel)
+    write('Processor_CPP_3-PrepareToPlay', content)
+
+
+def snippetAudioProcessorHDeclare(objlabel, InputIndex, OutputIndex):
 
     code = """
 //=========================================================================
@@ -18,19 +51,21 @@ def snippetAudioProcessorHDeclare(objlabel):
 
 //=========================================================================
 // Allocate some memories.
-unsigned int phsInputIndex = 0;
-unsigned int phsOutputIndex = 0;
-double phsInput = 0.f;""".format(objlabel.upper(), 
-                                 objlabel.lower())
+unsigned int {1}InputIndex = {2};
+unsigned int {1}OutputIndex = {3};
+double phsInput = 0.f;""".format(objlabel.upper(),
+                                 objlabel.lower(),
+                                 InputIndex,
+                                 OutputIndex)
     return indent(code)
-    
+
 
 def snippetAudioProcessorHInclude(src_folder):
     include = os.path.join('..', src_folder, 'core.h')
     return '#include "{}"'.format(include)
 
 
-def snippetAudioProcessorCppInitList(objlabel):
+def snippetAudioProcessorCppInstanciation(objlabel):
     return """:
 #ifndef JucePlugin_PreferredChannelConfigurations
      AudioProcessor (BusesProperties()
@@ -45,7 +80,7 @@ def snippetAudioProcessorCppInitList(objlabel):
 {}()
 """.format(objlabel) + '{\n}'
 
-    
+
 def snippetAudioProcessorCppProcessBlock(objlabel):
     code = ""
     code += indent("\n// Recover left data.")
@@ -63,14 +98,14 @@ def snippetAudioProcessorCppProcessBlock(objlabel):
     temp += indent("\nphsInput = (leftData[i] + rightData[i])/2.f;")
     temp += indent("\n")
     temp += indent("\n// Update PHS input.")
-    temp += indent("\n{0}.set_u(phsInput, phsInputIndex);\n".format(objlabel))
+    temp += indent("\n{0}.set_u(phsInput, {0}InputIndex);\n".format(objlabel))
     temp += indent("\n// Core PHS update.")
     temp += indent("\n{0}.update();\n".format(objlabel))
     temp += indent("\n// Get PHS ouput.")
-    temp += indent("\nleftData[i] = {0}.y(phsOutputIndex);\n".format(objlabel))
+    temp += indent("\nleftData[i] = {0}.y({0}OutputIndex);\n".format(objlabel))
     temp += indent("\nif (totalNumOutputChannels==2)")
     temp += indent("\n{")
-    temp += indent(indent("\nrightData[i] = {0}.y(phsOutputIndex);".format(objlabel)))
+    temp += indent(indent("\nrightData[i] = {0}.y({0}OutputIndex);".format(objlabel)))
     temp += indent("\n}")
     code += indent(temp)
     code += indent("\n}")
@@ -82,4 +117,11 @@ def snippetAudioProcessorCppPrepareToPlay(objlabel):
     // Update PHS sample-rate.
     {0}.set_sampleRate(sampleRate);""".format(objlabel)
 
-        
+
+if __name__ == '__main__':
+    from pyphs.examples.rlc.rlc import core
+    path = '/Users/afalaize/Desktop/rlc/src'
+    method = core.to_method()
+    method.to_cpp(path=path)
+    snippets('myobject', path, 0, 1)
+

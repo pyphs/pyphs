@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 from sympy.printing import ccode
 from .tools import matrix_type, dereference, indent, linesplit
 from pyphs.core.tools import types
-from pyphs.config import VERBOSE
+from pyphs.config import VERBOSE, CONFIG_CPP
 
 
 def append_funcs(method, files, objlabel):
@@ -47,7 +47,7 @@ def _append_funcs_defs(method, files):
         if name in method.funcs_names:
             expr = getattr(method, name + '_expr')
             if isinstance(expr, types.scalar_types):
-                files['h']['private'] += '\ndouble _{0};'.format(name)
+                files['h']['private'] += '\n{1} _{0};'.format(name, CONFIG_CPP['float'])
             else:
                 mtype = matrix_type(*types.matrix_types[0](expr).shape)
                 files['h']['private'] += '\n{0} _{1};'.format(mtype, name)
@@ -98,7 +98,7 @@ def _append_funcs_get_element(method, files, objlabel):
             if isinstance(expr, types.scalar_types):
                 pass
             else:
-                getvec = _str_mat_func_get_element(method, 
+                getvec = _str_mat_func_get_element(method,
                                                    name, objlabel)
                 h = getvec[0]
                 cpp = getvec[1]
@@ -118,21 +118,21 @@ def _str_mat_func_get(method, name, objlabel):
 
 
 def _str_scal_func_get(name, objlabel):
-    get_h = '\ndouble {0}();'.format(name)
+    get_h = '\n{1} {0}();'.format(name, CONFIG_CPP['float'])
     get_cpp = \
-        '\ndouble {0}::{1}() const '.format(objlabel, name) + '{\n'
+        '\n{2} {0}::{1}() const '.format(objlabel, name, CONFIG_CPP['float']) + '{\n'
     get_cpp += indent('return _{0};'.format(name)) + '\n}'
     return get_h, get_cpp
 
 
 def _str_mat_func_get_vector(method, name, objlabel):
     mat = types.matrix_types[0](getattr(method, name + '_expr'))
-    mtype = 'vector<double>'
+    mtype = 'vector<{0}>'.format(CONFIG_CPP['float'])
     get_h = '\n{0} {1}_vector() const;'.format(mtype, name)
     get_cpp = '\n{0} {1}::{2}_vector() const'.format(mtype, objlabel, name) + \
         ' {'
     dim = mat.shape[0]
-    get_cpp += indent("\nvector<double> v = vector<double>({0});".format(dim))
+    get_cpp += indent("\nvector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
     for i in range(dim):
         get_cpp += indent("\nv[{0}] = _{1}({0}, 0);".format(i, name))
     get_cpp += indent("\nreturn v;")+"\n}"
@@ -140,7 +140,7 @@ def _str_mat_func_get_vector(method, name, objlabel):
 
 
 def _str_mat_func_get_element(method, name, objlabel):
-    mtype = 'double'
+    mtype = CONFIG_CPP['float']
     get_h = '\n{0} {1}(unsigned int &) const;'.format(mtype, name)
     get_cpp = '\n{0} {1}::{2}(unsigned int & index) const'.format(mtype, objlabel, name) + \
         ' {'
@@ -213,7 +213,7 @@ def _append_funcs_data(method, files, objlabel):
 def _str_mat_func_init_data(method, name):
     mat = types.matrix_types[0](getattr(method, name + '_expr'))
     mat_dic = dict((((i, j), e) for i, j, e in mat.row_list()))
-    init_data = 'double {0}_data[] ='.format(name) + ' {'
+    init_data = '{1} {0}_data[] ='.format(name, CONFIG_CPP['float']) + ' {'
     crop = False
     for n in range(mat.shape[1]):
         for m in range(mat.shape[0]):
@@ -235,7 +235,7 @@ def _str_mat_func_init_data(method, name):
 
 def _str_scal_func_init_data(method, name):
     expr = getattr(method, name + '_expr')
-    init_data = 'double {0}_data = '.format(name)
+    init_data = '{1} {0}_data = '.format(name, CONFIG_CPP['float'])
     symbs = expr.free_symbols
     if any(symb in method.args for symb in symbs):
         init_data += "0.;"

@@ -10,6 +10,7 @@ import sympy
 import stopit
 from pyphs.config import TIMEOUT, SIMPLIFY
 from . import types
+from pyphs.misc.tools import geteval
 
 
 def sympify(expr):
@@ -234,6 +235,6 @@ def simplify_core(core):
                        list(core.symbs_names) +
                        ['M', '_dxH', 'observers'])
     for name in attrs_to_sub:
-        expr = getattr(core, name)
+        expr = geteval(core, name)
         if expr is not None:
             setattr(core, name, simplify(expr))

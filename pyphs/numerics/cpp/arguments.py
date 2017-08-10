@@ -10,6 +10,7 @@ from __future__ import absolute_import, division, print_function
 from .tools import indent, matrix_type
 from sympy.printing import ccode
 from pyphs.core.tools import types
+from pyphs.config import CONFIG_CPP
 from .tools import dereference, linesplit
 
 
@@ -40,28 +41,28 @@ def _append_args_pointers(method, files):
         '\n{0} args;'.format(matrix_type(len(method.args()), 1))
     for i, arg in enumerate(method.args()):
         files['h']['private'] += \
-            '\ndouble * {0} = & args({1}, 0);'.format(str(arg), i)
+            '\n{2} * {0} = & args({1}, 0);'.format(str(arg), i, CONFIG_CPP['float'])
 
 
 def _append_args_accessors_vector(method, files, objlabel):
     """
     add all accessors for arguments from method.args_names to the cpp files for
-    object with name objlabel. return vector<double>
-    """
-    title = linesplit + "\n// Acessors to Arguments, return vector<double>"
+    object with name objlabel. return vector<{0}>
+    """.format(CONFIG_CPP['float'])
+    title = linesplit + "\n// Acessors to Arguments, return vector<{0}>".format(CONFIG_CPP['float'])
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
         arg = getattr(method, name+'_expr')
         dim = len(arg)
         files['h']['public'] += \
-            '\nvector<double> {0}_vector() const;'.format(name)
+            '\nvector<{1}> {0}_vector() const;'.format(name, CONFIG_CPP['float'])
         files['cpp']['public'] += \
-            "\nvector<double> " + \
+            "\nvector<{0}> ".format(CONFIG_CPP['float']) + \
             "{0}::{1}".format(objlabel, name) + \
             "_vector() const {"
         files['cpp']['public'] += \
-            indent("\nvector<double> v = vector<double>({0});".format(dim))
+            indent("\nvector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
         for i, symb in enumerate(arg):
             files['cpp']['public'] += \
                 indent("\nv[{0}] = *{1};".format(i, str(symb)))
@@ -72,9 +73,9 @@ def _append_args_accessors_vector(method, files, objlabel):
 def _append_args_accessors_matrix(method, files, objlabel):
     """
     add all accessors for arguments from method.args_names to the cpp files for
-    object with name objlabel. return Matrix<double, n, m>
-    """
-    title = linesplit + "\n// Acessors to Arguments, return Matrix<double, n, m>"
+    object with name objlabel. return Matrix<{0}, n, m>
+    """.format(CONFIG_CPP['float'])
+    title = linesplit + "\n// Acessors to Arguments, return Matrix<{0}, n, m>".format(CONFIG_CPP['float'])
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
@@ -101,9 +102,9 @@ def _append_args_accessors_matrix(method, files, objlabel):
 def _append_args_mutators_matrix(method, files, objlabel):
     """
     add all mutators for arguments from method.args_names to the cpp files for
-    object with name objlabel. input is Matrix<double, n, m>
-    """
-    title = linesplit + "\n// Mutators for Arguments, type = Matrix<double, n, m>"
+    object with name objlabel. input is Matrix<{0}, n, m>
+    """.format(CONFIG_CPP['float'])
+    title = linesplit + "\n// Mutators for Arguments, type = Matrix<{0}, n, m>".format(CONFIG_CPP['float'])
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
@@ -114,10 +115,10 @@ def _append_args_mutators_matrix(method, files, objlabel):
         else:
             dim1 = 1
         files['h']['public'] += '\nvoid set_' + name + \
-            '(Matrix<double, {0}, {1}> &);'.format(dim0, dim1)
+            '(Matrix<{2}, {0}, {1}> &);'.format(dim0, dim1, CONFIG_CPP['float'])
         files['cpp']['public'] += \
             "\nvoid {0}::set_{1}".format(objlabel, name) + \
-            "(Matrix<double, {0}, {1}> & m)".format(dim0, dim1) + " {"
+            "(Matrix<{2}, {0}, {1}> & m)".format(dim0, dim1, CONFIG_CPP['float']) + " {"
         for i, symb in enumerate(arg):
             files['cpp']['public'] += \
                 '\n'+indent("*{0} = m({1}, 0);".format(str(symb), i))
@@ -127,17 +128,17 @@ def _append_args_mutators_matrix(method, files, objlabel):
 def _append_args_mutators_vectors(method, files, objlabel):
     """
     add all mutators for arguments from method.args_names to the cpp files for
-    object with name objlabel. input is vector<double>
-    """
-    title = linesplit + "\n// Mutators for Arguments, type = vector<double>"
+    object with name objlabel. input is vector<{0}>
+    """.format(CONFIG_CPP['float'])
+    title = linesplit + "\n// Mutators for Arguments, type = vector<{0}>".format(CONFIG_CPP['float'])
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
         arg = getattr(method, name+'_expr')
         files['h']['public'] += \
-            '\nvoid set_{0}(vector<double> &);'.format(name)
+            '\nvoid set_{0}(vector<{1}> &);'.format(name, CONFIG_CPP['float'])
         files['cpp']['public'] += \
-            "\nvoid {0}::set_{1}(vector<double> & v)".format(objlabel, name) +\
+            "\nvoid {0}::set_{1}(vector<{2}> & v)".format(objlabel, name, CONFIG_CPP['float']) +\
             " {"
         for i, symb in enumerate(arg):
             files['cpp']['public'] += "\n" + \
@@ -148,17 +149,17 @@ def _append_args_mutators_vectors(method, files, objlabel):
 def _append_args_mutators_elements(method, files, objlabel):
     """
     add all mutators for arguments from method.args_names to the cpp files for
-    object with name objlabel. input is double and int index.
-    """
-    title = linesplit + "\n// Mutators for Arguments, type is double with int index"
+    object with name objlabel. input is {0} and int index.
+    """.format(CONFIG_CPP['float'])
+    title = linesplit + "\n// Mutators for a single argument, types are {0} with int index".format(CONFIG_CPP['float'])
     files['h']['public'] += title
     files['cpp']['public'] += title
     for name in method.args_names:
         arg = getattr(method, name+'_expr')
         files['h']['public'] += \
-            '\nvoid set_{0}(double &, unsigned int &);'.format(name)
+            '\nvoid set_{0}({1} &, unsigned int &);'.format(name, CONFIG_CPP['float'])
         files['cpp']['public'] += \
-            "\nvoid {0}::set_{1}(double & value, unsigned int & index)".format(objlabel, name) +\
+            "\nvoid {0}::set_{1}({2} & value, unsigned int & index)".format(objlabel, name, CONFIG_CPP['float']) +\
             " {"
         for i, symb in enumerate(arg):
             if i == 0:
@@ -167,14 +168,14 @@ def _append_args_mutators_elements(method, files, objlabel):
                     "\n" + \
                     indent(indent("*{0} = value;".format(str(symb)))) + \
                     "\n" + \
-                    indent('}') 
+                    indent('}')
             else:
                 files['cpp']['public'] += "\n" + \
                     indent("else if(index == {0})".format(i)) + ' {' + \
                     "\n" + \
                     indent(indent("*{0} = value;".format(str(symb)))) + \
                     "\n" + \
-                    indent('}') 
+                    indent('}')
         files['cpp']['public'] += "\n}"
 
 ###############################################################################
@@ -191,7 +192,7 @@ def _append_args_data(method, files, objlabel):
 def _str_args_init_data(method, name):
     mat = types.matrix_types[0](method.inits[name])
     mat_dic = dict((((i, j), e) for i, j, e in mat.row_list()))
-    init_data = 'vector<double> {0}_data ='.format(name) + ' {'
+    init_data = 'vector<{1}> {0}_data ='.format(name, CONFIG_CPP['float']) + ' {'
     crop = False
     for n in range(mat.shape[1]):
         for m in range(mat.shape[0]):

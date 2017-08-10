@@ -112,8 +112,12 @@ def move_diss(core, indi, indf):
     core.w = [core.w[el] for el in new_indices]
     core.z = [core.z[el] for el in new_indices]
     moveCoreMcolnrow(core, core.dims.x()+indi, core.dims.x()+indf)
-    if not core.Zl.is_zero:
+    if (not core.Zl.is_zero and
+            indi < core.dims.wl() and
+            indf < core.dims.wl()):
         core.Zl = movesquarematrixcolnrow(core.Zl, indi, indf)
+    elif (not core.Zl.is_zero):
+        core.Zl = core.Zl[:0, :0]  # Set Matrix to zero
 
 
 def move_port(core, indi, indf):

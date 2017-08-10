@@ -11,6 +11,7 @@ from __future__ import absolute_import, division, print_function
 import sympy
 from ..tools import symbols, nicevarlabel
 from ..edges import DissipativeNonLinear
+from pyphs.config import GMIN
 
 
 class Triode(DissipativeNonLinear):
@@ -66,13 +67,17 @@ class Triode(DissipativeNonLinear):
 
         # dissipation funcions
 
+        def sign(expr):
+            return sympy.tanh(expr/GMIN)
+
+        def indicator(expr):
+            return (1. + sign(expr))/2.
+
         def igk():
             """
             dissipation function for edge 'e = (g->k)'
             """
-            exprp = (vgk-Va)/Rgk
-            exprm = 0.
-            expr = sympy.Piecewise((exprm, vgk <= Va), (exprp, True))
+            expr = indicator(vgk-Va)/Rgk
             return expr
 
         def ipk():
@@ -83,10 +88,11 @@ class Triode(DissipativeNonLinear):
             e2 = sympy.sqrt(Kvb + vpk**2)
             e3 = Kp*(mu**-1 + e1/e2)
             exprE = (vpk/Kp)*sympy.log(1 + sympy.exp(e3))
-            expr = exprE**Ex * (1 + sympy.sign(exprE)) / Kg
-            return expr
 
-        z = [ipk(), igk()]
+            expr = exprE**Ex * (1 + sign(exprE)) / Kg
+            return expr.evalf()
+
+        z = [ipk()+(vpk+vgk)*GMIN, igk()+(vpk+vgk)*GMIN]
 
         # edges data
         edge_pk_data = {'label': w[0],

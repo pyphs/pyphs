@@ -175,6 +175,9 @@ class Method(Core):
         return (self.x + self.dx() + self.w + self.u +
                 self.p + self.o())
 
+    def c(self):
+        return (self.x + self.u + self.p + self.o())
+
     def init_args(self):
         needed = self.update_actions_deps()
 

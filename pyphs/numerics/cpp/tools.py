@@ -7,6 +7,7 @@ Created on Mon Jun 27 16:01:13 2016
 
 from __future__ import absolute_import, division, print_function
 import os
+from pyphs.config import CONFIG_CPP
 
 linesplit = '\n//' + '='*74
 
@@ -40,7 +41,7 @@ def dereference(method):
 
 
 def matrix_type(dim1, dim2):
-    return "Matrix<double, " + str(dim1) + ', ' + str(dim2) + '>'
+    return "Matrix<{0},{1}, {2}>".format(CONFIG_CPP['float'], str(dim1), str(dim2))
 
 
 def indent(string):

@@ -81,7 +81,7 @@ def multirecursive(method, process, nin, nout, inits):
         string = '(' + string + ') ~ {2} <: {0}{1}'.format(p1, p2, prefix)
     return string
 
-def write_faust_dsp_for_linear_system(method, path=None, inputs=None, outputs=None, inits=None):
+def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None):
     if inits is None:
         inits = {}
     for name in ('x', 'dx', 'w', 'u', 'o', 'p'):

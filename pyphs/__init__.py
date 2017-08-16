@@ -4,6 +4,7 @@ from __future__ import print_function
 
 from .core.core import Core
 from .graphs.graph import Graph
+from .graphs import datum
 from .graphs.netlists import Netlist
 from .numerics import (Method, Numeric,
                        Evaluation, Operation)
@@ -26,7 +27,7 @@ __copyright__ = "Copyright 2012-2017"
 __version__ = '0.1.12'
 __author_email__ = 'antoine.falaize@gmail.fr'
 
-__all__ = ['Core', 'Netlist', 'Simulation', 'Graph',
+__all__ = ['Core', 'Netlist', 'Simulation', 'Graph', 'datum',
            'signalgenerator', 'Operation', 'Method',
            'Numeric', 'Evaluation',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',

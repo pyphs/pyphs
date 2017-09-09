@@ -9,6 +9,7 @@ from .tools import indent, main_path, SEP, make_executable, linesplit
 from .preamble import str_preamble
 from .cmake import cmake_write
 import os
+from pyphs.config import CONFIG_CPP
 
 
 def simu2cpp(simu):
@@ -159,7 +160,8 @@ def _str_initvecs(simu):
     for name in names:
         dim = len(getattr(simu.method, name))
         if dim > 0:
-            string += "\nvector<double> {0}Vector({1});".format(name, dim)
+            temp = name, dim, CONFIG_CPP['float']
+            string += "\nvector<{2}> {0}Vector({1});".format(*temp)
     names = simu.config['files']
     for name in names:
         val = simu.method.inits_evals[name]
@@ -168,7 +170,8 @@ def _str_initvecs(simu):
         else:
             dim = val.shape[0]
         if dim > 0:
-            string += "\nvector<double> {0}Vector({1});".format(name, dim)
+            temp = name, dim, CONFIG_CPP['float']
+            string += "\nvector<{2}> {0}Vector({1});".format(*temp)
     return indent(string)
 
 
@@ -256,10 +259,10 @@ def pbar(simu):
     string = '\n' + indent(indent(linesplit)) + """
         // Progressbar
         if({0})""".format(int(simu.config['pbar'])) + """{
-            
+
             // Progressbar position
             int position = barWidth * progress;
-            
+
             // Print Progressbar
             std::cout << "[";
             for (int i = 0; i < barWidth; ++i) {
@@ -294,7 +297,7 @@ def pbar(simu):
 def _str_process(simu, objlabel):
     string = '\n' + indent(linesplit) + """
     // Process
-    t.start();\n"""    
+    t.start();\n"""
     string += """
     for (unsigned int n = 0; n < nt; n++) {\n""" + _str_readdata(simu)
     if len(simu.method.u) > 0:
@@ -311,15 +314,15 @@ def _str_process(simu, objlabel):
     string += indent(indent(_gets(simu, objlabel)))
     string += pbar(simu)
     string += "\n    }\n"
-    if len(simu.method.u) > 0:        
-        string += '\n' + indent(linesplit + '\n// Close file for {} data'.format('u')) 
+    if len(simu.method.u) > 0:
+        string += '\n' + indent(linesplit + '\n// Close file for {} data'.format('u'))
         string += '\n    uFile.close();'
     if len(simu.method.p) > 0:
-        string += '\n' + indent(linesplit + '\n// Close file for {} data'.format('p')) 
+        string += '\n' + indent(linesplit + '\n// Close file for {} data'.format('p'))
         string += '\n    pFile.close();'
     string += indent(_close(simu))
 
-    string += '\n' + indent(linesplit + '\n// Print path to data') 
+    string += '\n' + indent(linesplit + '\n// Print path to data')
     string += """
     cout << endl;
     cout << "Data written at" << endl;

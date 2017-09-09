@@ -11,9 +11,10 @@ from __future__ import absolute_import, division, print_function
 import sympy as sp
 from pyphs.core.maths import matvecprod, jacobian, sumvecs
 from pyphs.core.tools import free_symbols, types
-from pyphs.config import CONFIG_METHOD, VERBOSE, EPS_DG, FS_SYMBS, FS
+from pyphs.config import CONFIG_METHOD, VERBOSE, EPS_DG, FS_SYMBS
 from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
 from pyphs import Core
+from ..cpp.method2cpp import method2cpp
 from ..tools import Operation
 from ._discrete_calculus import (discrete_gradient, gradient_theta,
                                  gradient_trapez)
@@ -22,8 +23,10 @@ import copy
 
 class Method(Core):
     """
-    Base class for pyphs numerical methods (defined symbolically).
+    Base class for pyphs symbolic numerical methods.
     """
+
+    to_cpp = method2cpp
 
     def __init__(self, core, config=None, label=None):
         """
@@ -172,6 +175,9 @@ class Method(Core):
         return (self.x + self.dx() + self.w + self.u +
                 self.p + self.o())
 
+    def c(self):
+        return (self.x + self.u + self.p + self.o())
+
     def init_args(self):
         needed = self.update_actions_deps()
 
@@ -244,15 +250,15 @@ class Method(Core):
     def to_numeric(self, inits=None, config=None):
         """
         Return a Numeric object for the evaluation of the PHS numerical method.
-        
+
         Parameter
         ---------
-        
+
         inits : dict or None (optional)
             Dictionary with variable name as keys and initialization values
             as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
-            
+
         Return
         ------
         numeric : pyphs.Numeric
@@ -260,19 +266,19 @@ class Method(Core):
         """
         from pyphs import Numeric
         return Numeric(self, inits=inits, config=config)
-    
+
     def to_simulation(self, config=None, inits=None):
         """
         Return a Numeric object for the evaluation of the PHS numerical method.
-        
+
         Parameter
         ---------
-        
+
         inits : dict or None (optional)
             Dictionary with variable name as keys and initialization values
             as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
-            
+
         Return
         ------
         numeric : pyphs.Simulation
@@ -280,7 +286,6 @@ class Method(Core):
         """
         from pyphs import Simulation
         return Simulation(self, inits=inits, config=config)
-    
 
 def set_structure(method):
     set_getters_I(method)

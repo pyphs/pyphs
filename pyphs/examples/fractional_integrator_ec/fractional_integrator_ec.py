@@ -9,16 +9,15 @@ Created on Sat May 13 17:00:14 2017
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import (netlist2core, Netlist, Graph)
-label = 'fractional_integrator_ec'
+from pyphs import Netlist
+
+label = 'fractional_intergrator_ec'
 
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 netlist_filename = path + os.sep + label + '.net'
 netlist = Netlist(netlist_filename)
-graph = Graph(netlist=netlist)
-core = netlist2core(netlist_filename)
-
+core = netlist.to_core()
 # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
 # !!! Very long simulation with numpy
 #

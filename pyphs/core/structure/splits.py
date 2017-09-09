@@ -59,6 +59,20 @@ Split core components into monovariate and multivariate components.
 # ============================== linear_nonlinear =========================== #
 def linear_nonlinear(core, criterion=None):
     """
+    1. Detect the number of linear storage component (_nxl) and of linear
+    dissipative components (_nwl).
+    2. Sort linear and then nonlinear components.
+    3. Build matrices Q and Zl.
+
+    Parameters
+    ----------
+
+    core : pyphs.Core
+        Core to analyse.
+
+    criterion: list of tuples of objects
+        criterion[0] = (hessH, argx)
+        criterion[1] = (jacz,  argz)
     """
     if criterion is None:
         args = (core.x + core.dx() + core.w, core.dx() + core.w)
@@ -85,9 +99,6 @@ def linear_nonlinear(core, criterion=None):
             # move the element at the end of states vector
             move_stor(core, nxl, core.dims.x()-1)
             hess = movefunc(hess, nxl, core.dims.x()-1)
-    # number of linear components
-    setattr(core.dims, '_xl', nxl)
-    setattr(core, 'Q', hessian(core.H, core.xl()))
 
     # split dissipative part
     nwl = 0
@@ -106,6 +117,11 @@ def linear_nonlinear(core, criterion=None):
             # move the element to end of dissipation variables vector
             move_diss(core, nwl, core.dims.w()-1)
             jacz = movefunc(jacz, nwl, core.dims.w()-1)
+
     # number of linear components
-    core.dims._wl = nwl
+    setattr(core.dims, '_xl', nxl)
+    core.setexpr('Q', hessian(core.H, core.xl()))
+
+    # number of linear components
+    setattr(core.dims, '_wl', nwl)
     core.setexpr('Zl', jacobian(core.zl(), core.wl()))

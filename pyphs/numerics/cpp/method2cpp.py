@@ -13,7 +13,7 @@ from .functions import append_funcs, append_funcs_constructors
 from .operations import append_ops
 from .tools import indent, SEP, formatPath
 from pyphs.config import EIGEN_PATH as config_eigen_path
-from pyphs.config import VERBOSE, CONFIG_NUMERIC
+from pyphs.config import VERBOSE, CONFIG_NUMERIC, CONFIG_CPP
 from pyphs.misc.tools import geteval
 from pyphs.core.tools import substitute, free_symbols
 from .tools import linesplit
@@ -27,7 +27,9 @@ standard_config = {'path': os.getcwd()}
 
 def init_eval(method, name):
 
-    if not name in method.inits_evals.keys():
+    if (name not in method.inits_evals.keys() or
+            method.inits_evals[name] is None):
+
         if VERBOSE >= 2:
             print('    Init value for {}'.format(name))
 
@@ -71,7 +73,42 @@ def eval_op(method, op):
 
 
 def method2cpp(method, objlabel=None, path=None, eigen_path=None,
-               inits=None, config=None):
+               inits=None, config=None, subs=None):
+    """
+    Writes all files that define the c++ class associated with a given
+    pyphs.Method.
+
+    Parameters
+    ----------
+
+    method : pyphs.Method
+        The object that will be converted to c++.
+
+
+    objlabel : string (default is None)
+        Name of the c++ class.
+
+
+    path : string (default is None)
+        Path to the folder where the source files will be generated.
+
+
+    eigen_path : string (default is None)
+        Path to the Eigen library (see also the configuration file at
+        pyphs.path_to_configuration_file).
+
+
+    inits : dictionary (default is None)
+        Dictionary of initialization values `{name: array}` with `name` in
+        ('x', 'dx', 'w', 'u', 'p', 'o') and `array` an vector of floats with
+        appropriate shape.
+
+    config : dictionary (default is None)
+        Dictionary of configuration options (see pyphs.config.CONFIG_NUMERIC).
+
+    subs : dictionary or list (default is None)
+        Dictionary or list of dictionaries of substitution parameters.
+    """
 
     if VERBOSE >= 1:
         print('Prepare method {} for C++ generation...'.format(method.label))
@@ -87,7 +124,7 @@ def method2cpp(method, objlabel=None, path=None, eigen_path=None,
 
     args_names = ['x', 'dx', 'w', 'u', 'p', 'o']
     for name in args_names:
-        if not name in inits.keys():
+        if name not in inits.keys() or inits[name] is None:
             inits[name] = list(sympy.zeros(len(geteval(method, name)), 1))
 
     method.inits = inits
@@ -182,7 +219,10 @@ def method2cpp(method, objlabel=None, path=None, eigen_path=None,
         _file.write(string)
         _file.close()
 
-    parameters_files = parameters(method.subs, objlabel)
+    if subs is None:
+        subs = method.subs
+
+    parameters_files = parameters(subs, objlabel)
     for e in exts:
         filename = path + os.sep + 'parameters.{0}'.format(e)
         if VERBOSE >= 1:
@@ -199,21 +239,24 @@ def method2cpp(method, objlabel=None, path=None, eigen_path=None,
 def append_parameters(method, files, objlabel):
     files['h']['private'] += linesplit + "\n// Sample Rate"
     files['h']['private'] += \
-        '\ndouble sampleRate = {};'.format(method.subscpp[method.fs])
-    files['h']['private'] += \
-        '\nconst double * F_S = & sampleRate;'
+        '\n{0} sampleRate = {1};'.format(CONFIG_CPP['float'], method.subscpp[method.fs])
+    files['h']['private'] += '\nconst {0} * F_S = & sampleRate;'.format(CONFIG_CPP['float'])
     files['h']['public'] += linesplit + "\n// Sample Rate"
-    files['h']['public'] += \
-        '\nvoid set_sampleRate(double &);'
+    files['h']['public'] += '\nvoid set_sampleRate(float &);'
+    files['h']['public'] += '\nvoid set_sampleRate(double &);'
     files['cpp']['public'] += linesplit + "\n// Sample Rate"
     files['cpp']['public'] += \
+        "\nvoid {0}::set_sampleRate(float & value)".format(objlabel) +\
+        " {\n" + indent('sampleRate = value;\ninit();') + '\n}'
+    files['cpp']['public'] += \
         "\nvoid {0}::set_sampleRate(double & value)".format(objlabel) +\
-        " {\n" + indent('sampleRate = value;') + '\n}'
+        " {\n" + indent('sampleRate = value;\ninit();') + '\n}'
     files['h']['private'] += linesplit + "\n// Parameters"
     files['h']['private'] += '\nconst unsigned int indexParameters = 0;  // See file "parameters.cpp".'
     for i, sub in enumerate(method.subs):
+        if not sub == method.fs:
             files['h']['private'] += \
-                '\nconst double * {0} = & subs[indexParameters][{1}];'.format(str(sub), i)
+                '\nconst {2} * {0} = & subs[indexParameters][{1}];'.format(str(sub), i, CONFIG_CPP['float'])
 
 
 def parameters(subs, objlabel):
@@ -254,7 +297,7 @@ def _append_subs(subs, files):
     npars = len(subs[0])
     if npars > 0:
         files['h'] += """\n
-extern const double subs[{0}][{1}];""".format(nsubs, npars)
+extern const {2} subs[{0}][{1}];""".format(nsubs, npars, CONFIG_CPP['float'])
         files['cpp'] += """\n
 // Correspondance is
 """
@@ -262,7 +305,7 @@ extern const double subs[{0}][{1}];""".format(nsubs, npars)
             if not str(k) == 'F_S':
                 files['cpp'] += '// subs[key][{}] = {}\n'.format(i, k)
         files['cpp'] += """\n
-const double subs[{}][{}]""".format(nsubs, npars) + """ = { """
+const {0} subs[{1}][{2}]""".format(CONFIG_CPP['float'], nsubs, npars) + """ = { """
         for i, s in enumerate(subs):
             files['cpp'] += indent(linesplit + '\n// key {}'.format(i))
             files['cpp'] += """

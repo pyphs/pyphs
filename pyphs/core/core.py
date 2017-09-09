@@ -1110,7 +1110,7 @@ add the connector'.format(i)
     # =========================================================================
 
     # SYMBOLS
-    @staticmethod
+    @ staticmethod
     def symbols(obj, *args, **kwargs):
         """
         sympy.symbols function with Core.assertions.

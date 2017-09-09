@@ -62,17 +62,17 @@ after this operation, and :code:`core.z()=core.znl()`.
     Dl = inverse(iDl)
     # build Mwlnl
     Mwlnl = types.matrix_types[0].hstack(core.Mwlxl(),
-                                core.Mwlxnl(),
-                                core.Mwlwnl(),
-                                core.Mwly(),
-                                core.Mwlcy())
+                                         core.Mwlxnl(),
+                                         core.Mwlwnl(),
+                                         core.Mwly(),
+                                         core.Mwlcy())
     # build Mnlwl
     Mnlwl = types.matrix_types[0].vstack(core.Mxlwl(),
-                                core.Mxnlwl(),
-                                core.Mwnlwl(),
-                                core.Mywl(),
-                                core.Mcywl())
-    # build Mnl
+                                         core.Mxnlwl(),
+                                         core.Mwnlwl(),
+                                         core.Mywl(),
+                                         core.Mcywl())
+            # build Mnl
     names = ('xl', 'xnl', 'wnl', 'y', 'cy')
     mat = []
     for namei in names:

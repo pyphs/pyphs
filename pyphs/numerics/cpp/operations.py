@@ -9,6 +9,7 @@ Created on Sat Dec 31 14:37:48 2016
 from __future__ import absolute_import, division, print_function
 
 from .tools import matrix_type, indent, linesplit
+from pyphs.config import CONFIG_CPP
 import numpy
 
 
@@ -70,7 +71,7 @@ def _str_mat_op_def(method, name, mat):
 
 
 def _str_scal_op_def(name):
-    return '\ndouble _{0};'.format(name)
+    return '\n{1} _{0};'.format(name, CONFIG_CPP['float'])
 
 
 ###############################################################################
@@ -146,12 +147,12 @@ def _str_mat_op_get_vector(method, name, objlabel):
     mat = method.inits_evals[name]
     if len(mat.shape) == 1:
         mat = numpy.matrix(mat).T
-    mtype = 'vector<double>'
+    mtype = 'vector<{0}>'.format(CONFIG_CPP['float'])
     get_h = '\n{0} {1}_vector() const;'.format(mtype, name)
     get_cpp = \
         '\n{0} {1}::{2}_vector() const'.format(mtype, objlabel, name) + ' {'
     dim = mat.shape[0]
-    get_cpp += indent("\nvector<double> v = vector<double>({0});".format(dim))
+    get_cpp += indent("\nvector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
     for i in range(dim):
         get_cpp += indent("\nv[{0}] = _{1}({0}, 0);".format(i, name))
     get_cpp += indent("\nreturn v;")+"\n}"
@@ -159,9 +160,9 @@ def _str_mat_op_get_vector(method, name, objlabel):
 
 
 def _str_scal_op_get(name, objlabel):
-    get_h = '\ndouble {0}() const;'.format(name)
+    get_h = '\n{1} {0}() const;'.format(name, CONFIG_CPP['float'])
     get_cpp = \
-        '\ndouble {0}::{1}() const'.format(objlabel, name)
+        '\n{2} {0}::{1}() const'.format(objlabel, name, CONFIG_CPP['float'])
     get_cpp += ' {\n' + indent('return _{0};'.format(name)) + '\n}'
     return get_h, get_cpp
 

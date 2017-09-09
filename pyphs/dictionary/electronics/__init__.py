@@ -1,13 +1,13 @@
 #
 
-from ._source import Source
+from ._bjt import Bjt
 from ._capacitor import Capacitor
-from ._resistor import Resistor
+from ._diode import Diode
 from ._inductor import Inductor
 from ._potentiometer import Potentiometer
-from ._diode import Diode
+from ._resistor import Resistor
+from ._source import Source
 from ._triode import Triode
-from ._bjt import Bjt
 
 
 __all__ = ['Source', 'Capacitor', 'Inductor', 'Resistor',

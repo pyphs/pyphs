@@ -1,0 +1,10 @@
+electronics.source in ('vin', '#'): type=voltage;
+electronics.source bias ('vbias', '#'): type=voltage;
+electronics.source out ('vout', '#'): type=current;
+electronics.triode T ('vk', 'vp', 'vg'): mu=88.; Ex=1.4; Kg=1060.; Kp=600.; Kvb=300.; Vcp=0.5; Va=0.33; Rgk=3e3;
+electronics.potentiometer Rg ('vin', 'vg', '#'): R=('potR', 220e3); alpha='potA'; expo=('potExp', 1);
+electronics.resistor Rk ('#', 'vk'): R=100e3;
+electronics.capacitor Ck ('#', 'vk'): C=1e-6;
+electronics.resistor Rp ('vp', 'vbias'): R=100e3;
+electronics.capacitor Co ('vp', 'vout'): C=22e-9;
+electronics.resistor Ro ('#', 'vout'): R=22e3;

@@ -20,9 +20,10 @@ netlist_filename = os.path.join(here, label + '.net')
 netlist = phs.Netlist(netlist_filename)
 core = netlist.to_core()
 
+
 #if __name__ == '__main__':
 #
-#    from pyphs import Simulation, signalgenerator
+#    from pyphs import signalgenerator
 #    import shutil
 #    import numpy as np
 #    import sympy as sp
@@ -63,9 +64,12 @@ core = netlist.to_core()
 #    # Run the simulation
 #    simu.process()
 #
+#    simu.data.plot([('x', 0)])
+#
 #    # Plots
 #    simu.data.plot_powerbal(mode='single')
 #    simu.data.plot(['u', 'x', 'y'])
+#
 #    # clean: delete folders 'data' and 'figures'
 #    shutil.rmtree(os.path.join(here, 'data'))
 #    shutil.rmtree(os.path.join(here, 'figures'))

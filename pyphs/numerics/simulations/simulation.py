@@ -7,7 +7,7 @@ Created on Tue May 24 11:20:26 2016
 
 from __future__ import absolute_import, division, print_function
 from pyphs.config import (CONFIG_METHOD, CONFIG_SIMULATION,
-                          CONFIG_NUMERIC, VERBOSE)
+                          CONFIG_NUMERIC, CONFIG_CPP, VERBOSE)
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.method2cpp import method2cpp, parameters
 from .. import Numeric
@@ -65,6 +65,7 @@ class Simulation:
         self.config = CONFIG_SIMULATION.copy()
         self.config.update(CONFIG_NUMERIC)
         self.config.update(CONFIG_METHOD)
+        self.config.update(CONFIG_CPP)
 
         # Update with method config
         self.config.update(self.method.config)
@@ -110,6 +111,12 @@ class Simulation:
     def config_simulation(self):
         dic = dict()
         for k in CONFIG_SIMULATION.keys():
+            dic[k] = self.config[k]
+        return dic
+
+    def config_cpp(self):
+        dic = dict()
+        for k in CONFIG_CPP.keys():
             dic[k] = self.config[k]
         return dic
 
@@ -179,7 +186,7 @@ class Simulation:
 
     inits : dict
         Dictionary with variable name as keys and initialization values
-        as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
+        as value. E.g: inits = {'x': [0., 0., 1.]} to initalize state x
         with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
         """
 

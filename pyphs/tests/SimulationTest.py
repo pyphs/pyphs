@@ -41,7 +41,7 @@ def simulation_rlc_with_split():
               'pbar': True,         # Display a progress bar
               'timer': True,        # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,}       # path to Eigen library
+              }  
 
     simu = Simulation(rlc.to_method(), config=config)
 
@@ -110,7 +110,6 @@ def simulation_rlc_without_split():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,       # path to Eigen library
               }
 
     simu = Simulation(rlc.to_method(), config=config)
@@ -144,7 +143,6 @@ def simulation_rlc_without_split_trapez():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,       # path to Eigen library
               }
 
     simu = Simulation(rlc.to_method(), config=config)
@@ -178,7 +176,6 @@ def simulation_rlc_without_split_theta():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,       # path to Eigen library
               }
 
     simu = Simulation(rlc.to_method(), config=config)
@@ -212,7 +209,6 @@ def simulation_rlc_plot():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,       # path to Eigen library
               }
 
     simu = Simulation(rlc.to_method(), config=config)
@@ -247,7 +243,6 @@ def simulation_nlcore_full():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,       # path to Eigen library
               }
 
 

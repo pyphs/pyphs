@@ -20,7 +20,7 @@ def jucelabel(objlabel):
 # -----------------------------------------------------------------------------
 
 def method2jucefx(method, objlabel=None, io=None, inits=None, params=None,
-                  subs=None, path=None, config=None, eigen_path=None):
+                  subs=None, path=None, config=None):
     """
     Generate the c++ sources for a pyphs.Method and a bunch of c++ snippets
     to use in a Juce FX audio plugin.
@@ -53,11 +53,6 @@ def method2jucefx(method, objlabel=None, io=None, inits=None, params=None,
 
     path : string (default is None)
         The source files will be generated in the folder 'path/PyPHS_Sources/'.
-
-
-    eigen_path : string (default is None)
-        Path to the Eigen library (see also the configuration file at
-        pyphs.path_to_configuration_file).
 
 
     inits : dictionary (default is None)
@@ -113,7 +108,7 @@ def method2jucefx(method, objlabel=None, io=None, inits=None, params=None,
     cppfolder = os.path.join(path, 'PyPHS_Sources')
     CONFIG_CPP['float'] = 'float'
     method.to_cpp(objlabel=objlabel, path=cppfolder,
-                  eigen_path=eigen_path, inits=inits,
+                  inits=inits,
                   config=config)
     snippetsfolder = os.path.join(path, 'PyPHS_Snippets')
     parametersFloats = audioParametersFloats(method, indices_inputs,

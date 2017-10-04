@@ -83,6 +83,7 @@ os.remove(path)
 def split_sp():
     netlist = NetlistThieleSmallNL()
     graph = Graph(netlist=netlist)
+    print(graph.edges(data=True))
     graph.split_sp()
     os.remove(path)
     return True

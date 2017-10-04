@@ -20,8 +20,8 @@ class GraphAnalysis:
         self._plot = plot
         self._verbose = verbose
         self.ndatum = 0
-        self.nodes = graph.nodes()
-        self.edges = graph.edges(data=True)
+        self.nodes = list(graph.nodes())
+        self.edges = list(graph.edges(data=True))
         # Compute incidence Matrix
         Gamma = networkx.linalg.incidence_matrix(graph, oriented=True)
         # we use the other convention for orientation encoding in Gamma
@@ -202,7 +202,7 @@ define it as effort-controlled (0 column in lambda).
         still_locked = True
         # for each row in block matrix extracted from the ic colums of Lambda
         for n, row in enumerate(self.Lambda[:, self.ic_edges].tolist()):
-            # only if the node is overdeterminated            
+            # only if the node is overdeterminated
             if sum(row) > 1:
                 col = self.Lambda[:, len(self.ec_edges)]  # first ic column
                 e = 0
@@ -210,7 +210,7 @@ define it as effort-controlled (0 column in lambda).
                        sum(col) != 1 and
                        e < len(self.ic_edges)):
                     e += 1
-                    col = self.Lambda[:, len(self.ec_edges) + e]                
+                    col = self.Lambda[:, len(self.ec_edges) + e]
                 if not e == (len(self.ic_edges) and not
                              self.get_edge_data(e, 'type')):
                     self.Lambda[n, len(self.ec_edges) + e] = 0

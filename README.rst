@@ -122,7 +122,7 @@ To run the included tests::
 Configuration
 --------------
 
-After installation, it is recommended to configure the `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ to your needs. Particularly, this is where the local path to the CMake binary and `Eigen library <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_ is specified.
+After installation, it is recommended to configure the `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ to your needs. Particularly, this is where the local path to the CMake binary.
 
 Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package, which can be recovered in a Python interpreter with
 

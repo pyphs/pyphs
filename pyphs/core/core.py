@@ -786,7 +786,7 @@ add the connector'.format(i)
             as authors arguments. Default is None.
         """
         if path is None:
-            path = 'core.tex'
+            path = '{}.tex'.format(self.label)
         if title is None:
             title = r'PyPHS Core'
         texdocument(core2tex(self), path, title=title,

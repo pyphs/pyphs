@@ -6,11 +6,17 @@ Created on Fri Mar  4 00:24:35 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs.config import authors, affiliations, special_chars
+from pyphs.config import authors as config_authors
+from pyphs.config import affiliations as config_affiliations
+from pyphs.config import special_chars
 from .tools import cr
 
 
-def docpreamble(title):
+def docpreamble(title, authors=None, affiliations=None):
+    if authors is None:
+        authors = config_authors
+    if affiliations is None:
+        affiliations = config_affiliations
     nb_authors = len(authors)
     nb_affiliations = len(affiliations)
     latex_affiliations = ""
@@ -84,7 +90,7 @@ affiliations: list of str or None
     of authors. Default is None.
     """
     str_tex = ""
-    str_tex += docpreamble(title)
+    str_tex += docpreamble(title, authors=authors, affiliations=affiliations)
     str_tex += cr(1) + r"\begin{document}" + cr(1)
     str_tex += r"\maketitle"
     str_tex += content

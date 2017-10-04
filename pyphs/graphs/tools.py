@@ -13,7 +13,7 @@ def serial_next(graph, n1, n2):
     assert not graph.is_directed()
     serial = [n1, n2]
     while graph.degree(serial[-1]) == 2 and not serial[-1] == datum:
-        l = graph.neighbors(serial[-1])
+        l = list(graph.neighbors(serial[-1]))
         l.pop(l.index(serial[-2]))
         serial.append(l[0])
     return serial
@@ -59,8 +59,8 @@ def parallel_edges(graph):
 
 def multi2single(graph):
     g = nx.Graph()
-    for u, v in graph.edges_iter():
-        g.add_edge(u, v)
+    for u, v, d in graph.edges(data=True):
+        g.add_edge(u, v, **d)
     return g
 
 

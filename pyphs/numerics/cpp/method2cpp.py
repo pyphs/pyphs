@@ -396,7 +396,7 @@ def append_destructuor(objlabel, files):
 
 ###############################################################################
 def include_Eigen(eigen_path):
-    return r'#include <{0}{1}Eigen{1}Dense>'.format(eigen_path, SEP)
+    return r'#include <Eigen/Dense>'
 
 
 def _str_includes(eigen_path):

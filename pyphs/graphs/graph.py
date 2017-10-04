@@ -221,19 +221,18 @@ port-Hamiltonian systems.
 
             for n in edges[1:3]:
                 if not n == datum:
-                    sg.add_edge(datum, n, attr_dict={'type': 'port',
-                                                     'ctrl': '?',
-                                                     'label': n})
+                    sg.add_edge(datum, n, **{'type': 'port',
+                                             'ctrl': '?',
+                                             'label': n})
             sg.add_edges_from(edges[0])
             sg._build_analysis()
             self._idser += 1
-            self.add_edge(edges[1], edges[2],
-                          attr_dict={'type': 'graph',
-                                     'ctrl': '?',
-                                     'label': 'serial{0}'.format(self._idser),
-                                     'graph': sg})
+            self.add_edge(edges[1], edges[2], **{'type': 'graph',
+                                                 'ctrl': '?',
+                                                 'label': 'serial{0}'.format(self._idser),
+                                                 'graph': sg})
             nodes_to_remove = list()
-            for degree in self.degree_iter():
+            for degree in self.degree():
                 if degree[1] == 0:
                     nodes_to_remove.append(degree[0])
 
@@ -257,14 +256,13 @@ port-Hamiltonian systems.
             self._idpar += 1
             for n in (n1, n2):
                 if not n == datum:
-                    pg.add_edge(datum, n, attr_dict={'type': 'port',
-                                                     'ctrl': '?',
-                                                     'label': n})
-            self.add_edge(n1, n2,
-                          attr_dict={'type': 'graph',
+                    pg.add_edge(datum, n, **{'type': 'port',
+                                             'ctrl': '?',
+                                             'label': n})
+            self.add_edge(n1, n2, **{'type': 'graph',
                                      'ctrl': '?',
                                      'label':
-                                         'parallel{0}'.format(self._idpar),
+                                     'parallel{0}'.format(self._idpar),
                                      'graph': pg})
         return bool(len(pe))
 

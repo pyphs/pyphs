@@ -14,6 +14,12 @@ from pyphs.config import GMIN
 from ..edges import DissipativeNonLinear
 
 
+default = {'Is': ('Is', 2e-09),
+           'R': ('Rd', 0.5),
+           'v0': ('v0', 26e-3),
+           'mu': ('mu', 1.7)}
+
+
 class Diode(DissipativeNonLinear):
     """
     Electronic nonlinear dissipative component: diode PN
@@ -42,7 +48,8 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         # parameters
         pars = ['Is', 'v0', 'R', 'mu']
         for par in pars:
-            assert par in kwargs.keys()
+            if par not in kwargs.keys():
+                kwargs[par] = default[par]
         Is, v0, R, mu, gmin = symbols(pars+['gmin'])
         # dissipation variable
         w = symbols(["w"+label, "w"+label+"_R", "w"+label+"_gmin"])
@@ -99,7 +106,4 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
     @staticmethod
     def metadata():
         return {'nodes': ('N1', 'N2'),
-                'arguments': {'Is': ('Is', 2e-09),
-                              'R': ('Rd', 0.5),
-                              'v0': ('v0', 26e-3),
-                              'mu': ('mu', 1.7)}}
+                'arguments': default}

@@ -134,12 +134,14 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True, label=None):
         else:
             raise TypeError('variable {} not understood'.format(var))
 
-    plotopts = {'unitx': 'time $t$ (s)',
-                'unity': labels,
-                'filelabel': filelabel}
-
     if len(datay) > 1:
+        plotopts = {'unitx': 'time $t$ (s)',
+                    'unity': labels,
+                    'filelabel': filelabel}
         multiplot(datax, datay, show=show, **plotopts)
 
     else:
+        plotopts = {'unitx': 'time $t$ (s)',
+                    'unity': labels[0],
+                    'filelabel': filelabel}
         singleplot(datax, datay, show=show, **plotopts)

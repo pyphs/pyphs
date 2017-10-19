@@ -133,6 +133,7 @@ class Simulation:
                                           config=self.config_numeric()))
         elif self.config['lang'] == 'c++':
             objlabel = self.method.label.upper()
+            self.work_path = os.getcwd()
             self.cpp_path = os.path.join(main_path(self), objlabel.lower())
             self.src_path = os.path.join(self.cpp_path, 'src')
             if not os.path.exists(self.src_path):
@@ -355,6 +356,9 @@ class Simulation:
 
         # execute the bash script
         self.system_call('./run.sh')
+
+        # go back to work folder
+        os.chdir(self.work_path)
 
     @staticmethod
     def system_call(cmd):

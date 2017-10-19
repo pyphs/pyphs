@@ -41,7 +41,7 @@ class TestNetlistInit(TestCase):
 
 class TestGraph(TestCase):
     def test_graph_build_from_netlist(self):
-        edges = graph.edges(data=True)
+        edges = list(graph.edges(data=True))
         edges.sort()
         res = []
         for l1, l2 in zip(target_edges, edges):

@@ -44,7 +44,6 @@ class Simulation:
               'timer': False,       # Display minimal timing infos
               'lang': 'c++',        # Language in {'python', 'c++'}
               'script': None,       # Call to C++ compiler and exec binary
-              'eigen': None,        # Path to Eigen C++ library
               # Options for the data reader. The data are read from index imin
               # to index imax, rendering one element out of the number decim
               'load': {'imin': None,
@@ -142,7 +141,7 @@ class Simulation:
             if not os.path.exists(self.cpp_path):
                 os.mkdir(self.src_path)
             method2cpp(self.method, objlabel=objlabel, path=self.src_path,
-                        eigen_path=self.config['eigen'], inits=self.inits,
+                        inits=self.inits,
                         config=self.config_numeric())
 
         self.data = Data(self.method, self.config)

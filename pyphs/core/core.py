@@ -786,7 +786,7 @@ add the connector'.format(i)
             as authors arguments. Default is None.
         """
         if path is None:
-            path = 'core.tex'
+            path = '{}.tex'.format(self.label)
         if title is None:
             title = r'PyPHS Core'
         texdocument(core2tex(self), path, title=title,
@@ -901,7 +901,7 @@ add the connector'.format(i)
 
     def to_simulation(self, config=None, inits=None):
         """
-        Return the PHS numerical method associated with the PHS core for the
+        Return a simulation associated with the PHS core for the
         specified configuration.
 
         Parameter
@@ -922,8 +922,8 @@ add the connector'.format(i)
         Output
         ------
 
-        method : pyphs.Method
-            The PHS numerical method associated with the PHS core for the
+        simulation : pyphs.Simulation
+            The simulation associated with the PHS core for the
             specified configuration.
 
         """

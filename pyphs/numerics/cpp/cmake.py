@@ -39,9 +39,6 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 # Project's name
 project(%s CXX)
 
-# Activate C++11
-set(CMAKE_CXX_STANDARD 11)
-
 # Set target to RELEASE
 set(CMAKE_BUILD_TYPE Release)
 
@@ -58,6 +55,12 @@ set(SOURCE_FILES
     src/parameters.h
     src/simu.cpp)
 
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 # Set executable with same name as the project
 add_executable(%s ${SOURCE_FILES})
-""" % (project_name, project_name)
+target_link_libraries (%s Eigen3::Eigen)
+
+# Activate C++11
+target_compile_features(%s PUBLIC cxx_std_11)
+""" % (project_name, project_name, project_name, project_name)

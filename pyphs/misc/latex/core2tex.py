@@ -7,17 +7,18 @@ Created on Fri Dec 30 14:53:41 2016
 """
 from __future__ import absolute_import, division, print_function
 
+from pyphs.misc.tools import geteval
 from .tools import obj2tex, cr
 from .latex import dic2table
 
 
 def symbol_names(core):
     sn = {}
-    for var in [r'x', r'w', r'u', r'y', r'p']:
-        for symb in getattr(core, var):
+    for var in [r'x', r'w', r'u', r'y', r'cy', r'p', r'o']:
+        for symb in geteval(core, var):
             string = str(symb)
             lab = string[1:]
-            sn.update({symb: var+r'_{\mathrm{'+lab+r'}}'})
+            sn.update({symb: string[0]+r'_{\mathrm{'+lab+r'}}'})
     return sn
 
 

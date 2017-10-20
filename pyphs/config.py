@@ -119,15 +119,6 @@ special_chars = ['#']
 # Data type for real numbers in {'float', 'double'}.
 FLOAT = 'double'
 
-# We use the Eigen C++ library for matrix algebra in the generated c++ code.
-# Inform below the path to your local eigen library, e.g. if you provide
-# EIGEN_PATH = r'/roor/path/subpath/eigen', PyPHS will include the following in
-# the generated 'core.h': r'/roor/path/subpath/eigen/Eigen/Dense'
-# !!! This should be a raw string (especially for Windows user) !!!!
-# Example MacOSX: r'/Users/afalaize/Developement/libs/eigen'
-# Example Linux: r'/home/afalaize/Documents/DEV/C++/bibliotheques/eigen'
-EIGEN_PATH = r'/Users/afalaize/Developement/libs/eigen'
-
 # We use the CMAKE build system to build the generated c++ sources. Below is
 # the path to cmake executable (as returned e.g. on UNIX by `which cmake`).
 # Example Linux: r'/usr/local/bin/cmake'
@@ -137,7 +128,6 @@ CMAKE_PATH = r'/usr/local/bin/cmake'
 
 
 CONFIG_CPP = {'float': FLOAT,
-              'eigen': EIGEN_PATH,
               'cmake': CMAKE_PATH
               }
 
@@ -173,7 +163,7 @@ SIMULATION_PATH = None
 
 # Simulation language in {'python', 'c++'}
 # Notice the 'c++' option need an appropriate configuration
-# of the EIGEN_PATH and SCRIPT above.
+# of SCRIPT above.
 LANGUAGE = 'python'
 
 # Names of the files to save in PATH/data.

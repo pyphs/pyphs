@@ -142,7 +142,7 @@ def moves(nedges):
 
 
 def draw_edges(graph, ax):
-    for nodes in multi2single(graph).edges_iter():
+    for nodes in multi2single(graph).edges():
         edges = getedges(graph, nodes)
         nedges = len(edges)
         for edge, move in zip(edges, moves(nedges)):
@@ -197,7 +197,7 @@ def plot_analysis(graph, analysis, show=True):
         [analysis.get_edges_data('label')[i]
          for i in analysis.ec_edges]
 
-    for nodes in multi2single(graph).edges_iter():
+    for nodes in multi2single(graph).edges():
         edges_colors = list()
         edges_copy = list()
         edges_draw = list()
@@ -215,7 +215,7 @@ def plot_analysis(graph, analysis, show=True):
                     edges_copy.append(edge)
                     edges_colors.append('storage')
                 elif sum(col) == 1:
-                    inode2 = graph.nodes()[list(col).index(1)]
+                    inode2 = list(graph.nodes())[list(col).index(1)]
                     inode1 = edge[0] if edge[1] == inode2 else edge[1]
                     edges_copy.append((inode1, inode2, edge[-1]))
                     edges_colors.append('dissipative')

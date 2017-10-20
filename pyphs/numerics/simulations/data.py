@@ -59,9 +59,9 @@ plot_powerbal:
         self.method = method
 
         self._build_generators()
-        
+
     def subs(self):
-        d = self.method.subs.copy() 
+        d = self.method.subs.copy()
         d[self.method.fs] = self.config['fs']
         return d
 
@@ -317,15 +317,18 @@ ps_generator: generator
                         self.y(**options)):
             yield scalar_product(u, y)
 
-    def o(self, imin=None, imax=None, decim=None):
+    def o(self, ind=None, imin=None, imax=None, decim=None):
         """
-ps
+o
 ==
 
-Generator of discrete sources power values.
+Generator of values for observers.
 
 Parameters
 -----------
+ind: int or None, optional
+    Index of the observer. If None, values for every observers are
+    returned (default).
 imin: int or None, optional
     Starting index. If None, imin=0 (default).
 imax: int or None,
@@ -358,8 +361,12 @@ ps_generator: generator
         obs_args = lambdify(self.method.args()[:index], obs_args,
                             theano=self.config['theano'])
 
-        for arg in self.args(**options):
-            yield obs(*obs_args(*arg))
+        if ind is None:
+            for arg in self.args(**options):
+                yield obs(*obs_args(*arg))
+        else:
+            for arg in self.args(**options):
+                yield obs(*obs_args(*arg))[ind]
 
 
     def args(self, ind=None, imin=None, imax=None, decim=None):

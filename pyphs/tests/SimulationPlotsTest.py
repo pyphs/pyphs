@@ -32,7 +32,6 @@ def plot_power_balance_rlc_with_split():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,       # path to Eigen library
               }
 
     # retrieve the pyphs.Core of a linear RLC from the examples
@@ -72,7 +71,6 @@ def plot_power_balance_nlcore_with_split():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,       # path to Eigen library
               }
 
 
@@ -112,7 +110,6 @@ def plot_rlc_with_split():
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              'eigen': None,       # path to Eigen library
               }
 
     # retrieve the pyphs.Core of a linear RLC from the examples

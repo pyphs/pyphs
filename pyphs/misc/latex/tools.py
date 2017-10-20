@@ -9,6 +9,7 @@ from sympy.printing import latex
 from pyphs.config import fold_short_frac, mat_delim, mat_str, mul_symbol
 from pyphs.misc.tools import geteval
 from pyphs.core.tools import types
+from sympy import simplify
 
 
 def nice_label(core, tup):
@@ -62,7 +63,7 @@ def obj2tex(obj, label, description, symbol_names, toMatrix=True):
     ------
     string
     """
-
+    obj = simplify(obj)
     if toMatrix:
         obj = types.matrix_types[0](obj)
 

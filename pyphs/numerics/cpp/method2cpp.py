@@ -12,7 +12,6 @@ from .arguments import append_args
 from .functions import append_funcs, append_funcs_constructors
 from .operations import append_ops
 from .tools import indent, SEP, formatPath
-from pyphs.config import EIGEN_PATH as config_eigen_path
 from pyphs.config import VERBOSE, CONFIG_NUMERIC, CONFIG_CPP
 from pyphs.misc.tools import geteval
 from pyphs.core.tools import substitute, free_symbols
@@ -72,7 +71,7 @@ def eval_op(method, op):
     return evaluate(args)
 
 
-def method2cpp(method, objlabel=None, path=None, eigen_path=None,
+def method2cpp(method, objlabel=None, path=None,
                inits=None, config=None, subs=None):
     """
     Writes all files that define the c++ class associated with a given
@@ -91,11 +90,6 @@ def method2cpp(method, objlabel=None, path=None, eigen_path=None,
 
     path : string (default is None)
         Path to the folder where the source files will be generated.
-
-
-    eigen_path : string (default is None)
-        Path to the Eigen library (see also the configuration file at
-        pyphs.path_to_configuration_file).
 
 
     inits : dictionary (default is None)
@@ -154,8 +148,6 @@ def method2cpp(method, objlabel=None, path=None, eigen_path=None,
     if not os.path.exists(path):
         os.makedirs(path)
 
-    if eigen_path is None:
-        eigen_path = config_eigen_path
     files = {}
     exts = ['cpp', 'h']
 
@@ -169,7 +161,7 @@ def method2cpp(method, objlabel=None, path=None, eigen_path=None,
     files['h']['starting'] += '\n'
     files['h']['starting'] += "\n#ifndef {0}_H".format(objlabel)
     files['h']['starting'] += "\n#define {0}_H".format(objlabel)
-    h, cpp = _str_includes(formatPath(eigen_path))
+    h, cpp = _str_includes()
     files['h']['starting'] += h
     files['cpp']['starting'] += cpp
     files['h']['starting'] += _str_namespaces()
@@ -395,20 +387,15 @@ def append_destructuor(objlabel, files):
 
 
 ###############################################################################
-def include_Eigen(eigen_path):
-    return r'#include <{0}{1}Eigen{1}Dense>'.format(eigen_path, SEP)
-
-
-def _str_includes(eigen_path):
+def _str_includes():
     string_c = '\n#include "core.h"'
     string_h = """\n
-#include "iostream"
-#include "vector"
-#include "math.h"
-
-# include "parameters.h"\n
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <Eigen/Dense>
+#include "parameters.h"\n
 """
-    string_h += include_Eigen(eigen_path)
     return string_h, string_c
 
 

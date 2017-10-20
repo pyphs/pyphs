@@ -43,7 +43,12 @@ def init_eval(method, name):
             obj = copy.copy(geteval(method, name))
             sobj = substitute(obj, method.subscpp)
             while not len(free_symbols(sobj)) == 0:
+                sobjpre = copy.copy(sobj)
                 sobj = substitute(sobj, method.subscpp)
+                if sobj == sobjpre:
+                    freesymbs = free_symbols(sobj)
+                    text = 'Missing substitution symbols: {}'.format(freesymbs)
+                    raise AttributeError(text)
             if not isinstance(sobj, (float, list)):
                 sobj = numpy.asarray(sobj.tolist(), dtype=float)
             else:

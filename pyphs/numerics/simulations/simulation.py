@@ -136,9 +136,9 @@ class Simulation:
             self.work_path = os.getcwd()
             self.cpp_path = os.path.join(main_path(self), objlabel.lower())
             self.src_path = os.path.join(self.cpp_path, 'src')
-            if not os.path.exists(self.src_path):
-                os.mkdir(self.cpp_path)
             if not os.path.exists(self.cpp_path):
+                os.mkdir(self.cpp_path)
+            if not os.path.exists(self.src_path):
                 os.mkdir(self.src_path)
             method2cpp(self.method, objlabel=objlabel, path=self.src_path,
                         inits=self.inits,

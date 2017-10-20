@@ -280,6 +280,8 @@ class Simulation:
         """
         if subs is None:
             subs = self.method.subs
+        else:
+            self.method.subs = subs
         path = self.src_path
         parameters_files = parameters(subs, 'rhodes'.upper())
         for e in ['cpp', 'h']:

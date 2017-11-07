@@ -31,8 +31,12 @@ def faust_vector(name, expr, argsnames, subs, method):
     code = str()
     for i, e in enumerate(expr):
         code += faust_expr(name+str(i), argsnames, e, subs)
-    code += '\n' + name + " = " + joinListArgsNames
-    code += " <: " + ''.join([name+str(i)+', ' for i in range(len(expr))])[:-2]
+    code += '\n' + name + " = "
+    if len(expr) > 0:
+        code += joinListArgsNames
+        code += " <: " + ''.join([name+str(i)+', ' for i in range(len(expr))])[:-2]
+    else:
+        code += '0. : ! '
     code += ';'
     return code
 

@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 from pyphs.config import authors as config_authors
 from pyphs.config import affiliations as config_affiliations
 from pyphs.config import special_chars
-from .tools import cr
+from .tools import cr, sympy2latex
 
 
 def docpreamble(title, authors=None, affiliations=None):
@@ -106,23 +106,33 @@ affiliations: list of str or None
     return str_tex
 
 
-def dic2table(labels, dic):
+def dic2table(labels, dic, sn, centering=True):
     """
     Return a latex table with two columns. Columns labels are labels[0] and \
 labels[1], then each line is made of columns key and dic[key] for each dic.keys
     """
     l_keys, l_vals = labels
     string = ""
-    string += r"\begin{center}" + cr(1)
+    if centering:
+        string += r"\begin{center}" + cr(1)
     string += r"\begin{tabular}{ll}" + cr(1)
     string += r"\hline" + cr(0)
     string += l_keys + r" & " + l_vals + cr(0) + r"\\ \hline" + cr(0)
     for k in dic.keys():
         v = dic[k]
-        string += str(k) + r" :& " + str(v) + cr(0) + r"\\" + cr(0)
+        strk = str(k)
+        label = strk[0]
+        if len(strk[1:]) > 0:
+            label += r'_{\mathrm{'+strk[1:]+r'}}'
+        if not isinstance(v, (int, float, str)):
+            value = sympy2latex(v, sn)
+        else:
+            value = str(v)
+        string += r"$" + label + r"$ & " + value + cr(0) + r"\\" + cr(0)
     string += r"\hline" + cr(0)
     string += r"\end{tabular}" + cr(1)
-    string += r"\end{center}"
+    if centering:
+        string += r"\end{center}"
     return string
 
 

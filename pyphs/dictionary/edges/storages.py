@@ -39,7 +39,9 @@ class StorageLinear(Graph):
         edge = (nodes[0], nodes[1], edge_data_dic)
         self.add_edges_from([edge])
         self.core.subs.update(coeff.sub)
-        if len(coeff.sub) == 0:
+        if len(coeff.sub) == 0 and kwargs['inv_coeff']:
+            self.core.p  += [coeff.symb**-1, ]
+        elif len(coeff.sub) == 0:
             self.core.p  += [coeff.symb, ]
 
 

@@ -59,10 +59,12 @@ class DissipativeLinear(Graph):
         edge = (nodes[0], nodes[1], edge_data_dic)
         self.add_edges_from([edge])
         self.core.subs.update(coeff.sub)
+        if len(coeff.sub) == 0:
+            self.core.p  += [coeff.symb, ]
 
 
 ###############################################################
-# LINEAR
+# NON LINEAR
 ###############################################################
 
 class DissipativeNonLinear(Graph):

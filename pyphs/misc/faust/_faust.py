@@ -11,12 +11,15 @@ from __future__ import absolute_import, division, print_function
 from pyphs.core.tools import free_symbols
 from sympy.printing import ccode
 import sympy as sp
+from pyphs.core.tools import simplify
+import time
 
 def faust_expr(name, args, expr, subs):
     previous_expr = sp.sympify(0.)
-    while previous_expr != expr:
+    start = time.time()
+    while previous_expr != expr and time.time()-start<10:
         previous_expr = expr
-        expr = previous_expr.simplify()
+        expr = simplify(previous_expr)
     code = '\n' + name + " = \(" + ('{}, '*len(args)).format(*map(str, args))[:-2] + ').('
     code += ccode(expr)
     code += ');'
@@ -85,7 +88,9 @@ def multirecursive(method, process, nin, nout, inits):
         string = '(' + string + ') ~ {2} <: {0}{1}'.format(p1, p2, prefix)
     return string
 
-def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None):
+def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
+                   nIt=3):
+    print('FAUST init...')
     if inits is None:
         inits = {}
     for name in ('x', 'dx', 'w', 'u', 'o', 'p'):
@@ -94,6 +99,8 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None):
     if path is None:
         path = method.label + '.dsp'
     argsnames = ['dx', 'w', 'x', 'o', 'u']
+
+    print('FAUST parameters...')
     code = '// Faust code associated with the PyPHS Method {0}'.format(method.label)
     code += '\n'
     code += '\nimport("stdfaust.lib");'
@@ -113,6 +120,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None):
     for p in method.p:
         code += '\n{0} = hslider("{0}", 0.5, 0., 1., 0.01);'.format(str(p))
     code += '\n'
+    print('FAUST signals...')
     code += '\n// Pass'
     def code_pass(name):
         a = geteval(method, name)
@@ -151,6 +159,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None):
                 pass
         if cr:
             code += '\n'
+    print('FAUST arguments...')
     code += '\n// Arguments'
     code += '\nargs = x, w, x, o, u;\n'
     code += '\nargsT = xT, wT, xT, oT, uT;\n'
@@ -181,8 +190,14 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None):
     code += '\n'
     code += '\n// UpdateNonLinear'
     code += '\nUpdateNonLinear = args <: ((vl, vnlT, cT), UpdateVnl, (vT, c)) : (vlvnl2v, c) : args;'
-    udNL = ('UpdateNonLinear:'*3)[:-1]
-    code += '\n{0}Main = {1}:UpdateLinear <: (UpdateX, y) ;'.format(method.label, udNL)
+    udNL = 'UpdateNonLinear:'*nIt if len(method.vnl()) > 0 else ''
+    udL = 'UpdateLinear' if len(method.vl()) > 0 else ''
+    udXY = '<: (UpdateX, y)' if len(method.x) > 0 else '<: y'
+    code += '\n'
+    code += '\n// Main'
+    code += '\n{0}Main = {1} {2} {3} ;'.format(method.label, udNL, udL, udXY)
+    code += '\n'
+    code += '\n// Recursion'
     code += '\n{0}Recursion = '.format(method.label)
     nin = len(method.x)*2 + len(method.w) + len(method.observers)
     nout = nin + len(method.y)
@@ -228,11 +243,6 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None):
     cout = cout[:-2] + ')'
     code += '\n{0}InputToOutput = (_,_):{1}:{0}Recursion:{2};'.format(method.label, cin, cout)
 
-    with open(path, 'w') as f:
-        for i, l in enumerate(code.splitlines()):
-            if i > 0:
-                f.write('\n')
-            f.write(l)
     with open(path, 'w') as f:
         for i, l in enumerate(code.splitlines()):
             if i > 0:

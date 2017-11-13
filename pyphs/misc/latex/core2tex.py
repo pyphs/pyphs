@@ -8,181 +8,202 @@ Created on Fri Dec 30 14:53:41 2016
 from __future__ import absolute_import, division, print_function
 
 from pyphs.misc.tools import geteval
-from .tools import obj2tex, cr
+from .tools import obj2tex, cr, symbol_names
 from .latex import dic2table
-
-
-def symbol_names(core):
-    sn = {}
-    for var in [r'x', r'w', r'u', r'y', r'cy', r'p', r'o']:
-        for symb in geteval(core, var):
-            string = str(symb)
-            lab = string[1:]
-            sn.update({symb: string[0]+r'_{\mathrm{'+lab+r'}}'})
-    return sn
-
+from .latexcore import LatexCore
 
 def core2tex(core):
-    string = r""
-    string += coredims2tex(core)
-    string += coresyms2tex(core)
-    string += coreexprs2tex(core)
-    string += corepars2tex(core)
-    string += corestruc2tex(core)
+    latexcore = LatexCore(core)
+    string = coredims2tex(latexcore)
+    string += coresyms2tex(latexcore)
+    string += coreexprs2tex(latexcore)
+    string += corestruc2tex(latexcore)
     return string
 
-
-def coredims2tex(core):
+def coredims2tex(latexcore):
     """
     latexize dimensions nx, nx, ny and np
     """
-    sm = symbol_names(core)
     str_dimensions = cr(2)
-    str_dimensions += r"\section{System dimensions}"
-    for dim in [r'x', r'w', r'y', r'p']:
-        val = getattr(core.dims, dim)()
-        label = r"n_\mathbf{"+dim+r"}"
-        desc = r"$\dim(\mathbf{"+dim+r"})=$"
-        str_dimensions += obj2tex(val, label, desc, sm, toMatrix=False)
+    str_dimensions += r""""\section{Core dimensions}
+
+The system
+
+"""
+    for key in latexcore.dims.keys():
+        val = latexcore.dims[key]
+        if (len(key) > 1 and key.endswith('l')) or (len(key) > 2 and key.endswith('nl')):
+            label = r"n_\mathbf{"+key[0] + '_' + key[1:] +r"}"
+            desc = r"$\dim(\mathbf{"+key[0] + '_' + key[1:]+r"})=$"
+        else:
+            label = r"n_\mathbf{"+key+r"}"
+            desc = r"$\dim(\mathbf{"+key+r"})=$"
+        str_dimensions += obj2tex(val, label, desc, latexcore.sn,
+                                  toMatrix=False)
+        str_dimensions += r' \par '
     return str_dimensions
 
-
-def coresyms2tex(core):
-    sm = symbol_names(core)
+def coresyms2tex(latexcore):
     str_variables = cr(2)
-    str_variables += r"\section{System variables}"
-    if core.dims.x() > 0:
-        str_variables += obj2tex(core.x, r'\mathbf{x}',
-                                 'State variable', sm)
-    if core.dims.w() > 0:
-        str_variables += obj2tex(core.w, r'\mathbf{w}',
-                                 'Dissipation variable', sm)
-    if core.dims.y() > 0:
-        str_variables += obj2tex(core.u, r'\mathbf{u}',
-                                 'Input', sm)
-        str_variables += obj2tex(core.y, r'\mathbf{y}',
-                                 'Output', sm)
+    str_variables += r"""\section{Core quantities}""" + cr(2)
+    str_variables += r"\subsection{Core constants}" + cr(1)  + latexcore.subs + cr(1) + r"""
+
+\subsection{Core variables}
+
+The system variables are:
+""" + cr(0) + r"""
+\begin{itemize}
+""" + cr(0) + r"""
+\item the \emph{state} $\mathbf x: t\mapsto \mathbf x(t)\in \mathbb R ^{%i}$ associated with the system's energy storage:
+""" % latexcore.dims['x'] + cr(0) + r"""
+$""" + latexcore.x + r"""$
+""" + cr(0) + r"""
+\item the \emph{state increment} $\mathbf{d_x}: t\mapsto \mathbf{d_x}(t)\in \mathbb R ^{%i}$ that represents the numerical increment during a single simulation time-step:
+""" % latexcore.dims['x'] + cr(0) + r"""
+$""" + latexcore.dx + r"""$
+""" + cr(0) + r"""
+\item the \emph{dissipation variable} $\mathbf w: t\mapsto \mathbf w(t)\in \mathbb R^{%i}$ associated with the system's energy dissipation:
+""" % latexcore.dims['w'] + cr(0) + r"""
+$""" + latexcore.w + r"""$
+""" + cr(0) + r"""
+\end{itemize}
+""" + cr(0) + r"""
+
+\subsection{Core inputs}
+
+The input (\textit{i.e.} controlled quantities) are:
+""" + cr(0) + r"""
+\begin{itemize}
+""" + cr(0) + r"""
+\item the \emph{input variable} $\mathbf u: t\mapsto \mathbf u(t)\in \mathbb R^{%i}$ associated with the system's energy supply (sources):
+""" % latexcore.dims['y'] + cr(0) + r"""
+$""" + latexcore.u + r"""$
+""" + cr(0) + r"""
+\item the \emph{parameters} $\mathbf p: t\mapsto \mathbf p(t)\in \mathbb R^{%i}$ associated with variable system parameters:
+""" % latexcore.dims['p'] + cr(0) + r"""
+$""" + latexcore.p + r"""$
+""" + cr(0) + r"""
+\end{itemize}
+""" + cr(0) + r"""
+
+\subsection{Core outputs}
+
+The output (\textit{i.e.} observed quantities) are:
+""" + cr(0) + r"""
+\begin{itemize}
+""" + cr(0) + r"""
+\item the \emph{output variable} ${\mathbf y: t\mapsto \mathbf y(t)\in \mathbb R^{%i}}$ associated with the system's energy supply (sources):
+""" % latexcore.dims['y'] + cr(0) + r"""
+$""" + latexcore.y + r"""$
+""" + cr(0) + r"""
+\item the \emph{observer} ${\mathbf o: t\mapsto \mathbf o(t)\in \mathbb R^{%i}}$ associated with functions of the above quantities:
+""" % latexcore.dims['o'] + cr(0) + r"""
+$""" + latexcore.o + r"""$
+
+\end{itemize}
+""" + cr(0)
+    if len(latexcore.o_elements) > 0:
+        str_variables += r"""
+The observed quantities are defined as follows:
+"""
+        for t in latexcore.o_elements:
+            str_variables += r"$" + t + r"""$
+""" + cr(1)
+    str_variables += r"""
+\subsection{Core connectors}
+
+The connected quantities are:
+""" + cr(0) + r"""
+\begin{itemize}
+""" + cr(0) + r"""
+\item the \emph{connected inputs} ${\mathbf u_c: t\mapsto \mathbf u_c(t)\in \mathbb R^{%i}}$
+""" % latexcore.dims['cy'] + cr(0) + r"""
+$""" + latexcore.cu + r"""$
+""" + cr(0) + r"""
+\item the \emph{connected outputs} ${\mathbf y_c: t\mapsto \mathbf y_c(t)\in \mathbb R^{%i}}$
+""" % latexcore.dims['cy'] + cr(0) + r"""
+$""" + latexcore.cy + r"""$
+
+\end{itemize}
+""" + cr(1)
+
     return str_variables
 
-
-def coreexprs2tex(core):
-    sm = symbol_names(core)
+def coreexprs2tex(latexcore):
     str_relations = cr(2)
-    str_relations += r"\section{Constitutive relations}"
-    if core.dims.x() > 0:
-        str_relations += obj2tex(core.H, r'\mathtt{H}(\mathbf{x})',
-                                 'Hamiltonian', sm,
-                                 toMatrix=False)
-        str_relations += obj2tex(core.dxH(),
-                                 r'\nabla \mathtt{H}(\mathbf{x})',
-                                 'Hamiltonian gradient', sm)
-    if core.dims.w() > 0:
-        str_relations += obj2tex(core.z, r'\mathbf{z}(\mathbf{w})',
-                                 'Dissipation function', sm)
-        str_relations += obj2tex(core.jacz(),
-                                 r'\mathcal{J}_{\mathbf{z}}(\mathbf{w})',
-                                 'Jacobian of dissipation function', sm)
+    str_relations += r"""\section{Core constitutive relations}
+
+\subsection{Core storage function}
+
+The system's storage function is:
+""" + cr(0) + r"""
+$""" + latexcore.H + r"""$
+""" + cr(0) + r"""
+The gradient of the system's storage function is:
+""" + cr(0) + r"""
+$""" + latexcore.dxH + r"""$
+""" + cr(0)
+    if len(latexcore.dxH_elements) > 0:
+        str_relations += r"""The elements of the storage function's gradient are given below:
+"""
+        for t in latexcore.dxH_elements:
+            str_relations += r"$" + t + r"""$
+    """ + cr(0)
+        str_relations += r"""
+The Hessian matrix of the storage function is:
+""" + cr(0) + """
+$""" + latexcore.hessH + r"""$
+""" + cr(2)
+    str_relations += r"""
+The Hessian matrix of the linear part of the storage function is:
+""" + cr(0) + """
+$""" + latexcore.Q + r"""$
+""" + cr(2)
+    str_relations += r"""
+
+\subsection{Core dissipation function}
+
+The dissipative function is:
+""" + cr(0) + """
+$""" + latexcore.z + r"""$
+""" + cr(2)
+    if len(latexcore.z_elements) > 0:
+        str_relations += r"""
+The elements of the dissipation function are given below:
+"""
+        for t in latexcore.z_elements:
+            str_relations += r"$" + t + r"""$
+""" + cr(1)
+        str_relations += r"""
+The jacobian matrix of the dissipation function is:
+""" + cr(1) + """
+$""" + latexcore.jacz + r"""$
+""" + cr(2)
+        str_relations += r"""
+The jacobian matrix of the linear part of the dissipation function is:
+""" + cr(0) + """
+$""" + latexcore.Zl + r"""$
+""" + cr(2)
     return str_relations
 
 
-def corepars2tex(core):
-    sm = symbol_names(core)
-    str_parameters = ""
-    if len(core.subs) > 0:
-        str_parameters += cr(2)
-        str_parameters += r"\section{System parameters}" + cr(2)
-        str_parameters += r"\subsection{Constant}" + cr(1)
-        str_parameters += dic2table(['parameter', 'value (SI)'], core.subs)
-    if core.dims.p() > 0:
-        str_parameters += cr(2)
-        str_parameters += r"\subsection{Controled}" + cr(1)
-        str_parameters += obj2tex(core.p, r'\mathbf{p}',
-                                  'Control parameters', sm)
-    return str_parameters
-
-
-def corestruc2tex(core, which='all'):
+def corestruc2tex(latexcore, which='all'):
     """
     return latex code for system structure matrices.
     """
     str_structure = cr(1)
-    str_structure += r"\section{System structure}"
-    if which in ['all', 'M']:
-        str_structure += corestrucM2tex(core)
-    if which in ['all', 'J']:
-        str_structure += corestrucJ2tex(core)
-    if which in ['all', 'R']:
-        str_structure += corestrucR2tex(core)
-    return str_structure
+    str_structure = r"""
+\section{Core structure}
 
+""" + latexcore.phs + cr(1) + latexcore.matrices + cr(1)
 
-def corestrucM2tex(core):
-    """
-    return latex code for matrix M.
-    """
-    sm = symbol_names(core)
-    str_structure = cr(1)
-    str_structure += obj2tex(core.M, r"\mathbf{M}", "", sm)
-    if core.dims.x() > 0:
-        str_structure += obj2tex(core.Mxx(), r"\mathbf{M_{xx}}", "", sm)
-        if core.dims.w() > 0:
-            str_structure += obj2tex(core.Mxw(), r"\mathbf{M_{xw}}", "", sm)
-        if core.dims.y() > 0:
-            str_structure += obj2tex(core.Mxy(), r"\mathbf{M_{xy}}", "", sm)
-    if core.dims.w() > 0:
-        if core.dims.x() > 0:
-            str_structure += obj2tex(core.Mwx(), r"\mathbf{M_{wx}}", "", sm)
-        str_structure += obj2tex(core.Mww(), r"\mathbf{M_{ww}}", "", sm)
-        if core.dims.y() > 0:
-            str_structure += obj2tex(core.Mwy(), r"\mathbf{M_{wy}}", "", sm)
-    if core.dims.y() > 0:
-        if core.dims.x() > 0:
-            str_structure += obj2tex(core.Myx(), r"\mathbf{M_{yx}}", "", sm)
-        if core.dims.w() > 0:
-            str_structure += obj2tex(core.Myw(), r"\mathbf{M_{yw}}", "", sm)
-        str_structure += obj2tex(core.Myy(), r"\mathbf{M_{yy}}", "", sm)
-    return str_structure
+    for name in 'MJR':
+        str_structure += r"""\subsection{Core %s-structure}""" % name + cr(1)
+        str_structure += r'$' + getattr(latexcore, name) + r'$' + cr(1)
+        for i in ['x', 'w', 'y', 'cy']:
+            for j in ['x', 'w', 'y', 'cy']:
+                key = name + i + j
+                t = getattr(latexcore, key)
+                str_structure += r'$' + t + r'$' + cr(1)
 
-
-def corestrucJ2tex(core):
-    """
-    return latex code for matrix M.
-    """
-    sm = symbol_names(core)
-    str_structure = cr(1)
-    str_structure += obj2tex(core.J(), r"\mathbf{J}", "", sm)
-    if core.dims.x() > 0:
-        str_structure += obj2tex(core.Jxx(), r"\mathbf{J_{xx}}", "", sm)
-        if core.dims.w() > 0:
-            str_structure += obj2tex(core.Jxw(), r"\mathbf{J_{xw}}", "", sm)
-        if core.dims.y() > 0:
-            str_structure += obj2tex(core.Jxy(), r"\mathbf{J_{xy}}", "", sm)
-    if core.dims.w() > 0:
-        str_structure += obj2tex(core.Jww(), r"\mathbf{J_{ww}}", "", sm)
-        if core.dims.y() > 0:
-            str_structure += obj2tex(core.Jwy(), r"\mathbf{J_{wy}}", "", sm)
-    if core.dims.y() > 0:
-        str_structure += obj2tex(core.Jyy(), r"\mathbf{J_{yy}}", "", sm)
-    return str_structure
-
-
-def corestrucR2tex(core):
-    """
-    return latex code for matrix M.
-    """
-    sm = symbol_names(core)
-    str_structure = cr(1)
-    str_structure += obj2tex(core.R(), r"\mathbf{R}", "", sm)
-    if core.dims.x() > 0:
-        str_structure += obj2tex(core.Rxx(), r"\mathbf{R_{xx}}", "", sm)
-        if core.dims.w() > 0:
-            str_structure += obj2tex(core.Rxw(), r"\mathbf{R_{xw}}", "", sm)
-        if core.dims.y() > 0:
-            str_structure += obj2tex(core.Rxy(), r"\mathbf{R_{xy}}", "", sm)
-    if core.dims.w() > 0:
-        str_structure += obj2tex(core.Rww(), r"\mathbf{R_{ww}}", "", sm)
-        if core.dims.y() > 0:
-            str_structure += obj2tex(core.Rwy(), r"\mathbf{R_{wy}}", "", sm)
-    if core.dims.y() > 0:
-        str_structure += obj2tex(core.Ryy(), r"\mathbf{R_{yy}}", "", sm)
     return str_structure

@@ -9,8 +9,20 @@ from sympy.printing import latex
 from pyphs.config import fold_short_frac, mat_delim, mat_str, mul_symbol
 from pyphs.misc.tools import geteval
 from pyphs.core.tools import types
-from sympy import simplify
+from sympy import simplify, Abs
 
+def symbol_names(core):
+    sn = {}
+    for var in [r'x', 'dx', r'w', r'u', r'y', r'cy', r'p', r'o', r'g', r'z_symbols']:
+        for symb in geteval(core, var):
+            string = str(symb)
+            lab = string[1:]
+            sn.update({symb: string[0]+r'_{\mathrm{'+lab+r'}}'})
+    for symb in core.subs.keys():
+        string = str(symb)
+        lab = string[1:]
+        sn.update({symb: string[0]+r'_{\mathrm{'+lab+r'}}'})
+    return sn
 
 def nice_label(core, tup):
     var, ind = tup
@@ -51,8 +63,8 @@ def sympy2latex(sp_object, symbol_names):
 
 
 def obj2tex(obj, label, description, symbol_names, toMatrix=True):
-    """
-    Return "%\ndescription $label = obj$;"
+    r"""
+    Return "\ndescription $label = obj$"
     Parameters
     -----------
     obj : sympy object
@@ -66,13 +78,20 @@ def obj2tex(obj, label, description, symbol_names, toMatrix=True):
     obj = simplify(obj)
     if toMatrix:
         obj = types.matrix_types[0](obj)
-
-    str_out = cr(1)
+        if obj.shape[0] * obj.shape[1] == 0:
+            texobj = r'\mathrm{Empty}'
+        elif sum(Abs(obj)) == 0:
+            texobj = r'\mathrm{Zeros}'
+        else:
+            texobj = sympy2latex(obj, symbol_names)
+    else:
+        texobj = sympy2latex(obj, symbol_names)
+    str_out = ''
     description = description + " " if len(description) > 0 \
         else description
     str_out += description +\
         r"$ " + label + r" = " +\
-        sympy2latex(obj, symbol_names) + r" ; $ " + cr(1) + r'\\'
+        texobj + r"$"
     return str_out
 
 

@@ -26,6 +26,9 @@ class Dimensions:
         dimp = _dimvar_generator(core, 'p')
         setattr(self, 'p', dimp)
 
+        dimp = _dimvar_generator(core, 'o')
+        setattr(self, 'o', dimp)
+
         dimargs = _dimvar_generator(core, 'args')
         setattr(self, 'args', dimargs)
 

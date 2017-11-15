@@ -9,6 +9,7 @@ Created on Mon Jun 19 00:12:15 2017
 from __future__ import absolute_import, division, print_function
 
 import numpy as np
+import sympy as sp
 from .. import edges
 from pyphs import Graph
 from pyphs.misc.io import data_generator
@@ -44,10 +45,18 @@ class Dissipative(Graph):
         # storage funcion
         z = pwl_func(w_vals, z_vals, w, **kwargs)
 
+        if ctrl == 'e':
+            not_ctrl = 'f'
+        else:
+            assert ctrl == 'f'
+            not_ctrl = 'e'
+
         # edge data
         data = {'label': w,
                 'type': 'dissipative',
                 'ctrl': ctrl,
+                'z' : {ctrl+'_ctrl': z,
+                       not_ctrl+'_ctrl': sp.sympify(0)},
                 'link': None}
         N1, N2 = nodes
 

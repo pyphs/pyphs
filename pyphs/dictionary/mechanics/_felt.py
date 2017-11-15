@@ -72,6 +72,7 @@ class Felt(Graph):
         data = {'label': wnl,
                 'type': 'dissipative',
                 'ctrl': 'e',
+                'z': {'e_ctrl': r*wnl, 'f_ctrl': sp.sympify(0)},
                 'link': None}
         self.add_edges_from([(N1, N2, data), ])
         self.core.add_dissipations(wnl, r*wnl)

@@ -52,7 +52,8 @@ def method2jucefx(method, objlabel=None, io=None, inits=None, params=None,
 
 
     path : string (default is None)
-        The source files will be generated in the folder 'path/PyPHS_Sources/'.
+        The source files will be generated in the folder 'path/label_Sources/',
+        with 'label' the method label.
 
 
     inits : dictionary (default is None)
@@ -105,12 +106,12 @@ def method2jucefx(method, objlabel=None, io=None, inits=None, params=None,
         path = os.getcwd()
 
     objlabel = method.label.lower()
-    cppfolder = os.path.join(path, 'PyPHS_Sources')
+    cppfolder = os.path.join(path, method.label + '_Sources')
     CONFIG_CPP['float'] = 'float'
     method.to_cpp(objlabel=objlabel, path=cppfolder,
                   inits=inits,
                   config=config)
-    snippetsfolder = os.path.join(path, 'PyPHS_Snippets')
+    snippetsfolder = os.path.join(path, method.label + '_Juce_Snippets')
     parametersFloats = audioParametersFloats(method, indices_inputs,
                                              indices_outputs, params)
 

@@ -267,7 +267,7 @@ class Simulation:
             t_total = tstop-tstart
             print('Total time: {}s'.format(tstop-tstart))
 
-            string = 'Total time w.r.t number of iterations: {}s'
+            string = 'Total time w.r.t number of time-steps: {}s'
             time_it = (t_total/float(self.data.config['nt']))
             print(string.format(time_it))
 

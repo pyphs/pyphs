@@ -19,7 +19,7 @@ from .structure.output import output_function as output
 from .structure.moves import move_stor, move_diss, move_port, move_connector
 from .structure.connectors import port2connector
 
-from .maths import gradient, jacobian, inverse
+from .maths import gradient, jacobian, inverse, hessian
 from .structure.dimensions import Dimensions
 from .structure.indices import Indices
 from .tools import (types, free_symbols, sympify,
@@ -268,6 +268,17 @@ class Core:
         """
         return [self.symbols('d'+str(x)) for x in self.x]
 
+    def z_symbols(self):
+        """
+        z_symbols
+        **********
+
+        Returns the symbols "zi" associated with the dissipation function
+        "(zi, wi)" for each "wi" in dissipation variables vector
+        'Core.w'.
+        """
+        return self.symbols(['z'+str(w)[1:] for w in self.w])
+
     def g(self):
         """
         g
@@ -384,6 +395,15 @@ class Core:
         :math:`\left[\\mathcal{J}_{\\mathbf z}\right]_{i,j}(\\mathbf w)=\\frac{\partial z_i}{\partial w_j}(\\mathbf w)`.
         """
         return jacobian(self.z, self.w)
+
+    def hessH(self):
+        """
+        hessH
+        ***
+        Return the hessian matrix of the storage function
+        :math:`\left[\\mathcal{J}_{\\mathbf z}\right]_{i,j}(\\mathbf w)=\\frac{\partial z_i}{\partial w_j}(\\mathbf w)`.
+        """
+        return hessian(self.H, self.x)
 
     # =========================================================================
 
@@ -822,7 +842,7 @@ add the connector'.format(i)
                                   self.cy)
 
         a = types.matrix_types[0](self.g() +
-                                  self.symbols(['z'+str(w)[1:] for w in self.w]) +
+                                  self.z_symbols() +
                                   self.u +
                                   self.cu)
 

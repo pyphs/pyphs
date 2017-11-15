@@ -85,10 +85,10 @@ datum = '#'
 # Below are the options for LATEX RENDERING in generated .tex files and plots
 
 # path to latex compiler
-latex_compiler_path = ':/usr/texbin'
+latex_compiler_path = '/Library/TeX/texbin'
 
 # list of authors for latex exports
-footnote = r'\footnote{\url{https://afalaize.github.io/pyphs/}}'
+footnote = r'\footnote{\url{https://pyphs.github.io/pyphs/}}'
 authors = [r'The \textsc{PyPHS}' + footnote + ' development team']
 
 # list of affiliations associated with the authors for latex exports

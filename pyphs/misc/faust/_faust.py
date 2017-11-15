@@ -90,6 +90,18 @@ def multirecursive(method, process, nin, nout, inits):
 
 def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
                    nIt=3):
+    if inputs is None:
+        inputs = list(map(str, method.u))
+    if outputs is None:
+        outputs = list(map(str, method.y))
+    indin = []
+    for i, u in enumerate(inputs):
+        if isinstance(u, float)
+            iin.append(i)
+    iout = []
+    for y in outputs:
+        iout.append(method.y.index(method.symbols(y)))
+
     print('FAUST init...')
     if inits is None:
         inits = {}
@@ -115,6 +127,11 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     code += '\n// Constant Parameters'
     for k in method.subs.keys():
         code += '\n{0} = {1};'.format(str(k), method.subs[k])
+    code += '\n'
+    code += '\n// Constant Inputs'
+    for i, k in enumerate(method.u):
+        if i not in iin:
+            code += '\n{0} = {1};'.format(str(k), inputs[i])
     code += '\n'
     code += '\n// Sliders Parameters'
     for p in method.p:
@@ -183,7 +200,8 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     code += faust_vector('UpdateVnl', method.ud_vnl, argsnames, method.subs, method)
     code += '\n'
     code += '\n// Define y'
-    code += faust_vector('y', method.output(), argsnames, method.subs, method)
+    code += faust_vector('y', [method.output()[i] for i in iout],
+                         argsnames, method.subs, method)
     code += '\n'
     code += '\n// UpdateLinear'
     code += '\nUpdateLinear = args <: (UpdateVl, (vlT, vnl, c)) : (vlvnl2v, c) : args;'
@@ -203,16 +221,6 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     nout = nin + len(method.y)
     code += multirecursive(method, method.label+'Main', nin, nout, inits) + ';'
 
-    if inputs is None:
-        inputs = list(map(str, method.u))
-    if outputs is None:
-        outputs = list(map(str, method.y))
-    iin = []
-    for u in inputs:
-        iin.append(method.u.index(method.symbols(u)))
-    iout = []
-    for y in outputs:
-        iout.append(method.y.index(method.symbols(y)))
     cin = '('
     for i in range(len(method.u)):
         if i in iin:
@@ -228,20 +236,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
             cin += '((!, !) : ' + str(method.u[i]) + '), '
 
     cin = cin[:-2] + ')'
-    cout = '('
-    for i in range(2):
-        if len(iout) >= i+1:
-            cout += '('
-            for j in range(len(method.y)):
-                if j == iout[i]:
-                    cout += '_, '
-                else:
-                    cout += '!, '
-            cout = cout[:-2] + '), '
-        else:
-            cout += '(0.), '
-    cout = cout[:-2] + ')'
-    code += '\n{0}InputToOutput = (_,_):{1}:{0}Recursion:{2};'.format(method.label, cin, cout)
+    code += '\n{0}InputToOutput = (_,_):{1}:{0}Recursion;'.format(method.label, cin, cout)
 
     with open(path, 'w') as f:
         for i, l in enumerate(code.splitlines()):

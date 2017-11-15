@@ -97,10 +97,12 @@ class Triode(DissipativeNonLinear):
         # edges data
         edge_pk_data = {'label': w[0],
                         'type': 'dissipative',
+                        'z': {'e_ctrl': z[0], 'f_ctrl': sympy.sympify(0)},
                         'ctrl': 'e',
                         'link': None}
         edge_gk_data = {'label': w[1],
                         'type': 'dissipative',
+                        'z': {'e_ctrl': z[1], 'f_ctrl': sympy.sympify(0)},
                         'ctrl': 'e',
                         'link': None}
         # edges

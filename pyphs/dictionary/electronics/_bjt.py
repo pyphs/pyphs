@@ -71,9 +71,11 @@ transistor#Ebers.E2.80.93Moll_model
         data_bc = {'label': wbjt[0],
                    'type': 'dissipative',
                    'ctrl': 'e',
+                   'z': {'e_ctrl': zbjt[0], 'f_ctrl': sympy.sympify(0)},
                    'link': None}
         data_be = {'label': wbjt[1],
                    'type': 'dissipative',
+                   'z': {'e_ctrl': zbjt[1], 'f_ctrl': sympy.sympify(0)},
                    'ctrl': 'e',
                    'link': None}
         # connector resistances dissipative functions

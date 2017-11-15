@@ -72,16 +72,17 @@ def multirecursive(method, process, nin, nout, inits):
             initstart = 0
         elif i < method.dims.x()+method.dims.w():
             initname = 'w'
-            initstart = method.dims.x()
-        elif i < method.dims.x()+method.dims.w()+method.dims.x():
+            initstart += method.dims.x()
+        elif i < initstart+method.dims.w()+method.dims.x():
             initname = 'x'
-            initstart = method.dims.x()+method.dims.w()
-        elif i < method.dims.x()+method.dims.w()+method.dims.x()+method.dims.u():
+            initstart += method.dims.w()
+        elif i < initstart+method.dims.x()+method.dims.u():
             initname = 'u'
-            initstart = method.dims.x()+method.dims.w()+method.dims.x()
+            initstart += method.dims.x()
         else:
             initname = 'o'
-            initstart = method.dims.x()+method.dims.w()+method.dims.x()+method.dims.u()
+            initstart += method.dims.u()
+
         p1 = listToPassAllExcept([None, ]*(nin-i), 0)+',' if nin-i>0 else ''
         p2 = listToAllPass([None, ]*(nout-nin))
         prefix = 'prefix({0}, _)'.format(inits[initname][i-initstart])
@@ -96,7 +97,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
         outputs = list(map(str, method.y))
     indin = []
     for i, u in enumerate(inputs):
-        if isinstance(u, float)
+        if isinstance(u, float):
             iin.append(i)
     iout = []
     for y in outputs:

@@ -58,8 +58,9 @@ multifigure
                                         data.ps(imin=imin, imax=imax,
                                                 decim=decim))]
         datay.append(deltaP)
-        config.update({'figsize': (6., 4.),
-                       'unity': [r'(W)']*4,
+        config.update({'linestyles': [('-b', ), ('-g', ), ('-r', ), ('-k', )],
+                       'figsize': (6., 4.),
+                       'unity': [r' (W)']*4,
                        'fontsize': 16,
                        'labels': [labdtE,
                                   labPd,

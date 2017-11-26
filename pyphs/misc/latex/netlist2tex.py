@@ -46,7 +46,7 @@ parameters " + r"\\ \hline" + cr(1)
     return str_netlist
 
 
-def graphplot2tex(graph, name=None, path=None, show=False):
+def graphplot2tex(graph, name=None, folder=None, show=False):
     """
     associate the plot of the graph to a latex figure
     """
@@ -54,16 +54,16 @@ def graphplot2tex(graph, name=None, path=None, show=False):
     from pyphs.config import plot_format
     if name is None:
         if hasattr(graph, 'label'):
-            name = graph.label
+            name = graph.label + r'_graph'
         else:
             name = 'graph'
-    if path is None:
-        path = os.getcwd()
-    filename = path + os.sep + name + '.' + plot_format
-    graph.plot(filename=filename, show=show)
+    if folder is None:
+        folder = os.getcwd()
+    path = os.path.join(folder,, name + '.' + plot_format)
+    graph.plot(filename=path, show=show)
     string = cr(2) + r"""\begin{figure}[!h]
 \begin{center}
-\includegraphics[width=\linewidth]{""" + filename + r"""}
+\includegraphics[width=\linewidth]{""" + path + r"""}
 %
 \caption{\label{fig:graph""" + name +\
         r"""} Graph of system \texttt{""" + name + r"""}. }

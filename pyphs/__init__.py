@@ -11,6 +11,7 @@ from .numerics import (Method, Numeric,
 from .numerics.simulations.simulation import Simulation
 from .misc.signals.synthesis import signalgenerator
 from .misc.latex import core2tex, netlist2tex, graphplot2tex, texdocument
+from .misc.faust import core2faustfx
 from .numerics.cpp.method2cpp import method2cpp
 from .numerics.cpp.simu2cpp import simu2cpp
 
@@ -32,4 +33,5 @@ __all__ = ['Core', 'Netlist', 'Simulation', 'Graph', 'datum',
            'Numeric', 'Evaluation',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
            'method2cpp', 'simu2cpp', 'path_to_configuration_file',
-           'path_to_examples', 'path_to_tutorials']
+           'path_to_examples', 'path_to_tutorials',
+           'core2faustfx']

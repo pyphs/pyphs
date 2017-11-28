@@ -54,12 +54,12 @@ def graphplot2tex(graph, name=None, folder=None, show=False):
     from pyphs.config import plot_format
     if name is None:
         if hasattr(graph, 'label'):
-            name = graph.label + r'_graph'
+            name = graph.label
         else:
-            name = 'graph'
+            name = 'NoName'
     if folder is None:
         folder = os.getcwd()
-    path = os.path.join(folder,, name + '.' + plot_format)
+    path = os.path.join(folder, name + r'_graph.' + plot_format)
     graph.plot(filename=path, show=show)
     string = cr(2) + r"""\begin{figure}[!h]
 \begin{center}

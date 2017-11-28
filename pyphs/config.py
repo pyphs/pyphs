@@ -17,7 +17,7 @@ path_to_configuration_file = os.path.join(here, 'config.py')
 # Below are the options for the INTERFACE
 
 # Verbose level in [0, 1, 2, 3]
-VERBOSE = 3
+VERBOSE = 0
 
 
 ###############################################################################
@@ -142,7 +142,7 @@ GRADIENT = 'discret'
 # Parameter of the theta numerical scheme:
 # M(x+theta*dx) with gradient={'discret', 'theta'}
 # grad(H(x+theta*dx)) with gradient='theta'
-THETA = 0.5
+THETA = 0.
 
 # Split the structure into explicit (up to a matrix inversion) and implicit
 # before the simulation. Then presolve (matrix inversion) for the explicit part

@@ -121,7 +121,9 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True, label=None):
                'w': 'w',
                'z': 'w',
                'u': 'y',
-               'y': 'y'
+               'y': 'y',
+               'p': 'p',
+               'o': 'o'
                }
     for var in vars:
         if isinstance(var, (tuple, list)):

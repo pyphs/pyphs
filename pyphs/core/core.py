@@ -414,7 +414,7 @@ class Core:
         init_M
         ******
 
-        Init the structure matrix M with zeros.
+        Initialize the structure matrix M with appropriate number of zeros.
 
         """
         self.M = types.matrix_types[0](sympy.zeros(self.dims.tot()))
@@ -649,12 +649,12 @@ add the connector'.format(i)
 
     def add_storages(self, x, H):
         """
-        Add storage components with state :math:`\\mathbf{x}` and energy \
+        Add storage components with state :math:`\\mathbf{x}` and energy
         :math:`\\mathrm{H}(\\mathbf{x}) \geq 0`.
 
-        * State :math:`\\mathbf{x}` is appended to the current list of \
+        * State :math:`\\mathbf{x}` is appended to the current list of
         states symbols :code:`core.x`,
-        * Expression :math:`\\mathrm{H}` is added to the current expression \
+        * Expression :math:`\\mathrm{H}` is added to the current expression
         of the Hamiltonian :code:`core.H`.
 
         Parameters
@@ -751,6 +751,8 @@ add the connector'.format(i)
         """
         Add one or several parameters :math:`{\\mathbf{p}}`, which is
         appended to the current list of parameters symbols :code:`core.p`.
+        Also, the parameters symbols are removed from the sustitution
+        dictionary.
 
         Parameter
         ----------
@@ -763,6 +765,11 @@ add the connector'.format(i)
         elif isinstance(p, types.scalar_types):
             p = [p, ]
         self.p += p
+
+        for par in p:
+            if par in self.subs:
+                self.subs.pop(par)
+
 
     def add_observer(self, obs):
         """

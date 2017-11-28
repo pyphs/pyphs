@@ -281,7 +281,24 @@ port-Hamiltonian systems.
             graph1.netlist += graph2.netlist
         graph1.core += graph2.core
         graph1.add_edges_from(graph2.edges(data=True))
+        if hasattr(graph1, 'positions'):
+            delattr(graph1, 'positions')
         return graph1
+
+
+    def _get_edgeslist(self):
+        """
+        Return a list of graph edges with data
+        """
+        return list(self.edges(data=True))
+    edgeslist = property(_get_edgeslist)
+
+    def _get_nodeslist(self):
+        """
+        Return a set of graph nodes
+        """
+        return set(self.nodes())
+    nodeslist = property(_get_nodeslist)
 
     @staticmethod
     def iter_analysis(graph):

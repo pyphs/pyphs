@@ -58,8 +58,9 @@ multifigure
                                         data.ps(imin=imin, imax=imax,
                                                 decim=decim))]
         datay.append(deltaP)
-        config.update({'figsize': (6., 4.),
-                       'unity': [r'(W)']*4,
+        config.update({'linestyles': [('-b', ), ('-g', ), ('-r', ), ('-k', )],
+                       'figsize': (6., 4.),
+                       'unity': [r' (W)']*4,
                        'fontsize': 16,
                        'labels': [labdtE,
                                   labPd,
@@ -120,7 +121,9 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True, label=None):
                'w': 'w',
                'z': 'w',
                'u': 'y',
-               'y': 'y'
+               'y': 'y',
+               'p': 'p',
+               'o': 'o'
                }
     for var in vars:
         if isinstance(var, (tuple, list)):

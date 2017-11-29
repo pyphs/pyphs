@@ -196,9 +196,6 @@ class Simulation:
         if config is None:
             config = {}
 
-        if inits is None:
-            inits = {}
-
         if subs is None:
             subs = {}
         else:
@@ -217,9 +214,16 @@ class Simulation:
 
         c.update(config)
 
-        if inits is not None and any([any(v1!=v2 for (v1, v2) in zip(self.inits[k], inits[k])) for k in inits.keys()]):
-            self.inits.update(inits)
-            init_numeric = True
+        if inits is not None:
+            equal = True
+            for k in inits.keys():
+                try:
+                    equal = inits[k]==self.inits[k] and equal
+                except KeyError:
+                    equal = False
+            if not equal:
+                self.inits.update(inits)
+                init_numeric = True
 
         if any([self.config[k] != c[k] for k in list(self.config_numeric().keys()) +
                                                 list(self.config_method().keys())]):

@@ -169,6 +169,11 @@ subplots.
 
         print_legend = False
 
+        if isinstance(opts['linestyles'][0], (tuple, list)):
+            linestyle = opts['linestyles'][n]
+        else:
+            linestyle = opts['linestyles']
+
         if type(datay[n]) is list:
             y = dec(datay[n], opts)
             maxy = max([maxy, max(y)])
@@ -177,10 +182,11 @@ subplots.
                 plotn = whichplot(opts['log'][n], axs[n])
             else:
                 plotn = whichplot(opts['log'][n], axs)
-            plotn(x, y, opts['linestyles'][0], label=opts['labels'][n],
+            plotn(x, y, linestyle[0], label=opts['labels'][n],
                   linewidth=opts['linewidth'],
                   markeredgewidth=opts['markeredgewidth'],
                   markersize=opts['markersize'])
+            print_legend = opts['labels'][n] is not None or print_legend
 
         elif isinstance(datay[n], tuple):
             len_yn = len(datay[n])
@@ -200,7 +206,7 @@ subplots.
                 maxy = max([maxy, max(y)])
                 miny = min([miny, min(y)])
                 plotn = whichplot(opts['log'][n], axs[n])
-                plotn(x, y, opts['linestyles'][m], label=l,
+                plotn(x, y, linestyle[m], label=l,
                       linewidth=opts['linewidth'],
                       markersize=opts['markersize'],
                       markeredgewidth=opts['markeredgewidth'])

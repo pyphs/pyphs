@@ -19,13 +19,14 @@ from .config import path_to_configuration_file
 
 from .examples import path_to_examples
 from .tutorials import path_to_tutorials
+from .dictionary import path_to_dictionary
 
 __licence__ = \
     "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2017"
-__version__ = '0.1.15b'
+__version__ = '0.2rc1'
 __author_email__ = 'antoine.falaize@gmail.fr'
 
 __all__ = ['Core', 'Netlist', 'Simulation', 'Graph', 'datum',
@@ -34,4 +35,4 @@ __all__ = ['Core', 'Netlist', 'Simulation', 'Graph', 'datum',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
            'method2cpp', 'simu2cpp', 'path_to_configuration_file',
            'path_to_examples', 'path_to_tutorials',
-           'core2faustfx']
+           'core2faustfx', 'path_to_dictionary']

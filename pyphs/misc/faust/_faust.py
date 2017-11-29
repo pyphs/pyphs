@@ -74,16 +74,16 @@ def multirecursive(method, process, nin, nout, inits):
             initstart = 0
         elif i < method.dims.x()+method.dims.w():
             initname = 'w'
-            initstart += method.dims.x()
+            initstart = method.dims.x()
         elif i < initstart+method.dims.w()+method.dims.x():
             initname = 'x'
-            initstart += method.dims.w()
-        elif i < initstart+method.dims.x()+nout-nin:
+            initstart = method.dims.x()+method.dims.w()
+        elif i < initstart+method.dims.x()+method.dims.y():
             initname = 'u'
-            initstart += method.dims.x()
+            initstart = method.dims.x()+method.dims.w()+method.dims.x()
         else:
             initname = 'o'
-            initstart += nout-nin
+            initstart += method.dims.x()+method.dims.w()+method.dims.x()+method.dims.y()
 
         p1 = listToPassAllExcept([None, ]*(nin-i), 0)+',' if nin-i>0 else ''
         p2 = listToAllPass([None, ]*(nout-nin))
@@ -138,7 +138,8 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
         inits = {}
     for name in ('x', 'dx', 'w', 'u', 'o', 'p'):
         if not name in inits.keys():
-            inits[name] = [0, ]*len(geteval(method, name))
+            inits[name] = [0., ]*len(geteval(method, name))
+
     if path is None:
         path = method.label + '.dsp'
     argsnames = ['dx', 'w', 'x', 'o', 'u']
@@ -147,8 +148,6 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     code += '\n'
     code += '\nimport("stdfaust.lib");'
     code += '\n'
-    nin = len(method.x)*2 + len(method.w) + len(method.observers)
-    nout = nin + len(outputs)
     code += '\nprocess = {0}InputToOutput;'.format(method.label)
     code += '\n'
     code += '\n// Sample Rate'

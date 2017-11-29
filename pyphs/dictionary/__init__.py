@@ -19,5 +19,10 @@ from . import fraccalc
 from . import transducers
 from . import thermics
 
+import os
+end = os.path.realpath(__file__).rfind(os.sep)
+path_to_dictionary = os.path.realpath(__file__)[:end]
+
 __all__ = ['electronics', 'mechanics', 'magnetics', 'connectors', 'beams',
-           'mechanics_dual', 'pwl', 'fraccalc', 'transducers', 'thermics']
+           'mechanics_dual', 'pwl', 'fraccalc', 'transducers', 'thermics',
+           'path_to_dictionary']

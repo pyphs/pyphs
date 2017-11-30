@@ -57,19 +57,21 @@ according to the control type of each indeterminate edge
     """
     # select dissipative relations
     for e in graph.analysis.diss_edges:
-        ctrl = graph.analysis.get_edge_data(e, 'ctrl')
-        # select for indeterminate edges only
-        if ctrl == '?':
-            # get edge label index in 'w'
-            label = graph.analysis.get_edge_data(e, 'label')
-            indw = graph.core.w.index(label)
-            if e in graph.analysis.ec_edges:
-                graph.core.z[indw] = \
-                    graph.analysis.get_edge_data(e, 'z')['e_ctrl']
-            else:
-                assert e in graph.analysis.fc_edges
-                graph.core.z[indw] = \
-                    graph.analysis.get_edge_data(e, 'z')['f_ctrl']
+
+#        ctrl = graph.analysis.get_edge_data(e, 'ctrl')
+#        # select for indeterminate edges only
+#        if ctrl == '?':
+
+        # get edge label index in 'w'
+        label = graph.analysis.get_edge_data(e, 'label')
+        indw = graph.core.w.index(label)
+        if e in graph.analysis.ec_edges:
+            graph.core.z[indw] = \
+                graph.analysis.get_edge_data(e, 'z')['e_ctrl']
+        else:
+            assert e in graph.analysis.fc_edges
+            graph.core.z[indw] = \
+                graph.analysis.get_edge_data(e, 'z')['f_ctrl']
 
 
 def _setCore(graph):

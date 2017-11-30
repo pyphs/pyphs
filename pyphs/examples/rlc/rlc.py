@@ -49,8 +49,7 @@ core = netlist.to_core()
 #    x0[0] = 1
 #    x0_expr = list(map(sp.sympify, x0))
 #    inits = {'x': x0_expr}
-#    method = netlist.to_method()
-#    simu = netlist.to_simulation(config=config)
+#    simu = core.to_simulation(config=config)
 #
 #    dur = 0.01
 #    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])

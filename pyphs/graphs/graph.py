@@ -63,7 +63,8 @@ port-Hamiltonian systems.
     def _build_analysis(self, verbose=False, plot=False):
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
-    def to_core(self, label=None, verbose=False, plot=False, connect=True):
+    def to_core(self, label=None, verbose=False, plot=False, connect=True,
+                force=True):
         """
         Return the core PHS object associated with the graph.
 
@@ -98,9 +99,11 @@ port-Hamiltonian systems.
         if VERBOSE >= 1:
             print('Build core {}...'.format(self.label))
 
-        self._build_analysis(verbose=verbose, plot=plot)
+        if not hasattr(self, 'analysis'):
+            self._build_analysis(verbose=verbose, plot=plot)
 
-        self.analysis.perform()
+        if not hasattr(self.analysis, 'iGamma_fc') or force:
+            self.analysis.perform()
 
         buildCore(self)
 
@@ -278,7 +281,24 @@ port-Hamiltonian systems.
             graph1.netlist += graph2.netlist
         graph1.core += graph2.core
         graph1.add_edges_from(graph2.edges(data=True))
+        if hasattr(graph1, 'positions'):
+            delattr(graph1, 'positions')
         return graph1
+
+
+    def _get_edgeslist(self):
+        """
+        Return a list of graph edges with data
+        """
+        return list(self.edges(data=True))
+    edgeslist = property(_get_edgeslist)
+
+    def _get_nodeslist(self):
+        """
+        Return a set of graph nodes
+        """
+        return set(self.nodes())
+    nodeslist = property(_get_nodeslist)
 
     @staticmethod
     def iter_analysis(graph):

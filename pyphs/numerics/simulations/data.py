@@ -59,9 +59,9 @@ plot_powerbal:
         self.method = method
 
         self._build_generators()
-        
+
     def subs(self):
-        d = self.method.subs.copy() 
+        d = self.method.subs.copy()
         d[self.method.fs] = self.config['fs']
         return d
 
@@ -232,6 +232,46 @@ dtE_generator: generator
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
                 yield scalar_product(dtx, dxh)
 
+    def E(self, imin=None, imax=None, decim=None):
+        """
+E
+===
+
+Generator of discrete energy's values.
+
+Parameters
+-----------
+imin: int or None, optional
+    Starting index. If None, imin=0 (default).
+imax: int or None,
+    Stoping index. If None, imax=simu.config['nt'] (default).
+decim: int or None,
+    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+
+Returns
+-------
+
+E_generator: generator
+    A python generator of scalar discrete energy's value E[i] for each time
+    step i starting from index imin to index imax with decimation factor decim
+    (i.e. the value is generated if i-imin % decim == 0).
+        """
+        options = self.config['load']
+        options = {'imin': options['imin'] if imin is None else imin,
+                   'imax': options['imax'] if imax is None else imax,
+                   'decim': options['decim'] if decim is None else decim}
+
+        H_expr = self.method.H.subs(self.method.subs)
+        H_symbs = free_symbols(H_expr)
+        H_args, H_inds = find(H_symbs, self.method.args())
+        H = lambdify(H_args, H_expr, theano=self.config['theano'])
+        H_args = lambdify(self.method.args(), H_args,
+                          theano=self.config['theano'])
+
+        for args, o in zip(self.args(**options), self.o(**options)):
+            a = (list(args)+list(o))
+            yield H(*H_args(*a))
+
     def pd(self, imin=None, imax=None, decim=None):
         """
 pd
@@ -317,15 +357,18 @@ ps_generator: generator
                         self.y(**options)):
             yield scalar_product(u, y)
 
-    def o(self, imin=None, imax=None, decim=None):
+    def o(self, ind=None, imin=None, imax=None, decim=None):
         """
-ps
+o
 ==
 
-Generator of discrete sources power values.
+Generator of values for observers.
 
 Parameters
 -----------
+ind: int or None, optional
+    Index of the observer. If None, values for every observers are
+    returned (default).
 imin: int or None, optional
     Starting index. If None, imin=0 (default).
 imax: int or None,
@@ -358,8 +401,12 @@ ps_generator: generator
         obs_args = lambdify(self.method.args()[:index], obs_args,
                             theano=self.config['theano'])
 
-        for arg in self.args(**options):
-            yield obs(*obs_args(*arg))
+        if ind is None:
+            for arg in self.args(**options):
+                yield obs(*obs_args(*arg))
+        else:
+            for arg in self.args(**options):
+                yield obs(*obs_args(*arg))[ind]
 
 
     def args(self, ind=None, imin=None, imax=None, decim=None):
@@ -551,7 +598,9 @@ nt: int or None:
 
         """
         # get number of time-steps
-        if hasattr(sequ, 'index'):
+        if nt is not None:
+            pass
+        elif hasattr(sequ, 'index'):
             nt = len(sequ)
         elif hasattr(seqp, 'index'):
             nt = len(seqp)

@@ -19,7 +19,7 @@ from .structure.output import output_function as output
 from .structure.moves import move_stor, move_diss, move_port, move_connector
 from .structure.connectors import port2connector
 
-from .maths import gradient, jacobian, inverse
+from .maths import gradient, jacobian, inverse, hessian
 from .structure.dimensions import Dimensions
 from .structure.indices import Indices
 from .tools import (types, free_symbols, sympify,
@@ -268,6 +268,17 @@ class Core:
         """
         return [self.symbols('d'+str(x)) for x in self.x]
 
+    def z_symbols(self):
+        """
+        z_symbols
+        **********
+
+        Returns the symbols "zi" associated with the dissipation function
+        "(zi, wi)" for each "wi" in dissipation variables vector
+        'Core.w'.
+        """
+        return self.symbols(['z'+str(w)[1:] for w in self.w])
+
     def g(self):
         """
         g
@@ -356,7 +367,7 @@ class Core:
         dxH
         ***
 
-        Gradient of storage function \
+        Gradient of storage function
         :math:`\\mathtt{dxH}_i = \\frac{\\partial \\mathrm H}{\\partial x_i}`.
 
         Return
@@ -385,6 +396,15 @@ class Core:
         """
         return jacobian(self.z, self.w)
 
+    def hessH(self):
+        """
+        hessH
+        ***
+        Return the hessian matrix of the storage function
+        :math:`\left[\\mathcal{J}_{\\mathbf z}\right]_{i,j}(\\mathbf w)=\\frac{\partial z_i}{\partial w_j}(\\mathbf w)`.
+        """
+        return hessian(self.H, self.x)
+
     # =========================================================================
 
     # STRUCTURE
@@ -394,7 +414,7 @@ class Core:
         init_M
         ******
 
-        Init the structure matrix M with zeros.
+        Initialize the structure matrix M with appropriate number of zeros.
 
         """
         self.M = types.matrix_types[0](sympy.zeros(self.dims.tot()))
@@ -404,8 +424,8 @@ class Core:
         J
         *
 
-        Return the skew-symetric part of structure matrix \
-        :math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the \
+        Return the skew-symetric part of structure matrix
+        :math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the
         conservative interconnection.
 
         Return
@@ -422,8 +442,8 @@ class Core:
         R
         *
 
-        Return the symetric part of structure matrix \
-        :math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the \
+        Return the symetric part of structure matrix
+        :math:`\\mathbf{M} = \\mathbf{J} - \\mathbf{R}` associated with the
         resistive interconnection.
 
         Return
@@ -526,12 +546,12 @@ class Core:
 
     # Connectors
 
-    def add_connector(self, indices, alpha):
+    def add_connector(self, indices, alpha=None):
         """
         add_connector
         *************
 
-        Add a connector which describes the connection of two ports from a \
+        Add a connector which describes the connection of two ports from a
         unique core.
 
         Usage
@@ -556,6 +576,8 @@ class Core:
         :code:`core.connectors` argument. The connection will be effective only
         after calling the method :code:`core.connect()`.
         """
+        if alpha is None:
+            alpha = sympify(1.)
         assert indices[0] != indices[1], 'Can not connect a port to itself: \
 indices={}.'.format(indices)
         u = list()
@@ -629,12 +651,12 @@ add the connector'.format(i)
 
     def add_storages(self, x, H):
         """
-        Add storage components with state :math:`\\mathbf{x}` and energy \
+        Add storage components with state :math:`\\mathbf{x}` and energy
         :math:`\\mathrm{H}(\\mathbf{x}) \geq 0`.
 
-        * State :math:`\\mathbf{x}` is appended to the current list of \
+        * State :math:`\\mathbf{x}` is appended to the current list of
         states symbols :code:`core.x`,
-        * Expression :math:`\\mathrm{H}` is added to the current expression \
+        * Expression :math:`\\mathrm{H}` is added to the current expression
         of the Hamiltonian :code:`core.H`.
 
         Parameters
@@ -660,12 +682,12 @@ add the connector'.format(i)
 
     def add_dissipations(self, w, z):
         """
-        Add dissipative components with variable :math:`\\mathbf{w}` and \
+        Add dissipative components with variable :math:`\\mathbf{w}` and
         dissipative function :math:`\\mathrm{z}(\\mathbf{w})`.
 
-        * Variable :math:`\\mathbf{w}` is appended to the current list of \
+        * Variable :math:`\\mathbf{w}` is appended to the current list of
         variables symbols :code:`core.w`,
-        * Expression :math:`\\mathrm{z}` is appended to the current list of \
+        * Expression :math:`\\mathrm{z}` is appended to the current list of
         dissipative functions :code:`core.z`.
 
         Parameters
@@ -731,6 +753,8 @@ add the connector'.format(i)
         """
         Add one or several parameters :math:`{\\mathbf{p}}`, which is
         appended to the current list of parameters symbols :code:`core.p`.
+        Also, the parameters symbols are removed from the sustitution
+        dictionary.
 
         Parameter
         ----------
@@ -743,6 +767,11 @@ add the connector'.format(i)
         elif isinstance(p, types.scalar_types):
             p = [p, ]
         self.p += p
+
+        for par in p:
+            if par in self.subs:
+                self.subs.pop(par)
+
 
     def add_observer(self, obs):
         """
@@ -822,7 +851,7 @@ add the connector'.format(i)
                                   self.cy)
 
         a = types.matrix_types[0](self.g() +
-                                  self.symbols(['z'+str(w)[1:] for w in self.w]) +
+                                  self.z_symbols() +
                                   self.u +
                                   self.cu)
 
@@ -901,7 +930,7 @@ add the connector'.format(i)
 
     def to_simulation(self, config=None, inits=None):
         """
-        Return the PHS numerical method associated with the PHS core for the
+        Return a simulation associated with the PHS core for the
         specified configuration.
 
         Parameter
@@ -922,8 +951,8 @@ add the connector'.format(i)
         Output
         ------
 
-        method : pyphs.Method
-            The PHS numerical method associated with the PHS core for the
+        simulation : pyphs.Simulation
+            The simulation associated with the PHS core for the
             specified configuration.
 
         """
@@ -1001,7 +1030,7 @@ add the connector'.format(i)
         =====
         {0}{1}{2}
         =====
-        Accessor to the submatrix :code:`core.{0}{1}{2}` with shape \
+        Accessor to the submatrix :code:`core.{0}{1}{2}` with shape
         :code:`[core.dims.{1}(), core.dims.{2}()]`.
         """.format(name, dims_names[0], dims_names[1])
         return get_mat
@@ -1039,7 +1068,7 @@ add the connector'.format(i)
         =========
         set_{0}{1}{2}
         =========
-        Mutator for the submatrix :code:`core.{0}{1}{2}` with shape \
+        Mutator for the submatrix :code:`core.{0}{1}{2}` with shape
         :code:`[core.dims.{1}(), core.dims.{2}()]`.
 
         Parameter
@@ -1077,7 +1106,7 @@ add the connector'.format(i)
     Return
     ------
     {0}l: list of sympy expressions
-        Linear part of core.{0}. This is a shorcut for \
+        Linear part of core.{0}. This is a shorcut for
     :code:`core.{0}[:core.dims.{1}l()]`.
 
     See also
@@ -1098,7 +1127,7 @@ add the connector'.format(i)
     Return
     ------
     {0}l: list of sympy expressions
-        Nonlinear part of core.{0}. This is a shorcut for \
+        Nonlinear part of core.{0}. This is a shorcut for
     :code:`core.{0}[core.dims.{1}l():]`.
 
     See also

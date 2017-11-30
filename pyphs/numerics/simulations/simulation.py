@@ -133,11 +133,12 @@ class Simulation:
                                           config=self.config_numeric()))
         elif self.config['lang'] == 'c++':
             objlabel = self.method.label.upper()
+            self.work_path = os.getcwd()
             self.cpp_path = os.path.join(main_path(self), objlabel.lower())
             self.src_path = os.path.join(self.cpp_path, 'src')
-            if not os.path.exists(self.src_path):
-                os.mkdir(self.cpp_path)
             if not os.path.exists(self.cpp_path):
+                os.mkdir(self.cpp_path)
+            if not os.path.exists(self.src_path):
                 os.mkdir(self.src_path)
             method2cpp(self.method, objlabel=objlabel, path=self.src_path,
                         inits=self.inits,
@@ -195,9 +196,6 @@ class Simulation:
         if config is None:
             config = {}
 
-        if inits is None:
-            inits = {}
-
         if subs is None:
             subs = {}
         else:
@@ -216,9 +214,16 @@ class Simulation:
 
         c.update(config)
 
-        if inits is not None and any([any(v1!=v2 for (v1, v2) in zip(self.inits[k], inits[k])) for k in inits.keys()]):
-            self.inits.update(inits)
-            init_numeric = True
+        if inits is not None:
+            equal = True
+            for k in inits.keys():
+                try:
+                    equal = inits[k]==self.inits[k] and equal
+                except KeyError:
+                    equal = False
+            if not equal:
+                self.inits.update(inits)
+                init_numeric = True
 
         if any([self.config[k] != c[k] for k in list(self.config_numeric().keys()) +
                                                 list(self.config_method().keys())]):
@@ -266,7 +271,7 @@ class Simulation:
             t_total = tstop-tstart
             print('Total time: {}s'.format(tstop-tstart))
 
-            string = 'Total time w.r.t number of iterations: {}s'
+            string = 'Total time w.r.t number of time-steps: {}s'
             time_it = (t_total/float(self.data.config['nt']))
             print(string.format(time_it))
 
@@ -279,6 +284,8 @@ class Simulation:
         """
         if subs is None:
             subs = self.method.subs
+        else:
+            self.method.subs = subs
         path = self.src_path
         parameters_files = parameters(subs, 'rhodes'.upper())
         for e in ['cpp', 'h']:
@@ -355,6 +362,9 @@ class Simulation:
 
         # execute the bash script
         self.system_call('./run.sh')
+
+        # go back to work folder
+        os.chdir(self.work_path)
 
     @staticmethod
     def system_call(cmd):

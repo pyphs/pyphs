@@ -34,20 +34,20 @@ free-parameter that can be continuously controlled during the simulations. \
 Else if no label is provided for the new component, the new label for the \
 i-th parameter is defined as 'label_pari'.
     """
-    def __init__(self, filename, clear=False):
+    def __init__(self, path, clear=False):
         """
-        init with filename to read data from 'filename.net'
+        init with path to read data from.
         """
-        n = filename[filename.rfind(os.sep)+1:]
-        f = filename[:filename.rfind(os.sep)+1]
+        n = path[path.rfind(os.sep)+1:]
+        f = path[:path.rfind(os.sep)+1]
         if len(n) == 0:
             n, f = f, n
         if VERBOSE >= 1:
             print('Read netlist {}'.format(n))
             print('from folder {}'.format(f))
-        self.filename = filename
-        if not os.path.isfile(self.filename) or clear:
-            file_ = open(self.filename, 'w')
+        self.path = path
+        if not os.path.isfile(self.path) or clear:
+            file_ = open(self.path, 'w')
             file_.close()
         self.datum = datum
         self.dictionaries = tuple()
@@ -56,6 +56,24 @@ i-th parameter is defined as 'label_pari'.
         self.nodes = tuple()
         self.arguments = tuple()
         self.read()
+
+    # --------------------------------------------------------------------------
+    # Folder
+
+    def get_folder(self):
+        return self.path[:self.path.rfind(os.sep)]
+
+    folder = property(get_folder)
+
+    # --------------------------------------------------------------------------
+    # Filename
+
+    def get_filename(self):
+        return  self.path[self.path.rfind(os.sep)+1:]
+
+    filename = property(get_filename)
+
+    # --------------------------------------------------------------------------
 
     def __getitem__(self, n):
         item = {'dictionary': self.dictionaries[n],
@@ -87,9 +105,9 @@ components).
 
     def read(self):
         """
-        read and store data from netlist 'filename.net'
+        read data from netlist
         """
-        file_ = open(self.filename, "r")
+        file_ = open(self.path, "r")
         with file_ as openfileobject:
             for line in openfileobject:
                 if line.startswith('#'):
@@ -137,13 +155,13 @@ components).
             netlist += self.line(n)
         return netlist[:-1]
 
-    def write(self, filename=None):
+    def write(self, path=None):
         """
-        write the content of the netlist to file 'filename'
+        write the content of the netlist to file point by 'path'
         """
-        if filename is None:
-            filename = self.filename
-        file_ = open(filename, 'w')
+        if path is None:
+            path = self.path
+        file_ = open(path, 'w')
         file_.write(self.netlist())  # remove the last cariage return
         file_.close()
 
@@ -152,6 +170,16 @@ components).
         print the netlist line 'n' whith appropriate format
         """
         return print_netlist_line(self[n])
+
+    def delline(self, n):
+        """
+        delete the netlist line 'n'
+        """
+        self.dictionaries.pop(n)
+        self.components.pop(n)
+        self.labels.pop(n)
+        self.nodes.pop(n)
+        self.arguments.pop(n)
 
     def setline(self, n, line):
         """
@@ -183,20 +211,20 @@ components).
 
         value = line['arguments']
         self.arguments[n] = value
-        
+
     def to_graph(self, label=None):
         """
         Return the graph associated with the netlist.
-        
+
         Parameter
         ---------
-        
+
         label : str (optional)
             String label for the returned graph object.
-            
+
         Output
         ------
-        
+
         graph : pyphs.Graph
             The graph object associated with the netlist.
         """
@@ -206,92 +234,92 @@ components).
     def to_core(self, label=None):
         """
         Return the graph associated with the netlist.
-        
+
         Parameter
         ---------
-        
+
         label : str (optional)
             String label for the returned graph object.
-            
+
         Output
         ------
-        
+
         graph : pyphs.Core
             The PHS core object associated with the netlist.
         """
         graph = self.to_graph(label=label)
         return graph.to_core(label=label)
-    
+
     def to_method(self, label=None, config=None):
         """
-        Return the PHS numerical method associated with the PHS graph for the 
+        Return the PHS numerical method associated with the PHS graph for the
         specified configuration.
-        
+
         Parameter
         ---------
 
         label : str (optional)
-            String label for the Core object (default None recovers the label 
+            String label for the Core object (default None recovers the label
             from the graph).
-            
+
         config : dict or None
             A dictionary of simulation parameters. If None, the standard
             pyphs.config.simulations is used (the default is None).
             keys and default values are
-            
+
               'fs': 48e3,           # Sample rate (Hz)
               'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
               'theta': 0.,          # Theta-scheme for the structure
               'split': False,       # split implicit from explicit part
               'maxit': 10,          # Max number of iterations for NL solvers
               'eps': 1e-16,         # Global numerical tolerance
-              
+
         Output
         ------
-        
+
         method : pyphs.Method
-            The PHS numerical method associated with the PHS graph for the 
+            The PHS numerical method associated with the PHS graph for the
             specified configuration.
         """
-        
+
         core = self.to_core(label=label)
         return core.to_method(config=config)
 
     def to_simulation(self, label=None, config=None, inits=None):
         """
-        Return the PHS simulation object associated with the PHS netlist for the 
+        Return the PHS simulation object associated with the PHS netlist for the
         specified configuration.
-        
+
         Parameter
         ---------
 
         label : str (optional)
-            String label for the Core object (default None recovers the label 
+            String label for the Core object (default None recovers the label
             from the graph).
-            
+
         config : dict or None
             A dictionary of simulation parameters. If None, the standard
             pyphs.config.simulations is used (the default is None).
             keys and default values are
-            
+
               'fs': 48e3,           # Sample rate (Hz)
               'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
               'theta': 0.,          # Theta-scheme for the structure
               'split': False,       # split implicit from explicit part
               'maxit': 10,          # Max number of iterations for NL solvers
               'eps': 1e-16,         # Global numerical tolerance
-              
+
         Output
         ------
-        
+
         method : pyphs.Simulation
-            The PHS simulation object associated with the PHS netlist for the 
+            The PHS simulation object associated with the PHS netlist for the
             specified configuration.
         """
-        
+
         core = self.to_core(label=label)
-        return core.to_simulation(config=config, inits=inits)    
-    
+        return core.to_simulation(config=config, inits=inits)
+
 def print_netlist_line(dic):
     """
     Return the line of the pyphs netlist associated to

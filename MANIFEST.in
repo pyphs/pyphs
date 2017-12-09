@@ -1,2 +1,2 @@
 include *.rst *.txt README LICENSE AUTHORS CHANGELOG
-recursive-include pyphs *.py *.net
+recursive-include pyphs *.py *.net *.template

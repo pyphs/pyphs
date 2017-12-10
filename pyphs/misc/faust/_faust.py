@@ -131,7 +131,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     iin = []
     for i, u in enumerate(inputs):
         if not isinstance(u, float):
-            iin.append(method.u.index(method.symbols(u)))
+            iin.append(method.u.index(method.symbols(str(u))))
 
     if outputs is None:
         outputs = list(map(str, method.y))
@@ -139,7 +139,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     # list of output indices
     iout = []
     for y in outputs:
-        iout.append(method.y.index(method.symbols(y)))
+        iout.append(method.y.index(method.symbols(str(y))))
 
     if inits is None:
         inits = {}

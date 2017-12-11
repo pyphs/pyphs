@@ -71,7 +71,7 @@ def spectrogram(x, fs, show=False, **kwargs):
     ax = axes()
 
     if isinstance(opts['label'], (list, tuple)):
-        annotate(*opts['label'], ax)
+        annotate(*opts['label'], ax=ax)
 
     noverlap = int(opts['nfft']/2)
     Pxx, fbins, tbins, im = ax.specgram(np.array(x)/(opts['nfft']/2.),

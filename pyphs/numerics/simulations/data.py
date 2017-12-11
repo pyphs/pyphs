@@ -632,19 +632,15 @@ nt: int or None:
 
         # write input sequence
         write_data(self.config['path']+os.sep+'data', sequ, 'u')
+
         # write parameters sequence
         write_data(self.config['path']+os.sep+'data', seqp, 'p')
 
         self.config['nt'] = nt
 
-        if self.config['load']['imin'] is None:
-            self.config['load']['imin'] = 0
-        if self.config['load']['imax'] is None:
-            self.config['load']['imax'] = self.config['nt']-1
-        if self.config['load']['decim'] is None:
-            nt = self.config['load']['imax']-self.config['load']['imin']
-            decim = max(1, int(nt/1e3))
-            self.config['load']['decim'] = decim
+        self.config['load']['imin'] = 0
+        self.config['load']['imax'] = self.config['nt']-1
+        self.config['load']['decim'] = 1
 
         self._build_generators()
 

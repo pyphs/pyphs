@@ -45,7 +45,7 @@ class MethodInvMat(Method):
               'fs': 48e3,           # Sample rate (Hz)
               'grad': 'discret',    # In {'discret', 'theta', 'trapez'}
               'theta': 0.,          # Theta-scheme for the structure
-              'split': True,       # split implicit from explicit part
+              'split': True,        # split implicit from explicit part
               'maxit': 10,          # Max number of iterations for NL solvers
         """
         Method.__init__(self, core, config=config, label=label)
@@ -53,6 +53,7 @@ class MethodInvMat(Method):
         if VERBOSE >= 2:
             print('    Build {}'.format('ijactempFll'))
         self.setexpr('ijactempFll', self.jactempFll().inverse_LU())
+
         if VERBOSE >= 2:
             print('    Build {}'.format('ud_vl'))
         ud_vl = matvecprod(-self.ijactempFll, self.Gl())
@@ -65,13 +66,13 @@ class MethodInvMat(Method):
         if VERBOSE >= 2:
             print('    simplify {}'.format('jacFnlnl'))
         jacFnlnl = simplify(self.jacGnlnl() - self.jactempFnll()*self.ijactempFll*self.jacGlnl())
+
         if VERBOSE >= 2:
             print('    Build {}'.format('ijacFnlnl'))
-
         if jacFnlnl.shape == (0, 0):
             ijacFnlnl = jacFnlnl
         else:
-            ijacFnlnl = jacFnlnl.inv()
+            ijacFnlnl = jacFnlnl.inverse_LU()
 
         if VERBOSE >= 2:
             print('    Build {}'.format('ud_vnl'))

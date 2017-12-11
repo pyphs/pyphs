@@ -14,7 +14,11 @@ import sympy as sp
 from pyphs.core.tools import simplify
 import time
 from ._method_invmat import MethodInvMat
+import os
+import string
+from pyphs import Netlist, Graph
 
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
 
 def faust_expr(name, args, expr, subs):
     previous_expr = sp.sympify(0.)
@@ -36,7 +40,7 @@ def faust_vector(name, expr, argsnames, subs, method):
     code = str()
     for i, e in enumerate(expr):
         code += faust_expr(name+str(i), argsnames, e, subs)
-    code += '\n' + name + " = "
+    code += '\n'*2 + name + " = "
     if len(expr) > 0:
         code += joinListArgsNames
         code += " <: " + ''.join([name+str(i)+', ' for i in range(len(expr))])[:-2]
@@ -117,6 +121,9 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
         Number of NL solver iterations
     """
 
+    with open(os.path.join(here, 'faustfx.template'), 'r') as f:
+        template = string.Template(f.read())
+
     if inputs is None:
         inputs = list(map(str, method.u))
 
@@ -124,7 +131,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     iin = []
     for i, u in enumerate(inputs):
         if not isinstance(u, float):
-            iin.append(method.u.index(method.symbols(u)))
+            iin.append(method.u.index(method.symbols(str(u))))
 
     if outputs is None:
         outputs = list(map(str, method.y))
@@ -132,7 +139,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     # list of output indices
     iout = []
     for y in outputs:
-        iout.append(method.y.index(method.symbols(y)))
+        iout.append(method.y.index(method.symbols(str(y))))
 
     if inits is None:
         inits = {}
@@ -144,126 +151,121 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
         path = method.label + '.dsp'
     argsnames = ['dx', 'w', 'x', 'o', 'u']
 
-    code = '// Faust code associated with the PyPHS Method {0}'.format(method.label)
-    code += '\n'
-    code += '\nimport("stdfaust.lib");'
-    code += '\n'
-    code += '\nprocess = {0}InputToOutput;'.format(method.label)
-    code += '\n'
-    code += '\n// Sample Rate'
-    code += '\n{0} = ma.SR;'.format(str(method.fs))
-    code += '\n'
-    code += '\n// Constant Parameters'
+
+    cinputs = '('
+    for i in range(len(method.u)):
+        if i in iin:
+            cinputs += '_, '
+        else:
+            cinputs += str(method.u[i]) + ', '
+
+    cinputs = cinputs[:-2] + ')'
+
+    constPars = ''
     for k in method.subs.keys():
-        code += '\n{0} = {1};'.format(str(k), method.subs[k])
-    code += '\n'
-    code += '\n// Constant Inputs'
+        constPars += '\n{0} = {1};'.format(str(k), method.subs[k])
+
+    constInputs = ''
     for i, k in enumerate(method.u):
         if i not in iin:
-            code += '\n{0} = {1};'.format(str(k), inputs[i])
-    code += '\n'
-    code += '\n// Sliders Parameters'
-    for p in method.p:
-        code += '\n{0} = hslider("{0}", 0.5, 0., 1., 0.001);'.format(str(p))
-    code += '\n'
+            constInputs += '\n{0} = {1};'.format(str(k), inputs[i])
 
-    code += '\n// Pass'
+    sliders = ''
+    for p in method.p:
+        sliders += '\n{0} = hslider("{0}", 0.5, 0., 1., 0.001);'.format(str(p))
+
     def code_pass(name):
         a = geteval(method, name)
         if len(a) > 0:
             return '\n{0} = {1};'.format(name, listToAllPass(a))
         else:
             return '\n{0} = 0. : !;'.format(name)
+
+    cpass = ''
     for name in 'xwupov':
         cr = False
         for suffix in ('', 'l', 'nl'):
             try:
                 c = code_pass(name+suffix)
                 if not c == '':
-                    code += c
+                    cpass += c
                     cr = True
             except:
                 pass
         if cr:
-            code += '\n'
-    code += '\n// Terminate'
+            cpass += '\n'
+
     def code_terminate(name):
         a = geteval(method, name)
         if len(a) > 0:
             return '\n{0}T = {1};'.format(name, listToAllTerminate(a))
         else:
             return '\n{0}T = 0. : !;'.format(name)
+    cstop = ''
     for name in 'xwupov':
         cr = False
         for suffix in ('', 'l', 'nl'):
             try:
                 c = code_terminate(name+suffix)
                 if not c == '':
-                    code += c
+                    cstop += c
                     cr = True
             except:
                 pass
         if cr:
-            code += '\n'
+            cstop += '\n'
 
-    code += '\n// Arguments'
-    code += '\nargs = x, w, x, o, u;\n'
-    code += '\nargsT = xT, wT, xT, oT, uT;\n'
-    code += '\n'
-    code += '\n// Constants'
-    code += '\nc = x, o, u;\n'
-    code += '\ncT = xT, oT, uT;\n'
-    code += '\n'
-    code += '\n// Shortcuts'
-    code += '\nv2vl = v :(vl, vnlT);\n'
-    code += '\nv2vnl = v :(vlT, vnl);\n'
-    code += '\nvlvnl2v = (vl, vnl) <: ((xl, wlT, vnlT), (vlT, xnl, wnlT), (xlT, wl, vnlT), (vlT, xnlT, wnl));\n'
-    code += '\n'
-    code += '\n// Update X and return args'
-    code += '\nUpdateX = args <: (x, w, cT), ((x, wT, x, oT, uT) :> x), (xT, wT, xT, o, uT);'
-    code += '\n'
-    code += '\n// Define UpdateVl(dx, w, x, u, p, o)'
-    code += faust_vector('UpdateVl', method.ud_vl, argsnames, method.subs, method)
-    code += '\n'
-    code += '\n// Define UpdateVnl(v, c)'
-    code += faust_vector('UpdateVnl', method.ud_vnl, argsnames, method.subs, method)
-    code += '\n'
-    code += '\n// Define y'
-    code += faust_vector('y', [method.output()[i] for i in iout],
-                         argsnames, method.subs, method)
-    code += '\n'
-    code += '\n// UpdateLinear'
-    code += '\nUpdateLinear = args <: (UpdateVl, (vlT, vnl, c)) : (vlvnl2v, c) : args;'
-    code += '\n'
-    code += '\n// UpdateNonLinear'
-    code += '\nUpdateNonLinear = args <: ((vl, vnlT, cT), UpdateVnl, (vT, c)) : (vlvnl2v, c) : args;'
-    udNL = 'UpdateNonLinear:'*nIt if len(method.vnl()) > 0 else ''
-    udL = 'UpdateLinear' if len(method.vl()) > 0 else ''
-    udXY = '<: (UpdateX, y)' if len(method.x) > 0 else '<: y'
-    code += '\n'
-    code += '\n// Main'
-    code += '\n{0}Main = {1} {2} {3} ;'.format(method.label, udNL, udL, udXY)
-    code += '\n'
-    code += '\n// Recursion'
-    code += '\n{0}Recursion = '.format(method.label)
+    udvl = faust_vector('udvl', method.ud_vl, argsnames, method.subs, method)
+    udvnl = faust_vector('udvnl', method.ud_vnl, argsnames, method.subs, method)
+    y = faust_vector('y', [method.output()[i] for i in iout],
+                     argsnames, method.subs, method)
+
+    udNL = 'iterationNL:'*nIt if len(method.vnl()) > 0 else ''
+    udL = 'iterationL' if len(method.vl()) > 0 else ''
+    udXY = '<: (udx, y)' if len(method.x) > 0 else '<: y'
+
     nin = len(method.x)*2 + len(method.w) + len(method.observers)
     nout = nin + len(outputs)
-    code += multirecursive(method, method.label+'Main', nin, nout, inits) + ';'
+    recursion = multirecursive(method, 'iteration', nin, nout, inits)
 
-    cin = '('
+    infoIn = ''
     for i in range(len(method.u)):
         if i in iin:
-            cin += '_, '
-        else:
-            cin += str(method.u[i]) + ', '
+            infoIn += str(method.u[i]) + ', '
 
-    cin = cin[:-2] + ')'
-    code += '\n'
-    code += '\n// InputToOutput'
-    code += '\n{0}InputToOutput = (_,_) :> {1}:{0}Recursion <: (_,_);'.format(method.label, cin)
+    infoOut = ''
+    for i in range(len(method.y)):
+        if i in iout:
+            infoOut += str(method.y[i]) + ', '
+
+    infoPars = ''
+    for p in method.p:
+        infoPars += str(p) + ', '
+
+    subs = {'inputs': cinputs,
+            'label': method.label,
+            'fs': str(method.fs),
+            'constPars': constPars,
+            'constInputs': constInputs,
+            'sliders': sliders,
+            'pass': cpass,
+            'stop': cstop,
+            'udvl': udvl,
+            'udvnl': udvnl,
+            'y': y,
+            'udNL': udNL,
+            'udL': udL,
+            'udXY': udXY,
+            'recursion': recursion,
+            'in': infoIn[:-2] + '.',
+            'out': infoOut[:-2] + '.',
+            'pars': infoPars[:-2] + '.'}
+
+
+    cfaust = template.substitute(subs)
 
     with open(path, 'w') as f:
-        for i, l in enumerate(code.splitlines()):
+        for i, l in enumerate(cfaust.splitlines()):
             if i > 0:
                 f.write('\n')
             f.write(l)

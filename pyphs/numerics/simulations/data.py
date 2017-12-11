@@ -25,28 +25,33 @@ except ImportError:
 
 class Data:
     """
-=======
-Data
-=======
+    =======
+    Data
+    =======
 
-Interface for pyphs.Simulation data files.
+    Interface for pyphs.Simulation data files.
 
-Generators
------------
-t:
-    Generator of simulation time values computed from simulation configuration.
-x, dx, dxH, w, z, u, y, p:
-    Read from files in the folder specified by the simulation configuration.
-dtE, ps, pd:
-    Compute the discrete energy's time variation, dissipated power, and sources
-    power (respectively).
-wavewrite:
-    Export data to wave file.
-plot:
-    Plot selected data.
-plot_powerbal:
-    Plot the power balance.
+    Generators
+    -----------
+    t:
+        Generator of simulation time values computed from simulation
+        configuration.
+    x, dx, dxH, w, z, u, y, p:
+        Read from files in the folder specified by the simulation
+        configuration.
+    E, dtE, ps, pd:
+        Compute the discrete energy's time variation, dissipated power, and
+        sources power (respectively).
+    wavewrite:
+        Export data to wave file.
+    plot:
+        Plot selected data.
+    plot_powerbal:
+        Plot the power balance.
     """
+
+    # ----------------------------------------------------------------------- #
+
     def __init__(self, method, config):
 
         if VERBOSE >= 1:
@@ -60,50 +65,375 @@ plot_powerbal:
 
         self._build_generators()
 
+    # ----------------------------------------------------------------------- #
+    # fs
+    def get_fs(self):
+        return self.config['fs']
+
+    fs = property(get_fs)
+
+    # ----------------------------------------------------------------------- #
+    # nt
+    def get_nt(self):
+        return self.config['nt']
+
+    nt = property(get_nt)
+
+    # ----------------------------------------------------------------------- #
+    # ntplot
+    ntplot = 1000
+
+    # ----------------------------------------------------------------------- #
+    # imin
+    def get_imin(self):
+        i = self.config['load']['imin']
+        if i is None:
+            return 0
+        else:
+            return i
+
+    def set_imin(self, i):
+        if i is None:
+            self.config['load']['imin'] = i
+        else:
+            if not 0 <= i < self.imax:
+                text = 'imin must be in [0, {0}].'
+                raise ValueError(text.format(self.imax-1))
+            if not isinstance(i, (int, float)):
+                text = 'imin must be a positive integer: %s.' % str(i)
+                raise ValueError(text)
+            self.config['load']['imin'] = int(i)
+
+    imin = property(get_imin, set_imin)
+
+    # ----------------------------------------------------------------------- #
+    # imax
+    def get_imax(self):
+        i = self.config['load']['imax']
+        if i is None:
+            return self.nt
+        else:
+            return i
+
+    def set_imax(self, i):
+        if i is None:
+            self.config['load']['imax'] = i
+        else:
+            if not self.imin < i <= self.nt:
+                text = 'imax must be in [{0}, {1}].'
+                raise ValueError(text.format(self.imin+1, self.nt))
+            if not isinstance(i, (int, float)):
+                text = 'imax must be a positive integer: %s.' % str(i)
+                raise ValueError(text)
+            self.config['load']['imax'] = int(i)
+
+    imax = property(get_imax, set_imax)
+
+    # ----------------------------------------------------------------------- #
+    # tmin
+    def get_tmin(self):
+        return self.imin/float(self.fs)
+
+    def set_tmin(self, t):
+        if t is None:
+            self.imin = t
+        else:
+            tmin = 0.
+            tmax = self.tmax
+            if not tmin <= t <= tmax:
+                text = 'tmin must be in [{0}, {1}].'
+                raise ValueError(text.format(tmin, tmax))
+            if not isinstance(t, (int, float)):
+                text = 'tmin must be a positive value: %s.' % str(t)
+                raise ValueError(text)
+            imin = int(t*self.fs)
+            self.imin = imin
+
+    tmin = property(get_tmin, set_tmin)
+
+    # ----------------------------------------------------------------------- #
+    # tmax
+
+    def get_tmax(self):
+        return (self.imax-1)/float(self.fs)
+
+    def set_tmax(self, t):
+        if t is None:
+            self.imax = t
+        else:
+            tmin = self.tmin
+            tmax = (self.nt-1)*self.fs
+            if not tmin <= t <= tmax:
+                text = 'tmax must be in [{0}, {1}].'
+                raise ValueError(text.format(tmin, tmax))
+            if not isinstance(t, (int, float)):
+                text = 'tmax must be a positive value: %s.' % str(t)
+                raise ValueError(text)
+            self.imax = int(t*self.fs)+1
+
+    tmax = property(get_tmax, set_tmax)
+
+    # ----------------------------------------------------------------------- #
+    # decim
+
+    def get_decim(self):
+        return self.config['load']['decim']
+
+    def set_decim(self, i):
+        if i is None:
+            self.config['load']['decim'] = 1
+        else:
+            if not 1 <= i or not isinstance(i, (int, float)):
+                text = 'decim must be a strictly positive integer.'
+                raise ValueError(text)
+            self.config['load']['decim'] = int(i)
+
+    decim = property(get_decim, set_decim)
+
+    # ----------------------------------------------------------------------- #
+
     def subs(self):
         d = self.method.subs.copy()
-        d[self.method.fs] = self.config['fs']
+        d[self.method.fs] = self.fs
         return d
 
+    # ----------------------------------------------------------------------- #
+
+    def init_data(self, sequ=None, seqp=None, nt=None):
+        """
+        Initialize the object and save the sequences for input u, parameters p
+        and state initialisation x0 to files in the folder specified by the
+        simulation configuration.
+
+        Parameters
+        ----------
+
+        sequ: iterable or None, optional
+            Input sequence wich elements are arrays with shape (dims.y(), ). If
+            the lenght nt of the sequence is known (e.g. sequ is a list), the
+            number of simulation time steps is set to nt. If None, a sequence
+            with length nt of zeros with appropriate shape is used (default).
+
+        seqp: iterable or None, optional
+            Input sequence wich elements are arrays with shape (dims.p(), ). If
+            (i) the lenght of sequ is not known, and (ii) the length nt of seqp
+            is known (e.g. seqp is a list), the number of simulation time steps
+            is set to nt=len(seqp). If None, a sequence with length nt of zeros
+            with appropriate shape is used (default).
+
+        nt: int or None:
+            Number of time steps. If None, the lenght of either sequ or seqp
+            must be known (default).
+
+        """
+        # get number of time-steps
+        if nt is not None:
+            pass
+        elif hasattr(sequ, 'index'):
+            nt = len(sequ)
+        elif hasattr(seqp, 'index'):
+            nt = len(seqp)
+        else:
+            if nt is None:
+                raise ValueError("""Unknown number of iterations.
+Please give either a list u (input sequence), a list p (sequence of parameters)
+or an integer nt (number of time steps).'
+    """)
+            nt = int(nt)
+        # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
+        if sequ is None:
+            def generator_u():
+                for _ in range(nt):
+                    if self.method.dims.y() > 0:
+                        yield [0, ]*self.method.dims.y()
+                    else:
+                        yield ""
+            sequ = generator_u()
+        # if seqp is not provided, a sequence of [[0]*np]*nt is assumed
+        if seqp is None:
+            def generator_p():
+                for _ in range(nt):
+                    if self.method.dims.p() > 0:
+                        yield [0, ]*self.method.dims.p()
+                    else:
+                        yield ""
+            seqp = generator_p()
+
+        # write input sequence
+        write_data(self.config['path']+os.sep+'data', sequ, 'u')
+
+        # write parameters sequence
+        write_data(self.config['path']+os.sep+'data', seqp, 'p')
+
+        # should be the only opportunity to modify self.config['nt']
+        self.config['nt'] = nt
+
+        self._build_generators()
+
+    # ----------------------------------------------------------------------- #
+
+    def wavwrite(self, name, index, path=None, gain=1.,
+                 fs=None, normalize=True, timefades=0.):
+        """
+        wavwrite
+        ========
+
+        Write data to wave file.
+
+        Parameters
+        ----------
+        name: str
+            Name of the data generator to export (e.g. 'x', 'y', 'dxH').
+
+        index: int
+            Index of the component of the data generator to read (e.g. if name
+            is 'x' and index is 0, the signal is x[index]).
+
+        path: str or None, optional
+            Raw path to the generated wave file. Notice '.wav' is appended by
+            default. If None, the simulation path and the data generator name
+            is used (default).
+
+        gain: float, optional
+            Gain applied to the signal before writing to file. Default is 1.
+
+        fs: float or None, optional
+            Sample rate for the generated wave file. Resampling is performed
+            with scipy.signal.resample. If None, the simulation samplerate is
+            use (default).
+
+        normalize: Bool
+            If True, the signal is normalised by the maximum absolute value.
+            Default is False.
+
+        timefades: float, optional
+            Fade-in and fade-out time to avoid clics. Default is 0.
+
+        See also
+        ---------
+        pyphs.misc.signals.waves.wavwrite
+
+        """
+        if fs is None:
+            fs = self.fs
+        if path is None:
+            path = self.config['path'] + os.sep + name + str(index)
+        print(path)
+        args = {'ind': index,
+                'imin': self.imin, 'imax': self.imax, 'decim': 1,
+                'postprocess': lambda e: gain*e}
+        sig = getattr(self, name)(**args)
+        wavwrite(sig, self.fs, path,
+                 fs_out=fs, normalize=normalize, timefades=timefades)
+
+    # ----------------------------------------------------------------------- #
+
+    def plot_powerbal(self, mode='single', DtE='deltaH',
+                      show=True, **loadopts):
+        """
+        Plot the power balance. mode is 'single' or 'multi' for single figure
+        or multifigure (default is 'single').
+
+        Parameters
+        -----------
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = int(data.nt/1000)
+            (default).
+
+        """
+        options = self.config['load'].copy()
+        options.update(loadopts)
+        if 'decim' not in loadopts:
+            options['decim'] = max((1, (self.imax-self.imin)//self.ntplot))
+        plot_powerbal(self, mode=mode, DtE=DtE, show=show, **options)
+
+    # ----------------------------------------------------------------------- #
+
+    def plot(self, vars, show=True, label=None, **loadopts):
+        """
+        Plot simulation data
+
+        Parameters
+        ----------
+
+        vars : list
+            List of variables to plot. Elements can be a single string name or
+            a tuples of strings (name, index). For each string element, every
+            indices of variable name are ploted. For each tuple element, the
+            element index of variable name is ploted.
+
+        load : dict
+            dictionary of signal load options, with keys
+                * 'imin': starting index,
+                * 'imax': stoping index,
+                * 'decim': decimation factor.
+
+        show : bool
+            Acivate the call to matplotlib.pyplot.show
+
+        """
+        options = self.config['load'].copy()
+        options.update(loadopts)
+        if 'decim' not in loadopts:
+            options['decim'] = max((1, (self.imax-self.imin)//self.ntplot))
+        plot(self, vars, show=show, label=label, **options)
+
+    # ----------------------------------------------------------------------- #
+
     def _build_generators(self):
+        """
+        Build most generators that read from txt files and render data.
+        """
+
+        # ------------------------------------------------------------------- #
+
+        names = ['x', 'dx', 'w', 'u', 'p', 'y', 'dxH', 'z']
+
+        # ------------------------------------------------------------------- #
+
         def build_generator(name):
             "Build data_generator from data name."
 
-            def data_generator(ind=None, postprocess=None,
-                               imin=self.config['load']['imin'],
-                               imax=self.config['load']['imax'],
-                               decim=self.config['load']['decim']):
+            def data_generator(ind=None, postprocess=None, **loadopts):
+
+                options = self.config['load'].copy()
+                options.update(loadopts)
+
                 "Doc string overwritten below"
-                return self._data_generator(name, ind=ind, imin=imin,
-                                            imax=imax, decim=decim,
-                                            postprocess=postprocess)
+                return self._data_generator(name, ind=ind,
+                                            postprocess=postprocess,
+                                            **options)
 
             doc_template = """
-{0}
-====
+    {0}
+    ====
 
-Reader for simulation data {0} from file:\n{1}
+    Reader for simulation data {0} from file:\n{1}
 
-Parameters
------------
-ind: int or None, optional
-    Index for the returned value {0}[ind]. If None, the full vector is
-    returned (default).
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=Inf (default).
-decim: int or None,
-    decimation factor
+    Parameters
+    -----------
+    ind: int or None, optional
+        Index for the returned value {0}[ind]. If None, the full vector is
+        returned (default).
+    imin: int or None, optional
+        Starting index. If None, imin=0 (default).
+    imax: int or None,
+        Stoping index. If None, imax=Inf (default).
+    decim: int or None,
+        decimation factor
 
-Returns
--------
+    Returns
+    -------
 
-{0}_generator: generator
-    A python generator of value {0}[ind][i] for each time step i starting
-    from index imin to index imax with decimation factor decim (i.e. the value
-    is generated if i-imin % decim == 0).
-"""
+    {0}_generator: generator
+        A python generator of value {0}[ind][i] for each time step i starting
+        from index imin to index imax with decimation factor decim (i.e. the
+        value is generated if i-imin % decim == 0).
+    """
             filename = '{0}{1}data{1}{2}.txt'.format(self.config['path'],
                                                      os.sep,
                                                      name)
@@ -111,15 +441,23 @@ Returns
             setattr(data_generator, 'func_doc', doc)
             return data_generator
 
-        for name in ['x', 'dx', 'w', 'u', 'p', 'y', 'dxH', 'z']:
+        # ------------------------------------------------------------------- #
+
+        for name in names:
             setattr(self, name, build_generator(name))
 
+    # ----------------------------------------------------------------------- #
+
     def _data_generator(self, name, ind=None, postprocess=None,
-                        imin=None, imax=None, decim=None):
-        opts = self.config['load']
-        options = {'imin': opts['imin'] if imin is None else imin,
-                   'imax': opts['imax'] if imax is None else imax,
-                   'decim': opts['decim'] if decim is None else decim}
+                        **loadopts):
+        """
+        Prototype function for readers. Used in
+        self._build_generators.build_generators.data_generator
+        """
+        options = self.config['load'].copy()
+        for k in options:
+            if k in loadopts:
+                options[k] = loadopts[k]
 
         path = self.config['path'] + os.sep + 'data'
         filename = path + os.sep + name + '.txt'
@@ -127,81 +465,86 @@ Returns
                                    **options)
         return generator
 
-    def t(self, imin=None, imax=None, decim=None):
+    # ----------------------------------------------------------------------- #
+
+    def t(self, **loadopts):
         """
-t
-=
+        t
+        =
 
-Generator of simulation times values.
+        Generator of simulation times values.
 
-Parameters
------------
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor
+        Parameters
+        -----------
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor
 
-Returns
--------
+        Returns
+        -------
 
-t_generator: generator
-    A python generator of scalar time value t[i] for each time step i starting
-    from index imin to index imax with decimation factor decim (i.e. the value
-    is generated if i-imin % decim == 0).
-"""
-        options = self.config['load']
-        if imin is None:
-            imin = options['imin']
-        if imax is None:
-            imax = options['imax']
-            if imax is None:
-                imax = float('Inf')
-        if decim is None:
-            decim = options['decim']
+        t_generator: generator
+            A python generator of scalar time value t[i] for each time step i
+            starting from index imin to index imax with decimation factor decim
+            (i.e. the value is generated if i-imin % decim == 0).
+        """
+        options = self.config['load'].copy()
+        options.update(loadopts)
+
+        if options['imin'] is None:
+            options['imin'] = 0
+        if options['imax'] is None:
+            options['imax'] = float('Inf')
+        if options['decim'] is None:
+            options['decim'] = 1
 
         def generator():
-            for n in range(self.config['nt']):
-                yield n/self.config['fs']
+            for n in range(self.nt):
+                yield n/self.fs
         i = 0
         for el in generator():
-            if imin <= i < imax and not bool(i % decim):
+            if (options['imin'] <= i < options['imax'] and
+                    not bool(i % options['decim'])):
                 yield el
             i += 1
 
-    def dtE(self, imin=None, imax=None, decim=None, DtE='DxhDtx'):
+    # ----------------------------------------------------------------------- #
+
+    def dtE(self, DtE='DxhDtx', **loadopts):
         """
-dtE
-===
+        dtE
+        ===
 
-Generator of discrete energy's time variation values.
+        Generator of discrete energy's time variation values.
 
-Parameters
------------
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
-DtE: str in {'deltaH', 'DxhDtx'}, optional
-    Method for the computation of discrete energy's time variation. If DtE is
-    'deltaH', the output with index i is (H[t[i+1]]-H[t[i]]) * samplerate. If
-    DtE is 'DxhDtx', the output with index i is (dxH[i] dot dtx[i]).
+        Parameters
+        -----------
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default).
+        DtE: str in {'deltaH', 'DxhDtx'}, optional
+            Method for the computation of discrete energy's time variation. If
+            DtE is 'deltaH', the output with index i is
+            (H[t[i+1]]-H[t[i]]) * samplerate. If DtE is 'DxhDtx', the output
+            with index i is (dxH[i] dot dtx[i]).
 
-Returns
--------
+        Returns
+        -------
 
-dtE_generator: generator
-    A python generator of scalar discrete energy's time variation value DtE[i]
-    for each time step i starting from index imin to index imax with decimation
-    factor decim (i.e. the value is generated if i-imin % decim == 0).
+        dtE_generator: generator
+            A python generator of scalar discrete energy's time variation value
+            DtE[i] for each time step i starting from index imin to index imax
+            with decimation factor decim (i.e. the value is generated if
+            i-imin % decim == 0).
         """
-        options = self.config['load']
-        options = {'imin': options['imin'] if imin is None else imin,
-                   'imax': options['imax'] if imax is None else imax,
-                   'decim': options['decim'] if decim is None else decim}
+        options = self.config['load'].copy()
+        options.update(loadopts)
 
         if DtE == 'deltaH':
             H_expr = self.method.H.subs(self.method.subs)
@@ -226,40 +569,40 @@ dtE_generator: generator
             for args, o in zip(self.args(**options), self.o(**options)):
                 a = (list(args)+list(o))
                 yield (Hpost(*Hpost_args(*a)) -
-                       H(*H_args(*a)))*self.config['fs']
+                       H(*H_args(*a)))*self.fs
 
         elif DtE == 'DxhDtx':
             for dtx, dxh in zip(self.dtx(**options), self.dxH(**options)):
                 yield scalar_product(dtx, dxh)
 
-    def E(self, imin=None, imax=None, decim=None):
+    # ----------------------------------------------------------------------- #
+
+    def E(self, **loadopts):
         """
-E
-===
+        E
+        ===
 
-Generator of discrete energy's values.
+        Generator of discrete energy's values.
 
-Parameters
------------
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+        Parameters
+        -----------
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default).
 
-Returns
--------
+        Returns
+        -------
 
-E_generator: generator
-    A python generator of scalar discrete energy's value E[i] for each time
-    step i starting from index imin to index imax with decimation factor decim
-    (i.e. the value is generated if i-imin % decim == 0).
+        E_generator: generator
+            A python generator of scalar discrete energy's value E[i] for each
+            time step i starting from index imin to index imax with decimation
+            factor decim (i.e. the value is generated if i-imin % decim == 0).
         """
-        options = self.config['load']
-        options = {'imin': options['imin'] if imin is None else imin,
-                   'imax': options['imax'] if imax is None else imax,
-                   'decim': options['decim'] if decim is None else decim}
+        options = self.config['load'].copy()
+        options.update(loadopts)
 
         H_expr = self.method.H.subs(self.method.subs)
         H_symbs = free_symbols(H_expr)
@@ -272,36 +615,35 @@ E_generator: generator
             a = (list(args)+list(o))
             yield H(*H_args(*a))
 
-    def pd(self, imin=None, imax=None, decim=None):
+    # ----------------------------------------------------------------------- #
+
+    def pd(self, **loadopts):
         """
-pd
-==
+        pd
+        ==
 
-Generator of discrete dissipated power values.
+        Generator of discrete dissipated power values.
 
-Parameters
------------
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+        Parameters
+        -----------
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default).
 
-Returns
--------
+        Returns
+        -------
 
-pd_generator: generator
-    A python generator of scalar discrete dissipated power value pd[i] for each
-    time step i starting from index imin to index imax with decimation
-    factor decim (i.e. the value is generated if i-imin % decim == 0), with
-    pd[i] = w[i] dot z[i].
-
+        pd_generator: generator
+            A python generator of scalar discrete dissipated power value pd[i]
+            for each time step i starting from index imin to index imax with
+            decimation factor decim (i.e. the value is generated if
+            i-imin % decim == 0), with pd[i] = w[i] dot z[i].
         """
-        options = self.config['load']
-        options = {'imin': options['imin'] if imin is None else imin,
-                   'imax': options['imax'] if imax is None else imax,
-                   'decim': options['decim'] if decim is None else decim}
+        options = self.config['load'].copy()
+        options.update(loadopts)
 
         R_expr = self.method.R().subs(self.subs())
 
@@ -323,74 +665,75 @@ pd_generator: generator
                                a,
                                R(*R_args(*(list(args)+list(o)))))
 
-    def ps(self, imin=None, imax=None, decim=None):
+    # ----------------------------------------------------------------------- #
+
+    def ps(self, **loadopts):
         """
-ps
-==
+        ps
+        ==
 
-Generator of discrete sources power values.
+        Generator of discrete sources power values.
 
-Parameters
------------
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+        Parameters
+        -----------
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default).
 
-Returns
--------
+        Returns
+        -------
 
-ps_generator: generator
-    A python generator of scalar discrete sources power value ps[i] for each
-    time step i starting from index imin to index imax with decimation
-    factor decim (i.e. the value is generated if i-imin % decim == 0), with
-    ps[i] = u[i] dot y[i].
-
+        ps_generator: generator
+            A python generator of scalar discrete sources power value ps[i]
+            for each time step i starting from index imin to index imax with
+            decimation factor decim (i.e. the value is generated if
+            i-imin % decim == 0), with ps[i] = u[i] dot y[i].
         """
-        options = self.config['load']
-        options = {'imin': options['imin'] if imin is None else imin,
-                   'imax': options['imax'] if imax is None else imax,
-                   'decim': options['decim'] if decim is None else decim}
+        options = self.config['load'].copy()
+        options.update(loadopts)
+
         for u, y in zip(self.u(**options),
                         self.y(**options)):
             yield scalar_product(u, y)
 
-    def o(self, ind=None, imin=None, imax=None, decim=None):
+    # ----------------------------------------------------------------------- #
+
+    def o(self, ind=None, **loadopts):
         """
-o
-==
+        o
+        ==
 
-Generator of values for observers.
+        Generator of values for observers.
 
-Parameters
------------
-ind: int or None, optional
-    Index of the observer. If None, values for every observers are
-    returned (default).
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+        Parameters
+        -----------
+        ind: int or None, optional
+            Index of the observer. If None, values for every observers are
+            returned (default).
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default).
 
-Returns
--------
+        Returns
+        -------
 
-ps_generator: generator
-    A python generator of scalar discrete sources power value ps[i] for each
-    time step i starting from index imin to index imax with decimation
-    factor decim (i.e. the value is generated if i-imin % decim == 0), with
-    ps[i] = u[i] dot y[i].
-
+        ps_generator: generator
+            A python generator of scalar discrete sources power value ps[i] for
+            each time step i starting from index imin to index imax with
+            decimation factor decim (i.e. the value is generated if
+            i-imin % decim == 0), with ps[i] = u[i] dot y[i].
         """
-        options = self.config['load']
-        options = {'imin': options['imin'] if imin is None else imin,
-                   'imax': options['imax'] if imax is None else imax,
-                   'decim': options['decim'] if decim is None else decim}
-        obs_expr = [e.subs(self.subs()) for e in self.method.observers.values()]
+        options = self.config['load'].copy()
+        options.update(loadopts)
+
+        obs_expr = [e.subs(self.subs())
+                    for e in self.method.observers.values()]
 
         obs_symbs = free_symbols(obs_expr)
         index = len(self.method.args())-len(obs_expr)
@@ -408,38 +751,40 @@ ps_generator: generator
             for arg in self.args(**options):
                 yield obs(*obs_args(*arg))[ind]
 
+    # ----------------------------------------------------------------------- #
 
-    def args(self, ind=None, imin=None, imax=None, decim=None):
+    def args(self, ind=None, **loadopts):
         """
-args
-====
+        args
+        ====
 
-Generator of values for arguments of numerical functions args=(x, dx, w, u, p).
+        Generator of values for arguments of numerical functions
+        args=(x, dx, w, u, p).
 
-Parameters
------------
-ind: int or None, optional
-    Index for the returned value args[ind]. If None, the full arguments vector
-    is returned (default).
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+        Parameters
+        -----------
+        ind: int or None, optional
+            Index for the returned value args[ind]. If None, the full arguments
+            vector is returned (default).
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default)
 
-Returns
--------
+        Returns
+        -------
 
-args_generator: generator
-    A python generator of arguments of numerical functions value args[ind][i]
-    for each time step i starting from index imin to index imax with decimation
-    factor decim (i.e. the value is generated if i-imin % decim == 0).
+        args_generator: generator
+            A python generator of arguments of numerical functions value
+            args[ind][i] for each time step i starting from index imin to index
+            imax with decimation factor decim (i.e. the value is generated if
+            i-imin % decim == 0).
         """
-        options = self.config['load']
-        options = {'imin': options['imin'] if imin is None else imin,
-                   'imax': options['imax'] if imax is None else imax,
-                   'decim': options['decim'] if decim is None else decim}
+        options = self.config['load'].copy()
+        options.update(loadopts)
+
         for x, dx, w, u, p in zip(self.x(**options),
                                   self.dx(**options),
                                   self.w(**options),
@@ -451,76 +796,91 @@ args_generator: generator
             else:
                 yield arg[ind]
 
-    def dtx(self, ind=None, imin=None, imax=None, decim=None):
+    # ----------------------------------------------------------------------- #
+
+    def dtx(self, ind=None, **loadopts):
         """
-dtx
-====
+        dtx
+        ====
 
-Generator of state vector time variation values dtx ~ dx * samplerate.
+        Generator of state vector time variation values dtx ~ dx * samplerate.
 
-Parameters
------------
-ind: int or None, optional
-    Index for the returned value dx[ind] * samplerate. If None, the full state
-    vector variation dx[:] * samplerate is returned (default).
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+        Parameters
+        -----------
+        ind: int or None, optional
+            Index for the returned value dx[ind] * samplerate. If None, the
+            full state vector variation dx[:] * samplerate is returned
+            (default).
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default).
 
-Returns
--------
+        Returns
+        -------
 
-dtx_generator: generator
-    A python generator of state vector time variation dx[ind][i] * samplerate
-    for each time step i starting from index imin to index imax with decimation
-    factor decim (i.e. the value is generated if i-imin % decim == 0).
+        dtx_generator: generator
+            A python generator of state vector time variation
+            dx[ind][i] * samplerate for each time step i starting from index
+            imin to index imax with decimation factor decim (i.e. the value is
+            generated if i-imin % decim == 0).
 
-See Also
----------
-x, dx
-"""
-        for dtx in self.dx(postprocess=self._dxtodtx, ind=ind, imin=imin,
-                           imax=imax, decim=decim):
+        See Also
+        ---------
+        x, dx
+        """
+
+        options = self.config['load'].copy()
+        options.update(loadopts)
+
+        def dxtodtx(dx):
+            return numpy.asfarray(dx)*self.fs
+
+        for dtx in self.dx(postprocess=dxtodtx, ind=ind, **options):
             yield dtx
 
-    def _dxtodtx(self, dx):
-        return numpy.asfarray(dx)*self.config['fs']
+    # ----------------------------------------------------------------------- #
 
-    def a(self, ind=None, imin=None, imax=None, decim=None):
+    def a(self, ind=None, **loadopts):
         """
-a
-====
+        a
+        =
 
-Generator of values for components of vector a in the core port-Hamiltonian
-structure b = J dot a, i.e. a = (dxH, z, u).
+        Generator of values for components of vector a in the core
+        port-Hamiltonian structure b = J dot a, i.e. a = (dxH, z, u).
 
-Parameters
------------
-ind: int or None, optional
-    Index for the returned value a[ind]. If None, the full vector is
-    returned (default).
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+        Parameters
+        -----------
+        ind: int or None, optional
+            Index for the returned value a[ind]. If None, the full vector is
+            returned (default).
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default).
 
-Returns
--------
+        Returns
+        -------
 
-a_generator: generator
-    A python generator of arguments of numerical functions value a[ind][i]
-    for each time step i starting from index imin to index imax with decimation
-    factor decim (i.e. the value is generated if i-imin % decim == 0).
+        a_generator: generator
+            A python generator of arguments of numerical functions value
+            a[ind][i] for each time step i starting from index imin to index
+            imax with decimation factor decim (i.e. the value is generated if
+            i-imin % decim == 0).
+
+        See also
+        --------
+
+        b
+
         """
-        options = self.config['load']
-        options = {'imin': options['imin'] if imin is None else imin,
-                   'imax': options['imax'] if imax is None else imax,
-                   'decim': options['decim'] if decim is None else decim}
+        options = self.config['load'].copy()
+        options.update(loadopts)
+
         for dxH, z, u in zip(self.dxH(**options),
                              self.z(**options),
                              self.u(**options)):
@@ -529,38 +889,45 @@ a_generator: generator
             else:
                 yield (dxH + z + u)[ind]
 
-    def b(self, ind=None, imin=None, imax=None, decim=None):
+    # ----------------------------------------------------------------------- #
+
+    def b(self, ind=None, **loadopts):
         """
-a
-====
+        b
+        =
 
-Generator of values for components of vector b in the core port-Hamiltonian
-structure b = J dot a, i.e. b = (dtx, w, y).
+        Generator of values for components of vector b in the core
+        port-Hamiltonian structure b = J dot a, i.e. b = (dtx, w, y).
 
-Parameters
------------
-ind: int or None, optional
-    Index for the returned value b[ind]. If None, the full vector is
-    returned (default).
-imin: int or None, optional
-    Starting index. If None, imin=0 (default).
-imax: int or None,
-    Stoping index. If None, imax=simu.config['nt'] (default).
-decim: int or None,
-    decimation factor. If None, decim = int(simu.config['nt']/1000) (default)
+        Parameters
+        -----------
+        ind: int or None, optional
+            Index for the returned value b[ind]. If None, the full vector is
+            returned (default).
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default).
 
-Returns
--------
+        Returns
+        -------
 
-b_generator: generator
-    A python generator of arguments of numerical functions value b[ind][i]
-    for each time step i starting from index imin to index imax with decimation
-    factor decim (i.e. the value is generated if i-imin % decim == 0).
+        b_generator: generator
+            A python generator of arguments of numerical functions value
+            b[ind][i] for each time step i starting from index imin to index
+            imax with decimation factor decim (i.e. the value is generated if
+            i-imin % decim == 0).
+
+        See also
+        --------
+
+        a
+
         """
-        options = self.config['load']
-        options = {'imin': options['imin'] if imin is None else imin,
-                   'imax': options['imax'] if imax is None else imax,
-                   'decim': options['decim'] if decim is None else decim}
+        options = self.config['load'].copy()
+        options.update(loadopts)
 
         for dtx, w, y in zip(self.dtx(**options),
                              self.w(**options),
@@ -570,173 +937,9 @@ b_generator: generator
             else:
                 yield [list(dtx) + list(w) + list(y)][ind]
 
-    def init_data(self, sequ=None, seqp=None, nt=None):
-        """
-Initialize the object and save the sequences for input u, parameters p and
-state initialisation x0 to files in the folder specified by the simulation
-configuration.
 
-Parameters
-----------
-
-sequ: iterable or None, optional
-    Input sequence wich elements are arrays with shape (method.dims.y(), ). If
-    the lenght nt of the sequence is known (e.g. sequ is a list), the number of
-    simulation time steps is set to nt. If None, a sequence with length nt of
-    zeros with appropriate shape is used (default).
-
-seqp: iterable or None, optional
-    Input sequence wich elements are arrays with shape (method.dims.p(), ). If
-    (i) the lenght of sequ is not known, and (ii) the length nt of seqp is
-    known (e.g. seqp is a list), the number of simulation time steps is set to
-    nt=len(seqp). If None, a sequence with length nt of zeros with appropriate
-    shape is used (default).
-
-nt: int or None:
-    Number of time steps. If None, the lenght of either sequ or seqp must be
-    known (default).
-
-        """
-        # get number of time-steps
-        if nt is not None:
-            pass
-        elif hasattr(sequ, 'index'):
-            nt = len(sequ)
-        elif hasattr(seqp, 'index'):
-            nt = len(seqp)
-        else:
-            assert nt is not None, 'Unknown number of \
-    iterations. Please tell either a list sequ (input sequence), a list seqp \
-    (sequence of parameters) or an int nt (number of time steps).'
-            assert isinstance(nt, int), 'number of time steps is not integer, \
-    got {0!s} '.format(nt)
-
-        # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
-        if sequ is None:
-            def generator_u():
-                for _ in range(nt):
-                    if self.method.dims.y() > 0:
-                        yield [0, ]*self.method.dims.y()
-                    else:
-                        yield ""
-            sequ = generator_u()
-        # if seqp is not provided, a sequence of [[0]*np]*nt is assumed
-        if seqp is None:
-            def generator_p():
-                for _ in range(nt):
-                    if self.method.dims.p() > 0:
-                        yield [0, ]*self.method.dims.p()
-                    else:
-                        yield ""
-            seqp = generator_p()
-
-        # write input sequence
-        write_data(self.config['path']+os.sep+'data', sequ, 'u')
-        # write parameters sequence
-        write_data(self.config['path']+os.sep+'data', seqp, 'p')
-
-        self.config['nt'] = nt
-
-        if self.config['load']['imin'] is None:
-            self.config['load']['imin'] = 0
-        if self.config['load']['imax'] is None:
-            self.config['load']['imax'] = self.config['nt']-1
-        if self.config['load']['decim'] is None:
-            nt = self.config['load']['imax']-self.config['load']['imin']
-            decim = max(1, int(nt/1e3))
-            self.config['load']['decim'] = decim
-
-        self._build_generators()
-
-    def wavwrite(self, name, index, path=None, gain=1.,
-                 fs=None, normalize=True, timefades=0.):
-        """
-========
-wavwrite
-========
-
-Write data to wave file.
-
-Parameters
-----------
-name: str
-    Name of the data generator to export (e.g. 'x', 'y', 'dxH').
-
-index: int
-    Index of the component of the data generator to read (e.g. if name is 'x'
-    and index is 0, the signal is x[index]).
-
-path: str or None, optional
-    Raw path to the generated wave file. Notice '.wav' is appended by default.
-    If None, the simulation path and the data generator name is used (default).
-
-gain: float, optional
-    Gain applied to the signal before writing to file. Default is 1.
-
-fs: float or None, optional
-    Sample rate for the generated wave file. Resampling is performed with
-    scipy.signal.resample. If None, the simulation samplerate is use (default).
-
-normalize: Bool
-    If True, the signal is normalised by the maximum absolute value. Default is
-    False.
-
-timefades: float, optional
-    Fade-in and fade-out time to avoid clics. Default is 0.
-
-See also
----------
-pyphs.misc.signals.waves.wavwrite
-        """
-        if fs is None:
-            fs = self.config['fs']
-        if path is None:
-            path = self.config['path'] + os.sep + name + str(index)
-        print(path)
-        args = {'ind': index,
-                'imin': 0, 'imax': None, 'decim': 1,
-                'postprocess': lambda e: gain*e}
-        sig = getattr(self, name)(**args)
-        wavwrite(sig, self.config['fs'], path,
-                 fs_out=fs, normalize=normalize, timefades=timefades)
-
-    def plot_powerbal(self, mode='single', DtE='deltaH', load=None, show=True):
-        """
-        Plot the power balance. mode is 'single' or 'multi' for single figure \
-or multifigure (default is 'single').
-        """
-        if load is None:
-            load = self.config['load']
-        plot_powerbal(self, mode=mode, DtE=DtE, show=show, **load)
-
-    def plot(self, vars, load=None, show=True, label=None):
-        """
-        Plot simulation data
-
-        Parameters
-        ----------
-
-        vars : list
-            List of variables to plot. Elements can be a single string name or
-            a tuples of strings (name, index). For each string element, every
-            indices of variable name are ploted. For each tuple element, the
-            element index of variable name is ploted.
-
-        load : dict
-            dictionary of signal load options, with keys
-                * 'imin': starting index,
-                * 'imax': stoping index,
-                * 'decim': decimation factor.
-
-        show : bool
-            Acivate the call to matplotlib.pyplot.show
-
-        """
-        if load is None:
-            load = self.config['load']
-        plot(self, vars, show=show, label=label, **load)
-
-###########################################################################
+# --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
 
 
 def scalar_product(list1, list2, weight_matrix=None):

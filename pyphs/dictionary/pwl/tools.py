@@ -13,12 +13,16 @@ import numpy as np
 def pwl_func(X_lst, Y_lst, symbol=sp.symbols('x'),
              integ=False, y0=0., intconst=0.):
     """
-Returns a piecewise linear interpolation of the set (X_lst, Y_lst), based on
-the following explicit form a + b.x + sum(c_i*abs(x - X_i)), where i denote the
-ith component of the list and a, b and c are defined in [Chua and Ying, eq (2)].
-[Chua and Ying, eq (2)] : Chua, L., & Ying, R. (1983). Canonical \
-piecewise-linear analysis. IEEE Transactions on Circuits and Systems, \
-30(3), 125-140.
+    Returns a piecewise linear interpolation of the set (X_lst, Y_lst), based on
+    the following explicit form:
+
+    f(x) = a + b.x + sum(c_i*abs(x - X_i)),
+
+    where i denote the i-th component of the list and a, b and c are defined
+    in [CY83, eq (2)].
+
+    [CY83] : Chua, L., & Ying, R. (1983). Canonical piecewise-linear analysis.
+    IEEE Transactions on Circuits and Systems, 30(3), 125-140.
     """
 
     # Numerical values

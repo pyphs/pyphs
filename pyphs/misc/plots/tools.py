@@ -20,7 +20,7 @@ def dec(li, opts):
     return [el for el in decimate(li, ndecim)]
 
 
-def annotate(s, xy, ax):
+def annotate(s, xy, ax=None):
     """
     function for plot annotation
     """

@@ -143,7 +143,7 @@ def multiplot(x, y, show=True, **kwargs):
 
             # Add label or annotation
             if isinstance(opts['labels'][n], (list, tuple)):
-                annotate(*opts['labels'][n], axe)
+                annotate(*opts['labels'][n], ax=axe)
                 l = None
             else:
                 l = opts['labels'][n]
@@ -174,7 +174,7 @@ def multiplot(x, y, show=True, **kwargs):
 
                 # Add label or annotation
                 if isinstance(opts['labels'][n][m], (list, tuple)):
-                    annotate(*opts['labels'][n][m], axe)
+                    annotate(*opts['labels'][n][m], ax=axe)
                     l = None
                 else:
                     l = opts['labels'][n][m]

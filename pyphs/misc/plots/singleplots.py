@@ -106,7 +106,7 @@ None).
     for n, yn in enumerate(y):
 
         if isinstance(opts['labels'][n], (list, tuple)):
-            annotate(*opts['labels'][n], ax)
+            annotate(*opts['labels'][n], ax=ax)
             l = None
         else:
             l = opts['labels'][n]

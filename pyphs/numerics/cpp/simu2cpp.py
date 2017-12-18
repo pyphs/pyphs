@@ -106,6 +106,8 @@ def _str_includes():
 #include <cstdio>
 #include <time.h>
 #include <math.h>
+#include <H5Cpp.h>
+using namespace H5;
 
 #include "core.h"
 """
@@ -156,12 +158,14 @@ def _str_initvecs(simu):
     string += "\nconst unsigned int nt = {0};".format(simu.data.config['nt'])
 
     string += '\n' + linesplit + '\n// Initialize vectors'
+    string2 = '\n' + linesplit + '\n// Initialize struct\ntypedef struct argstruct{'
     names = ('u', 'p')
     for name in names:
         dim = len(getattr(simu.method, name))
         if dim > 0:
             temp = name, dim, CONFIG_CPP['float']
             string += "\nvector<{2}> {0}Vector({1});".format(*temp)
+            string2 += "\n    {2} {0}[{1}];".format(*temp)
     names = simu.config['files']
     for name in names:
         val = simu.method.inits_evals[name]
@@ -172,75 +176,55 @@ def _str_initvecs(simu):
         if dim > 0:
             temp = name, dim, CONFIG_CPP['float']
             string += "\nvector<{2}> {0}Vector({1});".format(*temp)
-    return indent(string)
+            string2 += "\n    {2} {0}[{1}];".format(*temp)
+    string2 += "\n} argstruct;\nargstruct mystruct;"
+    return indent(string + string2)
 
 
 def _str_open_files(simu):
     """
     return piece of cpp code.
-    open files 'u.txt' and 'p.txt'
+    open HDF5 file
     """
-    string = ""
-    names = ('u', 'p')
-    for name in names:
-        dim = len(getattr(simu.method, name))
-        if dim > 0:
-            string += '\n' + indent(linesplit + '\n// Open file for {} data'.format(name)) +  r"""
-    ifstream {0}File;
-    {0}File.open("{1}{2}data{2}{0}.txt");
-
-    if ({0}File.fail()) """.format(name, main_path(simu), SEP)
-            string += "{" + """
+    h5name = os.path.join(main_path(simu), 'data', 'results.h5')
+    string = "\n" + indent(linesplit) + """
+    // Open HDF5 file for reading inputs and storing results
+    H5File h5fid;
+    try{{
+        h5fid = H5File("{0}", H5F_ACC_RDWR);
+    }}
+    catch(FileIException error){{
         cerr << "Failed opening {0} file" << endl;
-        exit(1);""".format(name) + "}"
+        exit(1);
+    }}""".format(h5name)
     return string
 
 
 def _str_readdata(simu):
-    string = ""
-    dimu = len(simu.method.u)
-    dimp = len(simu.method.p)
-    if dimu + dimp > 0:
-        string = ""
-        if dimu > 0:
-            string += """
-        // Get input data
-        for (unsigned int i=0; i<{0}; i++) """.format(dimu)
-            string += """{
-            uFile >> uVector[i];
-        }"""
-        if dimp > 0:
-            string += """\n
-        // Get parameters data
-        for (unsigned int i=0; i<{0}; i++)""".format(dimp) + """ {
-            pFile >> pVector[i];
-        }"""
+    string="""
+        h5offset[0] = n;
+        // Define current row as dataspace selection
+        Gspace1.selectElements(H5S_SELECT_SET, 1, h5offset);
+
+        // Read row (to retrieve input and parameter data)
+        Gdataset.read(&mystruct, Gdatatype, Gspace0, Gspace1);
+        """
     return string
 
 
-# -----------------------------------------------------------------------------
-
-
-def _init_file(simu, name):
-    """
-    open files for saving data
-    """
-    string = '\n' + indent(linesplit + '\n// Open file for {} data'.format(name)) + """
-    ofstream {0}File;
-    {0}File.open("{1}{2}data{2}{0}.txt");""".format(name, main_path(simu), SEP)
+def _init_files(simu):
+    string = "\n" + indent(linesplit) + """
+    // Initialize HDF5 objects for read/write
+    hsize_t h5dims[1] = {{1}};
+    hsize_t h5offset[1] = {{0}};\n
+    // Access global dataset, datatype and dataspace
+    DataSet Gdataset = h5fid.openDataSet("_global");
+    DataType Gdatatype;
+    Gdatatype.copy(Gdataset);
+    DataSpace Gspace1 = Gdataset.getSpace();
+    // Dataspace for single row
+    DataSpace Gspace0 = DataSpace(1, h5dims);""".format()
     return string
-
-
-# -----------------------------------------------------------------------------
-
-
-def _init_files(phs):
-    string = ""
-    names = ('x', 'dx', 'dxH', 'w', 'z', 'y')
-    for name in names:
-        string += _init_file(phs, name)
-    return string
-
 
 # -----------------------------------------------------------------------------
 
@@ -297,30 +281,30 @@ def pbar(simu):
 def _str_process(simu, objlabel):
     string = '\n' + indent(linesplit) + """
     // Process
-    t.start();\n"""
-    string += """
-    for (unsigned int n = 0; n < nt; n++) {\n""" + _str_readdata(simu)
-    if len(simu.method.u) > 0:
-        string += '\n' + indent(indent(linesplit)) + """
+    t.start();
+
+    for (unsigned int n = 0; n < nt; n++) {"""
+    string += _str_readdata(simu)
+
+    dimu = len(simu.method.u)
+    dimp = len(simu.method.p)
+    objlabellower = objlabel.lower()
+    if dimu > 0:
+        string += indent(indent(linesplit)) + """
         // Update Input
-        """ + objlabel.lower() + """.set_u(uVector);"""
-    if len(simu.method.p) > 0:
-        string += '\n' + indent(indent(linesplit)) + """
+        {0}.set_u((Matrix<double, {1}, 1> &)mystruct.u);\n""".format(objlabellower, dimu)
+    if dimp > 0:
+        string += indent(indent(linesplit)) + """
         // Update Parameters
-        """ + objlabel.lower() + """.set_p(pVector);"""
-    string += '\n' + indent(indent(linesplit)) + """
+        {0}.set_p((Matrix<double, {1}, 1> &)mystruct.p);\n""".format(objlabellower, dimp)
+    string += indent(indent(linesplit)) + """
         // Process update
-        """ + objlabel.lower() + """.update();\n"""
-    string += indent(indent(_gets(simu, objlabel)))
+        {0}.update();""".format(objlabellower)
+
+    string += _gets(simu, objlabel)
     string += pbar(simu)
     string += "\n    }\n"
-    if len(simu.method.u) > 0:
-        string += '\n' + indent(linesplit + '\n// Close file for {} data'.format('u'))
-        string += '\n    uFile.close();'
-    if len(simu.method.p) > 0:
-        string += '\n' + indent(linesplit + '\n// Close file for {} data'.format('p'))
-        string += '\n    pFile.close();'
-    string += indent(_close(simu))
+    string += _close(simu)
 
     string += '\n' + indent(linesplit + '\n// Print path to data')
     string += """
@@ -334,7 +318,7 @@ def _str_process(simu, objlabel):
 
 
 def _gets(simu, objlabel):
-    string = ''
+    string = ""
     names = simu.config['files']
     for name in names:
         val = simu.method.inits_evals[name]
@@ -342,21 +326,23 @@ def _gets(simu, objlabel):
             dim = 1
         else:
             dim = val.shape[0]
-        string += '\n' + linesplit+ '\n// Get data values for {}'.format(name)
-        if dim > 0:
-            string += ("\n{0}Vector = ".format(name)) + \
-                objlabel.lower() + (".{0}_vector();".format(name))
-            string += """
-    for (unsigned int i = 0; i<{0}; i++)""".format(dim) + "{" + """
-        {0}File << {0}Vector[i] << " ";""".format(name) + "\n}"
-        string += "\n{0}File << endl;".format(name)
-    return string
 
+        if dim > 0:
+            string += '\n' + indent(indent(linesplit)) + """
+        // Get data values for {0}
+        {0}Vector = {1}.{0}_vector();
+        for(int i=0; i<{2}; i++){{
+            mystruct.{0}[i] = {0}Vector[i];
+        }}""".format(name, objlabel.lower(), dim)
+
+    string += indent(indent(linesplit)) + """
+        // Write back row (with updated data for x, y, w, z, dx, dxH)
+        Gdataset.write(&mystruct, Gdatatype, Gspace0, Gspace1);"""
+    return string
 
 def _close(simu):
-    string = ''
-    names = simu.config['files']
-    for name in names:
-        string += '\n' + linesplit + '\n// Close file for {} data'.format(name)
-        string += "\n{0}File.close();".format(name)
+    string = '\n' + indent(linesplit) + """
+    // Close h5file
+    h5fid.close();"""
     return string
+    

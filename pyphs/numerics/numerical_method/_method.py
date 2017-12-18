@@ -82,7 +82,7 @@ class Method(Core):
                 target = getattr(self, name[0])
                 attr_name = name[1]
             attr = getattr(source, attr_name)
-            setattr(target, attr_name, copy.deepcopy(attr))
+            setattr(target, attr_name, copy.copy(attr))
 
         # replace every expressions in subs
         self.substitute(selfexprs=True)

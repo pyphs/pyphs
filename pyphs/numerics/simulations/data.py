@@ -6,7 +6,6 @@ Created on Thu Jun  9 10:22:56 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from pyphs.misc.io import data_generator, write_data
 from pyphs.misc.signals.waves import wavwrite
 from pyphs.misc.plots.data import plot, plot_powerbal
 import os
@@ -15,6 +14,7 @@ from pyphs.numerics.tools import lambdify
 from pyphs.misc.tools import find
 from pyphs.core.tools import free_symbols
 from pyphs.config import VERBOSE
+import h5py
 
 
 try:
@@ -23,7 +23,7 @@ except ImportError:
     pass
 
 
-class Data:
+class BaseData:
     """
     =======
     Data
@@ -62,8 +62,6 @@ class Data:
 
         # init method
         self.method = method
-
-        self._build_generators()
 
     # ----------------------------------------------------------------------- #
     # fs
@@ -199,7 +197,7 @@ class Data:
 
     # ----------------------------------------------------------------------- #
 
-    def init_data(self, sequ=None, seqp=None, nt=None):
+    def __init_data__(self, sequ=None, seqp=None, nt=None):
         """
         Initialize the object and save the sequences for input u, parameters p
         and state initialisation x0 to files in the folder specified by the
@@ -227,48 +225,32 @@ class Data:
 
         """
         # get number of time-steps
-        if nt is not None:
-            pass
-        elif hasattr(sequ, 'index'):
-            nt = len(sequ)
-        elif hasattr(seqp, 'index'):
-            nt = len(seqp)
-        else:
-            if nt is None:
+        if nt is None:
+            if hasattr(sequ, '__len__'):
+                nt = len(sequ)
+            elif hasattr(seqp, '__len__'):
+                nt = len(seqp)
+            else:
                 raise ValueError("""Unknown number of iterations.
 Please give either a list u (input sequence), a list p (sequence of parameters)
 or an integer nt (number of time steps).'
     """)
-            nt = int(nt)
+
+        self.config['nt'] = nt = int(nt)
+        
         # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
         if sequ is None:
-            def generator_u():
-                for _ in range(nt):
-                    if self.method.dims.y() > 0:
-                        yield [0, ]*self.method.dims.y()
-                    else:
-                        yield ""
-            sequ = generator_u()
+            dimy = self.method.dims.y()
+            value = [0,] * dimy if dimy > 0 else []
+            sequ = (value for _ in range(nt))
+
         # if seqp is not provided, a sequence of [[0]*np]*nt is assumed
         if seqp is None:
-            def generator_p():
-                for _ in range(nt):
-                    if self.method.dims.p() > 0:
-                        yield [0, ]*self.method.dims.p()
-                    else:
-                        yield ""
-            seqp = generator_p()
+            dimp = self.method.dims.p()
+            value = [0,] * dimp if dimp > 0 else []
+            seqp = (value for _ in range(nt))
 
-        # write input sequence
-        write_data(self.config['path']+os.sep+'data', sequ, 'u')
-
-        # write parameters sequence
-        write_data(self.config['path']+os.sep+'data', seqp, 'p')
-
-        # should be the only opportunity to modify self.config['nt']
-        self.config['nt'] = nt
-
-        self._build_generators()
+        return sequ, seqp, nt
 
     # ----------------------------------------------------------------------- #
 
@@ -384,31 +366,7 @@ or an integer nt (number of time steps).'
 
     # ----------------------------------------------------------------------- #
 
-    def _build_generators(self):
-        """
-        Build most generators that read from txt files and render data.
-        """
-
-        # ------------------------------------------------------------------- #
-
-        names = ['x', 'dx', 'w', 'u', 'p', 'y', 'dxH', 'z']
-
-        # ------------------------------------------------------------------- #
-
-        def build_generator(name):
-            "Build data_generator from data name."
-
-            def data_generator(ind=None, postprocess=None, **loadopts):
-
-                options = self.config['load'].copy()
-                options.update(loadopts)
-
-                "Doc string overwritten below"
-                return self._data_generator(name, ind=ind,
-                                            postprocess=postprocess,
-                                            **options)
-
-            doc_template = """
+    __doc_template__ = """
     {0}
     ====
 
@@ -434,36 +392,18 @@ or an integer nt (number of time steps).'
         from index imin to index imax with decimation factor decim (i.e. the
         value is generated if i-imin % decim == 0).
     """
-            filename = '{0}{1}data{1}{2}.txt'.format(self.config['path'],
-                                                     os.sep,
-                                                     name)
-            doc = doc_template.format(name, filename)
-            setattr(data_generator, 'func_doc', doc)
-            return data_generator
+
+    def _build_generators(self):
+        """
+        Build most generators that read from txt files and render data.
+        """
 
         # ------------------------------------------------------------------- #
 
+        names = ['x', 'dx', 'w', 'u', 'p', 'y', 'dxH', 'z']
         for name in names:
-            setattr(self, name, build_generator(name))
+            setattr(self, name, self.build_generator(name))
 
-    # ----------------------------------------------------------------------- #
-
-    def _data_generator(self, name, ind=None, postprocess=None,
-                        **loadopts):
-        """
-        Prototype function for readers. Used in
-        self._build_generators.build_generators.data_generator
-        """
-        options = self.config['load'].copy()
-        for k in options:
-            if k in loadopts:
-                options[k] = loadopts[k]
-
-        path = self.config['path'] + os.sep + 'data'
-        filename = path + os.sep + name + '.txt'
-        generator = data_generator(filename, ind=ind, postprocess=postprocess,
-                                   **options)
-        return generator
 
     # ----------------------------------------------------------------------- #
 
@@ -938,9 +878,239 @@ or an integer nt (number of time steps).'
                 yield [list(dtx) + list(w) + list(y)][ind]
 
 
-# --------------------------------------------------------------------------- #
+class ASCIIData(BaseData):
+    def init_data(self, sequ=None, seqp=None, nt=None):
+        sequ, seqp, nt = BaseData.__init_data__(self, sequ, seqp, nt)
+        # write input sequence
+        self.write_data(self.config['path']+os.sep+'data', sequ, 'u')
+
+        # write parameters sequence
+        self.write_data(self.config['path']+os.sep+'data', seqp, 'p')
+        self._build_generators()
+    
+    init_data.__doc__ = BaseData.__init_data__.__doc__
+
+    def write_data(self, path, seq, var):
+        if not os.path.exists(path):
+            os.makedirs(path)
+        with open(path + os.sep + var + '.txt', 'w') as _file:
+            for el in seq:
+                _file.write(list2str(el))
+
+    def build_generator(self, name):
+        "Build data_generator from data name."
+        filename = os.path.join(self.config['path'], name + '.txt')
+        default = self.config['load']
+
+        def data_generator(**kwargs):
+            """
+            Generator that read file from path. Each line is returned as a list of
+            floats, if index i is such that imin <= i < imax, with decimation factor
+            decim. A function can be passed as postprocess, to be applied on each
+            output.
+            """
+            imin = kwargs.get('imin', default['imin'])
+            imax = kwargs.get('imax', default['imax'])
+            decim = kwargs.get('decim', default['decim'])
+            ind = kwargs.get('ind', None)
+            postprocess = kwargs.get('postprocess', None)
+
+            if ind is not None and not isinstance(ind, int):
+                raise ValueError('Index should be an integer,not {0}'.format(type(ind)))
+
+            with open(filename, "r") as f:
+                for i, line in enumerate(f):
+                    if (i < imin) or (imax <= i) or ((i - imin) % decim > 0):
+                        continue
+                    if ind is None:
+                        # export full line
+                        out = [float(x) for x in line.split()]
+                        if postprocess is not None:
+                            out = [postprocess(el) for el in out]
+                        yield out
+                    else:
+                        # export selected index in line
+                        out = float(line.split()[ind])
+                        yield out if postprocess is None else postprocess(out)
+
+        data_generator.__doc__ = self.__doc_template__.format(name, filename)
+        return data_generator
+
+
 # --------------------------------------------------------------------------- #
 
+class h5Data(BaseData):
+    def __init__(self, method, config, h5name='results.h5'):
+        BaseData.__init__(self, method, config)
+        self.h5filename = os.path.join(self.config['path'], 'data', h5name)
+        self.h5file = h5py.File(self.h5filename, 'w')
+        self._build_generators()
+
+    def init_data(self, sequ=None, seqp=None, nt=None):
+        sequ, seqp, nt = BaseData.__init_data__(self, sequ, seqp, nt)
+
+        # Total number of samples to write for each time step
+        vars = ['u', 'p'] + list(self.config['files'])
+        dimvars = []
+        for name in vars:
+            val = self.method.inits_evals[name]
+            if len(val.shape) == 0:
+                dim = 1
+            else:
+                dim = val.shape[0]
+            dimvars.append(dim)
+
+        # Offsets defining the first element of each variable
+        self.offsets = [sum(dimvars[:n]) for n in range(len(vars) + 1)]
+        total = self.offsets[-1]
+
+        # Define compound datatype
+        names = ['%s%d' % (var, n) for var, l in zip(vars, dimvars)
+                                   for n in range(l)]
+        dt = numpy.dtype({
+            'names': names,
+            'formats': [numpy.float64,] * total})
+
+        # Create a global dataset
+        glob = self.h5file.create_dataset('_global', dtype=dt, shape=(self.nt,))
+        glob[:] = numpy.zeros(self.nt, dtype=dt)
+
+        # Write input and parameter data in HDF5 file
+        dimu = self.method.dims.y()
+        if dimu:
+            tmp = numpy.vstack(sequ)
+            offset = self.offsets[0]
+            for n in range(dimu):
+                glob[:, 'u%d' % n] = tmp[:, n] 
+
+        dimp = self.method.dims.p()
+        if dimp:
+            tmp = numpy.vstack(seqp)
+            offset = self.offsets[1]
+            for n in range(dimp):
+                glob[:, 'p%d' % n] = tmp[:, n]
+
+
+        self.h5file.close()
+    
+    init_data.__doc__ = BaseData.__init_data__.__doc__
+
+    def build_generator(self, name):
+        "Build data_generator from data name."
+        default = self.config['load']
+
+        def data_generator(ind=None, **kwargs):
+            """
+            Generator that read file from path. Each line is returned as a list of
+            floats, if index i is such that imin <= i < imax, with decimation factor
+            decim. A function can be passed as postprocess, to be applied on each
+            output.
+            """
+            imin = kwargs.get('imin', default['imin'])
+            imax = kwargs.get('imax', default['imax'])
+            decim = kwargs.get('decim', default['decim'])
+            postprocess = kwargs.get('postprocess', None)
+
+            if ind is not None:
+                if not isinstance(ind, int):
+                    raise ValueError('Index should be an integer,not {0}'.format(type(ind)))
+                ind = name + str(ind)
+            else:
+                if name in ('x', 'dx', 'dxH'):
+                    dim = self.method.dims.x()
+                elif name in ('u', 'y'):
+                    dim = self.method.dims.y()
+                elif name in ('w', 'z'):
+                    dim = self.method.dims.w()
+                else:
+                    dim = getattr(self.method.dims, name)()
+                ind = [name + str(n) for n in range(dim)]
+            
+            with h5py.File(self.h5filename, "r", swmr=True) as h5file:
+                data = h5file['_global'][imin:imax:decim]
+                if len(ind) == 0:
+                    return
+                data = data[ind]
+                print("Called generator for %s (shape: %s, %s)" % (name, data.shape, data.dtype))
+                for el in  data:
+                    if postprocess:
+                        el = postprocess(el)
+                    yield el
+
+        data_generator.__doc__ = self.__doc_template__.format(name, self.h5filename)
+        return data_generator
+
+    # ----------------------------------------------------------------------- #
+
+    def args(self, **kwargs):
+        """
+        args
+        ====
+
+        Generator of values for arguments of numerical functions
+        args=(x, dx, w, u, p).
+
+        Parameters
+        -----------
+        ind: int or None, optional
+            Index for the returned value args[ind]. If None, the full arguments
+            vector is returned (default).
+        imin: int or None, optional
+            Starting index. If None, imin=0 (default).
+        imax: int or None,
+            Stoping index. If None, imax=data.nt (default).
+        decim: int or None,
+            decimation factor. If None, decim = 1 (default)
+
+        Returns
+        -------
+
+        args_generator: generator
+            A python generator of arguments of numerical functions value
+            args[ind][i] for each time step i starting from index imin to index
+            imax with decimation factor decim (i.e. the value is generated if
+            i-imin % decim == 0).
+        """
+##        options = self.config['load'].copy()
+##        options.update(loadopts)
+
+##        for x, dx, w, u, p in zip(self.x(**options),
+##                                  self.dx(**options),
+##                                  self.w(**options),
+##                                  self.u(**options),
+##                                  self.p(**options)):
+##            arg = x + dx + w + u + p
+##            if ind is None:
+##                yield arg
+##            else:
+##                yield arg[ind]
+
+        default = self.config['load']
+        imin = kwargs.get('imin', default['imin'])
+        imax = kwargs.get('imax', default['imax'])
+        decim = kwargs.get('decim', default['decim'])
+        postprocess = kwargs.get('postprocess', None)
+        dimx, dimu, dimw, dimp = [getattr(self.method.dims, el)()
+                                  for el in 'xywp']
+        ind = ['x%d' % n for n in range(dimx)] \
+            + ['dx%d' % n for n in range(dimx)] \
+            + ['w%d' % n for n in range(dimw)] \
+            + ['u%d' % n for n in range(dimu)] \
+            + ['p%d' % n for n in range(dimp)]
+        print('Called generator for args', kwargs)
+            
+        with h5py.File(self.h5filename, "r", swmr=True) as h5file:
+            data = h5file['_global'][imin:imax:decim]
+            for el in data[ind]:
+                if postprocess:
+                    value = postprocess(el)
+                else:
+                    value = el
+                yield value
+
+# --------------------------------------------------------------------------- #
+
+Data = h5Data
 
 def scalar_product(list1, list2, weight_matrix=None):
     list1, list2 = list(list1), list(list2)

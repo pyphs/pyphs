@@ -104,6 +104,9 @@ None).
     print_legend = False
 
     for n, yn in enumerate(y):
+        if len(yn) == 0:
+            print('Skipping empty array: ', opts['labels'][n])
+            continue
 
         if isinstance(opts['labels'][n], (list, tuple)):
             annotate(*opts['labels'][n], ax=ax)

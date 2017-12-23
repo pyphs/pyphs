@@ -20,6 +20,7 @@ from .config import path_to_configuration_file
 from .examples import path_to_examples
 from .tutorials import path_to_tutorials
 from .dictionary import path_to_dictionary
+from .templates import path_to_templates
 
 __licence__ = \
     "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
@@ -35,4 +36,4 @@ __all__ = ['Core', 'Netlist', 'Simulation', 'Graph', 'datum',
            'core2tex', 'netlist2tex', 'graphplot2tex', 'texdocument',
            'method2cpp', 'simu2cpp', 'path_to_configuration_file',
            'path_to_examples', 'path_to_tutorials',
-           'core2faustfx', 'path_to_dictionary']
+           'core2faustfx', 'path_to_dictionary', 'path_to_templates']

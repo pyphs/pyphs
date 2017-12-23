@@ -1,0 +1,22 @@
+%
+% ------------------------------------------------------------------------------
+%
+\section{\texttt{Netlist} object}
+%
+\begin{center}
+%
+\texttt{
+  %
+  \begin{tabular}{llllll}
+  %
+  \hline
+  line & label & dictionary.component & nodes & parameters \\
+  \hline
+${netlist}
+  \hline
+  %
+  \end{tabular}
+  %
+}
+%
+\end{center}

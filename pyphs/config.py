@@ -87,15 +87,6 @@ datum = '#'
 # path to latex compiler
 latex_compiler_path = '/Library/TeX/texbin'
 
-# list of authors for latex exports
-footnote = r'\footnote{\url{https://pyphs.github.io/pyphs/}}'
-authors = [r'The \textsc{PyPHS}' + footnote + ' development team']
-
-# list of affiliations associated with the authors for latex exports
-affiliations = [r'Project-team S3AM\footnote{\url{https://www.ircam.fr/recherche/equipes-recherche/systemes-et-signaux-sonores-audioacoustique-instruments-s3am/}}\\' +
-                r'STMS, IRCAM-CNRS-UPMC (UMR 9912)\\' +
-                r'1 Place Igor-Stravinsky, 75004 Paris, France']
-
 # In equations:
 # use “p/q” instead of “frac{p}{q}” when the denominator is simple enough
 fold_short_frac = False

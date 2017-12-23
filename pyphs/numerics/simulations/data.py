@@ -237,7 +237,7 @@ or an integer nt (number of time steps).'
     """)
 
         self.config['nt'] = nt = int(nt)
-        
+
         # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
         if sequ is None:
             dimy = self.method.dims.y()
@@ -887,7 +887,7 @@ class ASCIIData(BaseData):
         # write parameters sequence
         self.write_data(self.config['path']+os.sep+'data', seqp, 'p')
         self._build_generators()
-    
+
     init_data.__doc__ = BaseData.__init_data__.__doc__
 
     def write_data(self, path, seq, var):
@@ -984,7 +984,7 @@ class h5Data(BaseData):
             tmp = numpy.vstack(sequ)
             offset = self.offsets[0]
             for n in range(dimu):
-                glob[:, 'u%d' % n] = tmp[:, n] 
+                glob[:, 'u%d' % n] = tmp[:, n]
 
         dimp = self.method.dims.p()
         if dimp:
@@ -995,7 +995,7 @@ class h5Data(BaseData):
 
 
         self.h5file.close()
-    
+
     init_data.__doc__ = BaseData.__init_data__.__doc__
 
     def build_generator(self, name):
@@ -1028,8 +1028,8 @@ class h5Data(BaseData):
                 else:
                     dim = getattr(self.method.dims, name)()
                 ind = [name + str(n) for n in range(dim)]
-            
-            with h5py.File(self.h5filename, "r", swmr=True) as h5file:
+
+            with h5py.File(self.h5filename, "r", swmr=False) as h5file:
                 data = h5file['_global'][imin:imax:decim]
                 if len(ind) == 0:
                     return
@@ -1101,8 +1101,8 @@ class h5Data(BaseData):
             + ['u%d' % n for n in range(dimu)] \
             + ['p%d' % n for n in range(dimp)]
         print('Called generator for args', kwargs)
-            
-        with h5py.File(self.h5filename, "r", swmr=True) as h5file:
+
+        with h5py.File(self.h5filename, "r", swmr=False) as h5file:
             data = h5file['_global'][imin:imax:decim]
             for el in data[ind]:
                 if postprocess:

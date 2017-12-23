@@ -942,7 +942,10 @@ class ASCIIData(BaseData):
 class h5Data(BaseData):
     def __init__(self, method, config, h5name='results.h5'):
         BaseData.__init__(self, method, config)
-        self.h5filename = os.path.join(self.config['path'], 'data', h5name)
+        datafolder = os.path.join(self.config['path'], 'data')
+        if not os.path.exists(datafolder):
+            os.mkdir(datafolder)
+        self.h5filename = os.path.join(datafolder, h5name)
         self.h5file = h5py.File(self.h5filename, 'w')
         self._build_generators()
 

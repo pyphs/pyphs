@@ -44,7 +44,7 @@ title: str or None
 
     from pyphs import path_to_templates
     with open(os.path.join(path_to_templates,
-                           'texdocument.template'), 'r') as f:
+                           'latex', 'document.template'), 'r') as f:
         template = string.Template(f.read())
 
     with open(os.path.join(path_to_templates,

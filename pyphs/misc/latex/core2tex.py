@@ -20,7 +20,7 @@ def core2tex(core):
 
     from pyphs import path_to_templates
     with open(os.path.join(path_to_templates,
-                           'texcore.template'), 'r') as f:
+                           'latex', 'core.template'), 'r') as f:
         template = string.Template(f.read())
     subs = {}
 

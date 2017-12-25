@@ -17,7 +17,7 @@ import string
 def netlist2tex(netlist):
     from pyphs import path_to_templates
     with open(os.path.join(path_to_templates,
-                           'texnetlist.template'), 'r') as f:
+                           'latex', 'netlist.template'), 'r') as f:
         template = string.Template(f.read())
     subs = {}
     # --------------------------------------------------------------------------
@@ -50,7 +50,7 @@ def graphplot2tex(graph, label=None, folder=None, show=False):
     """
     from pyphs import path_to_templates
     with open(os.path.join(path_to_templates,
-                           'texgraph.template'), 'r') as f:
+                           'latex', 'graph.template'), 'r') as f:
         template = string.Template(f.read())
     subs = {}
     from pyphs.config import plot_format

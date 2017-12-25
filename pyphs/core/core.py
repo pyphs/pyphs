@@ -157,10 +157,10 @@ class Core:
         ====
 
         Save Core object to disk. The path is
-        * folder/label.suffix
+        * folder/label.phs
 
         Notice the data appears on disk as
-        * folder/label.suffix.db
+        * folder/label.phs.db
 
         Parameters
         ----------
@@ -209,16 +209,16 @@ class Core:
         if VERBOSE > 0:
             print('Core {0} saved in {1}'.format(self.label, path))
 
-    def load(self, folder=None, label=None, suffix=None):
+    def load(self, folder=None, label=None):
         """
-        laod
+        load
         ====
 
-        Laod Core object content from disk. The path is
-        * folder/label.suffix
+        Load Core object content from disk. The path is
+        * folder/label.phs
 
         Notice the data appears on disk as
-        * folder/label.suffix.db
+        * folder/label.phs.db
 
         Parameters
         ----------
@@ -229,9 +229,6 @@ class Core:
 
         label : string (optional)
             label of the object to load (default is current object label).
-
-        suffix : string (optional)
-            extension of file (default is 'core').
 
         """
         if folder is None:

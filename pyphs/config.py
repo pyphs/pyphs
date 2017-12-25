@@ -186,7 +186,3 @@ CONFIG_SIMULATION = {'path': SIMULATION_PATH,
 
 # Export format:
 plot_format = 'pdf'
-
-# Can be used to define commands for latex rendering
-# in plot axis and lines labels:
-latex_preamble = [' ', ]

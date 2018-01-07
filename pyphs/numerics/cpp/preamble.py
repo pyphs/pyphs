@@ -9,7 +9,7 @@ from pyphs.misc.tools import get_date
 
 def str_preamble(label):
 
-    licence_text = """/*
+    license_text = """/*
     Copyright or (c) or Copr. Project-Team S3 (Sound Signals and \
 Systems) and
     Analysis/Synthesis team, Laboratory of Sciences and Technologies of Music \
@@ -64,4 +64,4 @@ liability.
 ===========================================================================
 */
 """.format(get_date(), label)
-    return licence_text
+    return license_text

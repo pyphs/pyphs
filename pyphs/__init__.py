@@ -22,7 +22,7 @@ from .tutorials import path_to_tutorials
 from .dictionary import path_to_dictionary
 from .templates import path_to_templates
 
-__licence__ = \
+__license__ = \
     "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
 __maintainer__ = "Antoine Falaize"

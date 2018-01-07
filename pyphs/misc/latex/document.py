@@ -48,10 +48,9 @@ title: str or None
         template = string.Template(f.read())
 
     with open(os.path.join(path_to_templates,
-                           'licence.template'), 'r') as f:
-        licence = string.Template(f.read())
-    str_licence = licence.substitute({'time': get_time()})
-    subs['licence'] = comment(str_licence)
+                           'license.template'), 'r') as f:
+        _license = string.Template(f.read())
+    subs['license'] = comment(_license.substitute({'time': get_time()}))
 
     for special_char in special_chars:
         latex_char = "\\" + special_char

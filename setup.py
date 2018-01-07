@@ -61,7 +61,7 @@ from codecs import open
 from os import path
 
 # Recover metadata from pyphs.__init__.py
-from pyphs import __author__, __version__, __licence__, __author_email__
+from pyphs import __author__, __version__, __license__, __author_email__
 
 # ----------------------------------------------------------------------
 # Recover README from source
@@ -92,7 +92,7 @@ setup(name='pyphs',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: ' + __licence__,
+        'License :: OSI Approved :: ' + __license__,
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Physics'
       ],
@@ -101,7 +101,7 @@ setup(name='pyphs',
       url='https://github.com/pyphs/pyphs',
       author=__author__,
       author_email=__author_email__,
-      license=__licence__,
+      license=__license__,
       packages=find_packages(exclude=['docs', ]),
       zip_safe=False,
       include_package_data=True,

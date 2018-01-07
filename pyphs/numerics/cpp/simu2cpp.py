@@ -218,7 +218,7 @@ def _init_files(simu):
     hsize_t h5dims[1] = {{1}};
     hsize_t h5offset[1] = {{0}};\n
     // Access global dataset, datatype and dataspace
-    DataSet Gdataset = h5fid.openDataSet("_global");
+    DataSet Gdataset = h5fid.openDataSet("global");
     DataType Gdatatype;
     Gdatatype.copy(Gdataset);
     DataSpace Gspace1 = Gdataset.getSpace();
@@ -345,4 +345,4 @@ def _close(simu):
     // Close h5file
     h5fid.close();"""
     return string
-    
+

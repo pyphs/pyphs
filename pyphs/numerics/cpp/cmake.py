@@ -56,9 +56,8 @@ set(SOURCE_FILES
     src/simu.cpp)
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-#set(HDF5ROOT /usr/include/hdf5/serial/)
-find_package (HDF5 COMPONENTS HL CXX REQUIRED)
 
+find_package (HDF5 COMPONENTS HL CXX REQUIRED)
 include_directories(${{HDF5_INCLUDE_DIRS}})
 
 # Set executable with same name as the project

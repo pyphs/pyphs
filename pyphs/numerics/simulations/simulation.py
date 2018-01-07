@@ -12,7 +12,7 @@ from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.method2cpp import method2cpp, parameters
 from .. import Numeric
 from .data import Data
-from pyphs.misc.io import dump_files, with_files
+#from pyphs.misc.io import dump_files, with_files
 import subprocess
 import progressbar
 import time
@@ -20,10 +20,73 @@ import os
 import sys
 
 
+# -----------------------------------------------------------------------------
+
+def system_call(cmd):
+    """
+    Execute a system command.
+
+    Parameter
+    ---------
+
+    cmd : list
+        List of arguments.
+
+    Example
+    -------
+
+    Change directory with
+
+    >>> cmd = ['cd', './my/folder']
+    >>> system_call(cmd)
+
+    """
+    if sys.platform.startswith('win'):
+        shell = True
+    else:
+        shell = True
+    if VERBOSE >= 1:
+        print(cmd)
+    p = subprocess.Popen(cmd, shell=shell,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    for line in iter(p.stdout.readline, b''):
+        l = line.decode()
+        if VERBOSE >= 1:
+            print(l)
+
+
+def execute_bash(text):
+    """
+    Execute a bash script, ignoring lines starting with #
+
+    Parameter
+    ---------
+
+    text : str
+        Bash script content. Execution of each line iteratively.
+    """
+    for line in text.splitlines():
+        if line.startswith('#') or len(line) == 0:
+            pass
+        else:
+            system_call(line.split())
+
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
+
 class Simulation:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
+
+    system_call = staticmethod(system_call)
+    execute_bash = staticmethod(execute_bash)
+
     def __init__(self, method, config=None, inits=None, label=None):
         """
         Parameters
@@ -153,8 +216,7 @@ class Simulation:
         if self.config_method() != self.method.config:
             self.method.__init__(self.method._core, config=self.config_method())
 
-###############################################################################
-
+    # -------------------------------------------------------------------------
 
     def init(self, nt=None, u=None, p=None,  inits=None,
              config=None, subs=None):
@@ -235,6 +297,46 @@ class Simulation:
 
         self.data.init_data(u, p, nt)
 
+    def init_parameters(self, subs=None):
+        """
+        Generate a new parameters.cpp based on a given substitution dictionary.
+        """
+        if subs is None:
+            subs = self.method.subs
+        else:
+            self.method.subs = subs
+        path = self.src_path
+        parameters_files = parameters(subs, 'rhodes'.upper())
+        for e in ['cpp', 'h']:
+            filename = path + os.sep + 'parameters.{0}'.format(e)
+            string = parameters_files[e]
+            _file = open(filename, 'w')
+            _file.write(string)
+            _file.close()
+        print('Parameters Files generated in \n{}'.format(path))
+
+    # -------------------------------------------------------------------------
+    # Progressbar
+
+    def _init_pb(self):
+        pb_widgets = ['\n', 'Simulation: ',
+                      progressbar.Percentage(), ' ',
+                      progressbar.Bar(), ' ',
+                      progressbar.ETA()
+                      ]
+        self._pbar = progressbar.ProgressBar(widgets=pb_widgets,
+                                             max_value=self.data.config['nt'])
+        self._pbar.start()
+
+    def _update_pb(self):
+        self._pbar.update(self.n)
+
+    def _close_pb(self):
+        self._pbar.finish()
+
+    # -------------------------------------------------------------------------
+    # Process
+
     def process(self):
         """
         Process simulation for all time steps.
@@ -278,40 +380,6 @@ class Simulation:
         if VERBOSE >= 1:
             print('Simulation: Done')
 
-    def init_parameters(self, subs=None):
-        """
-        Generate a new parameters.cpp based on a given substitution dictionary.
-        """
-        if subs is None:
-            subs = self.method.subs
-        else:
-            self.method.subs = subs
-        path = self.src_path
-        parameters_files = parameters(subs, 'rhodes'.upper())
-        for e in ['cpp', 'h']:
-            filename = path + os.sep + 'parameters.{0}'.format(e)
-            string = parameters_files[e]
-            _file = open(filename, 'w')
-            _file.write(string)
-            _file.close()
-        print('Parameters Files generated in \n{}'.format(path))
-
-    def _init_pb(self):
-        pb_widgets = ['\n', 'Simulation: ',
-                      progressbar.Percentage(), ' ',
-                      progressbar.Bar(), ' ',
-                      progressbar.ETA()
-                      ]
-        self._pbar = progressbar.ProgressBar(widgets=pb_widgets,
-                                             max_value=self.data.config['nt'])
-        self._pbar.start()
-
-    def _update_pb(self):
-        self._pbar.update(self.n)
-
-    def _close_pb(self):
-        self._pbar.finish()
-
     def _process_py(self):
 
         # get generators of u and p
@@ -347,9 +415,10 @@ class Simulation:
             if self.config['pbar']:
                 self._close_pb()
 
-            time.sleep(0.1)
+            time.sleep(1e-3)
 
         with_files(path, list_of_files, process)
+
         # close_files(files)
 
     def _process_cpp(self):
@@ -365,86 +434,3 @@ class Simulation:
 
         # go back to work folder
         os.chdir(self.work_path)
-
-    @staticmethod
-    def system_call(cmd):
-        """
-        Execute a system command.
-
-        Parameter
-        ---------
-
-        cmd : list
-            List of arguments.
-
-        Example
-        -------
-        Change directory with
-        cmd = ['cd', './my/folder']
-        system_call(cmd)
-        """
-        system_call(cmd)
-
-    @staticmethod
-    def execute_bash(text):
-        """
-        Execute a bash script, ignoring lines starting with #
-
-        Parameter
-        ---------
-
-        text : str
-            Bash script content. Execution of each line iteratively.
-        """
-        execute_bash(text)
-
-
-def system_call(cmd):
-    """
-    Execute a system command.
-
-    Parameter
-    ---------
-
-    cmd : list
-        List of arguments.
-
-    Example
-    -------
-
-    Change directory with
-
-    >>> cmd = ['cd', './my/folder']
-    >>> system_call(cmd)
-
-    """
-    if sys.platform.startswith('win'):
-        shell = True
-    else:
-        shell = True
-    if VERBOSE >= 1:
-        print(cmd)
-    p = subprocess.Popen(cmd, shell=shell,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
-    for line in iter(p.stdout.readline, b''):
-        l = line.decode()
-        if VERBOSE >= 1:
-            print(l)
-
-
-def execute_bash(text):
-    """
-    Execute a bash script, ignoring lines starting with #
-
-    Parameter
-    ---------
-
-    text : str
-        Bash script content. Execution of each line iteratively.
-    """
-    for line in text.splitlines():
-        if line.startswith('#') or len(line) == 0:
-            pass
-        else:
-            system_call(line.split())

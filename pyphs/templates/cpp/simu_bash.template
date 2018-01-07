@@ -1,0 +1,15 @@
+$license
+
+#!/bin/sh
+
+# chg dir to app dir
+cd ${folder}
+
+# CMake Build
+$cmakepath . -Bbuild
+
+# Binary Build
+$cmakepath --build build -- -j3
+
+# Binary Exec
+.${sep}bin${sep}${labelLow}

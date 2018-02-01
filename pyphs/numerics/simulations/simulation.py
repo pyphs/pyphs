@@ -12,7 +12,9 @@ from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.method2cpp import method2cpp, parameters
 from .. import Numeric
 from .data import Data
+from pyphs.misc.tools import geteval
 #from pyphs.misc.io import dump_files, with_files
+
 import subprocess
 import progressbar
 import time
@@ -385,41 +387,43 @@ class Simulation:
         # get generators of u and p
         data = self.data
         load = {'imin': 0, 'imax': None, 'decim': 1}
+        data.open()
         seq_u = data.u(**load)
         seq_p = data.p(**load)
 
-        path = os.path.join(self.config['path'], 'data')
-        list_of_files = list(self.config['files'])
+        names = list(self.config['files'])
 
-        def process(files):
+        # progressbar
+        if self.config['pbar']:
+            self._init_pb()
+
+        # init time step
+        self.n = 0
+
+        # process
+        for i, (u, p) in enumerate(zip(seq_u, seq_p)):
+
+            # update numerics
+            self.nums.update(u=u, p=p)
+
+            vecs = dict(zip(names,
+                            [geteval(self.nums, name) for name in names]))
+            # write to files
+            data.dump_vecs(self.n, vecs)
+
+            self.n += 1
+
+            # update progressbar
             if self.config['pbar']:
-                self._init_pb()
+                self._update_pb()
 
-            # init time step
-            self.n = 0
+        # progressbar
+        if self.config['pbar']:
+            self._close_pb()
 
-            # process
-            for (u, p) in zip(seq_u, seq_p):
-                # update numerics
-                self.nums.update(u=u, p=p)
+        time.sleep(1e-3)
 
-                # write to files
-                dump_files(self.nums, files)
-
-                self.n += 1
-
-                # update progressbar
-                if self.config['pbar']:
-                    self._update_pb()
-
-            if self.config['pbar']:
-                self._close_pb()
-
-            time.sleep(1e-3)
-
-        with_files(path, list_of_files, process)
-
-        # close_files(files)
+        data.close()
 
     def _process_cpp(self):
 

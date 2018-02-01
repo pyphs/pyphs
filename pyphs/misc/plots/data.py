@@ -115,12 +115,11 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True,
     datay = list()
     labels = list()
 
-    def append_sig(name, index):
-        generator = getattr(data, name)
-        sig = [el for el in generator(ind=index, imin=imin,
-                                      imax=imax, decim=decim)]
+    def append_sig(datay, labels, name, index):
+        sig = data[name, index, slice(imin, imax, decim)]
         datay.append(sig)
         labels.append(nice_label(data.method, (name, index)))
+
     dimsmap = {'x': 'x',
                'dx': 'x',
                'dtx': 'x',
@@ -134,13 +133,13 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True,
                }
     for var in vars:
         if isinstance(var, (tuple, list)):
-            append_sig(*var)
+            append_sig(datay, labels, *var)
             if path is not None:
                 path += '_'+var[0]+str(var[1])
         elif isinstance(var, str):
             dim = dimsmap[var]
             for i in range(getattr(data.method.dims, dim)()):
-                append_sig(var, i)
+                append_sig(datay, labels, var, i)
                 if path is not None:
                     path += '_'+var+str(i)
         else:
@@ -152,7 +151,7 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True,
                     'path': path}
         multiplot(datax, datay, show=show, **plotopts)
 
-    else:
+    elif len(datay) > 0:
         plotopts = {'xlabel': 'time $t$ (s)',
                     'ylabel': labels[0],
                     'path': path}

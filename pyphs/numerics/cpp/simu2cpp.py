@@ -215,15 +215,15 @@ def _str_readdata(simu):
 def _init_files(simu):
     string = "\n" + indent(linesplit) + """
     // Initialize HDF5 objects for read/write
-    hsize_t h5dims[1] = {{1}};
-    hsize_t h5offset[1] = {{0}};\n
+    hsize_t h5dims[1] = {%i};""" % simu.data.dim + """
+    hsize_t h5offset[1] = {0};\n
     // Access global dataset, datatype and dataspace
     DataSet Gdataset = h5fid.openDataSet("global");
     DataType Gdatatype;
     Gdatatype.copy(Gdataset);
     DataSpace Gspace1 = Gdataset.getSpace();
     // Dataspace for single row
-    DataSpace Gspace0 = DataSpace(1, h5dims);""".format()
+    DataSpace Gspace0 = DataSpace(1, h5dims);"""
     return string
 
 # -----------------------------------------------------------------------------

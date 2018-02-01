@@ -99,7 +99,9 @@ None).
     fig = figure(i)
 
     from matplotlib.pyplot import axes
+
     ax = axes()
+    ax.ticklabel_format(style='sci', scilimits=(-2, 2))
 
     print_legend = False
 

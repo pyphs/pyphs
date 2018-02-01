@@ -213,14 +213,14 @@ class BaseData:
     # tmax
 
     def get_tmax(self):
-        return self.index2time(self.imin, m='max')
+        return self.index2time(self.imax, m='max')
 
     def set_tmax(self, t):
         if t is None:
             self.imax = t
         else:
             tmin = self.tmin
-            tmax = (self.nt-1)*self.fs
+            tmax = (self.nt-1)/self.fs
             if not tmin <= t <= tmax:
                 text = 'tmax must be in [{0}, {1}].'
                 raise ValueError(text.format(tmin, tmax))
@@ -383,6 +383,9 @@ or an integer nt (number of time steps).'
         sig = getattr(self, name)(**args)
         wavwrite(sig, self.fs, path,
                  fs_out=fs, normalize=normalize, timefades=timefades)
+
+        if close:
+            self.close()
 
     # ----------------------------------------------------------------------- #
 
@@ -712,6 +715,7 @@ or an integer nt (number of time steps).'
         """
 
         options = self._build_options(loadopts)
+        s = slice(options['imin'], options['imax'], options['decim'])
 
         if not self._open:
             self.open()
@@ -728,17 +732,21 @@ or an integer nt (number of time steps).'
         R = lambdify(R_args, R_expr, theano=self.config['theano'])
         R_args = lambdify(self.method.args(), R_args,
                           theano=self.config['theano'])
-        for w, z, a, b, args, o in zip(self.w(**options),
-                                       self.z(**options),
-                                       self.a(**options),
-                                       self.b(**options),
-                                       self.args(**options),
-                                       self.o(**options)):
-            yield scalar_product(w, z) + \
-                scalar_product(a,
-                               a,
-                               R(*R_args(*(list(args)+list(o)))))
 
+        D = numpy.einsum('ti,ti->t', self['w', :, s], self['z', :, s])
+
+        if len(R_inds) == 0:
+            R = numpy.array(R_expr).astype(float)
+            A = numpy.array(list(self.a(**options)))
+            D += numpy.einsum('ti,ij,tj->t', A, R, A)
+            for d in D:
+                yield d
+        else:
+            for d, a, args, o in zip(D,
+                                  self.a(**options),
+                                  self.args(**options),
+                                  self.o(**options)):
+                yield d + scalar_product(a, a, R(*R_args(*(list(args)+list(o)))))
         if close:
             self.close()
 
@@ -771,6 +779,7 @@ or an integer nt (number of time steps).'
         """
 
         options = self._build_options(loadopts)
+        s = slice(options['imin'], options['imax'], options['decim'])
 
         if not self._open:
             self.open()
@@ -778,9 +787,8 @@ or an integer nt (number of time steps).'
         else:
             close = False
 
-        for u, y in zip(self.u(**options),
-                        self.y(**options)):
-            yield scalar_product(u, y)
+        for v in numpy.einsum('ti,ti->t', self['u', :, s], self['y', :, s]):
+            yield v
 
         if close:
             self.close()
@@ -1067,7 +1075,6 @@ or an integer nt (number of time steps).'
         if close:
             self.close()
 
-
 class ASCIIData(BaseData):
 
     # -------------------------------------------------------------------------
@@ -1102,10 +1109,10 @@ class ASCIIData(BaseData):
 
         def data_generator(**kwargs):
             """
-            Generator that read file from path. Each line is returned as a list of
-            floats, if index i is such that imin <= i < imax, with decimation factor
-            decim. A function can be passed as postprocess, to be applied on each
-            output.
+            Generator that read file from path. Each line is returned as a list
+            of floats, if index i is such that imin<=i<imax, with decimation
+            factor decim. A function can be passed as postprocess, to be
+            applied on each output.
             """
             imin = kwargs.get('imin', default['imin'])
             imax = kwargs.get('imax', default['imax'])
@@ -1222,9 +1229,9 @@ class HDFData(BaseData):
                 grp.attrs['dim'] = self.dims[name]
                 grp.attrs['inds'] = self.inds[name]
 
-            maxshape = (None, )
+            maxshape = (None, self.dim)
 
-            data = numpy.zeros(self.dim).astype(self.dtype)
+            data = numpy.zeros((1, self.dim)).astype(self.dtype)
 
             # Create a global dataset
             f.create_dataset(self.dname, data=data, dtype=self.dtype,
@@ -1234,8 +1241,9 @@ class HDFData(BaseData):
 
     @property
     def dtype(self):
-        return numpy.dtype({'names': list(map(str, range(self.dim))),
-                            'formats': [numpy.float64] * self.dim})
+        return numpy.float64
+#        return numpy.dtype({'names': list(map(str, range(self.dim))),
+#                            'formats': [numpy.float64] * self.dim})
 
     # ----------------------------------------------------------------------- #
 
@@ -1350,19 +1358,81 @@ class HDFData(BaseData):
         self.open()
 
         # Init shape
-        self.h5file[self.dname].resize(nt, axis=0)
+        self.h5file[self.dname].resize((nt, self.dim))
 
-        data = {'u': sequ, 'p': seqp}
+        seqs = {'u': sequ, 'p': seqp}
 
-        v = numpy.zeros(self.dim)
-        for j, elts in enumerate(zip(*[data[k] for k in data])):
-            for i, k in enumerate(data):
-                v[slice(*self.inds[k])] = elts[i]
-            self.h5file[self.dname][j] = numpy.asarray(v, dtype=self.dtype)[0]
+        self.dump_seqs(seqs)
 
         self.close()
 
     init_data.__doc__ = BaseData.__init_data__.__doc__
+
+    # ----------------------------------------------------------------------- #
+    def dump_vecs(self, t, vecs):
+        """
+        Write vectors to h5 file, with data a dictionary structured as:
+
+        data = {k1: vec1,
+                k2: vec2,
+                ...}
+
+        where dim(veci) = (dim(k1),).
+
+        """
+        # close flag
+        if not self._open:
+            self.open()
+            close = True
+        else:
+            close = False
+
+        # single array for every data
+        v = numpy.zeros(self.dim)
+
+        for name in self.names:
+            if name not in vecs:
+                vecs[name] = self[name, :, t]
+
+        # update array with data values
+        for i, name in enumerate(vecs):
+            v[slice(*self.inds[name])] = vecs[name]
+
+        # write array in h5 file at time t
+        self.h5file[self.dname][t] = numpy.asarray(v, dtype=self.dtype)
+
+        if close:
+            self.close()
+
+    # ----------------------------------------------------------------------- #
+    def dump_seqs(self, data):
+        """
+        Write sequences to h5 file, with data a dictionary structured as:
+
+        data = {k1: seq1,
+                k2: seq2,
+                ...}
+
+        where dim(seqi) = (nt, dim(ki)).
+
+        """
+
+        # close flag
+        if not self._open:
+            self.open()
+            close = True
+        else:
+            close = False
+
+        # iteration overs times (first dimension of data arrays)
+        for t, elts in enumerate(zip(*[data[name] for name in data])):
+            # build data dic
+            datat = dict(zip([name for name in data], elts))
+            # dump data at time t
+            self.dump_vecs(t, datat)
+
+        if close:
+            self.close()
 
     # ----------------------------------------------------------------------- #
 
@@ -1380,18 +1450,23 @@ class HDFData(BaseData):
             vname, vslice, tslice = value
         # value contains var name only
         else:
+            vname = value
             tslice = None
             vslice = None
 
         assert isinstance(vname, str)
+
         assert vname in self.inds
 
         if tslice is None:
             tslice = slice(None, None, None)
+
         if vslice is None:
             vslice = slice(*self.inds[vname])
+
         elif isinstance(vslice, int):
             vslice += self.inds[vname][0]
+
         else:
             if vslice.start is not None:
                 start = vslice.start+self.inds[vname][0]
@@ -1440,24 +1515,29 @@ class HDFData(BaseData):
             postprocess = kwargs.pop('postprocess', None)
 
             options = self._build_options(kwargs)
-            slicet = slice(options['imin'], options['imax'], options['decim'])
+            slicet = slice(options['imin'],
+                           options['imax'],
+                           options['decim'])
 
+            # slice vector indices
             if ind is not None:
                 if not isinstance(ind, int):
-                    text = 'Index should be an integer,not {0}'
+                    text = 'Index should be an integer, not {0}'
                     raise ValueError(text.format(type(ind)))
-                s = ind
+                slicevec = ind
             else:
-                s = slice(*self.inds[name])
+                slicevec = slice(*self.inds[name])
 
+            # close flag
             if not self._open:
                 self.open()
                 close = True
             else:
                 close = False
 
+            # read, post process and yield data
             for ti in range(self.nt)[slicet]:
-                el = self.h5file[self.dname][ti, s]
+                el = self.h5file[self.dname][ti, slicevec]
                 if postprocess:
                     el = postprocess(el)
                 yield el
@@ -1469,18 +1549,21 @@ class HDFData(BaseData):
                                                               self.h5path)
         return data_generator
 
+
 # --------------------------------------------------------------------------- #
 
 Data = HDFData
 
+
+# --------------------------------------------------------------------------- #
+
 def scalar_product(list1, list2, weight_matrix=None):
-    list1, list2 = list(list1), list(list2)
     if weight_matrix is not None:
         return numpy.einsum('i,ij,j',
-                            numpy.array(list1),
+                            list1,
                             weight_matrix,
-                            numpy.array(list2))
+                            list2)
     else:
         return numpy.einsum('i,i',
-                            numpy.array(list1),
-                            numpy.array(list2))
+                            list1,
+                            list2)

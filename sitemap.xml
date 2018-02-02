@@ -6,159 +6,147 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
-  <loc>https://pyphs.github.io/pyphs/</loc>
-  <lastmod>2017-07-19T19:09:00Z</lastmod>
+  <loc>https://afalaize.github.io/</loc>
+  <lastmod>2018-02-01T11:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/2016/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/2015/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/2017/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/2016/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/archive.html</loc>
-  <lastmod>2017-07-19T21:41:00Z</lastmod>
+  <loc>https://afalaize.github.io/2017/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/authors/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/2018/</loc>
+  <lastmod>2018-02-01T11:31:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/authors/afalaize/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/archive.html</loc>
+  <lastmod>2018-02-01T11:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/authors/pyphs-project/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/authors/tlebrun/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/audio/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/blog/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/cat_audio/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/blog/index-1.html</loc>
-  <lastmod>2017-07-20T21:43:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/cat_effect/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/building/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/cat_instrument/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/</loc>
-  <lastmod>2017-07-21T16:26:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/control/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/cat_documentation/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/differential-flatness/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/cat_electronics/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/fender-rhodes/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/cat_tutorial/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/loudspeaker/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/components/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/mathjax/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/dissipatives/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/numerical-method/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/mathjax/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/phs/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/phs/</loc>
-  <lastmod>2017-07-21T16:26:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/pyphs/</loc>
+  <lastmod>2018-02-01T11:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/storages/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/seminar/</loc>
+  <lastmod>2018-02-01T11:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/theory/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/simulation/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/categories/thiele-small-mathjax/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/tutorial/</loc>
+  <lastmod>2018-02-01T11:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/galleries/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/categories/virtual-instrument/</loc>
+  <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/galleries/intro/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/galleries/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/galleries/intro1/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/listings/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/galleries/intro2/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/pages/about-me/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/capacitor/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/pages/publications/</loc>
+  <lastmod>2017-11-23T22:50:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/diode/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/170614_ulr_python/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/analogcircuits/</loc>
+  <lastmod>2017-11-23T22:50:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/inductor/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/comparisonnumschemes/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/resistor/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/introgitpypi/</loc>
+  <lastmod>2017-11-23T22:50:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/source/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/jtcvam2/</loc>
+  <lastmod>2017-12-05T14:08:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/docs/port-hamiltonian-systems/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/pyphs-introductory-seminars/</loc>
+  <lastmod>2018-02-01T11:31:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/docs/pyphs-method/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/pyphs-seminar/</loc>
+  <lastmod>2018-02-01T11:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/tutos/evaluation/</loc>
-  <lastmod>2017-07-19T21:41:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/pyphs-tutorial/</loc>
+  <lastmod>2018-02-01T11:43:00Z</lastmod>
  </url>
  <url>
-  <loc>https://pyphs.github.io/pyphs/posts/tutos/pyphs-core/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
- </url>
- <url>
-  <loc>https://pyphs.github.io/pyphs/posts/tutos/pyphs-evaluation/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
- </url>
- <url>
-  <loc>https://pyphs.github.io/pyphs/posts/tutos/pyphs-graph/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
- </url>
- <url>
-  <loc>https://pyphs.github.io/pyphs/posts/tutos/pyphs-simulation/</loc>
-  <lastmod>2017-07-19T19:07:00Z</lastmod>
+  <loc>https://afalaize.github.io/posts/rhodes/</loc>
+  <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
 </urlset>

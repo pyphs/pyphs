@@ -1,8 +1,8 @@
 .. title: Analog audio circuits
 .. slug: analogcircuits
 .. date: 2016-06-21 01:06:53 UTC+02:00
-.. tags: mathjax
-.. category: effect
+.. tags: mathjax, PHS, PyPHS, Electronic, Graphs
+.. category: Article
 .. link:
 .. description:
 .. type: text

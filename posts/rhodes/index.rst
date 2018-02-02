@@ -1,9 +1,9 @@
 .. title: Simulation of the Fender Rhodes
 .. slug: rhodes
 .. date: 2015-10-13 12:38:29 UTC+02:00
-.. tags: mathjax, Audio, Fender Rhodes, Virtual Instrument
+.. tags: mathjax, Audio, PHS, Fender Rhodes, Virtual Instrument
 .. category: Audio
-.. link: 
+.. link:
 .. description:
 .. type: text
 .. author: Antoine Falaize

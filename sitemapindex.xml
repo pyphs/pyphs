@@ -7,11 +7,15 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://afalaize.github.io/categories/audio.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/categories/cat_article.xml</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/cat_audio.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/cat_effect.xml</loc>
@@ -22,6 +26,10 @@
   <lastmod>2017-11-23T22:50:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://afalaize.github.io/categories/computer-tools.xml</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://afalaize.github.io/categories/control.xml</loc>
   <lastmod>2018-02-02T20:41:00Z</lastmod>
  </sitemap>
@@ -30,8 +38,20 @@
   <lastmod>2018-02-02T20:41:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://afalaize.github.io/categories/electronic.xml</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://afalaize.github.io/categories/fender-rhodes.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/categories/git.xml</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/categories/graphs.xml</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/loudspeaker.xml</loc>
@@ -39,7 +59,7 @@
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/mathjax.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/numerical-method.xml</loc>
@@ -47,15 +67,19 @@
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/phs.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/pyphs.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://afalaize.github.io/categories/python.xml</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/seminar.xml</loc>
-  <lastmod>2018-02-02T20:35:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/simulation.xml</loc>
@@ -63,11 +87,11 @@
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/tutorial.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:02:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/categories/virtual-instrument.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/galleries/rss.xml</loc>
@@ -75,10 +99,10 @@
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/rss.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://afalaize.github.io/sitemap.xml</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </sitemap>
 </sitemapindex>

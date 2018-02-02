@@ -1,7 +1,7 @@
 .. title: Introductions to GIT and PyPI
 .. slug: introgitpypi
 .. date: 2017-11-23 23:14:32 UTC+02:00
-.. tags:
+.. tags: Seminar, Computer Tools, GIT
 .. category:
 .. link:
 .. description:

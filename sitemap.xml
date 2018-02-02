@@ -31,11 +31,15 @@
  </url>
  <url>
   <loc>https://afalaize.github.io/categories/</loc>
-  <lastmod>2018-02-02T20:41:00Z</lastmod>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/categories/audio/</loc>
   <lastmod>2018-02-02T20:41:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/categories/cat_article/</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/categories/cat_audio/</loc>
@@ -50,6 +54,10 @@
   <lastmod>2017-11-23T22:49:00Z</lastmod>
  </url>
  <url>
+  <loc>https://afalaize.github.io/categories/computer-tools/</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://afalaize.github.io/categories/control/</loc>
   <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
@@ -58,8 +66,20 @@
   <lastmod>2018-02-02T20:41:00Z</lastmod>
  </url>
  <url>
+  <loc>https://afalaize.github.io/categories/electronic/</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://afalaize.github.io/categories/fender-rhodes/</loc>
   <lastmod>2018-02-02T20:41:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/categories/git/</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/categories/graphs/</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/categories/loudspeaker/</loc>
@@ -80,6 +100,10 @@
  <url>
   <loc>https://afalaize.github.io/categories/pyphs/</loc>
   <lastmod>2018-02-01T11:43:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://afalaize.github.io/categories/python/</loc>
+  <lastmod>2018-02-02T21:27:00Z</lastmod>
  </url>
  <url>
   <loc>https://afalaize.github.io/categories/seminar/</loc>

@@ -1,7 +1,7 @@
 .. title: PyPHS Seminar
 .. slug: pyphs-seminar
-.. date: 2017-12-04 15:00:00 UTC+01:00
-.. tags: PyPHS, Seminar
+.. date: 2017-12-04 15:05:00 UTC+01:00
+.. tags: PyPHS, PHS, Seminar
 .. category:
 .. link:
 .. description:

@@ -5,6 +5,9 @@ $license
 # chg dir to app dir
 cd ${folder}
 
+# clean
+rm -rv ./build ./bin
+
 # CMake Build
 $cmakepath . -Bbuild
 

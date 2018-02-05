@@ -12,8 +12,8 @@ from ..latex.tools import nice_label
 import os
 
 
-def plot_powerbal(data, mode='single', DtE='DxhDtx', imin=0, imax=None,
-                  decim=1, show=True, save=False):
+def plot_powerbal(data, mode='single', DtE='DxhDtx', tslice=None,
+                  show=True, save=False):
     """
     Plot the power balance. mode is 'single' or 'multi' for single figure or \
 multifigure
@@ -34,15 +34,14 @@ multifigure
     labPs = r'$\mathrm{P_S}$'
     labPd = r'$\mathrm{P_D}$'
 
-    datax = [el for el in data.t(imin=imin, imax=imax, decim=decim)]
+    datax = [el for el in data.t(tslice=tslice)]
 
     if mode == 'single':
         datay = list()
-        datay.append([el for el in data.dtE(imin=imin, imax=imax,
-                                            decim=decim, DtE=DtE)])
+        datay.append([el for el in data.dtE(tslice=tslice, DtE=DtE)])
         Psd = map(lambda x, y: - float(x) - float(y),
-                  data.ps(imin=imin, imax=imax, decim=decim),
-                  data.pd(imin=imin, imax=imax, decim=decim))
+                  data.ps(tslice=tslice),
+                  data.pd(tslice=tslice))
         datay.append(tuple(Psd))
         config.update({'linestyles': ('-', '--'),
                        'ylabel': r'Power (W)',
@@ -51,16 +50,12 @@ multifigure
     else:
         assert mode == 'multi'
         datay = list()
-        datay.append([el for el in data.dtE(imin=imin, imax=imax,
-                                            decim=decim, DtE=DtE)])
-        datay.append([el for el in data.pd(imin=imin, imax=imax, decim=decim)])
-        datay.append([el for el in data.ps(imin=imin, imax=imax, decim=decim)])
-        deltaP = [sum(el) for el in zip(data.dtE(imin=imin, imax=imax,
-                                                 decim=decim, DtE=DtE),
-                                        data.pd(imin=imin,
-                                                imax=imax, decim=decim),
-                                        data.ps(imin=imin, imax=imax,
-                                                decim=decim))]
+        datay.append([el for el in data.dtE(tslice=tslice, DtE=DtE)])
+        datay.append([el for el in data.pd(tslice=tslice)])
+        datay.append([el for el in data.ps(tslice=tslice)])
+        deltaP = [sum(el) for el in zip(data.dtE(tslice=tslice, DtE=DtE),
+                                        data.pd(tslice=tslice),
+                                        data.ps(tslice=tslice))]
         datay.append(deltaP)
         config.update({'linestyles': [('-b', ), ('-g', ), ('-r', ), ('-k', )],
                        'ylabels': [r' (W)']*4,
@@ -72,7 +67,7 @@ multifigure
         multiplot(datax, datay, show=show, **config)
 
 
-def plot(data, vars, imin=0, imax=None, decim=1, show=True,
+def plot(data, vars, tslice=None, show=True,
          label=None, save=False):
     """
     Plot simulation data
@@ -111,12 +106,12 @@ def plot(data, vars, imin=0, imax=None, decim=1, show=True,
     else:
         path = None
 
-    datax = list(data.t(imin=imin, imax=imax, decim=decim))
+    datax = list(data.t(tslice=tslice))
     datay = list()
     labels = list()
 
     def append_sig(datay, labels, name, index):
-        sig = data[name, index, slice(imin, imax, decim)]
+        sig = data[name, tslice, index]
         datay.append(sig)
         labels.append(nice_label(data.method, (name, index)))
 

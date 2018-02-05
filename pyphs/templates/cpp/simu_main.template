@@ -8,12 +8,12 @@ $license
 #include <cstdio>
 #include <time.h>
 #include <math.h>
+using namespace std;
+
 #include <H5Cpp.h>
+using namespace H5;
 
 #include "core.h"
-
-using namespace H5;
-using namespace std;
 
 //==============================================================================
 // Define timer object
@@ -39,18 +39,23 @@ class timer {
 int main() {
 
     //==========================================================================
+    // Print start info
+
+    cout << endl;
+    cout << "=======================================" << endl;
+    cout << endl;
+    cout << "Start simulation of ${labelLow}..." << endl;
+    cout << endl;
+
+    //==========================================================================
     // Number of time-steps to process
 
     const unsigned int nt = ${nt};
 
     //==========================================================================
-    // Initialize vectors
-$vectors
-
-    //==========================================================================
     // Initialize struct
 
-    typedef struct argstruct{$struct
+    typedef struct argstruct{$vectors
     } argstruct;
     argstruct mystruct;
 
@@ -73,35 +78,33 @@ $vectors
     //==========================================================================
     // Initialize HDF5 objects for read/write
 
-    hsize_t h5dims[1] = {${dims}};
-    hsize_t h5offset[1] = {0};
+    const unsigned int h5rank = 2;
+    hsize_t h5count[h5rank] = {1, ${dim}};
+    hsize_t h5offset[h5rank] = {0, 0};
+
 
     // Access global dataset, datatype and dataspace
-
     DataSet Gdataset = h5fid.openDataSet("${dname}");
     DataType Gdatatype;
     Gdatatype.copy(Gdataset);
     DataSpace Gspace1 = Gdataset.getSpace();
 
     // Dataspace for single row
-    DataSpace Gspace0 = DataSpace(1, h5dims);
+    DataSpace Gspace0 = DataSpace(h5rank, h5count, NULL);
 
     //==========================================================================
     // Instanciate a PHS C++ core object
-
     ${labelUp} ${labelLow};
 
     //==========================================================================
     // ProgressBar data')
-
     int barWidth = 20;
     int ETA, ETAm, ETAs;
     float progress = 0.0;
-    timer t;
 
     //==========================================================================
     // Process
-
+    timer t;
     t.start();
 
     for (unsigned int n = 0; n < nt; n++) {
@@ -114,19 +117,24 @@ $vectors
         //======================================================================
         // Define current row as dataspace selection
 
-        Gspace1.selectElements(H5S_SELECT_SET, 1, h5offset);
+        Gspace1.selectHyperslab(H5S_SELECT_SET, h5count, h5offset, NULL, NULL);
 
         //======================================================================
         // Read row (to retrieve input and parameter data)
 
         Gdataset.read(&mystruct, Gdatatype, Gspace0, Gspace1);
-$u
-$p
+        //======================================================================
+        // Update controls
+        $updateInputs
 
         //======================================================================
         // Process update
 
-        ${labelLow}.update();${get}
+        ${labelLow}.update();
+
+        //======================================================================
+        // Update Results
+        ${updateResults}
 
         //======================================================================
         // Write back row (with updated data for x, y, w, z, dx, dxH)

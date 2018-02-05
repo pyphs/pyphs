@@ -181,6 +181,9 @@ class Method(Core):
         return (self.x + self.dx() + self.w + self.u +
                 self.p + self.o())
 
+    def dtx(self):
+        return [dx*self.fs for dx in self.dx()]
+
     def c(self):
         return (self.x + self.u + self.p + self.o())
 

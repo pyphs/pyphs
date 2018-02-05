@@ -11,7 +11,7 @@ from pyphs.config import (CONFIG_METHOD, CONFIG_SIMULATION,
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.method2cpp import method2cpp, parameters
 from .. import Numeric
-from .data import Data
+from .h5data import H5Data
 from pyphs.misc.tools import geteval
 #from pyphs.misc.io import dump_files, with_files
 
@@ -209,7 +209,7 @@ class Simulation:
                         inits=self.inits,
                         config=self.config_numeric())
 
-        self.data = Data(self.method, self.config)
+        self.data = H5Data(self.method, self.config, clear=True)
 
     def init_method(self):
         """
@@ -386,12 +386,12 @@ class Simulation:
 
         # get generators of u and p
         data = self.data
-        load = {'imin': 0, 'imax': None, 'decim': 1}
-        data.open()
-        seq_u = data.u(**load)
-        seq_p = data.p(**load)
+        tslice = slice(0, None, 1)
+        data.h5open()
+        seq_u = data.u(tslice=tslice)
+        seq_p = data.p(tslice=tslice)
 
-        names = list(self.config['files'])
+        names = list(self.config['dnames'])
 
         # progressbar
         if self.config['pbar']:
@@ -409,7 +409,7 @@ class Simulation:
             vecs = dict(zip(names,
                             [geteval(self.nums, name) for name in names]))
             # write to files
-            data.dump_vecs(self.n, vecs)
+            data.h5dump_vecs(self.n, vecs)
 
             self.n += 1
 
@@ -423,7 +423,7 @@ class Simulation:
 
         time.sleep(1e-3)
 
-        data.close()
+        data.h5close()
 
     def _process_cpp(self):
 

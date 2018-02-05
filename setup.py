@@ -112,7 +112,8 @@ setup(name='pyphs',
                         'progressbar2>=2.3',
                         'matplotlib>=2.0.0',
                         'stopit>=1.1.1',
-                        'nose>=1.3.7'
+                        'nose>=1.3.7',
+                        'h5py>=2.7.1'
                         ],
       test_suite='nose.collector',
       tests_require=['nose'],

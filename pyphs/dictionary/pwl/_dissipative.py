@@ -12,9 +12,9 @@ import numpy as np
 import sympy as sp
 from .. import edges
 from pyphs import Graph
-from pyphs.numerics.io import data_generator
+
 from ..tools import symbols
-from .tools import pwl_func
+from .tools import pwl_func, data_generator
 
 
 class Dissipative(Graph):

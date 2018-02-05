@@ -277,10 +277,10 @@ class Core:
                 target = core
                 attr_name = name
             else:
-                source = getattr(self, name[0])
-                target = getattr(core, name[0])
+                source = geteval(self, name[0])
+                target = geteval(core, name[0])
                 attr_name = name[1]
-            attr = getattr(source, attr_name)
+            attr = geteval(source, attr_name)
             try:
                 setattr(target, attr_name, attr.copy())
             except AttributeError:
@@ -384,6 +384,22 @@ class Core:
         :code:`x[n+1]=x[n]+dx[n]`.
         """
         return [self.symbols('d'+str(x)) for x in self.x]
+
+    def dtx(self):
+        return [self.symbols('dt'+str(x)) for x in self.x]
+
+    def b(self):
+        return self.dtx() + self.w + self.y
+
+    def a(self):
+        return geteval(self, 'dxH') + self.z + self.u
+
+    def pd(self):
+        output = sympify(0)
+        for w, z in zip(self.w, self.z):
+            output += w*z
+        output += sympy.SparseMatrix(self.a()).dot(self.R().dot(self.a()))
+        return output
 
     def z_symbols(self):
         """
@@ -889,7 +905,6 @@ add the connector'.format(i)
             if par in self.subs:
                 self.subs.pop(par)
 
-
     def add_observer(self, obs):
         """
         add_observer
@@ -971,13 +986,13 @@ add the connector'.format(i)
 
         sympy.init_printing()
 
-        b = types.matrix_types[0](self.dx() +
+        b = types.matrix_types[0](self.dtx() +
                                   self.w +
                                   self.y +
                                   self.cy)
 
-        a = types.matrix_types[0](self.g() +
-                                  self.z_symbols() +
+        a = types.matrix_types[0](self.dxH() +
+                                  self.z +
                                   self.u +
                                   self.cu)
 

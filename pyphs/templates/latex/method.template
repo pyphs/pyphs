@@ -1,0 +1,246 @@
+
+% ------------------------------------------------------------------------------
+%
+\section{Numerical MEthod (\texttt{Method} object)}
+%
+The Port-Hamiltonian structure in PyPHS is
+%
+\par\Resize{
+$$
+\left(
+  \begin{array}{c}
+    \frac{\mathrm d\, \mathbf x}{\mathrm d t} \\
+    \mathbf w \\
+    \mathbf y \\
+    \mathbf {cy} \\
+  \end{array}
+\right)
+=
+\left(
+  \begin{array}{rrrr}
+    \mathbf{M_{xx}} & \mathbf{M_{xw}} & \mathbf{M_{xy}} & \mathbf{M_{xcy}} \\
+    \mathbf{M_{wx}} & \mathbf{M_{ww}} & \mathbf{M_{wy}} & \mathbf{M_{wcy}}  \\
+    \mathbf{M_{yx}} & \mathbf{M_{yw}} &  \mathbf{M_{yy}} & \mathbf{M_{ycy}}  \\
+    \mathbf{M_{cyx}} & \mathbf{M_{cyw}} &  \mathbf{M_{cyy}} & \mathbf{M_{cycy}}  \\
+  \end{array}
+\right)
+\cdot
+\left(
+  \begin{array}{c}
+    \nabla \mathrm H\\
+    \mathbf z \\
+    \mathbf u \\
+    \mathbf {cu} \\
+  \end{array}
+\right)
+$$
+}
+%
+with
+%
+\par
+\Resize{
+  $$
+    \underbrace{
+      \left(
+      \begin{array}{rrrr}
+        \mathbf{M_{xx}} & \mathbf{M_{xw}} & \mathbf{M_{xy}} & \mathbf{M_{xcy}} \\
+        \mathbf{M_{wx}} & \mathbf{M_{ww}} & \mathbf{M_{wy}} & \mathbf{M_{wcy}}  \\
+        \mathbf{M_{yx}} & \mathbf{M_{yw}} &  \mathbf{M_{yy}} & \mathbf{M_{ycy}}  \\
+        \mathbf{M_{cyx}} & \mathbf{M_{cyw}} &  \mathbf{M_{cyy}} & \mathbf{M_{cycy}}  \\
+      \end{array}
+      \right)
+    }_{\mathbf M}
+    =
+    \underbrace{\left(
+      \begin{array}{rrrr}
+        \mathbf{J_{xx}} & \mathbf{J_{xw}} & \mathbf{ J_{xy}} & \mathbf{ J_{xcy}} \\
+        -^\intercal\mathbf{J_{xw}} & \mathbf{J_{ww}} & \mathbf{J_{wy}} & \mathbf{J_{wcy}}  \\
+        -^\intercal\mathbf{J_{xy}} & -^\intercal\mathbf{J_{wy}} &  \mathbf{J_{yy}} & \mathbf{J_{ycy}}  \\
+        -^\intercal\mathbf{J_{xcy}} & -^\intercal\mathbf{J_{wcy}} &  -^\intercal\mathbf{J_{ycy}} & \mathbf{J_{cycy}}  \\
+      \end{array}
+    \right)}_{\mathbf J}
+    -
+    \underbrace{
+      \left(
+      \begin{array}{rrrr}
+        \mathbf{R_{xx}} & \mathbf{R_{xw}} & \mathbf{ R_{xy}} & \mathbf{ R_{xcy}} \\
+        \intercal\mathbf{R_{xw}} & \mathbf{R_{ww}} & \mathbf{R_{wy}} & \mathbf{R_{wcy}}  \\
+        ^\intercal\mathbf{R_{xy}} & ^\intercal\mathbf{R_{wy}} &  \mathbf{R_{yy}} & \mathbf{R_{ycy}}  \\
+        ^\intercal\mathbf{R_{xcy}} & ^\intercal\mathbf{R_{wcy}} &  ^\intercal\mathbf{R_{ycy}} & \mathbf{R_{cycy}}  \\
+      \end{array}
+      \right)
+    }_{\mathbf R}
+  $$
+}
+%
+% ------------------------------------------------------------------------------
+%
+\subsection{Dimensions}
+%
+The system's dimensions are given below.
+%
+Notice that a 0 value in the dimensions of the linear parts
+$$\bullet_{\mathbf{l}} = \bullet-\bullet_{\mathbf{nl}}$$ occurs if the system has
+not been split.
+%
+${dims}
+%
+%
+% ------------------------------------------------------------------------------
+%
+\subsection{Constants}
+%
+The system's constant substition values are given below.
+%
+${subs}
+%
+%
+% ------------------------------------------------------------------------------
+%
+\subsection{Internal variables}
+%
+The system's internal variables are given below.
+%
+\begin{itemize}
+%
+\item The \emph{state} $$\mathbf x: t\mapsto \mathbf x(t)\in \mathbb R ^{${nx}}$$ associated with the system's energy storage:
+%
+\par\Resize{${x}.}
+%
+\item The \emph{state increment} $$\mathbf{d_x}: t\mapsto \mathbf{d_x}(t)\in \mathbb R ^{${nx}}$$ that represents the numerical increment during a single simulation time-step:
+%
+\par\Resize{${dx}.}
+%
+\item The \emph{dissipation variable} $$\mathbf w: t\mapsto \mathbf w(t)\in \mathbb R^{${nw}}$$ associated with the system's energy dissipation:
+%
+\par\Resize{${w}.}
+%
+\end{itemize}
+%
+% ------------------------------------------------------------------------------
+%
+\subsection{External variables}
+%
+The controlled system's variables are given below.:
+%
+\begin{itemize}
+%
+\item the \emph{input variable} $$\mathbf u: t\mapsto \mathbf u(t)\in \mathbb R^{${ny}}$$ associated with the system's energy supply (sources):
+%
+\par\Resize{${u}.}
+%
+\item the \emph{parameters} $$\mathbf p: t\mapsto \mathbf p(t)\in \mathbb R^{${np}}$$ associated with variable system parameters:
+%
+\par\Resize{${p}.}
+%
+\end{itemize}
+%
+% ------------------------------------------------------------------------------
+%
+\subsection{Output variables}
+%
+The output (\textit{i.e.} observed quantities) are:
+%
+\begin{itemize}
+%
+\item The \emph{output variable} $${\mathbf y: t\mapsto \mathbf y(t)\in \mathbb R^{${ny}}}$$ associated with the system's energy supply (sources):
+%
+\par\Resize{${y}.}
+%
+${y_elements}
+%
+\item The \emph{observer} $${\mathbf o: t\mapsto \mathbf o(t)\in \mathbb R^{${no}}}$$ associated with functions of the above quantities:
+%
+\par\Resize{${o}.}
+%
+${o_elements}
+%
+\end{itemize}
+%
+% ------------------------------------------------------------------------------
+%
+\subsection{Connectors}
+%
+The inputs and ouputs intended to be connected are given below.
+%
+\begin{itemize}
+%
+\item The \emph{connected inputs} $${\mathbf u_c: t\mapsto \mathbf u_c(t)\in \mathbb R^{${ncy}}}$$
+%
+\par\Resize{${cu}.}
+%
+\item The \emph{connected outputs} $${\mathbf y_c: t\mapsto \mathbf y_c(t)\in \mathbb R^{${ncy}}}$$
+%
+\par\Resize{${cy}.}
+%
+\end{itemize}
+%
+${connectors_elements}
+%
+% ------------------------------------------------------------------------------
+%
+\subsection{Constitutive relations}
+%
+% ------------------------------------------------------------------------------
+%
+\subsubsection{Storage}
+%
+The system's \emph{storage function} (Hamiltonian) is:
+%
+\par\Resize{${H}}
+%
+\par
+The gradient of the system's storage function is:
+%
+\par\Resize{${dxH}}
+%
+${dxH_elements}
+%
+\par
+The Hessian matrix of the storage function is:
+%
+\par\Resize{${hessH}}
+%
+\par
+The Hessian matrix of the linear part of the storage function is:
+%
+\par\Resize{${Q}}
+%
+% ------------------------------------------------------------------------------
+%
+\subsubsection{Dissipation}
+%
+The dissipation function is:
+%
+\par\Resize{${z}}
+%
+${z_elements}
+%
+\par
+The jacobian matrix of the dissipation function is:
+%
+\par\Resize{${jacz}}
+%
+\par
+The jacobian matrix of the linear part of the dissipation function is:
+%
+\par\Resize{${Zl}}
+%
+% ------------------------------------------------------------------------------
+%
+\subsection{Structure}
+%
+The interconnection matrices $$\mathbf M=\mathbf J-\mathbf R$$ are given below.
+%
+\subsubsection{$$\mathbf M$$ structure}
+%
+${M}
+%
+\subsubsection{$$\mathbf J$$ structure}
+%
+${J}
+%
+\subsubsection{$$\mathbf R$$ structure}
+${R}
+%

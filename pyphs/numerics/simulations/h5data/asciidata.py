@@ -109,3 +109,71 @@ def data_generator(path, ind=None, decim=None,
                     out = float(line.split()[ind])
                     yield out if postprocess is None else postprocess(out)
             i += 1
+
+#class ASCIIData(BaseData):
+#
+#    # -------------------------------------------------------------------------
+#    def init_data(self, sequ=None, seqp=None, nt=None):
+#
+#        sequ, seqp, nt = BaseData.__init_data__(self, sequ, seqp, nt)
+#        # write input sequence
+#        self.write_data(self.config['path']+os.sep+'data', sequ, 'u')
+#
+#        # write parameters sequence
+#        self.write_data(self.config['path']+os.sep+'data', seqp, 'p')
+#
+#        self._build_generators()
+#
+#    init_data.__doc__ = BaseData.__init_data__.__doc__
+#
+#    # -------------------------------------------------------------------------
+#
+#    def write_data(self, path, seq, var):
+#        if not os.path.exists(path):
+#            os.makedirs(path)
+#        with open(path + os.sep + var + '.txt', 'w') as _file:
+#            for el in seq:
+#                _file.write(list2str(el))
+#
+#    # -------------------------------------------------------------------------
+#
+#    def build_generator(self, name):
+#        "Build data_generator from data name."
+#        filename = os.path.join(self.config['path'], name + '.txt')
+#        default = self.config['load']
+#
+#        def data_generator(**kwargs):
+#            """
+#            Generator that read file from path. Each line is returned as a list
+#            of floats, if index i is such that imin<=i<imax, with decimation
+#            factor decim. A function can be passed as postprocess, to be
+#            applied on each output.
+#            """
+#            imin = kwargs.get('imin', default['imin'])
+#            imax = kwargs.get('imax', default['imax'])
+#            decim = kwargs.get('decim', default['decim'])
+#            ind = kwargs.get('ind', None)
+#            postprocess = kwargs.get('postprocess', None)
+#
+#            if ind is not None and not isinstance(ind, int):
+#                raise ValueError('Index should be an integer,not {0}'.format(type(ind)))
+#
+#            with open(filename, "r") as f:
+#                for i, line in enumerate(f):
+#                    if (i < imin) or (imax <= i) or ((i - imin) % decim > 0):
+#                        continue
+#                    if ind is None:
+#                        # export full line
+#                        out = [float(x) for x in line.split()]
+#                        if postprocess is not None:
+#                            out = [postprocess(el) for el in out]
+#                        yield out
+#                    else:
+#                        # export selected index in line
+#                        out = float(line.split()[ind])
+#                        yield out if postprocess is None else postprocess(out)
+#
+#        data_generator.__doc__ = self.__doc_template__.format(name, filename)
+#        return data_generator
+#
+#

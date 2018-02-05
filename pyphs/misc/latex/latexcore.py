@@ -7,7 +7,7 @@ Created on Sat Nov 11 10:33:44 2017
 """
 
 from pyphs.misc.latex.tools import obj2tex, symbol_names, sympy2latex
-from pyphs.misc.latex.latex import dic2table
+from pyphs.misc.latex.tools import dic2table
 
 
 from pyphs.misc.tools import geteval
@@ -122,6 +122,16 @@ class LatexCore(object):
         self.y = obj2tex(self.core.y, r'\mathbf y', '', self.sn)
         self.cy = obj2tex(self.core.cy, r'\mathbf y_c', '', self.sn)
         self.cu = obj2tex(self.core.cu, r'\mathbf u_c', '', self.sn)
+
+        l = []
+        for i, c in enumerate(self.core.connectors):
+            alpha = c['alpha']
+            u1, y1 = c['u'][0], c['y'][0]
+            s = obj2tex(alpha*y1, str(u1), '', self.sn)
+            u2, y2 = c['u'][1], c['y'][1]
+            s += obj2tex(-alpha*y2, str(u2), '', self.sn)
+            l.append(s)
+        self.connectors_elements = l
 
         self.y_elements = list(map(lambda a: obj2tex(a[0], sympy2latex(a[1], self.sn),
                                                      '', self.sn, toMatrix=False),

@@ -87,15 +87,6 @@ datum = '#'
 # path to latex compiler
 latex_compiler_path = '/Library/TeX/texbin'
 
-# list of authors for latex exports
-footnote = r'\footnote{\url{https://pyphs.github.io/pyphs/}}'
-authors = [r'The \textsc{PyPHS}' + footnote + ' development team']
-
-# list of affiliations associated with the authors for latex exports
-affiliations = [r'Project-team S3AM\footnote{\url{https://www.ircam.fr/recherche/equipes-recherche/systemes-et-signaux-sonores-audioacoustique-instruments-s3am/}}\\' +
-                r'STMS, IRCAM-CNRS-UPMC (UMR 9912)\\' +
-                r'1 Place Igor-Stravinsky, 75004 Paris, France']
-
 # In equations:
 # use “p/q” instead of “frac{p}{q}” when the denominator is simple enough
 fold_short_frac = False
@@ -166,11 +157,11 @@ SIMULATION_PATH = None
 # of SCRIPT above.
 LANGUAGE = 'python'
 
-# Names of the files to save in PATH/data.
-# Should be known elements of Numeric
-# !!!    For ploting with the Data object, FILES must    !!!
+# Data names in the global datasapce of the hdf5 file saved in PATH/data.
+# Any VECTOR element in Numeric object can be added to the dataset.
+# !!!    For ploting with the Data object, DNAMES must      !!!
 # !!!   contain at least ('x', 'dx', 'dxH', 'w', 'z', 'y')  !!!
-FILES = ('x', 'dx', 'dxH', 'w', 'z', 'y')
+DNAMES = ('x', 'dx', 'dxH', 'w', 'z', 'y')
 
 # Display minimal timing informations
 TIMER = False
@@ -178,15 +169,15 @@ TIMER = False
 # Display a progressbar at runtime
 PBAR = False
 
-# Options for the data reader. The data are read from index imin
-# to index imax, rendering one element out of the number decim
-LOAD_OPTS = {'imin': 0, 'imax': None, 'decim': 1}
+# Options for the data reader. The data are read from index start
+# to index stop, rendering one element out of the number step
+LOAD_OPTS = {'start': 0, 'stop': None, 'step': 1}
 
 CONFIG_SIMULATION = {'path': SIMULATION_PATH,
                      'lang': LANGUAGE,
                      'timer': TIMER,
                      'pbar': PBAR,
-                     'files': FILES,
+                     'dnames': DNAMES,
                      'load': LOAD_OPTS}
 
 ###############################################################################
@@ -195,7 +186,3 @@ CONFIG_SIMULATION = {'path': SIMULATION_PATH,
 
 # Export format:
 plot_format = 'pdf'
-
-# Can be used to define commands for latex rendering
-# in plot axis and lines labels:
-latex_preamble = [' ', ]

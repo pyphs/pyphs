@@ -11,8 +11,10 @@ from pyphs.config import (CONFIG_METHOD, CONFIG_SIMULATION,
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.method2cpp import method2cpp, parameters
 from .. import Numeric
-from .data import Data
-from pyphs.misc.io import dump_files, with_files
+from .h5data import H5Data
+from pyphs.misc.tools import geteval
+#from pyphs.misc.io import dump_files, with_files
+
 import subprocess
 import progressbar
 import time
@@ -20,10 +22,73 @@ import os
 import sys
 
 
+# -----------------------------------------------------------------------------
+
+def system_call(cmd):
+    """
+    Execute a system command.
+
+    Parameter
+    ---------
+
+    cmd : list
+        List of arguments.
+
+    Example
+    -------
+
+    Change directory with
+
+    >>> cmd = ['cd', './my/folder']
+    >>> system_call(cmd)
+
+    """
+    if sys.platform.startswith('win'):
+        shell = True
+    else:
+        shell = True
+    if VERBOSE >= 1:
+        print(cmd)
+    p = subprocess.Popen(cmd, shell=shell,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    for line in iter(p.stdout.readline, b''):
+        l = line.decode()
+        if VERBOSE >= 1:
+            print(l)
+
+
+def execute_bash(text):
+    """
+    Execute a bash script, ignoring lines starting with #
+
+    Parameter
+    ---------
+
+    text : str
+        Bash script content. Execution of each line iteratively.
+    """
+    for line in text.splitlines():
+        if line.startswith('#') or len(line) == 0:
+            pass
+        else:
+            system_call(line.split())
+
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
+
 class Simulation:
     """
     object that stores data and methods for simulation of PortHamiltonianObject
     """
+
+    system_call = staticmethod(system_call)
+    execute_bash = staticmethod(execute_bash)
+
     def __init__(self, method, config=None, inits=None, label=None):
         """
         Parameters
@@ -144,7 +209,7 @@ class Simulation:
                         inits=self.inits,
                         config=self.config_numeric())
 
-        self.data = Data(self.method, self.config)
+        self.data = H5Data(self.method, self.config, clear=True)
 
     def init_method(self):
         """
@@ -153,8 +218,7 @@ class Simulation:
         if self.config_method() != self.method.config:
             self.method.__init__(self.method._core, config=self.config_method())
 
-###############################################################################
-
+    # -------------------------------------------------------------------------
 
     def init(self, nt=None, u=None, p=None,  inits=None,
              config=None, subs=None):
@@ -235,6 +299,46 @@ class Simulation:
 
         self.data.init_data(u, p, nt)
 
+    def init_parameters(self, subs=None):
+        """
+        Generate a new parameters.cpp based on a given substitution dictionary.
+        """
+        if subs is None:
+            subs = self.method.subs
+        else:
+            self.method.subs = subs
+        path = self.src_path
+        parameters_files = parameters(subs, 'rhodes'.upper())
+        for e in ['cpp', 'h']:
+            filename = path + os.sep + 'parameters.{0}'.format(e)
+            string = parameters_files[e]
+            _file = open(filename, 'w')
+            _file.write(string)
+            _file.close()
+        print('Parameters Files generated in \n{}'.format(path))
+
+    # -------------------------------------------------------------------------
+    # Progressbar
+
+    def _init_pb(self):
+        pb_widgets = ['\n', 'Simulation: ',
+                      progressbar.Percentage(), ' ',
+                      progressbar.Bar(), ' ',
+                      progressbar.ETA()
+                      ]
+        self._pbar = progressbar.ProgressBar(widgets=pb_widgets,
+                                             max_value=self.data.config['nt'])
+        self._pbar.start()
+
+    def _update_pb(self):
+        self._pbar.update(self.n)
+
+    def _close_pb(self):
+        self._pbar.finish()
+
+    # -------------------------------------------------------------------------
+    # Process
+
     def process(self):
         """
         Process simulation for all time steps.
@@ -278,79 +382,48 @@ class Simulation:
         if VERBOSE >= 1:
             print('Simulation: Done')
 
-    def init_parameters(self, subs=None):
-        """
-        Generate a new parameters.cpp based on a given substitution dictionary.
-        """
-        if subs is None:
-            subs = self.method.subs
-        else:
-            self.method.subs = subs
-        path = self.src_path
-        parameters_files = parameters(subs, 'rhodes'.upper())
-        for e in ['cpp', 'h']:
-            filename = path + os.sep + 'parameters.{0}'.format(e)
-            string = parameters_files[e]
-            _file = open(filename, 'w')
-            _file.write(string)
-            _file.close()
-        print('Parameters Files generated in \n{}'.format(path))
-
-    def _init_pb(self):
-        pb_widgets = ['\n', 'Simulation: ',
-                      progressbar.Percentage(), ' ',
-                      progressbar.Bar(), ' ',
-                      progressbar.ETA()
-                      ]
-        self._pbar = progressbar.ProgressBar(widgets=pb_widgets,
-                                             max_value=self.data.config['nt'])
-        self._pbar.start()
-
-    def _update_pb(self):
-        self._pbar.update(self.n)
-
-    def _close_pb(self):
-        self._pbar.finish()
-
     def _process_py(self):
 
         # get generators of u and p
         data = self.data
-        load = {'imin': 0, 'imax': None, 'decim': 1}
-        seq_u = data.u(**load)
-        seq_p = data.p(**load)
+        tslice = slice(0, None, 1)
+        data.h5open()
+        seq_u = data.u(tslice=tslice)
+        seq_p = data.p(tslice=tslice)
 
-        path = os.path.join(self.config['path'], 'data')
-        list_of_files = list(self.config['files'])
+        names = list(self.config['dnames'])
 
-        def process(files):
+        # progressbar
+        if self.config['pbar']:
+            self._init_pb()
+
+        # init time step
+        self.n = 0
+
+        # process
+        for i, (u, p) in enumerate(zip(seq_u, seq_p)):
+
+            # update numerics
+            self.nums.update(u=u, p=p)
+
+            vecs = dict(zip(names,
+                            [geteval(self.nums, name) for name in names]))
+            # write to files
+            data.h5dump_vecs(self.n, vecs)
+
+            self.n += 1
+
+            # update progressbar
             if self.config['pbar']:
-                self._init_pb()
+                self._update_pb()
 
-            # init time step
-            self.n = 0
+        # progressbar
+        if self.config['pbar']:
+            self._close_pb()
 
-            # process
-            for (u, p) in zip(seq_u, seq_p):
-                # update numerics
-                self.nums.update(u=u, p=p)
+        time.sleep(1e-3)
 
-                # write to files
-                dump_files(self.nums, files)
-
-                self.n += 1
-
-                # update progressbar
-                if self.config['pbar']:
-                    self._update_pb()
-
-            if self.config['pbar']:
-                self._close_pb()
-
-            time.sleep(0.1)
-
-        with_files(path, list_of_files, process)
-        # close_files(files)
+        data.h5close()
 
     def _process_cpp(self):
 
@@ -365,86 +438,3 @@ class Simulation:
 
         # go back to work folder
         os.chdir(self.work_path)
-
-    @staticmethod
-    def system_call(cmd):
-        """
-        Execute a system command.
-
-        Parameter
-        ---------
-
-        cmd : list
-            List of arguments.
-
-        Example
-        -------
-        Change directory with
-        cmd = ['cd', './my/folder']
-        system_call(cmd)
-        """
-        system_call(cmd)
-
-    @staticmethod
-    def execute_bash(text):
-        """
-        Execute a bash script, ignoring lines starting with #
-
-        Parameter
-        ---------
-
-        text : str
-            Bash script content. Execution of each line iteratively.
-        """
-        execute_bash(text)
-
-
-def system_call(cmd):
-    """
-    Execute a system command.
-
-    Parameter
-    ---------
-
-    cmd : list
-        List of arguments.
-
-    Example
-    -------
-
-    Change directory with
-
-    >>> cmd = ['cd', './my/folder']
-    >>> system_call(cmd)
-
-    """
-    if sys.platform.startswith('win'):
-        shell = True
-    else:
-        shell = True
-    if VERBOSE >= 1:
-        print(cmd)
-    p = subprocess.Popen(cmd, shell=shell,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
-    for line in iter(p.stdout.readline, b''):
-        l = line.decode()
-        if VERBOSE >= 1:
-            print(l)
-
-
-def execute_bash(text):
-    """
-    Execute a bash script, ignoring lines starting with #
-
-    Parameter
-    ---------
-
-    text : str
-        Bash script content. Execution of each line iteratively.
-    """
-    for line in text.splitlines():
-        if line.startswith('#') or len(line) == 0:
-            pass
-        else:
-            system_call(line.split())

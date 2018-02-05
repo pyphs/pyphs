@@ -129,6 +129,8 @@ def multiplot(x, y, show=True, **kwargs):
         else:
             axe = axs
 
+        axe.ticklabel_format(style='sci', scilimits=(-2, 2))
+
         # --------------------------------------------------------
         # flag
         print_legend = False
@@ -226,3 +228,5 @@ def multiplot(x, y, show=True, **kwargs):
     if show:
         from matplotlib.pyplot import show as pltshow
         pltshow()
+
+    return fig, axs

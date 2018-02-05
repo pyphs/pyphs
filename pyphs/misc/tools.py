@@ -10,7 +10,14 @@ from datetime import datetime
 # =========================================================================== #
 
 def get_date():
-    " Return current date and time "
+    " Return current date."
+    now = datetime.now()
+    dt_format = '%Y/%m/%d'
+    return now.strftime(dt_format)
+
+
+def get_time():
+    " Return current date and time."
     now = datetime.now()
     dt_format = '%Y/%m/%d %H:%M:%S'
     return now.strftime(dt_format)

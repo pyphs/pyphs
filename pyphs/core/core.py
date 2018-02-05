@@ -9,6 +9,7 @@ from __future__ import absolute_import, division, print_function
 
 import sympy
 import copy
+import shelve
 
 from ..misc.tools import geteval
 from ..config import VERBOSE
@@ -28,6 +29,7 @@ from ..misc.latex import texdocument, core2tex
 
 from collections import OrderedDict
 
+import os
 
 class Core:
     """
@@ -149,6 +151,121 @@ class Core:
 
     # =========================================================================
 
+    def save(self, folder=None, label=None):
+        """
+        save
+        ====
+
+        Save Core object to disk. The path is
+        * folder/label.phs
+
+        Notice the data appears on disk as
+        * folder/label.phs.db
+
+        Parameters
+        ----------
+
+        folder : string (optional)
+            Folder where to save the object (default is current working
+            directory).
+
+        label : string (optional)
+            label of the object to save (default is current object label).
+
+        """
+
+        if folder is None:
+            folder = os.getcwd()
+
+        if label is None:
+            label = self.label
+
+        folder = os.path.join(folder, label)
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+
+        filename = '{0}.{1}'.format(label, 'phs')
+        path = os.path.join(folder, filename)
+
+        dico = {}
+        dico['label'] = label
+
+        for name in (list(set().union(
+                          self.attrstocopy,
+                          self.exprs_names,
+                          self.symbs_names))):
+            if isinstance(name, str):
+                source = self
+                attr_name = name
+            else:
+                source = getattr(self, name[0])
+                attr_name = name[1]
+            obj = getattr(source, attr_name)
+            dico[attr_name] = obj
+
+        with shelve.open(path) as database:
+            database['core'] = dico
+
+        if VERBOSE > 0:
+            print('Core {0} saved in {1}'.format(self.label, path))
+
+    def load(self, folder=None, label=None):
+        """
+        load
+        ====
+
+        Load Core object content from disk. The path is
+        * folder/label.phs
+
+        Notice the data appears on disk as
+        * folder/label.phs.db
+
+        Parameters
+        ----------
+
+        folder : string (optional)
+            Folder where to load the object (default is current working
+            directory).
+
+        label : string (optional)
+            label of the object to load (default is current object label).
+
+        """
+        if folder is None:
+            folder = os.getcwd()
+
+        if label is None:
+            label = self.label
+
+        filename = '{0}.{1}'.format(label, 'phs')
+        path = os.path.join(folder, label, filename)
+
+        with shelve.open(path) as database:
+            dico = database['core']
+
+        self.label = copy.copy(dico['label'])
+
+        for name in (list(set().union(
+                          self.attrstocopy,
+                          self.exprs_names,
+                          self.symbs_names))):
+            if isinstance(name, str):
+                target = self
+                attr_name = name
+            else:
+                target = getattr(self, name[0])
+                attr_name = name[1]
+            attr = dico[attr_name]
+            try:
+                setattr(target, attr_name, attr.copy())
+            except AttributeError:
+                setattr(target, attr_name, copy.copy(attr))
+
+        if VERBOSE > 0:
+            print('Read Core from {0}'.format(path))
+
+    # =========================================================================
+
     def __copy__(self):
         core = Core(label=None)
         for name in (list(set().union(
@@ -160,10 +277,10 @@ class Core:
                 target = core
                 attr_name = name
             else:
-                source = getattr(self, name[0])
-                target = getattr(core, name[0])
+                source = geteval(self, name[0])
+                target = geteval(core, name[0])
                 attr_name = name[1]
-            attr = getattr(source, attr_name)
+            attr = geteval(source, attr_name)
             try:
                 setattr(target, attr_name, attr.copy())
             except AttributeError:
@@ -267,6 +384,22 @@ class Core:
         :code:`x[n+1]=x[n]+dx[n]`.
         """
         return [self.symbols('d'+str(x)) for x in self.x]
+
+    def dtx(self):
+        return [self.symbols('dt'+str(x)) for x in self.x]
+
+    def b(self):
+        return self.dtx() + self.w + self.y
+
+    def a(self):
+        return geteval(self, 'dxH') + self.z + self.u
+
+    def pd(self):
+        output = sympify(0)
+        for w, z in zip(self.w, self.z):
+            output += w*z
+        output += sympy.SparseMatrix(self.a()).dot(self.R().dot(self.a()))
+        return output
 
     def z_symbols(self):
         """
@@ -772,7 +905,6 @@ add the connector'.format(i)
             if par in self.subs:
                 self.subs.pop(par)
 
-
     def add_observer(self, obs):
         """
         add_observer
@@ -791,8 +923,7 @@ add the connector'.format(i)
 
     # Latex
 
-    def texwrite(self, path=None, title=None,
-                 authors=None, affiliations=None):
+    def texwrite(self, path=None, title=None):
         """
         Write the port Hamiltonian Structure to a LaTeX file.
 
@@ -807,19 +938,29 @@ add the connector'.format(i)
         title : str
             LaTeX document title. If None, it is set to 'PyPHS Core' (default).
 
-        authors : list of str
-            List of authors. Default is None.
-
-        affiliations : list of str
-            List of affiliations for authors. It must have the same length
-            as authors arguments. Default is None.
         """
+
         if path is None:
-            path = '{}.tex'.format(self.label)
+            folder = os.getcwd()
+            path = os.path.join(folder, '{}.tex'.format(self.label))
+        else:
+            if os.sep in path:
+                imax = path.rfind(os.sep)
+            else:
+                imax = -1
+            folder = path[:imax]
+
         if title is None:
-            title = r'PyPHS Core'
-        texdocument(core2tex(self), path, title=title,
-                    authors=authors, affiliations=affiliations)
+            title = r'{0}'.format(self.label)
+
+        content = ""
+        if hasattr(self, '_netlist'):
+            from pyphs import netlist2tex, graphplot2tex
+            content += netlist2tex(getattr(self, '_netlist'))
+            content += graphplot2tex(getattr(self, '_netlist').to_graph(),
+                                     folder=folder)
+        content += core2tex(self)
+        texdocument(content, path, title=title)
 
     # =========================================================================
 
@@ -845,13 +986,13 @@ add the connector'.format(i)
 
         sympy.init_printing()
 
-        b = types.matrix_types[0](self.dx() +
+        b = types.matrix_types[0](self.dtx() +
                                   self.w +
                                   self.y +
                                   self.cy)
 
-        a = types.matrix_types[0](self.g() +
-                                  self.z_symbols() +
+        a = types.matrix_types[0](self.dxH() +
+                                  self.z +
                                   self.u +
                                   self.cu)
 

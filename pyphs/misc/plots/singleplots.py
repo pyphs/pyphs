@@ -99,11 +99,16 @@ None).
     fig = figure(i)
 
     from matplotlib.pyplot import axes
+
     ax = axes()
+    ax.ticklabel_format(style='sci', scilimits=(-2, 2))
 
     print_legend = False
 
     for n, yn in enumerate(y):
+        if len(yn) == 0:
+            print('Skipping empty array: ', opts['labels'][n])
+            continue
 
         if isinstance(opts['labels'][n], (list, tuple)):
             annotate(*opts['labels'][n], ax=ax)

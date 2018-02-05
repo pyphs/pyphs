@@ -37,15 +37,15 @@ def _template(project_name):
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 # Project's name
-project(%s CXX)
+project({0} CXX)
 
 # Set target to RELEASE
 set(CMAKE_BUILD_TYPE Release)
 
 # Set the output folder where program will be created
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+set(CMAKE_BINARY_DIR ${{CMAKE_SOURCE_DIR}}/bin)
+set(EXECUTABLE_OUTPUT_PATH ${{CMAKE_BINARY_DIR}})
+set(LIBRARY_OUTPUT_PATH ${{CMAKE_BINARY_DIR}})
 
 # Set the needed source files
 set(SOURCE_FILES
@@ -57,10 +57,13 @@ set(SOURCE_FILES
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
+find_package (HDF5 COMPONENTS HL CXX REQUIRED)
+include_directories(${{HDF5_INCLUDE_DIRS}})
+
 # Set executable with same name as the project
-add_executable(%s ${SOURCE_FILES})
-target_link_libraries (%s Eigen3::Eigen)
+add_executable({0} ${{SOURCE_FILES}})
+target_link_libraries ({0} Eigen3::Eigen ${{HDF5_LIBRARIES}})
 
 # Activate C++11
-target_compile_features(%s PUBLIC cxx_std_11)
-""" % (project_name, project_name, project_name, project_name)
+target_compile_features({0} PUBLIC cxx_std_11)
+""".format(project_name)

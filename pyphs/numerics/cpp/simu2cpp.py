@@ -35,6 +35,8 @@ def simu2cpp(simu):
     f = open(simu.run_script_path, 'w+')
     f.write(simu.run_script)
     f.close()
+
+    # Enables execution (chmod)
     make_executable(simu.run_script_path)
     make_executable(simu.cmakelists_path)
 
@@ -42,17 +44,44 @@ def simu2cpp(simu):
 def bash_script_template(path, label, cmakepath):
     return """#!/bin/sh
 
+### ERROR TRACKING ###
+# Stops bash script if an error occurs
+set -e
+
 # chg dir to app dir
 cd {0}
 
+# Check if stderr already exists, and deletes it
+if [ -e stderr ]
+then
+    rm stderr
+else
+    echo "creating stderr"
+fi
+
+
+# Create stderr file, for error tracking
+touch stderr
+echo "stderr: init" >> stderr
+
+
+### CMake Build ###
+echo "stderr: step 1 - cd to folder" >> stderr
+
 # CMake Build
+echo "stderr: step 2 - Cmake Build" >> stderr
 {3} . -Bbuild
 
 # Binary Build
+echo "stderr: step 3 - Binary Build" >> stderr
 {3} --build build -- -j3
 
 # Binary Exec
+echo "stderr: step 4 - Exec" >> stderr
 .{1}bin{1}{2}
+
+### END ###
+echo "stderr: end" >> stderr
 
         """.format(path,
                    os.path.sep,

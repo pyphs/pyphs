@@ -363,8 +363,29 @@ class Simulation:
         # execute the bash script
         self.system_call('./run.sh')
 
+        # Check if an error occured outside python (bash)
+        self._check_cpp_runtime_errors()
+        
+        # Removes the error file if everything went well
+        os.remove('stderr')
+
         # go back to work folder
         os.chdir(self.work_path)
+
+    def _check_cpp_runtime_errors(self):
+        
+        # Reading everyline of the error file in a list 
+        with open('stderr', 'r') as err_file:
+            stdError = err_file.readlines()
+
+        # Removing format characters (\n ...)
+        stdError = [line.strip() for line in stdError]
+
+        # Check if every step happened, otherwise, throws an error
+        if not 'stderr: end' in stdError:
+            raise RuntimeError(\
+'Bash/Cmake error while trying to compile cpp simulation: see file '
+                               + os.path.join(self.cpp_path, stdError[-1]))
 
     @staticmethod
     def system_call(cmd):

@@ -353,39 +353,50 @@ class Simulation:
         # close_files(files)
 
     def _process_cpp(self):
-
-        # build simu.cpp
+        
+                # build simu.cpp
         simu2cpp(self)
 
         # go to build folder
         os.chdir(self.cpp_path)
 
         # execute the bash script
-        self.system_call('./run.sh')
-
-        # Check if an error occured outside python (bash)
-        self._check_cpp_runtime_errors()
+        # self.system_call('./run.sh')
         
-        # Removes the error file if everything went well
-        os.remove('stderr')
+        # Commands
+        cmd = {
+               'Bbuild': '%s . -Bbuild' % self.config['cmake'],
+               'build': '%s --build build -- -j3' % self.config['cmake']
+              }
+        
+        # options for the subprocess.run method
+        sp_config = {
+            "cwd": self.cpp_path,
+            "stderr": subprocess.PIPE,
+            "check": True,
+            "universal_newlines": True,
+            "shell": True,
+            }
+        # Check compatibility with windows installs: 
+        #       "cmd <options> <files>".split() 
+        #               or
+        #       "cmd <options> <files>"
+        # And the "shell" option
+
+        # Perform build
+        with open(os.path.join(sp_config["cwd"], "build.log"), 'w') as fid:
+            sp_config['stdout'] = fid
+            p = subprocess.run(cmd['Bbuild'].split(), **sp_config)
+            p = subprocess.run(cmd['build'].split(), **sp_config)
+
+        sp_config['stdout'] = subprocess.PIPE
+        p = subprocess.run('./bin/%s' % self.label, **sp_config)
+        
+        print(p.stdout)
 
         # go back to work folder
         os.chdir(self.work_path)
 
-    def _check_cpp_runtime_errors(self):
-        
-        # Reading everyline of the error file in a list 
-        with open('stderr', 'r') as err_file:
-            stdError = err_file.readlines()
-
-        # Removing format characters (\n ...)
-        stdError = [line.strip() for line in stdError]
-
-        # Check if every step happened, otherwise, throws an error
-        if not 'stderr: end' in stdError:
-            raise RuntimeError(\
-'Bash/Cmake error while trying to compile cpp simulation: see file '
-                               + os.path.join(self.cpp_path, stdError[-1]))
 
     @staticmethod
     def system_call(cmd):

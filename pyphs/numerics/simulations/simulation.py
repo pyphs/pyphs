@@ -412,7 +412,6 @@ class Simulation:
 
 
     @staticmethod
-zsh:1: command not found: q
         """
         Execute a system command.
 

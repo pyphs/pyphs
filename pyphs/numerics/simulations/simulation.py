@@ -412,6 +412,7 @@ class Simulation:
 
 
     @staticmethod
+    def system_call(cmd):
         """
         Execute a system command.
 

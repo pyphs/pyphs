@@ -378,16 +378,12 @@ class Simulation:
             "shell": True,
             }
         # Check compatibility with windows installs: 
-        #       "cmd <options> <files>".split() 
-        #               or
-        #       "cmd <options> <files>"
-        # And the "shell" option
 
         # Perform build
         with open(os.path.join(sp_config["cwd"], "build.log"), 'w') as fid:
             sp_config['stdout'] = fid
-            p = subprocess.run(cmd['Bbuild'].split(), **sp_config)
-            p = subprocess.run(cmd['build'].split(), **sp_config)
+            p = subprocess.run(cmd['Bbuild'], **sp_config)
+            p = subprocess.run(cmd['build'], **sp_config)
 
         sp_config['stdout'] = subprocess.PIPE
         p = subprocess.run('./bin/%s' % self.label, **sp_config)

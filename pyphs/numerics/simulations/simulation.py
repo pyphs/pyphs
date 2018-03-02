@@ -353,22 +353,19 @@ class Simulation:
         # close_files(files)
 
     def _process_cpp(self):
-        
-                # build simu.cpp
+
+        # build simu.cpp
         simu2cpp(self)
 
         # go to build folder
         os.chdir(self.cpp_path)
 
-        # execute the bash script
-        # self.system_call('./run.sh')
-        
         # Commands
         cmd = {
-               'Bbuild': '%s . -Bbuild' % self.config['cmake'],
-               'build': '%s --build build -- -j3' % self.config['cmake']
-              }
-        
+            'build_tree': '%s . -Bbuild' % self.config['cmake'],
+            'compile_src': '%s --build build -- -j3' % self.config['cmake']
+            }
+
         # options for the subprocess.run method
         sp_config = {
             "cwd": self.cpp_path,
@@ -377,25 +374,45 @@ class Simulation:
             "universal_newlines": True,
             "shell": True,
             }
-        # Check compatibility with windows installs: 
 
         # Perform build
         with open(os.path.join(sp_config["cwd"], "build.log"), 'w') as fid:
             sp_config['stdout'] = fid
-            p = subprocess.run(cmd['Bbuild'], **sp_config)
-            p = subprocess.run(cmd['build'], **sp_config)
 
+            # Running commands
+            try:
+                process = subprocess.run(cmd['build_tree'], **sp_config)
+                process = subprocess.run(cmd['compile_src'], **sp_config)
+
+            except subprocess.CalledProcessError as error:
+
+                # Printing errors
+                print('\nAn error occured while building simulation executable.')
+                print('See %s for details\n' % fid.name)
+
+                # go back to work folder
+                os.chdir(self.work_path)
+
+                raise error
+
+        # VERBOSE: print build log
+        if VERBOSE >= 3:
+            build_log = open('build.log', 'r')
+            for line in build_log:
+                print(line)
+
+        # Running executable simulation
         sp_config['stdout'] = subprocess.PIPE
-        p = subprocess.run('./bin/%s' % self.label, **sp_config)
-        
-        print(p.stdout)
+        process = subprocess.run('./bin/%s' % self.label, **sp_config)
+
+        print(process.stdout)
 
         # go back to work folder
         os.chdir(self.work_path)
 
 
     @staticmethod
-    def system_call(cmd):
+zsh:1: command not found: q
         """
         Execute a system command.
 

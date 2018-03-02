@@ -36,9 +36,6 @@ def _template(project_name):
 # Specify the minimum version for CMake
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
-# Activate C++ 11
-set (CMAKE_CXX_STANDARD 11)
-
 # Project's name
 project(%s CXX)
 
@@ -64,4 +61,6 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 add_executable(%s ${SOURCE_FILES})
 target_link_libraries (%s Eigen3::Eigen)
 
-""" % (project_name, project_name, project_name)
+# Activate C++11
+target_compile_features(%s PUBLIC cxx_std_11)
+""" % (project_name, project_name, project_name, project_name)

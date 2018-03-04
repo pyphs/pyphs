@@ -36,6 +36,9 @@ def _template(project_name):
 # Specify the minimum version for CMake
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
+# Activate C++ 11
+set (CMAKE_CXX_STANDARD 11)
+
 # Project's name
 project({0} CXX)
 
@@ -64,6 +67,4 @@ include_directories(${{HDF5_INCLUDE_DIRS}})
 add_executable({0} ${{SOURCE_FILES}})
 target_link_libraries ({0} Eigen3::Eigen ${{HDF5_LIBRARIES}})
 
-# Activate C++11
-target_compile_features({0} PUBLIC cxx_std_11)
 """.format(project_name)

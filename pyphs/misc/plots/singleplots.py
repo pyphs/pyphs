@@ -152,3 +152,5 @@ None).
     if show:
         from matplotlib.pyplot import show as pltshow
         pltshow()
+
+    return fig, ax

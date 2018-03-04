@@ -27,8 +27,8 @@ $$
 \cdot
 \left(
   \begin{array}{c}
-    \nabla \mathrm H\\
-    \mathbf z \\
+    \nabla \mathrm H(\mathbf x)\\
+    \mathbf z(\mathbf w) \\
     \mathbf u \\
     \mathbf {cu} \\
   \end{array}

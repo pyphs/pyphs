@@ -41,6 +41,7 @@ def netlist2tex(netlist):
                                                           latex_nodes,
                                                           latex_args)
             subs['netlist'] += str_table + cr(0) + r" \\" + cr(0)
+        subs['netlist'] = subs['netlist'][:-1]
     return template.substitute(subs)
 
 

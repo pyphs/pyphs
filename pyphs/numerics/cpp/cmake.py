@@ -36,6 +36,9 @@ def _template(project_name):
 # Specify the minimum version for CMake
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
+# Activate C++ 11
+set (CMAKE_CXX_STANDARD 11)
+
 # Project's name
 project({0} CXX)
 

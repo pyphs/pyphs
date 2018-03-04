@@ -16,12 +16,10 @@ from pyphs.misc.tools import geteval
 from pyphs.config import VERBOSE
 import h5py
 
-
 try:
     import itertools.izip as zip
 except ImportError:
     pass
-
 
 class H5Data(object):
     """
@@ -349,7 +347,7 @@ or an integer nt (number of time steps).'
 
         seqs = {'u': sequ, 'p': seqp}
 
-        self.h5dump_seqs(seqs)
+        self.h5dump_seqs(seqs, slice(0, self.config['nt']))
 
         self.h5close()
 
@@ -548,7 +546,7 @@ or an integer nt (number of time steps).'
             self.h5close()
 
     # ----------------------------------------------------------------------- #
-    def h5dump_seqs(self, data):
+    def h5dump_seqs(self, data, tslice):
         """
         Write sequences to h5 file, with data a dictionary structured as:
 
@@ -567,12 +565,19 @@ or an integer nt (number of time steps).'
         else:
             close = False
 
-        # iteration overs times (first dimension of data arrays)
-        for t, elts in enumerate(zip(*[data[name] for name in data])):
-            # build data dic
-            datat = dict(zip([name for name in data], elts))
-            # dump data at time t
-            self.h5dump_vecs(t, datat)
+        for name in self.names:
+            if name not in data:
+                data[name] = self[name, tslice, :]
+
+        nt = tslice.stop - tslice.start
+        a = numpy.zeros((nt, self.dim))
+
+        # update array with data values
+        for i, name in enumerate(data):
+            a[:, slice(*self.inds[name])] = list(data[name])
+
+        # write array in h5 file at time t
+        self.h5file[self.dname][tslice, :] = numpy.asarray(a, dtype=self.dtype)
 
         if close:
             self.h5close()
@@ -604,7 +609,10 @@ or an integer nt (number of time steps).'
         return slice(start, stop, step)
 
     def _tuple2slice(self, vname, vslice):
-        # read variable slice from data object indices
+        """
+        return slice in the data from item spicifier
+        """
+
         # read variable slice from data object indices
         if vslice is None:
             vslice = slice(*self.inds[vname])
@@ -767,6 +775,9 @@ or an integer nt (number of time steps).'
     # ----------------------------------------------------------------------- #
 
     def _hstack(self, names, tslice=None, vslice=None, postprocess=None):
+        """
+
+        """
 
         if not self._open:
             self.h5open()
@@ -778,7 +789,13 @@ or an integer nt (number of time steps).'
             vslice = slice(None, None, None)
 
         tslice = self._tslice(tslice)
-        output = numpy.hstack([self[name, tslice] for name in names])[vslice]
+        arrays = []
+        for name in names:
+            array = self[name, tslice]
+            if len(array.shape) < 2:
+                array = array[:, numpy.newaxis]
+            arrays.append(array)
+        output = numpy.hstack(arrays)[vslice]
 
         if postprocess is None:
             return output
@@ -1316,7 +1333,7 @@ or an integer nt (number of time steps).'
 
         # Compute DtE = (h[x[n+1]]-h[x[n]]) / dt
         if DtE == 'deltaH':
-            last_dtH_value = numpy.einsum('ti, ti',
+            last_dtH_value = numpy.einsum('ti,ti->t',
                                           self['dxH', tslice.stop-1],
                                           self['dtx', tslice.stop-1])/self.fs
             output = numpy.ediff1d(self.E(tslice=tslice),
@@ -1324,7 +1341,7 @@ or an integer nt (number of time steps).'
 
         # Compute DtE = dxh.T * dtx
         elif DtE == 'DxhDtx':
-            output = numpy.einsum('ti, ti',
+            output = numpy.einsum('ti,ti->t',
                                   self['dxH', tslice],
                                   self['dtx', tslice])
 
@@ -1442,4 +1459,3 @@ or an integer nt (number of time steps).'
 
         if close:
             self.h5close()
-

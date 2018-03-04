@@ -433,8 +433,136 @@ class Simulation:
         # go to build folder
         os.chdir(self.cpp_path)
 
-        # execute the bash script
-        self.system_call('./run.sh')
+        # Commands
+        cmd = {
+            'build_tree': '%s . -Bbuild' % self.config['cmake'],
+            'compile_src': '%s --build build -- -j3' % self.config['cmake']
+            }
+
+        # options for the subprocess.run method
+        sp_config = {
+            "cwd": self.cpp_path,
+            "stderr": subprocess.PIPE,
+            "check": True,
+            "universal_newlines": True,
+            "shell": True,
+            }
+
+        # Perform build
+        with open(os.path.join(sp_config["cwd"], "build.log"), 'w') as fid:
+            sp_config['stdout'] = fid
+
+            # Running commands
+            try:
+                process = subprocess.run(cmd['build_tree'], **sp_config)
+                process = subprocess.run(cmd['compile_src'], **sp_config)
+
+            except subprocess.CalledProcessError as error:
+
+                # Printing errors
+                print('\nAn error occured while building simulation executable.')
+                print('See %s for details\n' % fid.name)
+
+                # go back to work folder
+                os.chdir(self.work_path)
+
+                raise error
+
+        # VERBOSE: print build log
+        if VERBOSE >= 3:
+            build_log = open('build.log', 'r')
+            for line in build_log:
+                print(line)
+
+        # Running executable simulation
+        sp_config['stdout'] = subprocess.PIPE
+        process = subprocess.run('./bin/%s' % self.label, **sp_config)
+
+        print(process.stdout)
 
         # go back to work folder
         os.chdir(self.work_path)
+
+
+    @staticmethod
+    def system_call(cmd):
+        """
+        Execute a system command.
+
+        Parameter
+        ---------
+
+        cmd : list
+            List of arguments.
+
+        Example
+        -------
+        Change directory with
+        cmd = ['cd', './my/folder']
+        system_call(cmd)
+        """
+        system_call(cmd)
+
+    @staticmethod
+    def execute_bash(text):
+        """
+        Execute a bash script, ignoring lines starting with #
+
+        Parameter
+        ---------
+
+        text : str
+            Bash script content. Execution of each line iteratively.
+        """
+        execute_bash(text)
+
+
+def system_call(cmd):
+    """
+    Execute a system command.
+
+    Parameter
+    ---------
+
+    cmd : list
+        List of arguments.
+
+    Example
+    -------
+
+    Change directory with
+
+    >>> cmd = ['cd', './my/folder']
+    >>> system_call(cmd)
+
+    """
+    if sys.platform.startswith('win'):
+        shell = True
+    else:
+        shell = True
+    if VERBOSE >= 1:
+        print(cmd)
+    p = subprocess.Popen(cmd, shell=shell,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    for line in iter(p.stdout.readline, b''):
+        l = line.decode()
+        if VERBOSE >= 1:
+            print(l)
+
+
+def execute_bash(text):
+    """
+    Execute a bash script, ignoring lines starting with #
+
+    Parameter
+    ---------
+
+    text : str
+        Bash script content. Execution of each line iteratively.
+    """
+    for line in text.splitlines():
+        if line.startswith('#') or len(line) == 0:
+            pass
+        else:
+            system_call(line.split())

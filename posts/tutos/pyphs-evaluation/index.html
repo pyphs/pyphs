@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The PyPHS.Evaluation class | PyPHS</title>
+<link href="../../../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/html4css1.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#618AC8">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.xml">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/posts/tutos/pyphs-evaluation/">
+<!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="afalaize">
+<link rel="next" href="../pyphs-simulation/" title="The PyPHS.Simulation class" type="text/html">
+<meta property="og:site_name" content="PyPHS">
+<meta property="og:title" content="The PyPHS.Evaluation class">
+<meta property="og:url" content="https://pyphs.github.io/pyphs/posts/tutos/pyphs-evaluation/">
+<meta property="og:description" content="In this tutorial, we cover the pyphs.Evaluation object for the numerical evaluation of pyphs.Core objects. The core PHS object associated with the Thiele-Small modeling of electrodynamic loudspeakers ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2016-11-05T16:30:34+02:00">
+<meta property="article:tag" content="mathjax">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
+                <img src="../../../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Documentation <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../../docs/port-hamiltonian-systems/">Port-Hamiltonian Systems</a>
+                    </li>
+<li>
+<a href="../../docs/pyphs-method/">PyPHS.Method</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tutorials <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../pyphs-core/">PyPHS.Core</a>
+                    </li>
+<li class="active">
+<a href=".">PyPHS.Evaluation <span class="sr-only">(active)</span></a>
+                    </li>
+<li>
+<a href="../pyphs-graph/">PyPHS.Graph</a>
+                    </li>
+<li>
+<a href="../pyphs-simulation/">PyPHS.Simulation</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dictionary <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/electronics">Electronic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/mechanics">Mechanic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/magnetics">Magnetic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/thermics">Thermic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/connectors">Connectors</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/transducers">Transducers</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/beams">Beams</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/fraccalc">Fractional Calculus</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/pwl">Piecewise Linear</a>
+            </li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+    <a href="index.ipynb" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">The PyPHS.Evaluation class</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                    <a href="../../../authors/afalaize/">afalaize</a>
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2016-11-05T16:30:34+02:00" itemprop="datePublished" title="2016-11-05 16:30">2016-11-05 16:30</time></a></p>
+            
+        <p class="sourceline"><a href="index.ipynb" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this tutorial, we cover the <code>pyphs.Evaluation</code> object for the numerical evaluation of <code>pyphs.Core</code> objects. The core PHS object associated with the Thiele-Small modeling of electrodynamic loudspeakers is used as an example.</p>
+<!-- TEASER_END -->
+
+<p>The <a href="https://github.com/pyphs/pyphs/tree/master/pyphs/examples/thielesmall">example</a> can be found in the PyPHS examples at <code>\pyphs\examples\</code> and the script <a href="https://github.com/pyphs/pyphs/tree/master/pyphs/examples/thielesmall"><code>evaluation.py</code></a> corresponding to this notebook can be found in the PyPHS tutorials at <code>\pyphs\tutorials\</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Description">Description<a class="anchor-link" href="#Description">¶</a>
+</h2>
+<p>The <code>pyphs.Evaluation</code> object build the numerical functions associated with the symbolic expressions of a <code>pyphs.Core</code>. This is not a dynamical object, so it has to be rebuild if the core is changed in any way.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Retrieve-the-pyphs.Core-from-the-Thiele-Small-example">Retrieve the pyphs.Core from the Thiele-Small example<a class="anchor-link" href="#Retrieve-the-pyphs.Core-from-the-Thiele-Small-example">¶</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyphs.examples.thielesmall.thielesmall</span> <span class="k">import</span> <span class="n">core</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Read netlist thielesmall.net
+from folder /Users/afalaize/Developement/repos/pyphs/pyphs/examples/thielesmall/
+pass "#=======================  INPUTS  ========================#"
+read "electronics.source      IN  ('A', '#'):             type=voltage;"
+pass "#"
+pass "#=====================  ELECTRONICS  =====================#"
+read "electronics.resistor    R   ('A', 'B'):             R=('R', 5.9);"
+read "electronics.inductor    L   ('B', 'C'):             L=('L', 2.36*1e-3);"
+pass "#"
+pass "#======================  CONNECTOR  ======================#"
+read "connectors.transformer  T   ('C', '#', 'D', '#'):   alpha=('Bl', 16.37);"
+pass "#"
+pass "#======================  MECHANICS  ======================#"
+read "mechanics.mass          M   ('D',):                 M=('M', 0.075);"
+read "mechanics.stiffness     K   ('D', '#'):             K=('K', 1e4);"
+read "mechanics.damper        A   ('D', '#'):             A=('A', 10.);"
+pass ""
+Build graph IN...
+Build graph R...
+Build graph L...
+Build graph T...
+Build graph M...
+Build graph K...
+Build graph A...
+Build graph thielesmall...
+Build core thielesmall...
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The structure is</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>⎡                                                ⎡1.0⋅K⋅xK⎤⎤
+⎢                                                ⎢        ⎥⎥
+⎢⎡dtxK⎤  ⎡ 0     0      -1.0     0    0     0 ⎤  ⎢ 1.0⋅xL ⎥⎥
+⎢⎢    ⎥  ⎢                                    ⎥  ⎢ ────── ⎥⎥
+⎢⎢dtxL⎥  ⎢ 0     0     -1.0⋅Bl   0   -1.0  1.0⎥  ⎢   L    ⎥⎥
+⎢⎢    ⎥  ⎢                                    ⎥  ⎢        ⎥⎥
+⎢⎢dtxM⎥  ⎢1.0  1.0⋅Bl     0     1.0   0     0 ⎥  ⎢ 1.0⋅xM ⎥⎥
+⎢⎢    ⎥, ⎢                                    ⎥, ⎢ ────── ⎥⎥
+⎢⎢ wA ⎥  ⎢ 0     0      -1.0     0    0     0 ⎥  ⎢   M    ⎥⎥
+⎢⎢    ⎥  ⎢                                    ⎥  ⎢        ⎥⎥
+⎢⎢ wR ⎥  ⎢ 0    1.0       0      0    0     0 ⎥  ⎢  A⋅wA  ⎥⎥
+⎢⎢    ⎥  ⎢                                    ⎥  ⎢        ⎥⎥
+⎢⎣yIN ⎦  ⎣ 0    -1.0      0      0    0     0 ⎦  ⎢  R⋅wR  ⎥⎥
+⎢                                                ⎢        ⎥⎥
+⎣                                                ⎣  uIN   ⎦⎦
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>with the state</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left [ xK, \quad xL, \quad xM\right ]$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>the dissipation variable</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">w</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left [ wA, \quad wR\right ]$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>the storage function (Hamiltonian)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">H</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$0.5 K xK^{2} + \frac{0.5 xM^{2}}{M} + \frac{0.5 xL^{2}}{L}$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>the dissipation function</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">z</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left [ A wA, \quad R wR\right ]$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the parameters</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">subs</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left \{ A : 10.0, \quad Bl : 16.37, \quad K : 10000.0, \quad L : 0.00236, \quad M : 0.075, \quad R : 5.9\right \}$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Build-Evaluation-object">Build Evaluation object<a class="anchor-link" href="#Build-Evaluation-object">¶</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The evaluation object is build with</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">to_evaluation</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">'H'</span><span class="p">,</span> <span class="s1">'dxH'</span><span class="p">,</span> <span class="s1">'z'</span><span class="p">,</span> <span class="s1">'M'</span><span class="p">,</span> <span class="s1">'Jxx'</span><span class="p">],</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Build numerical evaluations...
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice the symbols associated with entries in the substitution dictionary <code>core.subs</code> are automatically replaced by their correponding value in <code>core.subs</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The parameters are</p>
+<ul>
+<li>
+<strong><code>names</code>:  list of strings or 'all' (optional).</strong> List of core's arguments names associated with the functions that
+  will be lambdified. If 'all', the names for every arguments,
+  every functions (including all systems matrices and sub-matrices),
+  and every operations are considered (processing time increases
+  quickly with original core's complexity if thsi option is used).</li>
+<li>
+<strong><code>vectorize</code>: bool (optional).</strong> If True, every functions are vectorized with numpy.vectorize.
+  The default is True.   </li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Arguments">Arguments<a class="anchor-link" href="#Arguments">¶</a>
+</h2>
+<p>The arguments of numerical functions are taken from the vector 
+$$\mathbf{args} \triangleq (\mathbf x, \, \delta \mathbf x, \, \mathbf w, \, \mathbf u, \, \mathbf p, \, \mathbf o)$$
+from the original <code>Core</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span><span class="o">.</span><span class="n">args</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[9]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left [ xK, \quad xL, \quad xM, \quad dxK, \quad dxL, \quad dxM, \quad wA, \quad wR, \quad uIN\right ]$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Below we define a set of numerical values for these arguments</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5e-4</span><span class="p">,</span> <span class="mf">2e-2</span><span class="p">]</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5e-3</span><span class="p">,</span> <span class="mf">2e-1</span><span class="p">]</span>
+<span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5e-3</span><span class="p">,</span> <span class="p">]</span>
+<span class="n">u</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="p">]</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">+</span> <span class="n">w</span> <span class="o">+</span> <span class="n">u</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Call-to-Functions">Call to Functions<a class="anchor-link" href="#Call-to-Functions">¶</a>
+</h2>
+<p>For each function that has been built at initialization, <code>Evaluation</code> contains</p>
+<ol>
+<li>a list <code>Evaluation.funcname_args</code> of symbols for arguments, </li>
+<li>a list <code>Evaluation.funcname_inds</code> of corresponding indices in $\mathbf{args}$,</li>
+<li>a numerical function <code>Evaluation.funcname</code> with arguments defined by the list (1),</li>
+</ol>
+<p>where <code>funcname</code> has to be changed to appropriate funcion name.</p>
+<p>As a example, we evaluate below the Hamiltonian</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">H</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[11]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$0.5 K xK^{2} + \frac{0.5 xM^{2}}{M} + \frac{0.5 xL^{2}}{L}$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>which reads after substitution</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">H</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[12]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$5000.0 xK^{2} + 211.864406779661 xL^{2} + 6.66666666666667 xM^{2}$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The arguments are</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span><span class="o">.</span><span class="n">H_args</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left ( xK, \quad xL, \quad xM\right )$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and correspond to the following entries in $\mathbf{args}$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span><span class="o">.</span><span class="n">H_inds</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left ( 0, \quad 1, \quad 2\right )$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>i.e. the numerical values for the arguments are</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">evals</span><span class="o">.</span><span class="n">H_inds</span><span class="p">]</span>
+<span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[15]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left ( 0.0005, \quad 0.02, \quad 0.005\right )$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Thus, the function for the evaluation of the Hamiltonian takes three argmuents. 
+It is called with</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array(0.08616242937853107)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or directly</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_vec</span> <span class="o">=</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span>
+<span class="n">evals</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="o">*</span><span class="n">x_vec</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[17]:</div>
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array(0.08616242937853107)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Also notice the case with no arguments, e.g.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$\left[\begin{matrix}0 &amp; 0 &amp; -1.0\\0 &amp; 0 &amp; -16.37\\1.0 &amp; 16.37 &amp; 0\end{matrix}\right]$$
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">evals</span><span class="o">.</span><span class="n">Jxx_args</span><span class="p">,</span> <span class="n">evals</span><span class="o">.</span><span class="n">Jxx_inds</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>() ()
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span><span class="o">.</span><span class="n">Jxx</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[  0.  ,   0.  ,  -1.  ],
+       [  0.  ,   0.  , -16.37],
+       [  1.  ,  16.37,   0.  ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Vectorize">Vectorize<a class="anchor-link" href="#Vectorize">¶</a>
+</h2>
+<p>If the option <code>vectorize=True</code> has been passed to the initialization of the <code>Evaluation</code> object, each argument of function can be a vector of values. Below, we define vectors of random values</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">x1_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="mf">1e-3</span>
+<span class="n">x2_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="mf">1e-3</span>
+<span class="n">x3_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="mf">1e-3</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and call the function with these vectors:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evals</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="n">x1_vec</span><span class="p">,</span> <span class="n">x3_vec</span><span class="p">,</span> <span class="n">x3_vec</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[22]:</div>
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([  4.44981238e-03,   1.38762645e-04,   9.45259727e-06,
+         2.62797091e-04,   5.10995136e-04])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags"></ul>
+<ul class="pager hidden-print">
+<li class="next">
+                <a href="../pyphs-simulation/" rel="next" title="The PyPHS.Simulation class">Next post</a>
+            </li>
+        </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha256-SDRP1VVYu+tgAGKhddBSl5+ezofHKZeI+OzxakbIe/Y=" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:pyphs.project@gmail.com">PyPHS project</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../../assets/js/jquery.min.js"></script><script src="../../../assets/js/bootstrap.min.js"></script><script src="../../../assets/js/moment-with-locales.min.js"></script><script src="../../../assets/js/fancydates.js"></script><script src="../../../assets/js/jquery.colorbox-min.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

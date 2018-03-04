@@ -2,27 +2,21 @@
 <html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-<title>galleries | Antoine Falaize</title>
-<link href="../assets/css/bitter.css" rel="stylesheet" type="text/css">
-<link href="../assets/css/main.css" rel="stylesheet" type="text/css">
-<link href="../assets/css/rst.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>galleries | PyPHS</title>
+<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/html4css1.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#618AC8">
+<meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
-<link rel="canonical" href="https://afalaize.github.io/galleries/">
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-        processEscapes: true
-    },
-    displayAlign: 'left', // Change this to 'center' to center equations.
-    "HTML-CSS": {
-        styles: {'.MathJax_Display': {"margin": 0}}
-    }
-});
-</script><!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/galleries/">
+<!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <style type="text/css">
     .image-block {
         display: inline-block;
@@ -31,56 +25,150 @@ MathJax.Hub.Config({
         width: 100%;
     }
     </style>
-<link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 </head>
 <body>
-    <section class="social"><ul>
-<li><a href="../index.html" title="Home"><i class="icon-home"></i></a></li>
-            <li><a href="../pages/publications" title="Publications"><i class="icon-file-text"></i></a></li>
-            <li><a href="../categories/index.html" title="Tags"><i class="icon-tags"></i></a></li>
-            <li><a href="../archive.html" title="Archives"><i class="icon-folder-open-alt"></i></a></li>
-            <li><a href="../pages/about-me" title="About Me"><i class="icon-user"></i></a></li>
-            <li><a href="../rss.xml" title="RSS"><i class="icon-rss"></i></a></li>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
 
-        </ul></section><section class="page-content"><div class="content" rel="main">
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
+                <img src="../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Documentation <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../posts/docs/port-hamiltonian-systems/">Port-Hamiltonian Systems</a>
+                    </li>
+<li>
+<a href="../posts/docs/pyphs-method/">PyPHS.Method</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tutorials <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../posts/tutos/pyphs-core/">PyPHS.Core</a>
+                    </li>
+<li>
+<a href="../posts/tutos/pyphs-evaluation/">PyPHS.Evaluation</a>
+                    </li>
+<li>
+<a href="../posts/tutos/pyphs-graph/">PyPHS.Graph</a>
+                    </li>
+<li>
+<a href="../posts/tutos/pyphs-simulation/">PyPHS.Simulation</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dictionary <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/electronics">Electronic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/mechanics">Mechanic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/magnetics">Magnetic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/thermics">Thermic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/connectors">Connectors</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/transducers">Transducers</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/beams">Beams</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/fraccalc">Fractional Calculus</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/pwl">Piecewise Linear</a>
+            </li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav navbar-right"></ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
             
     
 <nav class="breadcrumbs"><ul class="breadcrumb">
 <li>galleries</li>
 </ul></nav><h1>galleries</h1>
-
+    <ul>
+<li><a href="intro1/"><i class="glyphicon glyphicon-folder-open"></i> intro1</a></li>
+        <li><a href="intro2/"><i class="glyphicon glyphicon-folder-open"></i> intro2</a></li>
+        <li><a href="intro/"><i class="glyphicon glyphicon-folder-open"></i> intro</a></li>
+    </ul>
 <div id="gallery_container"></div>
 
-             
-        <footer id="footer"><p>Contents © 2018         <a href="mailto:antoine.falaize@gmail.com">Antoine Falaize</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+        </div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:pyphs.project@gmail.com">PyPHS project</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
 </div>
-    </section><script src="../assets/js/jquery-1.10.2.min.js" type="text/javascript"></script><script src="../assets/js/jquery.timeago.js" type="text/javascript"></script><script src="../assets/js/flowr.js"></script><script>
+</div>
+
+
+            <script src="../assets/js/jquery.min.js"></script><script src="../assets/js/bootstrap.min.js"></script><script src="../assets/js/moment-with-locales.min.js"></script><script src="../assets/js/fancydates.js"></script><script src="../assets/js/jquery.colorbox-min.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates --><script src="../assets/js/flowr.plugin.js"></script><script>
 jsonContent = [];
-flowr(document.querySelectorAll("#gallery_container")[0], {
+$("#gallery_container").flowr({
         data : jsonContent,
-        height : 180*.6,
+        height : 200*.6,
         padding: 5,
         rows: -1,
         render : function(params) {
             // Just return a div, string or a dom object, anything works fine
-            var img = document.createElement("img");
-            img.setAttribute('src', params.itemData.url_thumb);
-            img.setAttribute('width', params.width);
-            img.setAttribute('height', params.height);
-            img.setAttribute('alt', params.itemData.title);
-            img.style.maxWidth = '100%';
-            link = document.createElement("a");
-            link.setAttribute('href', params.itemData.url);
-            link.setAttribute('class', 'image-reference');
-            div = document.createElement("div");
-            div.setAttribute('class', 'image-block');
-            div.setAttribute('title', params.itemData.title);
-            div.setAttribute('data-toggle', "tooltip")
+            img = $("<img />").attr({
+                'src': params.itemData.url_thumb,
+                'width' : params.width,
+                'height' : params.height
+            }).css('max-width', '100%');
+            link = $( "<a></a>").attr({
+                'href': params.itemData.url,
+                'class': 'image-reference'
+            });
+            div = $("<div />").addClass('image-block').attr({
+                'title': params.itemData.title,
+                'data-toggle': "tooltip",
+            });
             link.append(img);
             div.append(link);
-            //div.hover(div.tooltip());
+            div.hover(div.tooltip());
             return div;
         },
         itemWidth : function(data) { return data.size.w; },
@@ -91,10 +179,8 @@ flowr(document.querySelectorAll("#gallery_container")[0], {
             }
         }
     });
-    baguetteBox.run('#gallery_container', {
-        captions: function(element) {
-            return element.getElementsByTagName('img')[0].alt;
-    }});
+$("a.image-reference").colorbox({rel:"gal", maxWidth:"100%",maxHeight:"100%",scalePhotos:true});
+$('a.image-reference[href="'+window.location.hash.substring(1,1000)+'"]').click();
 </script>
 </body>
 </html>

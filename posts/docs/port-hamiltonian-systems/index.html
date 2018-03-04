@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Port-Hamiltonian Systems | PyPHS</title>
+<link href="../../../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/html4css1.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#618AC8">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.xml">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/posts/docs/port-hamiltonian-systems/">
+<!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="PyPHS project">
+<link rel="prev" href="../../dicos/electronics/electronics/" title="Electronics" type="text/html">
+<link rel="next" href="../pyphs-method/" title="The class PyPHS.Method" type="text/html">
+<meta property="og:site_name" content="PyPHS">
+<meta property="og:title" content="Port-Hamiltonian Systems">
+<meta property="og:url" content="https://pyphs.github.io/pyphs/posts/docs/port-hamiltonian-systems/">
+<meta property="og:description" content="In this post, we recall the port-Hamiltonian systems (PHS) formalism.
+It is shown how this structure guarantees a continuous time power balance, and thus defines a passive system.
+PyPHS aims at simula">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2017-02-11T18:19:33+01:00">
+<meta property="article:tag" content="mathjax">
+<meta property="article:tag" content="phs">
+<meta property="article:tag" content="theory">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
+                <img src="../../../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Documentation <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li class="active">
+<a href=".">Port-Hamiltonian Systems <span class="sr-only">(active)</span></a>
+                    </li>
+<li>
+<a href="../pyphs-method/">PyPHS.Method</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tutorials <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../../tutos/pyphs-core/">PyPHS.Core</a>
+                    </li>
+<li>
+<a href="../../tutos/pyphs-evaluation/">PyPHS.Evaluation</a>
+                    </li>
+<li>
+<a href="../../tutos/pyphs-graph/">PyPHS.Graph</a>
+                    </li>
+<li>
+<a href="../../tutos/pyphs-simulation/">PyPHS.Simulation</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dictionary <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/electronics">Electronic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/mechanics">Mechanic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/magnetics">Magnetic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/thermics">Thermic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/connectors">Connectors</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/transducers">Transducers</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/beams">Beams</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/fraccalc">Fractional Calculus</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/pwl">Piecewise Linear</a>
+            </li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+    <a href="index.rst" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Port-Hamiltonian Systems</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                    <a href="../../../authors/pyphs-project/">PyPHS project</a>
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2017-02-11T18:19:33+01:00" itemprop="datePublished" title="2017-02-11 18:19">2017-02-11 18:19</time></a></p>
+            
+        <p class="sourceline"><a href="index.rst" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>In this post, we recall the <em>port-Hamiltonian systems (PHS)</em> formalism.
+It is shown how this structure guarantees a continuous time power balance, and thus defines a passive system.
+<strong>PyPHS</strong> aims at simulating such passive systems by firstly generating the structure equations (5) below associated to a given circuit (graph), and secondly by deriving its numerical version so that a discrete power balance is satisfied.</p>
+<!-- TEASER_END: Read more -->
+<p>The following presentation is adapted from the reference <a class="citation-reference" href="#fh2016" id="id1">[FH2016]</a>. This reference is the first corner stone of the PyPHS project, which presents (i) the Port-Hamiltonian Systems (PHS) formalism, (ii) an algorithm for generating the PHS structure associated to a given network by automated graph analysis, and (iii) the structure preserving numerical method for passive guaranteed simulations.
+Reference [FH2016] is devoted to the treatment of electronic circuits for which power variables are chosen as current and voltage. However, all the following definitions apply equally to multiphysical systems, provided an adapted set of power variables, generically denoted by flux (currents, velocities, magnetic flux variations) and efforts (voltages, forces, magnetomotive force), the product of which is a power:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%">
+<col width="37%">
+<col width="37%">
+</colgroup>
+<thead valign="bottom"><tr>
+<th class="head">Domain</th>
+<th class="head">Flux</th>
+<th class="head">Effort</th>
+</tr></thead>
+<tbody valign="top">
+<tr>
+<td>Electronics</td>
+<td>Current (A)</td>
+<td>Voltage (V)</td>
+</tr>
+<tr>
+<td>Mechanics</td>
+<td>Force (N)</td>
+<td>Velocity (m/s)</td>
+</tr>
+<tr>
+<td>Mechanics dual</td>
+<td>Velocity (m/s)</td>
+<td>Force (N)</td>
+</tr>
+<tr>
+<td>Magnetics</td>
+<td>Flux variation (V)</td>
+<td>Magnetomotive Force (A)</td>
+</tr>
+<tr>
+<td>Thermics</td>
+<td>Entropy variation (W/K)</td>
+<td>Temperature (K)</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="power-balance">
+<h2>Power balance</h2>
+<p>Denote <span class="math">\(E(t)\geq 0\)</span> the energy <em>stored</em> in an open physical system. If the system is conservative, its time variation <span class="math">\(\frac{\mathrm d \mathrm E}{\mathrm d t}(t)\)</span> reduces to <span class="math">\(\mathrm S(t)\)</span> the power <strong>received</strong> by the <em>sources</em> through the external ports. If the system includes dissipative phenomena, <span class="math">\(\mathrm D(t)\geq0\)</span> is the <em>dissipated</em> power, and the evolution of energy is governed by the following instantaneous <strong>power balance</strong>:</p>
+<div class="math">
+\begin{equation*}
+\begin{array}{lr}\frac{\mathrm d \mathrm E}{\mathrm d t}(t) + \mathrm D(t) + \mathrm S(t)=0.  &amp; \qquad\qquad(1)\end{array}
+\end{equation*}
+</div>
+<p>The port-Hamiltonian approach is used to decompose such open physical systems into (i) a set of components that are combined according to (ii) a conservative interconnection network. These two ingredients are detailed below.</p>
+</div>
+<div class="section" id="components">
+<h2>Components</h2>
+<p>The elementary components of multiphysical systems are sorted as (or can be a combination of):</p>
+<ul class="simple">
+<li>
+<span class="math">\(n_S\)</span> internal components that store energy <span class="math">\(\mathrm E \geq 0\)</span> (capacitor, inductor, spring, mass, heat capacity, etc.),</li>
+<li>
+<span class="math">\(n_D\)</span> internal components that dissipate power <span class="math">\(\mathrm D\geq 0\)</span> (resistor, diode, damper, etc.),</li>
+<li>
+<span class="math">\(n_P\)</span> external ports that convey power <span class="math">\(\mathrm S(\in \mathbb R)\)</span> from sources (current/voltage source, external force, imposed velocity/temperature, etc.), or any external system (active, dissipative, or mixed).</li>
+</ul>
+<p>The behavior of each component is described by a relation between two power variables: the <em>flux</em> <span class="math">\(f\)</span> and the <em>effort</em> <span class="math">\(e\)</span>, defined in <strong>receiver convention</strong> (the <em>received</em> power is <span class="math">\(\mathrm P=e\cdot f\)</span>, including for the sources).</p>
+<div class="section" id="storage-components">
+<h3>Storage components</h3>
+<p>The energy <span class="math">\(\mathrm E_s\)</span> stored in storage component <span class="math">\(s\in [1,\,\cdots ,\,n_S]\)</span> is expressed as a <em>storage function</em> <span class="math">\(h_s\)</span> of an appropriate state <span class="math">\(x_s\)</span>: <span class="math">\(\mathrm E_s(t)=h_s(x_s(t))\geq 0\)</span>.</p>
+<dl class="docutils">
+<dt>Example 1:</dt>
+<dd>For a linear inductor with inductance <span class="math">\(L\)</span>, the state can be the magnetic flux <span class="math">\(x_L=\phi\)</span> and the positive definite function is <span class="math">\(h_L(\phi)=\phi^2/(2\,L)\)</span>.</dd>
+<dt>Example 2:</dt>
+<dd>For a nonlinear cubic spring with linear stiffness <span class="math">\(K\)</span> and nonlinearity coefficient <span class="math">\(\alpha\)</span>, the state can be the ellongation <span class="math">\(x_K=\ell\)</span> and the positive definite function is <span class="math">\(h_K(\ell)=\frac{K}{2}\ell^2\,(1 + \frac{\alpha}{2}\ell^2)\)</span>.</dd>
+</dl>
+<p>Storage power variables (<span class="math">\(e_s\)</span>, <span class="math">\(f_s\)</span>) are related to the variation of the state <span class="math">\(\frac{\mathrm d x_s}{\mathrm dt}\)</span> and the gradient of the storage function <span class="math">\(h^\prime _s(x_s)\)</span>, the product of which is precisely the received power: <span class="math">\(e_s\,f_s=\frac{\mathrm d \mathrm E}{\mathrm d t}=h^\prime _s\,\frac{\mathrm d x_s}{\mathrm d t}\)</span>.</p>
+<dl class="docutils">
+<dt>Example 1 (continued):</dt>
+<dd>For the above linear inductor, these constitutive laws are the voltage (effort) <span class="math">\(e_L=V_L=\frac{\mathrm d \phi}{\mathrm d t}=\frac{\mathrm d x_L}{\mathrm d t}\)</span> and the current (flux) <span class="math">\(i_L=\frac{\phi}{L}=h^\prime_L\)</span>, the product of which <span class="math">\(P_{L}=V_L\,i_L\)</span> is the electrical power.</dd>
+<dt>Example 2 (continued):</dt>
+<dd>For the above nonlinear cubic spring, these constitutive laws are the velocity (flux) <span class="math">\(v_K=\frac{\mathrm d \ell}{\mathrm d t}=\frac{\mathrm d x_K}{\mathrm d t}\)</span> and the mechanical force (effort) <span class="math">\(F_K=K\,(\ell+\alpha\,\ell^3)=h^\prime_K\)</span>, the product of which <span class="math">\(P_{K}=F_K\,v_K\)</span> is the mechanical power (<em>i.e.</em> variation of mechanical work).</dd>
+</dl>
+<p>Finally, the total energy of a system with <span class="math">\(n_S\)</span> storage components is <span class="math">\(\mathrm E =\mathrm H(\mathbf x) = \sum_{i=1}^{N}h_i(x_i)\)</span>. The total storage function <span class="math">\(\mathrm H: \mathbb R^N \mapsto \mathbb R_{+}\)</span> is called the  <strong>Hamiltonian</strong> of the system. Then, the total energy variation of the system is <span class="math">\(P_{\mathrm{storage}}=\frac{\mathrm d E}{\mathrm d t} = \nabla \mathrm H \cdot \frac{\mathrm d \mathbf x}{\mathrm d t}= \sum_{i=1}^N \frac{\partial h}{x_i}\,\frac{\mathrm d x_i}{\mathrm d t}\)</span>.</p>
+<p><em>Note that the above definitions can be straightforwardly extended to account for storage components defined by a multivariate storage functions</em>
+<span class="math">\(h_s(\mathbf x_s)\)</span> with state <span class="math">\(\mathbf x_s = (x_{s,1},\,\cdots,\, x_{s,n})^\intercal\)</span>
+<em>and associated received power</em>
+<span class="math">\(\mathrm P_s = \frac{\mathrm d h_s(\mathbf x_s)}{\mathrm d t} = \nabla h_s \cdot \frac{\mathrm d \mathbf x_s}{\mathrm d t}= \sum_{i=1}^n \frac{\partial h_{s,i}}{x_{s,i}}\,\frac{\mathrm d x_{s,i}}{\mathrm d t}.\)</span></p>
+</div>
+<div class="section" id="dissipative-components">
+<h3>Dissipative components</h3>
+<p>The power <span class="math">\(D_d\)</span> instantaneously dissipated by the dissipative component <span class="math">\(d\in [1,\,\cdots,\,n_D]\)</span> is expressed with respect to an appropriate dissipation variable <span class="math">\(w_d\)</span>: <span class="math">\(D_d(t)\equiv D_d(w_d(t))\geq 0\)</span>. Typically, for a linear resistance <span class="math">\(R\)</span>, <span class="math">\(w_R\)</span> can be a current <span class="math">\(w_R=i_R\)</span> and <span class="math">\(D_R(i_R)=R\cdot i_R^2\)</span>.</p>
+<p>As for storage components, a mapping of the dissipative power variables (<span class="math">\(v_d\)</span>, <span class="math">\(i_d\)</span>) is provided, based on the factorization <span class="math">\(D_d(w_d)=w_d\,z_d(w_d)\)</span>, introducing a dissipation function <span class="math">\(z_d\)</span>.
+For the resistance, <span class="math">\(i_R=w_R\)</span> and <span class="math">\(V_R=R\,i_R=z_R(w_R)\)</span>.</p>
+</div>
+<div class="section" id="source-components">
+<h3>Source components</h3>
+<p>The power instantaneously provided to the system through external port
+<span class="math">\(p \in [1\cdot n_P]\)</span>
+is
+<span class="math">\(S_p(t)\)</span>
+, and we arrange the source variables
+<span class="math">\((v_p,i_p)\)</span>
+in two vectors: one is considered as an input
+<span class="math">\(u_p\)</span>
+, and the other as the associated output
+<span class="math">\(y_p\)</span>
+, so that the power received from sources on port
+<span class="math">\({p}\)</span>
+is
+<span class="math">\(S_p=y_p\, u_p=-v_p \,i_p\)</span> (receiver convention, with <span class="math">\(v_p\,i_p\)</span> the power received by the sources).</p>
+</div>
+</div>
+<div class="section" id="conservative-interconnection">
+<h2>Conservative Interconnection</h2>
+<p>The interconnection of the components is achieved by relating all the voltages and currents through the application of the Kirchhoff’s laws to the interconnection network (schematic).
+This defines a conservative interconnection, according to Tellegen’s theorem recalled below.</p>
+<p><strong>Tellegen Theorem</strong>:</p>
+<p><em>Consider an electronic circuit made of</em>
+<span class="math">\({N}\)</span>
+<em>edges defined in same convention (here receiver), with individual voltages</em>
+<span class="math">\(\mathbf v=(v_1,\cdots,v_N)^\intercal\)</span>
+<em>and currents</em>
+<span class="math">\(\mathbf i=(i_1,\cdots,i_N)^\intercal\)</span>
+<em>which all comply with the Kirchhoff’s laws. Then</em></p>
+<div class="math">
+\begin{equation*}
+\begin{array}{lr}\mathbf v^\intercal \cdot \mathbf i = 0.  &amp; \qquad\qquad(2)\end{array}
+\end{equation*}
+</div>
+<p>A direct consequence of (2) is that no power is created nor lost in the structure: <span class="math">\(\mathbf v^\intercal\cdot\mathbf i=\sum_{i=1}^N P_n=0\)</span>, with <span class="math">\(P_n = v_n \,i_n \)</span>, thus defining a conservative interconnection (Tellegen’s theorem is a special case of a more general interconnection structure, namely, the Dirac structure).
+Now, denote
+<span class="math">\((\mathbf v_{\mathrm s},\mathbf i_{\mathrm s})\)</span>,
+<span class="math">\((\mathbf v_{\mathrm d},\mathbf i_{\mathrm d})\)</span>, and
+<span class="math">\((\mathbf v_{\mathrm p},\mathbf i_{\mathrm p})\)</span>
+the sets of all the power variables associated with storage components, dissipative components, and sources (respectively), and
+<span class="math">\(\mathbf v=(\mathbf v_{\mathrm s}^\intercal,\mathbf v_{\mathrm d}^\intercal,\mathbf v_{\mathrm p}^\intercal)^\intercal\)</span>
+with
+<span class="math">\(\mathbf i=(\mathbf i_{\mathrm s}^\intercal,\mathbf i_{\mathrm d}^\intercal,\mathbf i_{\mathrm p}^\intercal)^\intercal\)</span>
+the vectors of all the power variables.
+Then, Tellegen’s theorem restores the power balance (1) with</p>
+<div class="math">
+\begin{equation*}
+\begin{array}{lcccr} \mathbf v^\intercal \cdot \mathbf i &amp;=&amp; \mathbf v^\intercal \cdot \mathbf i + \mathbf v^\intercal \cdot \mathbf i + \mathbf v^\intercal \cdot \mathbf i &amp; \\
+&amp; = &amp; \nabla \mathrm H \cdot \frac{\mathrm d \mathbf x}{\mathrm d t} + \mathbf z(\mathbf w)^\intercal \cdot \mathbf w + \mathbf y^\intercal \cdot \mathbf u &amp; = &amp; 0.  &amp; \qquad\qquad(3)\end{array}
+\end{equation*}
+</div>
+<p>where
+<span class="math">\(\nabla \mathrm H: \mathbb R^{n_S} \rightarrow \mathbb R ^{n_S}\)</span>
+denotes the gradient of the total energy
+<span class="math">\(\mathrm E=\mathrm H(\mathbf x)=\sum_{s=1}^{n_S} h_s(x_s)\)</span>
+with respect to (w.r.t.) the vector of the states
+<span class="math">\([\mathbf x]s=x_s\)</span>,
+and function
+<span class="math">\(\mathbf z : \mathbb R^{n_D} \rightarrow \mathbb R ^{n_D}\)</span>
+denotes the collection of functions
+<span class="math">\(z_d\)</span>
+w.r.t. the vector
+<span class="math">\(\mathbf w \in \mathbb R^{n_D}\)</span>
+of
+<span class="math">\([\mathbf w]_d=w_d\)</span>
+so that
+<span class="math">\(\mathbf z(\mathbf w)^\intercal \cdot \mathbf w=\sum_{n=1}^{n_D}D_d(w_d)\)</span>
+is the total dissipated power.</p>
+</div>
+<div class="section" id="port-hamiltonian-system">
+<h2>Port-Hamiltonian System</h2>
+<p>The above description of storage components, dissipative components, and source, along with the conservative interconnection stated by the Kirchhoff’s laws, constitute the minimal definition of a port-Hamiltonian system (PHS).
+In <strong>PyPHS</strong>, we focus on systems that admit an explicit realization of PHS, for which the quantities
+<span class="math">\(\mathbf b=(b_1,\cdot,b_N)^\intercal=(\frac{\mathrm d \mathbf x^\intercal}{\mathrm d t},\mathbf w^\intercal,-\mathbf y^\intercal)^\intercal\)</span>
+(with <span class="math">\(b_n=v_n\)</span> or <span class="math">\(b_n=i_n\)</span>) can be expressed as linear combinations of the remaining
+<span class="math">\({N}\)</span>
+powers variables organized in the dual vector
+<span class="math">\(\mathbf a=(a_1,\cdot,a_N)^\intercal=(\nabla \mathrm H(\mathbf x)^\intercal,\mathbf z(\mathbf w)^\intercal,\mathbf u^\intercal)^\intercal\)</span>
+(with <span class="math">\(a_n=i_n\)</span> if <span class="math">\(b_n=v_n\)</span> or <span class="math">\(a_n=v_n\)</span> if <span class="math">\(b_n=i_n\)</span>)
+:</p>
+<div class="math">
+\begin{equation*}
+\begin{array}{lr} \mathbf b = \mathbf J \cdot \mathbf a. &amp; \qquad\qquad(4)\end{array}
+\end{equation*}
+</div>
+<p>Then,
+<span class="math">\(\mathbf a^\intercal \cdot \mathbf  b=\mathbf a^\intercal\cdot \mathbf J\cdot\mathbf a=0\)</span>
+from Tellegen’s theorem, so that the matrix
+<span class="math">\(\mathbf J\)</span>
+is necessarily skew-symmetric (<span class="math">\(\mathbf J^\intercal=-\mathbf J\)</span>).
+More precisely, we consider the following <strong>differential-algebraic system of equations</strong>:</p>
+<div class="math">
+\begin{equation*}
+\begin{array}{lr}
+\left(
+\begin{array}{c}
+\frac{\mathrm d \mathbf x}{\mathrm d t}\\
+\mathbf w\\
+\mathbf y
+\end{array}\right)
+=
+\left(
+\begin{array}{lll}
+\mathbf J_{\mathrm{xx}} &amp; \mathbf J_{\mathrm{xw}} &amp; \mathbf J_{\mathrm{xy}} \\
+\mathbf J_{\mathrm{wx}} &amp; \mathbf J_{\mathrm{ww}} &amp; \mathbf J_{\mathrm{wy}} \\
+\mathbf J_{\mathrm{yx}} &amp; \mathbf J_{\mathrm{yw}} &amp; \mathbf J_{\mathrm{yy}} \\
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\nabla \mathrm H(\mathbf x)\\
+\mathbf z(\mathbf w)\\
+\mathbf u
+\end{array}\right),
+&amp; \qquad\qquad(5)\end{array}
+\end{equation*}
+</div>
+<p>where matrices on the diagonal
+<span class="math">\(\mathbf J_{\mathrm{xx}}\)</span>
+,
+<span class="math">\(\mathbf J_{\mathrm{ww}}\)</span>
+,
+<span class="math">\(\mathbf J_{\mathrm{yy}}\)</span>
+are skew-symmetric.
+The significance of the structure matrices is the following:</p>
+<ul class="simple">
+<li>
+<span class="math">\(\mathbf J_{\mathrm{xx}}\in\mathbb R^{n_S\times n_S}\)</span> expresses the conservative power exchanges between storage components (this corresponds to the so-called <span class="math">\(\mathbf J\)</span> matrix in classical Hamiltonian systems);</li>
+<li>
+<span class="math">\(\mathbf J_{\mathrm{ww}}\in\mathbb R^{n_D\times n_D}\)</span> expresses the conservative power exchanges between dissipative components;</li>
+<li>
+<span class="math">\(\mathbf J_{\mathrm{yy}}\in\mathbb R^{n_P\times n_P}\)</span> expresses the conservative power exchanges between ports (direct connections of inputs to outputs);</li>
+<li>
+<span class="math">\(\mathbf J_{\mathrm{xw}}\in\mathbb R^{n_S\times n_D}\)</span> expresses the conservative power exchanges between the storage components and the dissipative components;</li>
+<li>
+<span class="math">\(\mathbf J_{\mathrm{xy}}\in\mathbb R^{n_S\times n_P}\)</span> expresses the conservative power exchanges between ports and storage components (input gain matrix);</li>
+<li>
+<span class="math">\(\mathbf J_{\mathrm{wy}}\in\mathbb R^{n_D\times n_P}\)</span>  expresses the conservative power exchanges between ports and dissipative components (input gain matrix);</li>
+<li>
+<span class="math">\(\mathbf J_{\mathrm{wx}}^\intercal=-\mathbf J_{\mathrm{xw}}\)</span>, <span class="math">\(\mathbf J_{\mathrm{yx}}^\intercal=-\mathbf J_{\mathrm{xy}}\)</span>, <span class="math">\(\mathbf J_{\mathrm{yw}}^\intercal=-\mathbf J_{\mathrm{wy}}\)</span>.</li>
+</ul>
+<p>The PHS (5) fulfills the definition of <strong>passivity</strong> according to the following property.</p>
+<p><strong>Power Balance:</strong></p>
+<p>The variation of the total energy
+<span class="math">\(\mathrm E=\mathrm H(\mathbf x)\)</span>
+of a system governed by (5) is given by (1), with
+<span class="math">\(\mathrm D=\mathbf z(\mathbf w)^\intercal\cdot \mathbf w\geq 0\)</span>
+the total dissipated power, and
+<span class="math">\(\mathrm S=\mathbf u^\intercal\cdot \mathbf y\)</span>
+the total power incoming on external ports.</p>
+<p><strong>Proof:</strong></p>
+<p>We have
+<span class="math">\(\mathbf a^\intercal\cdot\mathbf b=\frac{\mathrm d\mathrm E}{\mathrm d t}+\mathrm D+\mathrm S.\)</span>
+Now
+<span class="math">\(\mathbf a^\intercal\cdot\mathbf b=\mathbf a^\intercal\cdot\mathbf J\cdot\mathbf a=0\)</span>
+since
+<span class="math">\({\mathbf J}\)</span>
+is skew-symmetric.</p>
+<p><strong>Reduction of the dissipation function:</strong></p>
+<p>Notice the system (5) can be reduced by (i) decomposing the function <span class="math">\(\mathbf z\)</span>
+into its linear and nonlinear parts, and (ii) constructing the <strong>resistive interconnection</strong> associated with its linear part.
+Details can be found in appendix of reference [FH2016].</p>
+</div>
+<div class="section" id="reference">
+<h2>Reference</h2>
+<table class="docutils citation" frame="void" id="fh2016" rules="none">
+<colgroup>
+<col class="label">
+<col>
+</colgroup>
+<tbody valign="top"><tr>
+<td class="label"><a class="fn-backref" href="#id1">[FH2016]</a></td>
+<td>Falaize, A., &amp; Hélie, T. (2016). Passive Guaranteed Simulation of Analog Audio Circuits: A Port-Hamiltonian Approach. Applied Sciences, 6(10), 273.</td>
+</tr></tbody>
+</table>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../../categories/phs/" rel="tag">phs</a></li>
+            <li><a class="tag p-category" href="../../../categories/theory/" rel="tag">theory</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../../dicos/electronics/electronics/" rel="prev" title="Electronics">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../pyphs-method/" rel="next" title="The class PyPHS.Method">Next post</a>
+            </li>
+        </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha256-SDRP1VVYu+tgAGKhddBSl5+ezofHKZeI+OzxakbIe/Y=" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:pyphs.project@gmail.com">PyPHS project</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../../assets/js/jquery.min.js"></script><script src="../../../assets/js/bootstrap.min.js"></script><script src="../../../assets/js/moment-with-locales.min.js"></script><script src="../../../assets/js/fancydates.js"></script><script src="../../../assets/js/jquery.colorbox-min.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

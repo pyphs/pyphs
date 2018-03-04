@@ -1183,6 +1183,16 @@ or an integer nt (number of time steps).'
 
         label : str (optional)
 
+        Returns
+        -------
+
+        fig : matplotlib figure
+            The generated figure for post-rendering.
+
+        ax : matplotlib axe or list of axes
+            The axe (or axes) of the plot for post-rendering.
+
+
         """
 
         tslice = self._tslice(tslice)
@@ -1196,11 +1206,12 @@ or an integer nt (number of time steps).'
         if tslice.step is None:
             tslice.step = max((1, (self.stop-self.start)//self.ntplot))
 
-        plot_powerbal(self, mode=mode, DtE=DtE, show=show, tslice=tslice)
+        fig, ax = plot_powerbal(self, mode=mode, DtE=DtE, show=show, tslice=tslice)
 
         if close:
             self.h5close()
 
+        return fig, ax
     # ----------------------------------------------------------------------- #
 
     def plot(self, vars, tslice=None, show=True, label=None):
@@ -1227,6 +1238,14 @@ or an integer nt (number of time steps).'
 
         label : str (optional)
 
+        Returns
+        -------
+
+        fig : matplotlib figure
+            The generated figure for post-rendering.
+
+        ax : matplotlib axe or list of axes
+            The axe (or axes) of the plot for post-rendering.
 
         """
         if not self._open:
@@ -1241,10 +1260,12 @@ or an integer nt (number of time steps).'
         if tslice.step is None:
             tslice.step = max((1, (self.stop-self.start)//self.ntplot))
 
-        plot(self, vars, show=show, label=label, tslice=tslice)
+        fig, ax = plot(self, vars, show=show, label=label, tslice=tslice)
 
         if close:
             self.h5close()
+
+        return fig, ax
 
     # ----------------------------------------------------------------------- #
 

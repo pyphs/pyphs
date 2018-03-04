@@ -46,7 +46,7 @@ multifigure
         config.update({'linestyles': ('-', '--'),
                        'ylabel': r'Power (W)',
                        'labels': [labdtE, r'$-$('+labPs+r'$+$'+labPd + r')']})
-        singleplot(datax, datay, show=show, **config)
+        fig, ax = singleplot(datax, datay, show=show, **config)
     else:
         assert mode == 'multi'
         datay = list()
@@ -64,7 +64,10 @@ multifigure
                                   labPd,
                                   labPs,
                                   labdtE+r'$+$'+labPd+r'$+$'+labPs]})
-        multiplot(datax, datay, show=show, **config)
+
+        fig, ax = multiplot(datax, datay, show=show, **config)
+
+    return fig, ax
 
 
 def plot(data, vars, tslice=None, show=True,
@@ -144,10 +147,12 @@ def plot(data, vars, tslice=None, show=True,
         plotopts = {'xlabel': 'time $t$ (s)',
                     'ylabels': labels,
                     'path': path}
-        multiplot(datax, datay, show=show, **plotopts)
+        fig, ax = multiplot(datax, datay, show=show, **plotopts)
 
     elif len(datay) > 0:
         plotopts = {'xlabel': 'time $t$ (s)',
                     'ylabel': labels[0],
                     'path': path}
-        singleplot(datax, datay, show=show, **plotopts)
+        fig, ax = singleplot(datax, datay, show=show, **plotopts)
+
+    return fig, ax

@@ -75,6 +75,8 @@ def singleplot(x, y, show=True, **kwargs):
         Figure main title. If set to None, the desactivated (the default is \
 None).
 
+    grid = bool
+        Indicate whether to show the grid or not (the default is False)
     """
     opts = standard.copy()
     opts['ylabel'] = opts.pop('ylabels')
@@ -139,6 +141,10 @@ None).
         from matplotlib.pyplot import title
         title(opts['title'])
 
+    # Show grid
+    ax.grid(opts['grid'])
+    ax.minorticks_on()
+
     if opts['path'] is not None:
         from matplotlib.pyplot import savefig
         savefig(opts['path'] + '.' + opts['format'])
@@ -146,3 +152,5 @@ None).
     if show:
         from matplotlib.pyplot import show as pltshow
         pltshow()
+
+    return fig, ax

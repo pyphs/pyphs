@@ -54,4 +54,5 @@ standard = {'loc': 0,  # legend location
             'labels': None,
             'title': None,
             'xpos_ylabel': None,
+            'grid': False
             }

@@ -294,7 +294,7 @@ Run the following in a Python interpreter in the netlist file directory:
     # Write ready-to-use .tex document
     phs.texdocument(content,
                     title='DLC',
-                    filename='dlc.tex')
+                    path='dlc.tex')
 
 
 This yields the following **tex** file:

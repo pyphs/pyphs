@@ -79,6 +79,9 @@ def multiplot(x, y, show=True, **kwargs):
         If provided, set the x-position of the ylabels so that they align (the
         default is None). You probably want it to be negative.
 
+    grid : bool
+        Indicate whether to show the grid or not.
+
     """
 
     # ------------------------------------------------------------
@@ -210,6 +213,11 @@ def multiplot(x, y, show=True, **kwargs):
         else:
             from matplotlib.pyplot import setp
             setp(axs[n].get_xticklabels(), visible=False)
+
+        # --------------------------------------------------------
+        # Show grid
+        axs[n].grid(opts['grid'])
+        axs[n].minorticks_on()
 
     # ------------------------------------------------------------
     # Set title

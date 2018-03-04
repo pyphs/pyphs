@@ -823,9 +823,14 @@ or an integer nt (number of time steps).'
         evalobj = self.method.to_evaluation(names=[name])
 
         # cope with functions that have no arguments (see Evaluation object)
+        if name == 'o':
+            argsname = 'args'
+        else:
+            argsname = 'args_o'
+
         if len(getattr(evalobj, name+'_inds')) > 0:
-            args = self.args_o(tslice=tslice)[:,
-                                              getattr(evalobj, name+'_inds')]
+            vs = getattr(evalobj, name+'_inds')
+            args = getattr(self, argsname)(tslice=tslice)[:, vs]
         else:
             args = numpy.zeros((expectedNt, 1))
 
@@ -910,31 +915,8 @@ or an integer nt (number of time steps).'
             A python generator of observed quantites.
         """
 
-        tslice = self._tslice(tslice)
-
-        if not self._open:
-            self.h5open()
-            close = True
-        else:
-            close = False
-
-        if vslice is None:
-            vslice = slice(None, None, None)
-
-        evalobj = self.method.to_evaluation(names=['o'])
-        args = self.args(tslice=tslice)[:, getattr(evalobj, 'o_inds')]
-        output = getattr(evalobj, 'o')(*args.T)
-
-        if not numpy.prod(output.shape):
-            output = numpy.zeros((len(self['t', :]), 0))
-
-        if postprocess is None:
-            return output
-        else:
-            return postprocess(output)
-
-        if close:
-            self.h5close()
+        return self._expression('o', tslice=tslice, vslice=vslice,
+                                postprocess=postprocess)
 
     # ----------------------------------------------------------------------- #
 

@@ -66,7 +66,7 @@ The PHS form">
 <a href="posts/tutos/pyphs-core/">PyPHS.Core</a>
                     </li>
 <li>
-<a href="posts/tutos/evaluation/">PyPHS.Evaluation</a>
+<a href="posts/tutos/pyphs-evaluation/">PyPHS.Evaluation</a>
                     </li>
 <li>
 <a href="posts/tutos/pyphs-graph/">PyPHS.Graph</a>
@@ -80,16 +80,31 @@ The PHS form">
 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dictionary <b class="caret"></b></a>
             <ul class="dropdown-menu">
 <li>
-<a href="posts/dicos/electronics/electronics/">Electronic</a>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/electronics">Electronic</a>
                     </li>
 <li>
-<a href="building/">Mechanic</a>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/mechanics">Mechanic</a>
                     </li>
 <li>
-<a href="building/">Magnetic</a>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/magnetics">Magnetic</a>
                     </li>
 <li>
-<a href="building/">Thermic</a>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/thermics">Thermic</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/connectors">Connectors</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/transducers">Transducers</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/beams">Beams</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/fraccalc">Fractional Calculus</a>
+                    </li>
+<li>
+<a href="https://github.com/pyphs/pyphs/tree/master/pyphs/dictionary/pwl">Piecewise Linear</a>
             </li>
 </ul>
 </li>
@@ -120,7 +135,8 @@ The PHS form">
 <p><a class="reference external" href="https://badge.fury.io/py/pyphs"><object data="https://badge.fury.io/py/pyphs.svg" type="image/svg+xml">pypi version</object></a> <a class="reference external" href="http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html"><object data="https://img.shields.io/badge/licence-CeCILL--B-blue.svg" type="image/svg+xml">Licence badge</object></a> <a class="reference external" href="https://www.travis-ci.org/pyphs/pyphs"><object data="https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg" type="image/svg+xml">python versions</object></a> <a class="reference external" href="https://pyphs.github.io/pyphs/"><object data="https://img.shields.io/badge/documentation-website-blue.svg" type="image/svg+xml">Website badge</object></a></p>
 <p>A Python software (Py) dedicated to the simulation of multi-physical Port-Hamiltonian Systems (PHS) described by graph structures.</p>
 <p>The PHS formalism decomposes network systems into <strong>conservative</strong> parts, <strong>dissipative</strong> parts and <strong>source</strong> parts, which are combined according to an <strong>energy conserving interconnection</strong>. This approach permits to formulate the dynamics of multi-physical systems as a <strong>set of differential-algebraic equations</strong> structured according to energy flows. This <strong>structure</strong> proves the <strong>passivity</strong> of the system, including the nonlinear cases. Moreover, it guarantees the <strong>stability</strong> of the numerical simulations for an adapted structure preserving numerical method.</p>
-<img alt="https://pyphs.github.io/pyphs/figures/home2.png" class="align-center" src="https://pyphs.github.io/pyphs/figures/home2.png" style="width: 650px;"><p>The standard workflow is as follows.</p>
+<img alt="https://pyphs.github.io/pyphs/figures/home2.png" class="align-center" src="https://pyphs.github.io/pyphs/figures/home2.png" style="width: 650px;"><p>The main objects of the library are introduced in <a class="reference external" href="https://pyphs.github.io/pyphs/PyPHS_IRCAM_seminar_041217.pdf">this presentation</a>.
+The standard workflow is as follows.</p>
 <ol class="arabic simple">
 <li>Inputs are <strong>netlist descriptions</strong> of network systems (very similar to SPICE netlists).</li>
 <li>The associated <strong>graphs</strong> are analyzed to produce the <strong>core system's dynamics equations</strong> in the PHS formalism.</li>
@@ -159,6 +175,7 @@ The PHS form">
 <li><a class="reference external" href="http://www.scipy.org">scipy</a></li>
 <li><a class="reference external" href="http://matplotlib.org/">matplotlib</a></li>
 <li><a class="reference external" href="http://networkx.github.io/">networkx</a></li>
+<li><a class="reference external" href="http://docs.h5py.org/en/latest/index.html">h5py</a></li>
 <li><a class="reference external" href="https://pypi.python.org/pypi/stopit">stopit</a></li>
 <li><a class="reference external" href="https://pypi.python.org/pypi/progressbar2">progressbar2</a></li>
 <li>
@@ -205,8 +222,8 @@ python setup.py test
 <h3>Configuration</h3>
 <p>After installation, it is recommended to configure the <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/config.py">config.py</a> to your needs. Particularly, this is where the local path to the CMake binary and <a class="reference external" href="http://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen library</a> is specified.</p>
 <p>Your local <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/config.py">config.py</a> file is located at the root of the <a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> package, which can be recovered in a Python interpreter with</p>
-<pre class="code python"><a name="rest_code_6644397edce5423f9b2911b019516c5e-1"></a><span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">path_to_configuration_file</span>
-<a name="rest_code_6644397edce5423f9b2911b019516c5e-2"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_configuration_file</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_63b42a2f61e14f898f59dacc6dc9d167-1"></a><span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">path_to_configuration_file</span>
+<a name="rest_code_63b42a2f61e14f898f59dacc6dc9d167-2"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_configuration_file</span><span class="p">)</span>
 </pre>
 </div>
 <div class="section" id="upgrade-of-existing-installations">
@@ -288,7 +305,12 @@ git pull
 </div>
 <div class="section" id="documentation">
 <h2>Documentation</h2>
-<p>Most of the documentation can be found in the <a class="reference external" href="https://pyphs.github.io/pyphs/">website</a>.</p>
+<p>Most of the documentation can be found in the <a class="reference external" href="https://pyphs.github.io/pyphs/">website</a>.
+In particular, you can see the two following resources:</p>
+<ul class="simple">
+<li>The <a class="reference external" href="https://pyphs.github.io/pyphs/PyPHS_IRCAM_seminar_041217.pdf">slides</a> from a talk given at IRCAM that introduces most the scientific background.</li>
+<li>The <a class="reference external" href="https://pyphs.github.io/pyphs/PyPHS_TUTORIAL.zip">tutorial</a> that shows practical usage of most PyPHS objects (3Mb).</li>
+</ul>
 <div class="section" id="theoretical-overview">
 <h3>Theoretical overview</h3>
 <p>The development of <a class="reference external" href="https://github.com/pyphs/pyphs/">PyPHS</a> started as an implementation of the methods proposed in the reference [GraphAnalysis2016], in which the port-Hamiltonian formalism, the graph analysis and the structure preserving numerical method are exposed. This is worth to read before using the package.</p>
@@ -300,9 +322,9 @@ git pull
 <div class="section" id="tutorials-and-examples">
 <h3>Tutorials and examples</h3>
 <p>The package comes with a set of tutorials for the use of the main functionalities (<a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/core.py">definition</a>, <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/evaluation.py">evaluation</a>, and <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/tutorials/simulation.py">simulation</a> of a core PHS structure). More tutorials are to come. Additionally, you can see the <a class="reference external" href="https://github.com/pyphs/pyphs/tree/master/pyphs/examples">examples</a> scripts. Both the <em>tutorials</em> and the <em>examples</em> folders are located at your package root, which can be recovered in Python interpreter with</p>
-<pre class="code python"><a name="rest_code_fb7928bac5794035997aa871a5672a30-1"></a><span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">path_to_examples</span><span class="p">,</span> <span class="n">path_to_tutorials</span>
-<a name="rest_code_fb7928bac5794035997aa871a5672a30-2"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_examples</span><span class="p">)</span>
-<a name="rest_code_fb7928bac5794035997aa871a5672a30-3"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_tutorials</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_6917d1f3d26249238196221f74784767-1"></a><span class="kn">from</span> <span class="nn">pyphs</span> <span class="kn">import</span> <span class="n">path_to_examples</span><span class="p">,</span> <span class="n">path_to_tutorials</span>
+<a name="rest_code_6917d1f3d26249238196221f74784767-2"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_examples</span><span class="p">)</span>
+<a name="rest_code_6917d1f3d26249238196221f74784767-3"></a><span class="k">print</span><span class="p">(</span><span class="n">path_to_tutorials</span><span class="p">)</span>
 </pre>
 </div>
 </div>
@@ -367,30 +389,30 @@ git pull
 <div class="section" id="perform-graph-analysis">
 <h3>2. Perform graph analysis</h3>
 <p>Run the following in a Python interpreter in the netlist file directory:</p>
-<pre class="code python"><a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-1"></a><span class="kn">import</span> <span class="nn">pyphs</span> <span class="kn">as</span> <span class="nn">phs</span>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-2"></a>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">Netlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-5"></a>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">to_graph</span><span class="p">()</span>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-8"></a>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
-<a name="rest_code_6fe5d9981e7c439e831d1ab7306baf97-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">to_core</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-1"></a><span class="kn">import</span> <span class="nn">pyphs</span> <span class="kn">as</span> <span class="nn">phs</span>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-2"></a>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-3"></a><span class="c1"># Read the 'dlc_netlist.net'</span>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-4"></a><span class="n">netlist</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">Netlist</span><span class="p">(</span><span class="s1">'dlc.net'</span><span class="p">)</span>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-5"></a>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-6"></a><span class="c1"># Construct the graph associated with 'netlist'</span>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-7"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">to_graph</span><span class="p">()</span>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-8"></a>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-9"></a><span class="c1"># Construct the core Port-Hamiltonian System from 'graph'</span>
+<a name="rest_code_283af43282d54c39bb5356fc0e3b9bbc-10"></a><span class="n">core</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">to_core</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="export-latex">
 <h3>3. Export LaTeX</h3>
-<pre class="code python"><a name="rest_code_c0a0947af33b48438e138dab41ec4edd-1"></a><span class="c1"># Add netlist to LaTeX content</span>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-2"></a><span class="n">content</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-3"></a>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-4"></a><span class="c1"># Add PHS core to LaTeX content</span>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-5"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">phs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-6"></a>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-7"></a><span class="c1"># Write ready-to-use .tex document</span>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-8"></a><span class="n">phs</span><span class="o">.</span><span class="n">texdocument</span><span class="p">(</span><span class="n">content</span><span class="p">,</span>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-9"></a>                <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span>
-<a name="rest_code_c0a0947af33b48438e138dab41ec4edd-10"></a>                <span class="n">filename</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-1"></a><span class="c1"># Add netlist to LaTeX content</span>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-2"></a><span class="n">content</span> <span class="o">=</span> <span class="n">phs</span><span class="o">.</span><span class="n">netlist2tex</span><span class="p">(</span><span class="n">netlist</span><span class="p">)</span>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-3"></a>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-4"></a><span class="c1"># Add PHS core to LaTeX content</span>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-5"></a><span class="n">content</span> <span class="o">+=</span> <span class="n">phs</span><span class="o">.</span><span class="n">core2tex</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-6"></a>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-7"></a><span class="c1"># Write ready-to-use .tex document</span>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-8"></a><span class="n">phs</span><span class="o">.</span><span class="n">texdocument</span><span class="p">(</span><span class="n">content</span><span class="p">,</span>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-9"></a>                <span class="n">title</span><span class="o">=</span><span class="s1">'DLC'</span><span class="p">,</span>
+<a name="rest_code_2d3539ecbe784ac49616e1c261c6033d-10"></a>                <span class="n">path</span><span class="o">=</span><span class="s1">'dlc.tex'</span><span class="p">)</span>
 </pre>
 <p>This yields the following <strong>tex</strong> file:</p>
 <ul class="simple">
@@ -403,19 +425,19 @@ git pull
 </div>
 <div class="section" id="export-c-code">
 <h3>4. Export C++ code</h3>
-<pre class="code python"><a name="rest_code_eeaa582e83f349f28640d891883f71b8-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
-<a name="rest_code_eeaa582e83f349f28640d891883f71b8-2"></a><span class="c1"># with default configuration</span>
-<a name="rest_code_eeaa582e83f349f28640d891883f71b8-3"></a><span class="n">method</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">to_method</span><span class="p">()</span>
-<a name="rest_code_eeaa582e83f349f28640d891883f71b8-4"></a>
-<a name="rest_code_eeaa582e83f349f28640d891883f71b8-5"></a><span class="c1"># Export the set of C++ file for simulation</span>
-<a name="rest_code_eeaa582e83f349f28640d891883f71b8-6"></a><span class="n">phs</span><span class="o">.</span><span class="n">method2cpp</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_57c94da21bcb4600b821ed55d580eff5-1"></a><span class="c1"># Numerical method for time discretization of 'core'</span>
+<a name="rest_code_57c94da21bcb4600b821ed55d580eff5-2"></a><span class="c1"># with default configuration</span>
+<a name="rest_code_57c94da21bcb4600b821ed55d580eff5-3"></a><span class="n">method</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">to_method</span><span class="p">()</span>
+<a name="rest_code_57c94da21bcb4600b821ed55d580eff5-4"></a>
+<a name="rest_code_57c94da21bcb4600b821ed55d580eff5-5"></a><span class="c1"># Export the set of C++ file for simulation</span>
+<a name="rest_code_57c94da21bcb4600b821ed55d580eff5-6"></a><span class="n">method</span><span class="o">.</span><span class="n">to_cpp</span><span class="p">()</span>
 </pre>
 <p>This yields the following <strong>cpp</strong> files:</p>
 <ul class="simple">
 <li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.cpp">core.cpp</a></li>
 <li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.h">core.h</a></li>
-<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.cpp">data.cpp</a></li>
-<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.h">data.h</a></li>
+<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/parameters.cpp">parameters.cpp</a></li>
+<li><a class="reference external" href="https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/parameters.h">parameters.h</a></li>
 </ul>
 <p>The <cite>core.h</cite> defines a class of <cite>DLC</cite> systems with an update method to be called at each iteration for the simulations.</p>
 </div>
@@ -477,7 +499,7 @@ MathJax.Hub.Config({
         <!--End of body content-->
 
         <footer id="footer">
-            Contents © 2017         <a href="mailto:pyphs.project@gmail.com">PyPHS project</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2018         <a href="mailto:pyphs.project@gmail.com">PyPHS project</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
 </div>

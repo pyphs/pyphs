@@ -67,4 +67,4 @@ include_directories(${{HDF5_INCLUDE_DIRS}})
 add_executable({0} ${{SOURCE_FILES}})
 target_link_libraries ({0} Eigen3::Eigen ${{HDF5_LIBRARIES}})
 
-""" % (project_name, project_name, project_name)
+""".format(project_name)

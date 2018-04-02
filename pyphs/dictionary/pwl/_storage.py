@@ -11,9 +11,9 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 from .. import edges
 from pyphs import Graph
-from pyphs.misc.io import data_generator
+
 from ..tools import symbols
-from .tools import pwl_func
+from .tools import pwl_func, data_generator
 
 
 class Storage(Graph):

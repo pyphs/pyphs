@@ -12,6 +12,7 @@ from pyphs.core.tools import free_symbols
 from ._lambdify import lambdify
 import numpy
 
+
 class Evaluation(object):
     """
     Return an object with all the numerical function associated with all
@@ -47,6 +48,8 @@ class Evaluation(object):
             print('Build numerical evaluations...')
 
         self.core = core.__copy__()
+        self.core.o = list(self.core.observers.values())
+
         self.core.substitute(selfall=True)
 
         if names in ['all', None]:
@@ -75,7 +78,7 @@ class Evaluation(object):
 
     def args(self):
         return (self.core.x + self.core.dx() + self.core.w + self.core.u +
-                self.core.p + self.core.o())
+                self.core.p + list(self.core.observers.keys()))
 
     @staticmethod
     def expr_to_numeric(core, name, allargs, theano=False, vectorize=True):
@@ -105,9 +108,27 @@ class Evaluation(object):
         if expr is not None:
             symbs = free_symbols(expr)
             args, inds = find(symbs, allargs)  # args are symbs reorganized
-            func = lambdify(args, expr, subs=core.subs,
-                            theano=theano)
-            func = numpy.vectorize(func)
+            f = lambdify(args, expr, subs=core.subs,
+                         theano=theano)
+
+            # Cope with vector evaluation of functions with arguments
+            if vectorize and len(args) > 0:
+                func = numpy.vectorize(f)
+            # Cope with vector evaluation of functions with no arguments
+            elif vectorize and len(args) == 0:
+                def func(*args):
+                    if len(args) == 0:
+                        return numpy.array(f())
+                    elif isinstance(args[0], list):
+                        return numpy.array([f(), ]*len(args[0]))
+                    elif isinstance(args[0], numpy.ndarray):
+                        return numpy.array([f(), ]*args[0].shape[0])
+                    else:
+                        return numpy.array(f())
+            # No vectorization
+            else:
+                func = f
+
             func.func_doc = """
     Evaluate `{0}`.
 
@@ -125,6 +146,7 @@ class Evaluation(object):
             """.format(name)
 
         else:
+            print('Expression {0} is None'.format(name))
             func, args, inds = None, None, None
 
         return func, args, inds

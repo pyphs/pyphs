@@ -152,5 +152,5 @@ def TranferFunction():
     sig1 = np.random.rand(int(1e4))
     sig2 = lowpass(sig1, 0.1)
     f, TF = transferFunction(sig1, sig2, 100)
-    spectrogram(sig1, sig2, fs=100)
+    spectrogram(sig2, fs=100)
     return True

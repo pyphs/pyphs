@@ -11,6 +11,7 @@ from pyphs.misc.tools import geteval
 from pyphs.core.tools import types
 from sympy import simplify, Abs
 
+
 def symbol_names(core):
     sn = {}
     for var in [r'x', 'dx', r'w', r'u', r'y', r'cy', r'p', r'o', r'g', r'z_symbols']:
@@ -23,6 +24,7 @@ def symbol_names(core):
         lab = string[1:]
         sn.update({symb: string[0]+r'_{\mathrm{'+lab+r'}}'})
     return sn
+
 
 def nice_label(core, tup):
     var, ind = tup
@@ -102,3 +104,53 @@ def cr(n):
     assert isinstance(n, int), 'n should be an int, got {0!s}'.format(type(n))
     string = ('\n' + r'%')*n + '\n'
     return string
+
+
+def dic2table(labels, dic, sn, centering=True):
+    """
+    Return a latex table with two columns. Columns labels are labels[0] and
+    labels[1], then each line is made of columns key and dic[key] for each
+    key in dic.keys.
+    """
+    l_keys, l_vals = labels
+    string = ""
+    if centering:
+        string += r"\begin{center}" + cr(1)
+    string += r"\begin{tabular}{ll}" + cr(1)
+    string += r"\hline" + cr(0)
+    string += l_keys + r" & " + l_vals + cr(0) + r"\\ \hline" + cr(0)
+    for k in dic.keys():
+        v = dic[k]
+        strk = str(k)
+        label = strk[0]
+        if len(strk[1:]) > 0:
+            label += r'_{\mathrm{'+strk[1:]+r'}}'
+        if not isinstance(v, (int, float, str)):
+            value = sympy2latex(v, sn)
+        else:
+            value = str(v)
+        string += r"$" + label + r"$ & " + value + cr(0) + r"\\" + cr(0)
+    string += r"\hline" + cr(0)
+    string += r"\end{tabular}" + cr(1)
+    if centering:
+        string += r"\end{center}"
+    return string
+
+
+def dic2array(dic):
+    """
+    """
+    string = cr(1)
+    string += r"\begin{tabular}{ll}" + cr(1)
+    for k in dic.keys():
+        v = dic[k]
+        string += str(k) + r" & " + str(v) + cr(0) + r"\\" + cr(0)
+    string += r"\end{tabular}"
+    return string
+
+
+def comment(s):
+    out = str()
+    for line in s.splitlines():
+        out += '% ' + line + '\n'
+    return out

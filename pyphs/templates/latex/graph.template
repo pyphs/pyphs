@@ -1,0 +1,18 @@
+%
+% -----------------------------------------------------------------------------
+%
+\section{\texttt{Graph} object}
+%
+The system's graph is made of ${nn} nodes and ${ne} egdes (see figure \ref{fig:graph}).
+%
+\begin{figure}[!h]
+%
+\begin{center}
+%
+\includegraphics[width=\linewidth]{${figpath}}
+%
+\caption{\label{fig:graph} System's graph with the storage edges in blue, the dissipation edges in green, and the ports edges in red.}
+%
+\end{center}
+%
+\end{figure}

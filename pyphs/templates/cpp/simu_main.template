@@ -1,0 +1,190 @@
+$license
+
+//==============================================================================
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <string>
+#include <cstdio>
+#include <time.h>
+#include <math.h>
+using namespace std;
+
+#include <H5Cpp.h>
+using namespace H5;
+
+#include "core.h"
+
+//==============================================================================
+// Define timer object
+
+class timer {
+    private:
+        unsigned long begTime;
+    public:
+        void start() {
+            begTime = clock();
+        }
+        unsigned long elapsedTime() {
+            return ((unsigned long) clock() - begTime) / CLOCKS_PER_SEC;
+        }
+        bool isTimeout(unsigned long seconds) {
+            return seconds >= elapsedTime();
+        }
+};
+
+//==============================================================================
+// Main
+
+int main() {
+
+    //==========================================================================
+    // Print start info
+
+    cout << endl;
+    cout << "=======================================" << endl;
+    cout << endl;
+    cout << "Start simulation of ${labelLow}..." << endl;
+    cout << endl;
+
+    //==========================================================================
+    // Number of time-steps to process
+
+    const unsigned int nt = ${nt};
+
+    //==========================================================================
+    // Initialize struct
+
+    typedef struct argstruct{$vectors
+    } argstruct;
+    argstruct mystruct;
+
+    //==========================================================================
+    // Open HDF5 file for reading inputs and storing results
+
+    H5File h5fid;
+    try{
+        {
+            h5fid = H5File("${h5path}", H5F_ACC_RDWR);
+        }
+    }
+    catch(FileIException error){
+        {
+            cerr << "Failed opening ${h5path} file" << endl;
+            exit(1);
+        }
+    }
+
+    //==========================================================================
+    // Initialize HDF5 objects for read/write
+
+    const unsigned int h5rank = 2;
+    hsize_t h5count[h5rank] = {1, ${dim}};
+    hsize_t h5offset[h5rank] = {0, 0};
+
+
+    // Access global dataset, datatype and dataspace
+    DataSet Gdataset = h5fid.openDataSet("${dname}");
+    DataType Gdatatype;
+    Gdatatype.copy(Gdataset);
+    DataSpace Gspace1 = Gdataset.getSpace();
+
+    // Dataspace for single row
+    DataSpace Gspace0 = DataSpace(h5rank, h5count, NULL);
+
+    //==========================================================================
+    // Instanciate a PHS C++ core object
+    ${labelUp} ${labelLow};
+
+    //==========================================================================
+    // ProgressBar data')
+    int barWidth = 20;
+    int ETA, ETAm, ETAs;
+    float progress = 0.0;
+
+    //==========================================================================
+    // Process
+    timer t;
+    t.start();
+
+    for (unsigned int n = 0; n < nt; n++) {
+
+        //======================================================================
+        // Increment H5 offset
+
+        h5offset[0] = n;
+
+        //======================================================================
+        // Define current row as dataspace selection
+
+        Gspace1.selectHyperslab(H5S_SELECT_SET, h5count, h5offset, NULL, NULL);
+
+        //======================================================================
+        // Read row (to retrieve input and parameter data)
+
+        Gdataset.read(&mystruct, Gdatatype, Gspace0, Gspace1);
+        //======================================================================
+        // Update controls
+        $updateInputs
+
+        //======================================================================
+        // Process update
+
+        ${labelLow}.update();
+
+        //======================================================================
+        // Update Results
+        ${updateResults}
+
+        //======================================================================
+        // Write back row (with updated data for x, y, w, z, dx, dxH)
+
+        Gdataset.write(&mystruct, Gdatatype, Gspace0, Gspace1);
+
+        //======================================================================
+        // Progressbar
+
+        if(${pbar}){
+            // Progressbar position
+            int position = barWidth * progress;
+            // Print Progressbar
+            std::cout << "[";
+            for (int i = 0; i < barWidth; ++i) {
+            if (i < position) std::cout << "=";
+            else if (i == position) std::cout << ">";
+            else std::cout << " ";
+            }
+            // Update progress for Progressbar
+            progress = float(n+1)/float(nt);
+            // Estimated Time of Arrival
+            ETA = (float(nt)/(n+1)-1.)*(t.elapsedTime());
+            // Estimated Time of Arrival in minutes
+            ETAm = int(floor(ETA))/60;
+            // Estimated Time of Arrival rest in seconds
+            ETAs = floor(ETA%60);
+            // Print Estimated Time of Arrival
+            std::cout << "] " << int(progress * 100.0) << "% done, ETA: " << ETAm << "m" << ETAs << "s" << endl ;
+            // Flush output
+            std::cout.flush();
+        }
+    }
+
+    //==========================================================================
+    // Close h5file
+
+    h5fid.close();
+
+    //==========================================================================
+    // Print path to data
+
+    cout << endl;
+    cout << "Results written in" << endl;
+    cout << endl;
+    cout << "${h5path}"<< endl;
+    cout << endl;
+
+    //==========================================================================
+    // Return
+
+    return 0;
+}

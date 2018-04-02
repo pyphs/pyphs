@@ -120,6 +120,9 @@ port-Hamiltonian systems.
 
         core.label = label
 
+        if hasattr(self, 'netlist'):
+            core._netlist = self.netlist
+
         return core
 
     def to_method(self, label=None, config=None):

@@ -8,6 +8,7 @@ Created on Tue Dec 27 15:11:30 2016
 from __future__ import absolute_import, division, print_function
 
 from unittest import TestCase
+from .faustFx import test_faust_fx_generation
 from .signalsTest import signal_synthesis, signal_waves
 from .NetlistTests import test_netslist
 from .GraphTests import (graph, target_edges, target_M, split_sp,
@@ -253,3 +254,8 @@ class TestCorefunctions(TestCase):
 
     def test_allsymbs(self):
         self.assertTrue(test_allsymbs())
+
+
+class TestFaustGeneration(TestCase):
+    def test_faust_fx_generation(self):
+        self.assertTrue(test_faust_fx_generation())

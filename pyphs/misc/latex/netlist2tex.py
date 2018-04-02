@@ -8,19 +8,21 @@ Created on Fri Dec 30 14:59:51 2016
 from __future__ import absolute_import, division, print_function
 
 from .tools import cr
-from .latex import dic2array
+from .tools import dic2array
+
+import os
+import string
 
 
 def netlist2tex(netlist):
-    str_netlist = cr(2)
+    from pyphs import path_to_templates
+    with open(os.path.join(path_to_templates,
+                           'latex', 'netlist.template'), 'r') as f:
+        template = string.Template(f.read())
+    subs = {}
+    # --------------------------------------------------------------------------
+    subs['netlist'] = ""
     if netlist.nlines() > 0:
-        str_netlist += r"\section{System netlist}" + cr(2)
-        str_netlist += r"\begin{center}" + cr(1)
-        str_netlist += r"\texttt{" + cr(0)
-        str_netlist += r"\begin{tabular}{llllll}" + cr(0)
-        str_netlist += r"\hline" + cr(0)
-        str_netlist += "line & label & dictionary.component & nodes & \
-parameters " + r"\\ \hline" + cr(1)
         l = 0
         for comp in netlist:
             l += 1
@@ -38,36 +40,31 @@ parameters " + r"\\ \hline" + cr(1)
                                                           latex_comp,
                                                           latex_nodes,
                                                           latex_args)
-            str_netlist += str_table + cr(0) + r" \\" + cr(0)
-        str_netlist += r"\hline" + cr(0)
-        str_netlist += r"\end{tabular}" + cr(1)
-        str_netlist += r"}" + cr(1)
-        str_netlist += r"\end{center}" + cr(1)
-    return str_netlist
+            subs['netlist'] += str_table + cr(0) + r" \\" + cr(0)
+        subs['netlist'] = subs['netlist'][:-1]
+    return template.substitute(subs)
 
 
-def graphplot2tex(graph, name=None, folder=None, show=False):
+def graphplot2tex(graph, label=None, folder=None, show=False):
     """
     associate the plot of the graph to a latex figure
     """
-    import os
+    from pyphs import path_to_templates
+    with open(os.path.join(path_to_templates,
+                           'latex', 'graph.template'), 'r') as f:
+        template = string.Template(f.read())
+    subs = {}
     from pyphs.config import plot_format
-    if name is None:
+    if label is None:
         if hasattr(graph, 'label'):
-            name = graph.label
+            label = graph.label
         else:
-            name = 'NoName'
+            label = 'NoName'
     if folder is None:
         folder = os.getcwd()
-    path = os.path.join(folder, name + r'_graph.' + plot_format)
+    path = os.path.join(folder, label + r'_graph.' + plot_format)
     graph.plot(filename=path, show=show)
-    string = cr(2) + r"""\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=\linewidth]{""" + path + r"""}
-%
-\caption{\label{fig:graph""" + name +\
-        r"""} Graph of system \texttt{""" + name + r"""}. }
-\end{center}
-\end{figure}
-%"""
-    return string
+    subs['ne'] = graph.number_of_edges()
+    subs['nn'] = graph.number_of_nodes()
+    subs['figpath'] = path
+    return template.substitute(subs)

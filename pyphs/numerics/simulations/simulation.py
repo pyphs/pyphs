@@ -13,7 +13,6 @@ from ..cpp.method2cpp import method2cpp, parameters
 from .. import Numeric
 from .h5data import H5Data
 from pyphs.misc.tools import geteval
-#from pyphs.misc.io import dump_files, with_files
 
 import subprocess
 import progressbar
@@ -23,6 +22,7 @@ import sys
 
 
 # -----------------------------------------------------------------------------
+# Functions for system call and bash execution
 
 def system_call(cmd):
     """
@@ -67,6 +67,7 @@ def execute_bash(text):
 
     text : str
         Bash script content. Execution of each line iteratively.
+
     """
     for line in text.splitlines():
         if line.startswith('#') or len(line) == 0:
@@ -74,16 +75,13 @@ def execute_bash(text):
         else:
             system_call(line.split())
 
-# -----------------------------------------------------------------------------
-# -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# -----------------------------------------------------------------------------
+# Simulation class
 
-
-class Simulation:
+class Simulation(object):
     """
-    object that stores data and methods for simulation of PortHamiltonianObject
+    Object for the iterative solving of Method object.
     """
 
     system_call = staticmethod(system_call)
@@ -94,8 +92,10 @@ class Simulation:
         Parameters
         -----------
 
-        config : dic of configuration options
+        method : pyphs Method
+            Numerical method for the simulation.
 
+        config : dic of configuration options
             keys and default values are
 
               'fs': 48e3,           # Sample rate (Hz)
@@ -139,7 +139,7 @@ class Simulation:
             config = {}
         else:
             for k in config.keys():
-                if not k in self.config.keys():
+                if k not in self.config.keys():
                     text = 'Configuration key "{0}" unknown.'.format(k)
                     raise AttributeError(text)
         self.config.update(config)
@@ -184,30 +184,34 @@ class Simulation:
             dic[k] = self.config[k]
         return dic
 
+    @property
+    def objlabel(self):
+        return self.method.label.upper()
+
     def init_numericalCore(self):
         """
         Build the Numeric from the Core.
         Additionnally, generate the c++ code if config['lang'] == 'c++'.
         """
         if not self.config['lang'] in ['c++', 'python']:
-            raise AttributeError('Unknows language {}'.format(self.config['lang']))
+            text = 'Unknows language {}'
+            raise AttributeError(text.format(self.config['lang']))
 
         elif self.config['lang'] == 'python':
             setattr(self, 'nums', Numeric(self.method,
                                           inits=self.inits,
                                           config=self.config_numeric()))
         elif self.config['lang'] == 'c++':
-            objlabel = self.method.label.upper()
             self.work_path = os.getcwd()
-            self.cpp_path = os.path.join(main_path(self), objlabel.lower())
+            self.cpp_path = os.path.join(main_path(self), self.objlabel.lower())
             self.src_path = os.path.join(self.cpp_path, 'src')
             if not os.path.exists(self.cpp_path):
                 os.mkdir(self.cpp_path)
             if not os.path.exists(self.src_path):
                 os.mkdir(self.src_path)
-            method2cpp(self.method, objlabel=objlabel, path=self.src_path,
-                        inits=self.inits,
-                        config=self.config_numeric())
+            method2cpp(self.method, objlabel=self.objlabel, path=self.src_path,
+                       inits=self.inits,
+                       config=self.config_numeric())
 
         self.data = H5Data(self.method, self.config, clear=True)
 
@@ -216,7 +220,8 @@ class Simulation:
         Build the numerical method.
         """
         if self.config_method() != self.method.config:
-            self.method.__init__(self.method._core, config=self.config_method())
+            self.method.__init__(self.method._core,
+                                 config=self.config_method())
 
     # -------------------------------------------------------------------------
 
@@ -264,7 +269,7 @@ class Simulation:
             subs = {}
         else:
             for k in subs.keys():
-                if not k in self.method.subs.keys():
+                if k not in self.method.subs.keys():
                     init_numeric = True
             if not init_numeric:
                 init_parameters = True
@@ -282,22 +287,23 @@ class Simulation:
             equal = True
             for k in inits.keys():
                 try:
-                    equal = inits[k]==self.inits[k] and equal
+                    equal = inits[k] == self.inits[k] and equal
                 except KeyError:
                     equal = False
             if not equal:
                 self.inits.update(inits)
                 init_numeric = True
 
-        if any([self.config[k] != c[k] for k in list(self.config_numeric().keys()) +
-                                                list(self.config_method().keys())]):
+        if any([self.config[k] != c[k] for k in
+                list(self.config_numeric().keys()) +
+                list(self.config_method().keys())]):
             self.config.update(c)
             self.init_method()
 
         if init_numeric:
             self.init_numericalCore()
 
-        self.data.init_data(u, p, nt)
+        self.data.init_data(nt, sequ=u, seqp=p)
 
     def init_parameters(self, subs=None):
         """
@@ -308,7 +314,7 @@ class Simulation:
         else:
             self.method.subs = subs
         path = self.src_path
-        parameters_files = parameters(subs, 'rhodes'.upper())
+        parameters_files = parameters(subs, self.objlabel)
         for e in ['cpp', 'h']:
             filename = path + os.sep + 'parameters.{0}'.format(e)
             string = parameters_files[e]
@@ -380,11 +386,11 @@ class Simulation:
             print(string.format(time_it))
 
         if VERBOSE >= 1:
-            print('Simulation: Done')
+            print('\nSimulation: Done')
 
     def _process_py(self):
 
-        # get generators of u and p
+        # get values for u and p
         data = self.data
         tslice = slice(0, None, 1)
         data.h5open()
@@ -460,8 +466,9 @@ class Simulation:
             except subprocess.CalledProcessError as error:
 
                 # Printing errors
-                print('\nAn error occured while building simulation executable.')
-                print('See %s for details\n' % fid.name)
+                print(
+                    '\nAn error occured while building simulation executable.')
+                print('See log file {0} for details\n'.format(fid.name))
 
                 # go back to work folder
                 os.chdir(self.work_path)
@@ -482,7 +489,6 @@ class Simulation:
 
         # go back to work folder
         os.chdir(self.work_path)
-
 
     @staticmethod
     def system_call(cmd):
@@ -515,54 +521,3 @@ class Simulation:
             Bash script content. Execution of each line iteratively.
         """
         execute_bash(text)
-
-
-def system_call(cmd):
-    """
-    Execute a system command.
-
-    Parameter
-    ---------
-
-    cmd : list
-        List of arguments.
-
-    Example
-    -------
-
-    Change directory with
-
-    >>> cmd = ['cd', './my/folder']
-    >>> system_call(cmd)
-
-    """
-    if sys.platform.startswith('win'):
-        shell = True
-    else:
-        shell = True
-    if VERBOSE >= 1:
-        print(cmd)
-    p = subprocess.Popen(cmd, shell=shell,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
-    for line in iter(p.stdout.readline, b''):
-        l = line.decode()
-        if VERBOSE >= 1:
-            print(l)
-
-
-def execute_bash(text):
-    """
-    Execute a bash script, ignoring lines starting with #
-
-    Parameter
-    ---------
-
-    text : str
-        Bash script content. Execution of each line iteratively.
-    """
-    for line in text.splitlines():
-        if line.startswith('#') or len(line) == 0:
-            pass
-        else:
-            system_call(line.split())

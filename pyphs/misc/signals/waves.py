@@ -9,6 +9,7 @@ import types
 from struct import pack
 from scipy.io import wavfile
 import wave
+import numpy as np
 
 
 _maxVol = 2**15-1.0  # maximum amplitude
@@ -42,7 +43,8 @@ def wavread(path, fs=None, normalize=False):
 
 
 def wavwrite(sig, fs_sig, path, fs_out=None, normalize=None, timefades=0):
-    assert isinstance(sig, (list, types.GeneratorType)), 'Signal should be a \
+
+    assert isinstance(sig, (list, np.ndarray, types.GeneratorType)), 'Signal should be a \
 list or a generator. Got {0!s}'.format(type(sig))
     if isinstance(sig, types.GeneratorType):
         print('Convert generator to list...')

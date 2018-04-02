@@ -1,0 +1,5 @@
+electronics.source I ('N1', '#'): type=voltage;
+electronics.resistor R1 ('N1', 'N2'): R=('R1', 500.0);
+electronics.resistor R2 ('N2', '#'): R=('R2', 1000.0);
+electronics.capacitor Capa ('N2', '#'): C=('CCapa', 1e-06);
+electronics.source O ('N2', '#'): type=current;

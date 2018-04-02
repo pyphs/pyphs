@@ -20,6 +20,7 @@ The PHS formalism decomposes network systems into **conservative** parts, **diss
 	:width: 650
 	:align: center
 
+The main objects of the library are introduced in `this presentation <https://pyphs.github.io/pyphs/PyPHS_IRCAM_seminar_041217.pdf>`_.
 The standard workflow is as follows.
 
 1. Inputs are **netlist descriptions** of network systems (very similar to SPICE netlists).
@@ -43,18 +44,23 @@ Status
 
 This package is in development status Beta. The continuous integration is checked with Travis for Unix systems and AppVeyor for Windows systems (see build status below).
 
-.. image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
+|Travis| |Appveyor| |Codecov| |Landscape|
+
+.. |Travis| image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/pyphs/pyphs
 
-.. image:: https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true
+.. |Appveyor| image:: https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true
     :target: https://ci.appveyor.com/project/pyphsadmin/pyphs
 
-.. image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
+
+.. |Codecov| image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/pyphs/pyphs
 
-.. image:: https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat
+
+.. |Landscape| image:: https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat
    :target: https://landscape.io/github/pyphs/pyphs/master
    :alt: Health
+
 
 Licence
 =======
@@ -75,6 +81,7 @@ The `PyPHS <https://github.com/pyphs/pyphs/>`_ package run on Python 2.7 and Pyt
 - `scipy <http://www.scipy.org>`_
 - `matplotlib <http://matplotlib.org/>`_
 - `networkx <http://networkx.github.io/>`_
+- `h5py <http://docs.h5py.org/en/latest/index.html>`_
 - `stopit <https://pypi.python.org/pypi/stopit>`_
 - `progressbar2 <https://pypi.python.org/pypi/progressbar2>`_
 - `nose <https://github.com/nose-devs/nose>`_ (to run the tests)
@@ -122,7 +129,7 @@ To run the included tests::
 Configuration
 --------------
 
-After installation, it is recommended to configure the `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ to your needs. Particularly, this is where the local path to the CMake binary.
+After installation, it is recommended to configure the `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ to your needs. Particularly, this is where the local path to the CMake binary is specified.
 
 Your local `config.py <https://github.com/pyphs/pyphs/tree/master/pyphs/config.py>`_ file is located at the root of the `PyPHS <https://github.com/pyphs/pyphs/>`_ package, which can be recovered in a Python interpreter with
 
@@ -198,6 +205,12 @@ Documentation
 ==============
 
 Most of the documentation can be found in the `website <https://pyphs.github.io/pyphs/>`_.
+In particular, you can see the two following resources:
+
+- The `slides <https://pyphs.github.io/pyphs/PyPHS_IRCAM_seminar_041217.pdf>`_ from a talk given at IRCAM that introduces most the scientific background.
+- The `tutorial <https://pyphs.github.io/pyphs/PyPHS_TUTORIAL.zip>`_ that shows practical usage of most PyPHS objects (3Mb).
+
+
 
 Theoretical overview
 --------------------
@@ -294,7 +307,7 @@ Run the following in a Python interpreter in the netlist file directory:
     # Write ready-to-use .tex document
     phs.texdocument(content,
                     title='DLC',
-                    filename='dlc.tex')
+                    path='dlc.tex')
 
 
 This yields the following **tex** file:
@@ -316,15 +329,15 @@ which is compiled to produce the following **pdf** file:
     method = core.to_method()
 
     # Export the set of C++ file for simulation
-    phs.method2cpp(method)
+    method.to_cpp()
 
 
 This yields the following **cpp** files:
 
 * `core.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.cpp>`_
 * `core.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/core.h>`_
-* `data.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.cpp>`_
-* `data.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/data.h>`_
+* `parameters.cpp <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/parameters.cpp>`_
+* `parameters.h <https://pyphs.github.io/pyphs/pyphs_outputs/dlc/cpp/parameters.h>`_
 
 The `core.h` defines a class of `DLC` systems with an update method to be called at each iteration for the simulations.
 

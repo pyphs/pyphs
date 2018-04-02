@@ -5,199 +5,118 @@ Created on Wed Jun  8 18:56:56 2016
 @author: Falaize
 """
 from .processing import lowpass
-from pyphs.misc.plots.tools import (activate_latex, annotate, setticks, dec,
-                               standard)
+from pyphs.misc.plots.tools import (annotate, standard)
 from pyphs.misc.plots.fonts import globalfonts
 import numpy as np
 
 
-def spectrogram(datax, datay, fs, **kwargs):
+def spectrogram(x, fs, show=False, **kwargs):
     """
     Plot spectrogramm of datay.
 
     Parameters
     ----------
 
-    datax : list of numerics
-        x-axis values.
-
-    datay : list of lists of numerics
+    x : lists of values
         y-axis values for each curve.
 
-    labels : list, optional
-        list of curve labels (the default is None).
+    fs : floats
+        samplerate.
 
-    unitx : str, optional
+    label : list, optional
+        signal label (the default is None).
+
+    xlabel : str, optional
         x-axis label (the default is None).
 
-    unity : list of str, optional
+    ylabel : list of str, optional
         y-axis labels (the default is None).
 
-    ylims : tuple of float, optional
-        (ymin, ymax) values. If None then (ymin, ymax) is set automatically \
-(the default is None).
-        If extend the y-axis is extended by 5% on both sides (the default is \
-'extend').
-
-    linewidth : float, optional
-        The default is 2.
-
-    figsize : tuple of float, optional
-        The default is (5., 5.).
-
-    filelabel : str, optional
+    path : str, optional
         Figure is saved in 'filelabel.png' (the default is 'multiplot').
 
-    loc : int or string or pair of floats, default: 0
-        The location of the legend. Possible codes are:
+    title : str, optional
+        Figure main title. If set to None, the desactivated (the default is
+        None).
 
-            ===============   =============
-            Location String   Location Code
-            ===============   =============
-            'best'            0
-            'upper right'     1
-            'upper left'      2
-            'lower left'      3
-            'lower right'     4
-            'right'           5
-            'center left'     6
-            'center right'    7
-            'lower center'    8
-            'upper center'    9
-            'center'          10
-            ===============   =============
+    dynamics : positive value, optional
+        The dynamics is normalized to 0db and the value below minus 'dynamics'
+        are set to zeros
 
-    log : str, optional
-        Log-scale activation according to
-            ===============   =============
-            Plot type          Code
-            ===============   =============
-            'plot'            ''
-            'semilogx'        'x'
-            'semilogy'        'y'
-            'loglog'          'xy'
-            ===============   =============
-
-    linestyles : iterable, otpional
-        List of line styles; the default is ('-b', '--r', ':g', '-.m').
-
-    fontsize : int, optional
-        the default is figsize[0]*4.
-
-    legendfontsize : int, optional
-        Figure legend font size. If None then set to 4/5 of fontsize (the \
-default is None).
-
-    maintitle : str, optional
-        Figure main title. If set to None, the desactivated (the default is \
-None).
-
-    axedef : tuple of floats, optional
-        Figure geometry (left, botom, right, top).
-        The default is (.15, .15, .85, .85).
-
-    nbinsx, nbinsy : int, optional
-        number of x-axis and y-axis ticks (the default is 4).
-
-    minor : bool
-        Activate the minor grid.
-
-    markersize : float
-        Default is 6.
-
-    markeredgewidth : float
-        Width of line around markers (the default is 0.5).
-
+    cmap : str, optional
+        Colormap specifier. Default is 'gnuplot2'.
     """
     opts = standard.copy()
+    opts['ylabel'] = opts.pop('ylabels')
+    opts['label'] = opts.pop('labels')
     opts.update(kwargs)
-    if opts['axedef'] is None:
-        opts['axedef'] = [.15, .15, .75, .75]
-    if opts['linestyles'] is None:
-        opts['linestyles'] = ['-b', '--r', '-.g', ':m']
-    nplots = int(datay.__len__())
-    if opts['fontsize'] is None:
-        opts['fontsize'] = int(4*opts['figsize'][0])
-    if opts['legendfontsize'] is None:
-        opts['legendfontsize'] = int(0.8*opts['fontsize'])
-    if opts['labels'] is None:
-        opts['labels'] = None
-    if opts['log'] is None:
-        opts['log'] = ''
+
     if not 'dynamics' in opts.keys():
         opts['dynamics'] = 80.
-    if not 'ylimits' in opts.keys():
-        opts['ylimits'] = (10, fs/2.)
-    if not 'xlimits' in opts.keys():
-        opts['xlimits'] = (datax[0], datax[-1])
+    if not 'nfft' in opts.keys():
+        opts['nfft'] = int(2**8)
+    else:
+        opts['nfft'] = int(opts['nfft'])
+    if not 'cmap' in opts.keys():
+        opts['cmap'] = 'BuPu'
 
-    activate_latex(opts)
+    from matplotlib.pyplot import figure, fignum_exists
 
-    from matplotlib.pyplot import rc
-    rc('font', size=opts['fontsize'], **globalfonts())
-
-    from matplotlib.pyplot import close
-    close('all')
-
-    from matplotlib.pyplot import figure
-    fig = figure(1, figsize=opts['figsize'])
-
-    if isinstance(datax[0], (float, int)):
-        datax = [datax, ]*nplots
+    i = 1
+    while fignum_exists(i):
+        i += 1
+    fig = figure(i)
 
     from matplotlib.pyplot import axes
-    ax = axes(opts['axedef'][:4])
+    ax = axes()
 
-    miny = float('Inf')
-    maxy = -float('Inf')
-
-    x = dec(datax, opts)
-    y = dec(datay, opts)
-    maxy = max([maxy, max(y)])
-    miny = min([miny, min(y)])
-
-    if isinstance(opts['labels'], (list, tuple)):
-        annotate(x, y, opts['labels'][0], opts['labels'][1],
-                 opts['legendfontsize'])
+    if isinstance(opts['label'], (list, tuple)):
+        annotate(*opts['label'], ax=ax)
 
     noverlap = int(opts['nfft']/2)
-    Pxx, fbins, tbins, im = ax.specgram(np.array(y)/(opts['nfft']/2),
+    Pxx, fbins, tbins, im = ax.specgram(np.array(x)/(opts['nfft']/2.),
                                         mode='psd', Fs=fs,
                                         NFFT=opts['nfft'], noverlap=noverlap,
-                                        cmap=opts['colormap'])
+                                        cmap=opts['cmap'])
     Pxx = Pxx/np.max(Pxx)
-    extent = [tbins.min(), tbins.max(), fbins.min(), fbins.max()]
+    extent = [tbins.min(), tbins.max(), 0., fbins.max()]
+    print(extent)
     im = ax.imshow(10*np.log10(Pxx), extent=extent, origin='lower',
-                   aspect='auto', cmap=opts['colormap'],
+                   aspect='auto', cmap=opts['cmap'],
                    vmin=-opts['dynamics'], vmax=0)
 
-    setticks(ax, opts)
-
-    ax.set_ylim(opts['ylimits'])
-    ax.set_xlim(opts['xlimits'])
-
-    if opts['unitx'] is not None:
+    if opts['xlabel'] is not None:
         from matplotlib.pyplot import xlabel
-        xlabel(opts['unitx'])
+        xlabel(opts['xlabel'])
 
-    if opts['unity'] is not None:
+    if opts['ylabel'] is not None:
         from matplotlib.pyplot import ylabel
-        ylabel(opts['unity'])
+        ylabel(opts['ylabel'])
 
-    if opts['maintitle'] is not None:
+    if opts['title'] is not None:
         from matplotlib.pyplot import title
-        title(opts['maintitle'])
+        title(opts['title'])
 
-    if opts['filelabel'] is not None:
+    if opts['path'] is not None:
         from matplotlib.pyplot import savefig
-        savefig(opts['filelabel'] + '.' + opts['format'])
+        savefig(opts['path'] + '.' + opts['format'])
 
-    ax.yaxis.set_label_coords(opts['xpos_ylabel'], 0.5)
+    fig.colorbar(im, label='Magnitude (dB)')
 
-    cbar_ax = fig.add_axes([0.87, 0.397, 0.01, 0.555])
-    fig.colorbar(im, cax=cbar_ax, label='Magnitude (dB)')
+    if opts['log'] is not None and 'y' in opts['log']:
+        from matplotlib.pyplot import yscale
+        yscale('log')
 
-    
+    if opts['log'] is not None and 'x' in opts['log']:
+        from matplotlib.pyplot import xscale
+        xscale('log')
+
+    if show:
+        from matplotlib.pyplot import show as pltshow
+        pltshow()
+
+
+
 def transferFunction(sigin, sigout, fs, nfft=int(2e13), filtering=None,
                      limits=None):
     """

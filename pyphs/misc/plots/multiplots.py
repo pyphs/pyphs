@@ -6,48 +6,41 @@ Created on Sat Jun 11 20:06:50 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from .tools import activate_latex, annotate, whichplot, setlims, \
-    setticks, dec, standard
-from .fonts import globalfonts
+from .tools import annotate, whichplot, standard
+import numpy
 
 
-def multiplot(datax, datay, show=True, **kwargs):
+def multiplot(x, y, show=True, **kwargs):
     """
-    Plot multiple y-axis and possible multiple curves in each. Result is saved\
- as a '.png' document.
+    Plot multiple y-axis and possible multiple curves in each. Result can be
+    saved as a '.png' document.
 
     Parameters
     ----------
 
-    datax : list of floats
+    x : list of floats
         x-axis values.
 
-    datay : list of floats or list of tuples of list of floats
+    y : list of floats or of tuples of list of floats
         y-axis values per axis and per curve in each axis, if tuple.
 
-    labels : list, optional
-        list of or tupple of list of curve labels (the default is None).
-
-    unitx : str, optional
+    xlabel : str, optional
         x-axis label (the default is None).
 
-    unity : list of str, optional
-        y-axis labels per axis (the default is None).
+    ylabels : list of str, optional
+        y-axis label for each axe (the default is None).
 
-    limits= : list of tuples, optional
-        List of (ymin, ymax) values. If None then (ymin, ymax) is set \
-automatically.
-        If 'extend', the y-axis is extend by 5% on both ends (the default is \
-'extend').
+    title : str, optional
+        Figure main title. Desactivated if set to None (default).
 
-    linewidth : float, optional
-        The default is 2.
+    labels : list, optional
+        list of curve labels (the default is None). Textboxes can be used with_files
+        the elements syntax ['label', (xrel, yrel)] where xrel and yrel are
+        relative x and y position.
 
-    figsize : tuple of float, optional
-        The default is (5., 5.).
-
-    filelabel : str, optional
-        Figure is saved in 'filelabel.png' if provided (the default is None).
+    path : str, optional
+        Figure is saved in 'path.ext' if provided (the default is None).
+        Extension from pyphs config.py.
 
     loc : int or string or pair of floats, default: 0
         The location of the legend. Possible codes are:
@@ -80,170 +73,168 @@ automatically.
             ===============   =============
 
     linestyles : iterable, otpional
-        List of line styles; the default is ('-b', '--r', ':g', '-.m').
-
-    fontsize : int, optional
-        the default is figsize[0]*4
-
-    legendfontsize : int, optional
-        Figure legend font size. If None then set to 4/5 of fontsize (the \
-default is None).
-
-    maintitle : str, optional
-        Figure main title. If set to None, the desactivated (the default is \
-None).
-
-    axedef : tuple of floats, optional
-        Figure geometry (left, botom, right, top, height, width).
-        The default is (.15, .15, .85, .85, .1, .3).
-
-        ======  \
-===============================================================
-        Value    Description
-        ======  \
-===============================================================
-        left     the left side of the subplots of the figure.
-        bottom   the bottom of the subplots of the figure.
-        right    the right side of the subplots of the figure.
-        top      the top of the subplots of the figure.
-        wspace   the amount of width reserved for blank space between subplots.
-        hspace   the amount of height reserved for white space between \
-subplots.
-        ======  \
-===============================================================
-
-    markersize : float
-        Default is 6.
-
-    markeredgewidth : float
-        Width of line around markers (the default is 0.5).
-
-    nbinsx, nbinsy : int, optional
-        number of x-axis and y-axis ticks (the default is 4).
-
-    minor : bool
-        Activate the minor grid.
+        List of line styles; the default is None.
 
     xpos_ylabel : float, optional
-        If provided, set the x-position of the ylabels so that they align (the\
- default is None).
-        You probably want it to be negative.
+        If provided, set the x-position of the ylabels so that they align (the
+        default is None). You probably want it to be negative.
+
+    grid : bool
+        Indicate whether to show the grid or not.
 
     """
-    opts = standard.copy()
-    opts.update(kwargs)
-    nplots = len(datay)
 
-    if opts['fontsize'] is None:
-        opts['fontsize'] = int(6*opts['figsize'][0])
-    if opts['legendfontsize'] is None:
-        opts['legendfontsize'] = int(0.8*opts['fontsize'])
-    if opts['unity'] is None:
-        opts['unity'] = ['', ]*nplots
-    if opts['limits'] is None:
-        opts['limits'] = [None, ]*nplots
-    elif opts['limits'] == 'extend':
-        opts['limits'] = ['extend', ]*nplots
+    # ------------------------------------------------------------
+    # Number of axes
+    nplots = len(y)
+
+    # ------------------------------------------------------------
+    # Recover standard options
+    opts = standard.copy()
+
+    # Update with new options
+    opts.update(kwargs)
+
+    # ------------------------------------------------------------
+    # Check fo options length
+    if opts['ylabels'] is None:
+        opts['ylabels'] = ['', ]*nplots
+    elif not len(opts['ylabels']) == nplots:
+        raise AttributeError('wrong number of y labels')
+
     if opts['labels'] is None:
-        opts['labels'] = [None, ] * nplots
+        opts['labels'] = [None, ]*nplots
+    elif not len(opts['ylabels']) == nplots:
+        raise AttributeError('wrong number of curves labels')
+
     if opts['log'] is None:
         opts['log'] = ['', ] * nplots
+    elif not len(opts['log']) == nplots:
+        raise AttributeError('wrong number of log options')
+
+    # ------------------------------------------------------------
+    # Init figure and axes
     from matplotlib.pyplot import subplots, fignum_exists
+
     i = 1
     while fignum_exists(i):
         i += 1
-    fig, axs = subplots(nplots, 1, sharex=True, figsize=opts['figsize'],
-                        num=i)
+    fig, axs = subplots(nplots, 1, sharex=True, num=i)
 
-    activate_latex(opts)
+    # ------------------------------------------------------------
+    # Iterate over y data
+    for n, yn in enumerate(y):
 
-    # Dic of font properties
-    from matplotlib.pyplot import rc
-    rc('font', size=opts['fontsize'], **globalfonts())
+        # --------------------------------------------------------
+        # get axe
+        if nplots > 1:
+            axe = axs[n]
+        else:
+            axe = axs
 
-    x = dec(datax, opts)
-    for n in range(nplots):
+        axe.ticklabel_format(style='sci', scilimits=(-2, 2))
 
-        miny = float('Inf')
-        maxy = -float('Inf')
-
+        # --------------------------------------------------------
+        # flag
         print_legend = False
 
-        if isinstance(opts['linestyles'][0], (tuple, list)):
-            linestyle = opts['linestyles'][n]
-        else:
-            linestyle = opts['linestyles']
+        # --------------------------------------------------------
+        # if yn is a list of values
+        if (isinstance(yn[0], (float, int)) or
+            (isinstance(yn[0], numpy.ndarray) and len(yn[0].shape) == 0)):
 
-        if type(datay[n]) is list:
-            y = dec(datay[n], opts)
-            maxy = max([maxy, max(y)])
-            miny = min([miny, min(y)])
-            if nplots > 1:
-                plotn = whichplot(opts['log'][n], axs[n])
+            # get plot in {plot, semilogx, semilogy, loglog}
+            plotn = whichplot(opts['log'][n], axe)
+
+            # Add label or annotation
+            if isinstance(opts['labels'][n], (list, tuple)):
+                annotate(*opts['labels'][n], ax=axe)
+                l = None
             else:
-                plotn = whichplot(opts['log'][n], axs)
-            plotn(x, y, linestyle[0], label=opts['labels'][n],
-                  linewidth=opts['linewidth'],
-                  markeredgewidth=opts['markeredgewidth'],
-                  markersize=opts['markersize'])
-            print_legend = opts['labels'][n] is not None or print_legend
+                l = opts['labels'][n]
+            print_legend = l is not None or print_legend
 
-        elif isinstance(datay[n], tuple):
-            len_yn = len(datay[n])
+            # Plot
+            if opts['linestyles'] is not None:
+                plotn(x, yn, opts['linestyles'][n][0],
+                      label=l)
+            else:
+                plotn(x, yn, label=l)
+
+        # --------------------------------------------------------
+        # if yn is a list of signals
+        else:
+
+            # get number of signals in yn
+            len_yn = len(yn)
+
+            # Set appropriate
             if opts['labels'][n] is None:
                 opts['labels'][n] = (None, )*len_yn
-            for m in range(len_yn):
+            elif not len(opts['labels'][n]) == len_yn:
+                raise AttributeError('wrong number of labels')
+
+            # iterate over yn  data
+            for m, ynm in enumerate(yn):
+
+                # Add label or annotation
                 if isinstance(opts['labels'][n][m], (list, tuple)):
-                    annotate(x, y, opts['labels'][n][m][0],
-                             opts['labels'][n][m][1],
-                             opts['legendfontsize'])
+                    annotate(*opts['labels'][n][m], ax=axe)
                     l = None
                 else:
                     l = opts['labels'][n][m]
                 print_legend = l is not None or print_legend
 
-                y = dec(datay[n][m], opts)
-                maxy = max([maxy, max(y)])
-                miny = min([miny, min(y)])
-                plotn = whichplot(opts['log'][n], axs[n])
-                plotn(x, y, linestyle[m], label=l,
-                      linewidth=opts['linewidth'],
-                      markersize=opts['markersize'],
-                      markeredgewidth=opts['markeredgewidth'])
+                # get plot in {plot, semilogx, semilogy, loglog}
+                plotn = whichplot(opts['log'][n], axe)
 
-        setlims(axs[n], x, miny, maxy, opts['limits'][n])
-        setticks(axs[n], opts, n)
+                # Plot
+                if opts['linestyles'] is not None:
+                    plotn(x, ynm, opts['linestyles'][n][m], label=l)
+                else:
+                    plotn(x, ynm, label=l)
+
+        # --------------------------------------------------------
+        # Print legend
         if print_legend:
-            axs[n].legend(loc=opts['loc'], fontsize=opts['legendfontsize'])
-        if opts['unity'][n] is not None:
-            axs[n].set_ylabel(opts['unity'][n], fontsize=opts['fontsize'])
+            axs[n].legend(loc=opts['loc'])
+
+        # --------------------------------------------------------
+        # Set y label
+        if opts['ylabels'][n] is not None:
+            axs[n].set_ylabel(opts['ylabels'][n])
             if opts['xpos_ylabel'] is not None:
                 axs[n].yaxis.set_label_coords(opts['xpos_ylabel'], 0.5)
+
+        # --------------------------------------------------------
+        # Set x label if last plot
         if n == nplots-1:
-            axs[n].set_xlabel(opts['unitx'], fontsize=opts['fontsize'])
+            axs[n].set_xlabel(opts['xlabel'])
         else:
             from matplotlib.pyplot import setp
             setp(axs[n].get_xticklabels(), visible=False)
 
-    if opts['maintitle'] is not None:
+        # --------------------------------------------------------
+        # Show grid
+        axs[n].grid(opts['grid'])
+        axs[n].minorticks_on()
+
+    # ------------------------------------------------------------
+    # Set title
+    if opts['title'] is not None:
         from matplotlib.pyplot import suptitle
-        suptitle(opts['maintitle'])
+        suptitle(opts['title'])
 
-    if opts['axedef'] is not None:
-        print(opts['axedef'])
-        left, right = opts['axedef'][0], opts['axedef'][2]
-        bottom, top = opts['axedef'][1], opts['axedef'][3]
-        wspace, hspace = opts['axedef'][4], opts['axedef'][5]
-        fig.subplots_adjust(left=left, right=right,
-                            bottom=bottom, top=top,
-                            wspace=wspace, hspace=hspace)
-    else:
-        fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=.0)
-
-    if opts['filelabel'] is not None:
+    # ------------------------------------------------------------
+    # Save file
+    if opts['path'] is not None:
         from matplotlib.pyplot import savefig
-        savefig(opts['filelabel'] + '.' + opts['format'])
+        savefig(opts['path'] + '.' + opts['format'])
 
+    # ------------------------------------------------------------
+    # Show
     if show:
         from matplotlib.pyplot import show as pltshow
         pltshow()
+
+    return fig, axs

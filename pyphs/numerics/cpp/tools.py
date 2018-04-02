@@ -11,6 +11,16 @@ from pyphs.config import CONFIG_CPP
 
 linesplit = '\n//' + '='*74
 
+
+def comment(s, symb=None):
+    if symb is None:
+        symb = '//'
+    out = ""
+    for l in s.splitlines():
+        out += '\n'
+        out += symb + ' ' + str(l)
+    return out
+
 def make_executable(path):
     """
     """

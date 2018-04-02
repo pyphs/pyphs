@@ -10,15 +10,60 @@ import sympy as sp
 import numpy as np
 
 
+def data_generator(path, ind=None, decim=None,
+                   postprocess=None, imin=None, imax=None):
+    """
+    Generator that read file from path. Each line is returned as a list of
+    floats, if index i is such that imin <= i < imax, with decimation factor
+    decim. A function can be passed as postprocess, to be applied on each
+    output.
+    """
+
+    if imin is None:
+        imin = 0
+    if imax is None:
+        imax = float('Inf')
+    if decim is None:
+        decim = 1
+
+    if ind is not None and not isinstance(ind, int):
+        text = 'Index should be an integer. Got {0}'
+        text = text.format(type(ind))
+        raise ValueError(text)
+
+    i = 0
+
+    with open(path, "r") as f:
+        for line in f:
+            if imin <= i < imax and not bool((i-imin) % decim):
+                # export full line
+                if ind is None:
+                    out = [float(x) for x in line.split()]
+                    if postprocess is None:
+                        y = out
+                    else:
+                        y = list(map(postprocess, out))
+                    yield y
+                # export selected index in line
+                else:
+                    out = float(line.split()[ind])
+                    yield out if postprocess is None else postprocess(out)
+            i += 1
+
+
 def pwl_func(X_lst, Y_lst, symbol=sp.symbols('x'),
              integ=False, y0=0., intconst=0.):
     """
-Returns a piecewise linear interpolation of the set (X_lst, Y_lst), based on
-the following explicit form a + b.x + sum(c_i*abs(x - X_i)), where i denote the
-ith component of the list and a, b and c are defined in [Chua and Ying, eq (2)].
-[Chua and Ying, eq (2)] : Chua, L., & Ying, R. (1983). Canonical \
-piecewise-linear analysis. IEEE Transactions on Circuits and Systems, \
-30(3), 125-140.
+    Returns a piecewise linear interpolation of the set (X_lst, Y_lst), based on
+    the following explicit form:
+
+    f(x) = a + b.x + sum(c_i*abs(x - X_i)),
+
+    where i denote the i-th component of the list and a, b and c are defined
+    in [CY83, eq (2)].
+
+    [CY83] : Chua, L., & Ying, R. (1983). Canonical piecewise-linear analysis.
+    IEEE Transactions on Circuits and Systems, 30(3), 125-140.
     """
 
     # Numerical values

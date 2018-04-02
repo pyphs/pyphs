@@ -42,7 +42,7 @@ class Dissipative(Graph):
 
         # state  variable
         w = symbols("w"+label)
-        # storage funcion
+        # dissipative funcion
         z = pwl_func(w_vals, z_vals, w, **kwargs)
 
         if ctrl == 'e':

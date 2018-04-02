@@ -16,10 +16,6 @@ from pyphs.misc.tools import geteval
 from pyphs.config import VERBOSE
 import h5py
 
-try:
-    import itertools.izip as zip
-except ImportError:
-    pass
 
 class H5Data(object):
     """
@@ -251,7 +247,7 @@ class H5Data(object):
             self.config['load']['step'] = 1
         else:
             if not 1 <= i or not isinstance(i, (int, float)):
-                text = 'step must be a strictly positive integer.'
+                text = 'step must be an integer >= 1.'
                 raise ValueError(text)
             self.config['load']['step'] = int(i)
 
@@ -277,7 +273,7 @@ class H5Data(object):
 
     # ----------------------------------------------------------------------- #
 
-    def init_data(self, sequ=None, seqp=None, nt=None):
+    def init_data(self, nt=None, sequ=None, seqp=None):
         """
         Initialize the object and save the sequences for input u, parameters p
         and state initialisation x0 to files in the folder specified by the
@@ -285,6 +281,10 @@ class H5Data(object):
 
         Parameters
         ----------
+
+        nt: int or None, optional
+            Number of time steps. If None, it is extracted from sequ or seqp
+            dimensions.
 
         sequ: iterable or None, optional
             Input sequence wich elements are arrays with shape (dims.y(), ). If
@@ -299,56 +299,49 @@ class H5Data(object):
             is set to nt=len(seqp). If None, a sequence with length nt of zeros
             with appropriate shape is used (default).
 
-        nt: int or None:
-            Number of time steps. If None, the lenght of either sequ or seqp
-            must be known (default).
-
         """
         # get number of time-steps
         if nt is None:
             if hasattr(sequ, '__len__'):
                 nt = len(sequ)
+            elif hasattr(sequ, 'shape'):
+                nt = sequ.shape[0]
             elif hasattr(seqp, '__len__'):
                 nt = len(seqp)
+            elif hasattr(seqp, 'shape'):
+                nt = seqp.shape[0]
             else:
                 raise ValueError("""Unknown number of iterations.
 Please give either a list u (input sequence), a list p (sequence of parameters)
 or an integer nt (number of time steps).'
     """)
 
+        # store number of time steps
         self.config['nt'] = nt = int(nt)
 
         # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
         if sequ is None:
-            dimy = self.method.dims.y()
-
-            def generator_sequ():
-                value = [0, ] * dimy if dimy > 0 else []
-                for _ in range(nt):
-                    yield value
-
-            sequ = generator_sequ()
+            ny = self.method.dims.y()
+            sequ = [[0]*ny for _ in range(nt)]
 
         # if seqp is not provided, a sequence of [[0]*np]*nt is assumed
         if seqp is None:
-            dimp = self.method.dims.p()
+            np = self.method.dims.p()
+            seqp = [[0]*np for _ in range(nt)]
 
-            def generator_seqp():
-                value = [0, ] * dimp if dimp > 0 else []
-                for _ in range(nt):
-                    yield value
-
-            seqp = generator_seqp()
-
-        self.h5open()
-
-        # Init shape
-        self.h5file[self.dname].resize((nt, self.dim))
-
+        # data to store in h5 dataset
         seqs = {'u': sequ, 'p': seqp}
 
-        self.h5dump_seqs(seqs, slice(0, self.config['nt']))
+        # Open h5 file
+        self.h5open()
 
+        # Init h5 dataset shape
+        self.h5file[self.dname].resize((nt, self.dim))
+
+        # dump seqs on times [0:nt-1]
+        self.h5dump_seqs(seqs, slice(0, nt))
+
+        # Close h5 file
         self.h5close()
 
     # ----------------------------------------------------------------------- #
@@ -589,7 +582,9 @@ or an integer nt (number of time steps).'
         # Set time slice
 
         if tslice is None:
-            tslice = slice(self.start, self.stop, self.step)
+            tslice = slice(self.start,
+                           self.stop,
+                           self.step)
 
         elif isinstance(tslice, int):
             tslice = slice(tslice, tslice+1, None)
@@ -617,7 +612,7 @@ or an integer nt (number of time steps).'
         if vslice is None:
             vslice = slice(*self.inds[vname])
 
-        # convert indice in var to indice in glbal dataset
+        # convert index in var to index in global dataset
         elif isinstance(vslice, int):
             vslice += self.inds[vname][0]
 
@@ -1183,6 +1178,16 @@ or an integer nt (number of time steps).'
 
         label : str (optional)
 
+        Returns
+        -------
+
+        fig : matplotlib figure
+            The generated figure for post-rendering.
+
+        ax : matplotlib axe or list of axes
+            The axe (or axes) of the plot for post-rendering.
+
+
         """
 
         tslice = self._tslice(tslice)
@@ -1196,11 +1201,12 @@ or an integer nt (number of time steps).'
         if tslice.step is None:
             tslice.step = max((1, (self.stop-self.start)//self.ntplot))
 
-        plot_powerbal(self, mode=mode, DtE=DtE, show=show, tslice=tslice)
+        fig, ax = plot_powerbal(self, mode=mode, DtE=DtE, show=show, tslice=tslice)
 
         if close:
             self.h5close()
 
+        return fig, ax
     # ----------------------------------------------------------------------- #
 
     def plot(self, vars, tslice=None, show=True, label=None):
@@ -1227,6 +1233,14 @@ or an integer nt (number of time steps).'
 
         label : str (optional)
 
+        Returns
+        -------
+
+        fig : matplotlib figure
+            The generated figure for post-rendering.
+
+        ax : matplotlib axe or list of axes
+            The axe (or axes) of the plot for post-rendering.
 
         """
         if not self._open:
@@ -1241,10 +1255,12 @@ or an integer nt (number of time steps).'
         if tslice.step is None:
             tslice.step = max((1, (self.stop-self.start)//self.ntplot))
 
-        plot(self, vars, show=show, label=label, tslice=tslice)
+        fig, ax = plot(self, vars, show=show, label=label, tslice=tslice)
 
         if close:
             self.h5close()
+
+        return fig, ax
 
     # ----------------------------------------------------------------------- #
 

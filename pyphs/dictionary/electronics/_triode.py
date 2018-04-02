@@ -67,8 +67,15 @@ class Triode(DissipativeNonLinear):
 
         # dissipation funcions
 
+        # smoothed signum function
         def sign(expr):
             return sympy.tanh(expr/GMIN)
+
+        # hard signum function
+#        def sign(expr):
+#            return sympy.Piecewise((-1, expr < 0),
+#                                   (0, expr == 0.),
+#                                   (1, True))
 
         def indicator(expr):
             return (1. + sign(expr))/2.
@@ -88,7 +95,6 @@ class Triode(DissipativeNonLinear):
             e2 = sympy.sqrt(Kvb + vpk**2)
             e3 = Kp*(mu**-1 + e1/e2)
             exprE = (vpk/Kp)*sympy.log(1 + sympy.exp(e3))
-
             expr = exprE**Ex * (1 + sign(exprE)) / Kg
             return expr.evalf()
 
@@ -112,7 +118,7 @@ class Triode(DissipativeNonLinear):
 
         # init component
         DissipativeNonLinear.__init__(self, label, edges,
-                                         w, z, **kwargs)
+                                      w, z, **kwargs)
 
     @staticmethod
     def metadata():

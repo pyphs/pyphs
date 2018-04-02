@@ -8,28 +8,32 @@ Created on Sat Jan 14 11:50:23 2017
 
 from __future__ import absolute_import, division, print_function
 
-from pyphs.core.tools import free_symbols
 from sympy.printing import ccode
 import sympy as sp
 from pyphs.core.tools import simplify
+from pyphs.misc.tools import geteval
+from pyphs.config import VERBOSE
 import time
 from ._method_invmat import MethodInvMat
 import os
 import string
-from pyphs import Netlist, Graph
 
 here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+
 
 def faust_expr(name, args, expr, subs):
     previous_expr = sp.sympify(0.)
     start = time.time()
-    while previous_expr != expr and time.time()-start<10:
+    while previous_expr != expr and time.time()-start < 10:
         previous_expr = expr
         expr = simplify(previous_expr)
-    code = '\n' + name + " = \(" + ('{}, '*len(args)).format(*map(str, args))[:-2] + ').('
+    code = '\n' + \
+        name + " = \(" + \
+        ('{}, '*len(args)).format(*map(str, args))[:-2] + ').('
     code += ccode(expr)
     code += ');'
     return code.replace('(-', '(0-')
+
 
 def faust_vector(name, expr, argsnames, subs, method):
     joinListArgsNames = ', '.join(map(lambda s: s[-1], argsnames))
@@ -39,11 +43,14 @@ def faust_vector(name, expr, argsnames, subs, method):
     argsnames = list(map(str, methodargs))
     code = str()
     for i, e in enumerate(expr):
+        if VERBOSE >= 2:
+            print('    Generate Faust expression {}[{}]'.format(name, i))
         code += faust_expr(name+str(i), argsnames, e, subs)
     code += '\n'*2 + name + " = "
     if len(expr) > 0:
         code += joinListArgsNames
-        code += " <: " + ''.join([name+str(i)+', ' for i in range(len(expr))])[:-2]
+        code += " <: " + ''.join([name+str(i)+', '
+                                  for i in range(len(expr))])[:-2]
     else:
         code += '0. : ! '
     code += ';'
@@ -53,8 +60,10 @@ def faust_vector(name, expr, argsnames, subs, method):
 def listToAllPass(l):
     return ('_, '*len(l))[:-2]
 
+
 def listToAllTerminate(l):
     return ('!, '*len(l))[:-2]
+
 
 def listToTerminateAllExcept(l, i):
     string = ''
@@ -62,13 +71,13 @@ def listToTerminateAllExcept(l, i):
         string += '_, ' if n == i else '!, '
     return string[:-2]
 
+
 def listToPassAllExcept(l, i):
     string = ''
     for n, el in enumerate(l):
         string += '!, ' if n == i else '_, '
     return string[:-2]
 
-from pyphs.misc.tools import geteval
 
 def multirecursive(method, process, nin, nout, inits):
     string = process
@@ -87,13 +96,17 @@ def multirecursive(method, process, nin, nout, inits):
             initstart = method.dims.x()+method.dims.w()+method.dims.x()
         else:
             initname = 'o'
-            initstart += method.dims.x()+method.dims.w()+method.dims.x()+method.dims.y()
+            initstart += method.dims.x() + \
+                method.dims.w() + \
+                method.dims.x() + \
+                method.dims.y()
 
-        p1 = listToPassAllExcept([None, ]*(nin-i), 0)+',' if nin-i>0 else ''
+        p1 = listToPassAllExcept([None, ]*(nin-i), 0)+',' if nin-i > 0 else ''
         p2 = listToAllPass([None, ]*(nout-nin))
         prefix = 'prefix({0}, _)'.format(inits[initname][i-initstart])
         string = '(' + string + ') ~ {2} <: {0}{1}'.format(p1, p2, prefix)
     return string
+
 
 def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
                    nIt=3):
@@ -121,6 +134,9 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
         Number of NL solver iterations
     """
 
+    if VERBOSE >= 1:
+        print('Generate Faust code')
+
     with open(os.path.join(here, 'faustfx.template'), 'r') as f:
         template = string.Template(f.read())
 
@@ -144,13 +160,12 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     if inits is None:
         inits = {}
     for name in ('x', 'dx', 'w', 'u', 'o', 'p'):
-        if not name in inits.keys():
+        if name not in inits.keys():
             inits[name] = [0., ]*len(geteval(method, name))
 
     if path is None:
         path = method.label + '.dsp'
     argsnames = ['dx', 'w', 'x', 'o', 'u']
-
 
     cinputs = '('
     for i in range(len(method.u)):
@@ -164,15 +179,21 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     constPars = ''
     for k in method.subs.keys():
         constPars += '\n{0} = {1};'.format(str(k), method.subs[k])
+    if constPars == '':
+        constPars = '// None'
 
     constInputs = ''
     for i, k in enumerate(method.u):
         if i not in iin:
             constInputs += '\n{0} = {1};'.format(str(k), inputs[i])
+    if constInputs == '':
+        constInputs = '// None'
 
     sliders = ''
     for p in method.p:
         sliders += '\n{0} = hslider("{0}", 0.5, 0., 1., 0.001);'.format(str(p))
+    if sliders == '':
+        sliders = '// None'
 
     def code_pass(name):
         a = geteval(method, name)
@@ -216,12 +237,16 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
             cstop += '\n'
 
     udvl = faust_vector('udvl', method.ud_vl, argsnames, method.subs, method)
-    udvnl = faust_vector('udvnl', method.ud_vnl, argsnames, method.subs, method)
+    udvnl = faust_vector('udvnl',
+                         method.ud_vnl,
+                         argsnames,
+                         method.subs,
+                         method)
     y = faust_vector('y', [method.output()[i] for i in iout],
                      argsnames, method.subs, method)
 
-    udNL = 'iterationNL:'*nIt if len(method.vnl()) > 0 else ''
-    udL = 'iterationL' if len(method.vl()) > 0 else ''
+    udNL = ('iterationNL : '*nIt)[:-1] if len(method.vnl()) > 0 else ''
+    udL = 'iterationL' if len(method.vl()) > 0 else 'args'
     udXY = '<: (udx, y)' if len(method.x) > 0 else '<: y'
 
     nin = len(method.x)*2 + len(method.w) + len(method.observers)
@@ -261,7 +286,6 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
             'out': infoOut[:-2] + '.',
             'pars': infoPars[:-2] + '.'}
 
-
     cfaust = template.substitute(subs)
 
     with open(path, 'w') as f:
@@ -269,34 +293,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
             if i > 0:
                 f.write('\n')
             f.write(l)
-#%%
-#    simu = netlist.to_simulation(config=config)
-#
-#    dur = 0.01
-#    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
-#
-#    def sequ():
-#        for el in u():
-#            yield (el, )
-#
-#    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
-#
-#    # Run the simulation
-#    simu.process()
-#
-#    simu.data.plot([('x', 0)])
-#
-#    # Plots
-#    simu.data.plot_powerbal(mode='single')
-#    simu.data.plot(['u', 'x', 'y'])
-#
-#    # clean: delete folders 'data' and 'figures'
-#    shutil.rmtree(os.path.join(here, 'data'))
-#    shutil.rmtree(os.path.join(here, 'figures'))
-#
-#    # clean: delete folder 'rlc'
-#    if config['lang'] == 'c++':
-#        shutil.rmtree(os.path.join(here, 'rlc'))
+
 
 def core2faustfx(core, config=None, path=None, inputs=None,
                  outputs=None, inits=None, nIt=10):

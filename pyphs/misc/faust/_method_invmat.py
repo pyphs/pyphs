@@ -8,18 +8,11 @@ Created on Wed Dec 28 11:13:24 2016
 
 from __future__ import absolute_import, division, print_function
 
-import sympy as sp
-from pyphs.core.maths import matvecprod, jacobian, sumvecs
-from pyphs.core.tools import free_symbols, types, simplify
-from pyphs.config import CONFIG_METHOD, VERBOSE, EPS_DG, FS_SYMBS
-from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
-from pyphs import Core
+from pyphs.core.maths import matvecprod
+from pyphs.core.tools import types, simplify
+from pyphs.config import VERBOSE
 from pyphs.numerics.cpp.method2cpp import method2cpp
-from pyphs.numerics.tools import Operation
 from pyphs.numerics.numerical_method._method import Method
-from pyphs.numerics.numerical_method._discrete_calculus import (discrete_gradient, gradient_theta,
-                                 gradient_trapez)
-import copy
 
 
 class MethodInvMat(Method):
@@ -61,22 +54,26 @@ class MethodInvMat(Method):
 
         if VERBOSE >= 2:
             print('    Build {}'.format('Fnl'))
-        Fnl = list(types.matrix_types[0](self.Gnl()) - types.matrix_types[0](matvecprod(self.jactempFnll()*self.ijactempFll, self.Gl())))
+        temp = matvecprod(self.jactempFnll()*self.ijactempFll, self.Gl())
+        Fnl = list(types.matrix_types[0](self.Gnl()) -
+                   types.matrix_types[0](temp))
 
         if VERBOSE >= 2:
-            print('    simplify {}'.format('jacFnlnl'))
-        jacFnlnl = simplify(self.jacGnlnl() - self.jactempFnll()*self.ijactempFll*self.jacGlnl())
+            print('    Simplify {}'.format('jacFnlnl'))
+        jacFnlnl = simplify(self.jacGnlnl() -
+                            self.jactempFnll()*self.ijactempFll*self.jacGlnl())
 
         if VERBOSE >= 2:
-            print('    Build {}'.format('ijacFnlnl'))
+            print('    Inverse {}'.format('jacFnlnl'))
         if jacFnlnl.shape == (0, 0):
             ijacFnlnl = jacFnlnl
         else:
-            ijacFnlnl = jacFnlnl.inverse_LU()
+            ijacFnlnl = jacFnlnl.inv()
 
         if VERBOSE >= 2:
-            print('    Build {}'.format('ud_vnl'))
-        ud_vnl = list(types.matrix_types[0](self.vnl()) - types.matrix_types[0]((matvecprod(ijacFnlnl, Fnl))))
+            print('    Build {} for Faust code generation'.format('ud_vnl'))
+        ud_vnl = list(types.matrix_types[0](self.vnl()) -
+                      types.matrix_types[0]((matvecprod(ijacFnlnl, Fnl))))
         self.setexpr('ud_vnl', list(ud_vnl))
 
         self.init_funcs()

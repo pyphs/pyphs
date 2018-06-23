@@ -18,10 +18,10 @@ from pyphs.config import plot_format
 
 from pyphs.graphs.netlists import datum
 from pyphs.graphs.tools import multi2single, getedges
+
 # pos = spring_layout(graph, iterations=200)
 
-
-LAYOUT = 'spring'
+LAYOUT = 'circular'
 ITERATIONS = 1000
 
 

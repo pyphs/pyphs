@@ -10,20 +10,33 @@ from pyphs.config import datum
 
 
 def serial_next(graph, n1, n2):
+    """
+    Return a list of
+    """
+    # Undirected graph only
     assert not graph.is_directed()
+
+    # Init list of nodes in the serial chain
     serial = [n1, n2]
+    # COntinue serial chain until fork or datum
     while graph.degree(serial[-1]) == 2 and not serial[-1] == datum:
+        # get serial node label
         l = list(graph.neighbors(serial[-1]))
         l.pop(l.index(serial[-2]))
+        # append list of nodes in the serial chain
         serial.append(l[0])
     return serial
 
 
 def serial_edges(graph):
+    # Undirected graph only
     g = graph.to_undirected()
+    # init lists
     serial_nodes = list()
     all_edges = list()
+    # Check for datum termination
     datum_end = False
+    # for
     for node in g.nodes():
         if node not in serial_nodes and g.degree(node) == 2 \
                 and not node == datum:

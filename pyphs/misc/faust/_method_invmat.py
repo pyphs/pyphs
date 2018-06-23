@@ -13,11 +13,12 @@ from pyphs.core.tools import types, simplify
 from pyphs.config import VERBOSE
 from pyphs.numerics.cpp.method2cpp import method2cpp
 from pyphs.numerics.numerical_method._method import Method
+import sympy
 
 
 class MethodInvMat(Method):
     """
-    Base class for pyphs symbolic numerical methods.
+    Pyphs symbolic numerical methods for faust code generation
     """
 
     to_cpp = method2cpp
@@ -72,8 +73,8 @@ class MethodInvMat(Method):
 
         if VERBOSE >= 2:
             print('    Build {} for Faust code generation'.format('ud_vnl'))
-        ud_vnl = list(types.matrix_types[0](self.vnl()) -
-                      types.matrix_types[0]((matvecprod(ijacFnlnl, Fnl))))
+        ud_vnl = list(sympy.simplify(types.matrix_types[0](self.vnl()) -
+                      types.matrix_types[0]((matvecprod(ijacFnlnl, Fnl)))))
         self.setexpr('ud_vnl', list(ud_vnl))
 
         self.init_funcs()

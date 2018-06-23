@@ -17,50 +17,102 @@ from .exceptions import UndefinedPotential
 from ..config import datum, VERBOSE
 import os
 
+description = "\
+Class for graph representation of port-Hamiltonian systems and the automated \
+generation of pyphs.Core by graph analysis."
+
 
 class Graph(nx.MultiDiGraph):
-    """
-    Class that stores and manipulates graph representation of \
-port-Hamiltonian systems.
-    """
-    def __init__(self, netlist=None, label=None):
+    "{0}".format(description)
 
-        self.datum = datum
+    # identifiers parallel edges
+    _idpar = 0
+    # identifiers serial edges
+    _idser = 0
+
+    # Datum
+    datum = datum
+
+    # -------------------------------------------------------------------------
+    def __init__(self, netlist=None, label=None):
+        """
+        {0}
+
+        Parameters
+        ----------
+
+        netlist : Netlist, str, or None (optional)
+            If type is pyphs.Netlist, the graph is built with netlist.to_graph.
+            If type is str, it is considered as a path to a '*.net' file from
+            which a new pyphs.Netlist is created and the graph is built.
+            If None, the graph is initialized as empty. Default is None.
+
+        label : str or None (optional)
+            Graph label. If None and a netlist is provided, the label is
+            recovered from pyphs.Netlist.label value.
+
+        Output
+        ------
+
+        graph : pyphs.Graph
+            A networkx.MultiDiGraph object with additional methods and
+            attributes for the generation of pyphs.Core objects by graph
+            analysis.
+
+        """.format(description)
+
 
         nx.MultiDiGraph.__init__(self)
 
         self.core = Core()
 
+        # Read netlist and label
         if netlist is not None:
+
             from ..graphs import Netlist
 
-            if isinstance(netlist, str):
-                netlist = Netlist(netlist)
+            # Verbosity
+            if VERBOSE >= 1:
+                print('\nBuild graph {}...'.format(self.label))
 
-            elif not isinstance(netlist, Netlist):
+            # build a netlist from path if netlist parameter is a string
+            if isinstance(netlist, str):
+                path = netlist
+                netlist = Netlist(path)
+            # pass if netlist is a pyphs.Netlist
+            elif isinstance(netlist, Netlist):
+                pass
+            # else raise TypeError
+            else:
                 t = type(netlist)
                 text = 'Can not understand netlist type {}'.format(t)
                 raise TypeError(text)
 
+            # store netlist
             self.netlist = netlist
 
+            # read netlist and build graph
             self._build_from_netlist()
 
+            # graph label
             if label is None:
+                # read the label from netlist
                 label = os.path.basename(netlist.filename).split('.')[0]
 
-        if label is None:
+            # Verbosity
+            if VERBOSE >= 1:
+                print('Done.'.format(self.label))
+
+        elif label is None:
             label = 'None'
 
+        # graph label
         self.label = label
 
-        if VERBOSE >= 1:
-            print('Build graph {}...'.format(self.label))
-
-        self._idpar = 0
-        self._idser = 0
-
     def _build_analysis(self, verbose=False, plot=False):
+        """
+        Initialize the pyphs.graphs.analysis.GraphAnalysis object.
+        """
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
     def to_core(self, label=None, verbose=False, plot=False, connect=True,
@@ -86,40 +138,47 @@ port-Hamiltonian systems.
             state of the analysis process. Default is False.
 
         connect : bool (optional)
-            If True, the method core.connect() is called before returning, so
-            that the transformers and gyrators are resolved in the structure
-            matrix. Default is True.
+            If True, the method core.connect() is called before output of the
+            pyphs.Core object, so that the transformers and gyrators are
+            resolved in the structure matrix. Default is True.
 
         Output
         ------
 
         core : pyphs.Core
             The PHS core object associated with the graph.
+
         """
+        # verbosity
         if VERBOSE >= 1:
             print('Build core {}...'.format(self.label))
 
+        # check for graph analysis object
         if not hasattr(self, 'analysis'):
             self._build_analysis(verbose=verbose, plot=plot)
 
+        # check for graph analysis object
         if not hasattr(self.analysis, 'iGamma_fc') or force:
             self.analysis.perform()
 
+        # build Core (after graph analysis)
         buildCore(self)
 
+        # returned core is a copy
         core = self.core.__copy__()
 
+        # connect gyrators and transformers
         if connect:
             core.connect()
 
+        # Core.label can be specified, else the Graph.label is recovered
         if label is None:
             label = self.label
-
         if not isinstance(label, str):
             raise TypeError('Core label not understood:\n{}'.format(label))
-
         core.label = label
 
+        # Transfer reference to Netlist object
         if hasattr(self, 'netlist'):
             core._netlist = self.netlist
 
@@ -214,72 +273,122 @@ port-Hamiltonian systems.
 
     def plot(self, filename=None, ax=None, show=True):
         """
-        Plot the graph (networkx.plot method).
+        Plot the graph (enhanced networkx.plot method).
         """
         plot(self, filename=filename, ax=ax, show=show)
 
     def _split_serial(self):
+        """
+        Detect clusters of serial edges and replace them by equivalent
+        subgraph.
+        """
+        # list of clusters of serial edges
         se = serial_edges(self)
         for edges in se:
+            # remove edges in serial cluster
             for e in edges[0]:
                 self.remove_edges_from([(e[0], e[1], None) for e in edges[0]])
-            sg = Graph()
-
+            # increment counter for parallel edges labels
+            self._idser += 1
+            sglabel = 'serial{0}'.format(self._idser)
+            # instanciate a new subgraph
+            sg = Graph(label=sglabel)
+            # add serial cluster edges
+            sg.add_edges_from(edges[0])
+            # add serial cluster edges
             for n in edges[1:3]:
                 if not n == datum:
                     sg.add_edge(datum, n, **{'type': 'port',
                                              'ctrl': '?',
-                                             'label': n})
-            sg.add_edges_from(edges[0])
+                                             'label': sglabel + '_out_' + n})
+            # build subgraph analysis object
             sg._build_analysis()
-            self._idser += 1
+            # add subgraph to root graph
             self.add_edge(edges[1], edges[2], **{'type': 'graph',
                                                  'ctrl': '?',
-                                                 'label': 'serial{0}'.format(self._idser),
+                                                 'label': sglabel,
                                                  'graph': sg})
+            # remove orphan nodes (with 0 degree)
             nodes_to_remove = list()
             for degree in self.degree():
                 if degree[1] == 0:
                     nodes_to_remove.append(degree[0])
-
             for node in nodes_to_remove:
                 self.remove_node(node)
+        # Return True if any change occured
         return bool(len(se))
 
     def _split_parallel(self):
+        """
+        Detect clusters of parallel edges and replace them by equivalent
+        subgraph.
+        """
+        # list of paralell edges
         pe = parallel_edges(self)
         for edges in pe:
+            # get nodes
             n1, n2 = edges[0][:2]
+            # remove forward edges
             self.remove_edges_from([(n1, n2, k) for k in self[n1][n2]])
+            # remove backward edges if any
             try:
                 self.remove_edges_from([(n2, n1, k) for k in self[n2][n1]])
             except KeyError:
                 pass
-            pg = Graph()
-            pg.add_edges_from(edges)
-
-            pg._build_analysis()
+            # increment counter for parallel edges labels
             self._idpar += 1
+            pglabel = 'parallel{0}'.format(self._idpar)
+            # instanciate a new subgraph
+            pg = Graph(label=pglabel)
+            # add parallel edges
+            pg.add_edges_from(edges)
+            # build subgraph analysis object
+            pg._build_analysis()
+            # add control edge
             for n in (n1, n2):
                 if not n == datum:
                     pg.add_edge(datum, n, **{'type': 'port',
                                              'ctrl': '?',
-                                             'label': n})
+                                             'label': pglabel + '_out_' + n})
+            # add subgraph to root graph
             self.add_edge(n1, n2, **{'type': 'graph',
                                      'ctrl': '?',
                                      'label':
-                                     'parallel{0}'.format(self._idpar),
+                                     pglabel,
                                      'graph': pg})
+        # Return True if any change occured
         return bool(len(pe))
 
     def split_sp(self):
-        flag = True
-        while flag:
+        """
+        Split the graph into a tree graph of serial/parallel subgraphs.
+        """
+        change = True
+        while change:
+            # check for serial connection
             change_s = self._split_serial()
+            # check for parallel connection
             change_p = self._split_parallel()
-            flag = any((change_s, change_p))
+            # Test for any change to iterate
+            change = any((change_s, change_p))
+
+    @property
+    def subgraphs(self):
+        """
+        Get a list of subgraphs.
+        """
+        subgraphs = dict()
+        for e in self.edges(data=True):
+            # if leaf is a subgraph
+            if e[-1]['type'] == 'graph':
+                print(e[-1]['label'])
+                subgraphs[e[-1]['label']] = e[-1]['graph']
+        return subgraphs
 
     def __add__(graph1, graph2):
+        """
+        Graph summation.
+        """
         if hasattr(graph1, 'netlist') and hasattr(graph2, 'netlist'):
             graph1.netlist += graph2.netlist
         graph1.core += graph2.core
@@ -287,7 +396,6 @@ port-Hamiltonian systems.
         if hasattr(graph1, 'positions'):
             delattr(graph1, 'positions')
         return graph1
-
 
     def _get_edgeslist(self):
         """
@@ -305,10 +413,22 @@ port-Hamiltonian systems.
 
     @staticmethod
     def iter_analysis(graph):
+        """
+        Recursive graph analysis over a serial_parallel tree graph.
+
+        See Also
+        --------
+        pyphs.Graph.split_sp
+
+        """
+        # check for graph analysis object
+        if not hasattr(graph, 'analysis'):
+            graph._build_analysis()
+        # analyze root graph
         graph.analysis.iteration()
+        # iterate over leaves
         for e in graph.edges(data=True):
+            # if leaf is a subgraph
             if e[-1]['type'] == 'graph':
-                try:
-                    Graph.iter_analysis(e[-1]['graph'])
-                except UndefinedPotential:
-                    pass
+                # iterate
+                Graph.iter_analysis(e[-1]['graph'])

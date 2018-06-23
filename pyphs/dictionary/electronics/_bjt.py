@@ -100,7 +100,7 @@ transistor#Ebers.E2.80.93Moll_model
                    'link': None}
         # edge
         Nb, Nc, Ne = nodes
-        iNb, iNc, iNe = [str(el)+label for el in (Nb, Nc, Ne)]
+        iNb, iNc, iNe = [label + '_' + str(el) for el in (Nb, Nc, Ne)]
         edges = [(iNb, iNc, data_bc),
                  (iNb, iNe, data_be),
                  (Nb, iNb, data_rb),

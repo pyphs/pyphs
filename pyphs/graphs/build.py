@@ -58,20 +58,22 @@ according to the control type of each indeterminate edge
     # select dissipative relations
     for e in graph.analysis.diss_edges:
 
-#        ctrl = graph.analysis.get_edge_data(e, 'ctrl')
-#        # select for indeterminate edges only
-#        if ctrl == '?':
-
         # get edge label index in 'w'
         label = graph.analysis.get_edge_data(e, 'label')
+        # get index in w
         indw = graph.core.w.index(label)
+
         if e in graph.analysis.ec_edges:
+            # select effocrt-controlled constitutive law
             graph.core.z[indw] = \
                 graph.analysis.get_edge_data(e, 'z')['e_ctrl']
-        else:
-            assert e in graph.analysis.fc_edges
+        elif e in graph.analysis.fc_edges:
+            # select flux-controlled constitutive law
             graph.core.z[indw] = \
                 graph.analysis.get_edge_data(e, 'z')['f_ctrl']
+        else:
+            message = "Control of edge {0} is not known."
+            raise ValueError(message)
 
 
 def _setCore(graph):
@@ -84,6 +86,7 @@ def _setCore(graph):
         new_indices_x.append(index_e_in_x)
     graph.core.x = [graph.core.x[el] for el in new_indices_x]
 
+    # sort dissipatives
     new_indices_w = []
     for e in graph.analysis.diss_edges:
         e_label = graph.analysis.get_edge_data(e, 'label')
@@ -92,6 +95,7 @@ def _setCore(graph):
     graph.core.w = [graph.core.w[el] for el in new_indices_w]
     graph.core.z = [graph.core.z[el] for el in new_indices_w]
 
+    # sort sources
     new_indices_y = []
     for e in graph.analysis.port_edges:
         e_label = graph.analysis.get_edge_data(e, 'label')
@@ -100,20 +104,21 @@ def _setCore(graph):
     graph.core.y = [graph.core.y[el] for el in new_indices_y]
     graph.core.u = [graph.core.u[el] for el in new_indices_y]
 
+    # sort connectors
     new_indices_connector = []
     for e in graph.analysis.conn_edges:
         e_label = graph.analysis.get_edge_data(e, 'label')
         new_indices_connector.append(graph.core.cy.index(e_label))
         index_e_in_connector = [e_label in c['y']
                                 for c in graph.core.connectors].index(True)
-
         alpha = graph.analysis.get_edge_data(e, 'alpha')
         if alpha is not None:
             graph.core.connectors[index_e_in_connector]['alpha'] = alpha
-
     graph.core.cy = [graph.core.cy[el] for el in new_indices_connector]
     graph.core.cu = [graph.core.cu[el] for el in new_indices_connector]
 
+    # select constitutive law (ec or fc) for dissipative components
     _select_relations(graph)
 
+    # set structure matrix
     graph.core.M = graph.analysis.J

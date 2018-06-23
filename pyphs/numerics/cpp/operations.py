@@ -136,9 +136,9 @@ def _str_mat_op_get(method, name, objlabel):
     else:
         shape = mat.shape
     mtype = matrix_type(shape[0], shape[1])
-    get_h = '\n{0} {1}() const;'.format(mtype, name)
+    get_h = '\nconst {0} & {1}() const;'.format(mtype, name)
     get_cpp = \
-        '\n{0} {1}::{2}() const'.format(mtype, objlabel, name)
+        '\nconst {0} & {1}::{2}() const'.format(mtype, objlabel, name)
     get_cpp += ' {\n' + indent('return _{0};'.format(name)) + '\n}'
     return get_h, get_cpp
 
@@ -152,7 +152,7 @@ def _str_mat_op_get_vector(method, name, objlabel):
     get_cpp = \
         '\n{0} {1}::{2}_vector() const'.format(mtype, objlabel, name) + ' {'
     dim = mat.shape[0]
-    get_cpp += indent("\nvector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
+    get_cpp += indent("\nstatic vector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
     for i in range(dim):
         get_cpp += indent("\nv[{0}] = _{1}({0}, 0);".format(i, name))
     get_cpp += indent("\nreturn v;")+"\n}"
@@ -160,9 +160,9 @@ def _str_mat_op_get_vector(method, name, objlabel):
 
 
 def _str_scal_op_get(name, objlabel):
-    get_h = '\n{1} {0}() const;'.format(name, CONFIG_CPP['float'])
+    get_h = '\nconst {1} & {0}() const;'.format(name, CONFIG_CPP['float'])
     get_cpp = \
-        '\n{2} {0}::{1}() const'.format(objlabel, name, CONFIG_CPP['float'])
+        '\nconst {2} & {0}::{1}() const'.format(objlabel, name, CONFIG_CPP['float'])
     get_cpp += ' {\n' + indent('return _{0};'.format(name)) + '\n}'
     return get_h, get_cpp
 

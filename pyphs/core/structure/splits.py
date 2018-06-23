@@ -15,10 +15,9 @@ import sympy
 
 def monovar_multivar(core):
     """
-Split core components into monovariate and multivariate components.
+    Split core components into monovariate and multivariate components.
     """
 
-    from utils.structure import move_stor, move_diss
     # split storage part
     i = 0
     for _ in range(core.dims.x()):
@@ -61,7 +60,7 @@ def linear_nonlinear(core, criterion=None):
     """
     1. Detect the number of linear storage component (_nxl) and of linear
     dissipative components (_nwl).
-    2. Sort linear and then nonlinear components.
+    2. Sort components as [linear, nonlinear].
     3. Build matrices Q and Zl.
 
     Parameters
@@ -70,7 +69,7 @@ def linear_nonlinear(core, criterion=None):
     core : pyphs.Core
         Core to analyse.
 
-    criterion: list of tuples of objects
+    criterion: list of tuples of objects or None (optional)
         criterion[0] = (hessH, argx)
         criterion[1] = (jacz,  argz)
     """

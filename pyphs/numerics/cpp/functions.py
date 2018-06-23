@@ -109,8 +109,8 @@ def _append_funcs_get_element(method, files, objlabel):
 def _str_mat_func_get(method, name, objlabel):
     mat = types.matrix_types[0](getattr(method, name + '_expr'))
     mtype = matrix_type(mat.shape[0], mat.shape[1])
-    get_h = '\n{0} {1}() const;'.format(mtype, name)
-    get_cpp = '\n{0} {1}::{2}() const'.format(mtype, objlabel, name)
+    get_h = '\nconst {0} & {1}() const;'.format(mtype, name)
+    get_cpp = '\nconst {0} & {1}::{2}() const'.format(mtype, objlabel, name)
     get_cpp += ' {\n'
     get_cpp += indent("return _{0};".format(name))
     get_cpp += '\n}'
@@ -118,9 +118,9 @@ def _str_mat_func_get(method, name, objlabel):
 
 
 def _str_scal_func_get(name, objlabel):
-    get_h = '\n{1} {0}();'.format(name, CONFIG_CPP['float'])
+    get_h = '\nconst {1} & {0}();'.format(name, CONFIG_CPP['float'])
     get_cpp = \
-        '\n{2} {0}::{1}() const '.format(objlabel, name, CONFIG_CPP['float']) + '{\n'
+        '\nconst {2} & {0}::{1}() const '.format(objlabel, name, CONFIG_CPP['float']) + '{\n'
     get_cpp += indent('return _{0};'.format(name)) + '\n}'
     return get_h, get_cpp
 
@@ -128,11 +128,11 @@ def _str_scal_func_get(name, objlabel):
 def _str_mat_func_get_vector(method, name, objlabel):
     mat = types.matrix_types[0](getattr(method, name + '_expr'))
     mtype = 'vector<{0}>'.format(CONFIG_CPP['float'])
-    get_h = '\n{0} {1}_vector() const;'.format(mtype, name)
-    get_cpp = '\n{0} {1}::{2}_vector() const'.format(mtype, objlabel, name) + \
+    get_h = '\nconst {0} & {1}_vector() const;'.format(mtype, name)
+    get_cpp = '\nconst {0} & {1}::{2}_vector() const'.format(mtype, objlabel, name) + \
         ' {'
     dim = mat.shape[0]
-    get_cpp += indent("\nvector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
+    get_cpp += indent("\nstatic vector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
     for i in range(dim):
         get_cpp += indent("\nv[{0}] = _{1}({0}, 0);".format(i, name))
     get_cpp += indent("\nreturn v;")+"\n}"
@@ -141,8 +141,8 @@ def _str_mat_func_get_vector(method, name, objlabel):
 
 def _str_mat_func_get_element(method, name, objlabel):
     mtype = CONFIG_CPP['float']
-    get_h = '\n{0} {1}(unsigned int &) const;'.format(mtype, name)
-    get_cpp = '\n{0} {1}::{2}(unsigned int & index) const'.format(mtype, objlabel, name) + \
+    get_h = '\nconst {0} & {1}(unsigned int &) const;'.format(mtype, name)
+    get_cpp = '\nconst {0} & {1}::{2}(unsigned int & index) const'.format(mtype, objlabel, name) + \
         ' {'
     get_cpp += indent("\nreturn _{0}(index, 0);".format(name))+"\n}"
     return get_h, get_cpp

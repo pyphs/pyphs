@@ -71,10 +71,6 @@ class Graph(nx.MultiDiGraph):
 
             from ..graphs import Netlist
 
-            # Verbosity
-            if VERBOSE >= 1:
-                print('\nBuild graph {}...'.format(self.label))
-
             # build a netlist from path if netlist parameter is a string
             if isinstance(netlist, str):
                 path = netlist
@@ -91,9 +87,6 @@ class Graph(nx.MultiDiGraph):
             # store netlist
             self.netlist = netlist
 
-            # read netlist and build graph
-            self._build_from_netlist()
-
             # graph label
             if label is None:
                 # read the label from netlist
@@ -101,10 +94,13 @@ class Graph(nx.MultiDiGraph):
 
             # Verbosity
             if VERBOSE >= 1:
-                print('Done.'.format(self.label))
+                print('\nBuild graph {}...'.format(label))
+
+            # read netlist and build graph
+            self._build_from_netlist()
 
         elif label is None:
-            label = 'None'
+            label = 'graph'
 
         # graph label
         self.label = label

@@ -460,8 +460,16 @@ class Simulation(object):
 
             # Running commands
             try:
-                process = subprocess.run(cmd['build_tree'], **sp_config)
-                process = subprocess.run(cmd['compile_src'], **sp_config)
+                # subprocess.run has been introduced in py3.5
+                if hasattr(subprocess, 'run'):
+                    process = subprocess.run(cmd['build_tree'], **sp_config)
+                    process = subprocess.run(cmd['compile_src'], **sp_config)
+                else:
+                    sp_config.pop('check')
+                    process = subprocess.call(cmd['build_tree'].split(),
+                                              **sp_config)
+                    process = subprocess.call(cmd['compile_src'].split(),
+                                              **sp_config)
 
             except subprocess.CalledProcessError as error:
 
@@ -483,9 +491,15 @@ class Simulation(object):
 
         # Running executable simulation
         sp_config['stdout'] = subprocess.PIPE
-        process = subprocess.run('./bin/%s' % self.label, **sp_config)
 
-        print(process.stdout)
+        # subprocess.run has been introduced in py3.5
+        if hasattr(subprocess, 'run'):
+            process = subprocess.run('./bin/%s' % self.label, **sp_config)
+            print(process.stdout)
+
+        else:
+            process = subprocess.call(['./bin/%s' % self.label, ],
+                                      **sp_config)
 
         # go back to work folder
         os.chdir(self.work_path)

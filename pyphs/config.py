@@ -153,8 +153,7 @@ CONFIG_METHOD = {'grad': GRADIENT,
 SIMULATION_PATH = None
 
 # Simulation language in {'python', 'c++'}
-# Notice the 'c++' option need an appropriate configuration
-# of SCRIPT above.
+# Notice the 'c++' option need an appropriate configuration (see website).
 LANGUAGE = 'python'
 
 # Data names in the global datasapce of the hdf5 file saved in PATH/data.
@@ -185,4 +184,4 @@ CONFIG_SIMULATION = {'path': SIMULATION_PATH,
 # Below are the options for PLOTS
 
 # Export format:
-plot_format = 'pdf'
+plot_format = 'png'

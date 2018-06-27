@@ -160,7 +160,7 @@ def graph_eq(splitgraph):
     for edge in edges:
         if edge[2]['type'] == 'graph':
             subgraph = edge[2]['graph']
-            subgraph = graph_eq(subgraph)
+            graph_eq(subgraph)
     if edges[0][0] == edges[1][0]:
         graph_analysis_parallel(splitgraph)
     else:

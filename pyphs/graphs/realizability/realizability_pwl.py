@@ -6,10 +6,11 @@ Created on Fry May 25 15:23:49 2018
 @author: Najnudel
 """
 import warnings
-from ..dictionary import pwl
-from ..dictionary.pwl.tools import data_generator
+from pyphs.dictionary import pwl
+from pyphs.dictionary.pwl.tools import data_generator
 import numpy as np
 import os
+
 
 def PWL(X, Y, Xin):
     n = len(X)
@@ -39,8 +40,8 @@ def PWL(X, Y, Xin):
             Yout = np.append(Yout,y)
         Yout.sort()
         return Yout
-    
-    
+
+
 def PWL_inv(X, Y):
     n = len(X)
     if n < 2:
@@ -53,13 +54,13 @@ def PWL_inv(X, Y):
         raise ValueError('PWL of zero must be zero')
     else:
         return Y, X
-    
-    
+
+
 def PWL_comp(X, Y1, Y2, Z):
     Zout = PWL(Y2, Z, Y1)
     return X, Zout
 
-    
+
 def PWL_sum(XX, YY, tol=2):
     eps = np.finfo(float).eps
     n = len(XX)
@@ -85,9 +86,9 @@ def PWL_integ(X, Y):
     for i in range(len(X)):
         if z < i:
             integ = p*(Y[z+1:i].sum() + Y[i]/2)  #trapezoidal rule
-        else: 
+        else:
             integ = -p*(Y[i+1:z].sum() + Y[i]/2)
-        Yout = np.append(Yout, integ)    
+        Yout = np.append(Yout, integ)
     return X, Yout
 
 
@@ -127,7 +128,7 @@ def initialize_Heq():
 
 def replace_Heq_par(graph, keys, nodes, path, label):
     """
-        Replace all parallel storages within a parallel graph with 
+        Replace all parallel storages within a parallel graph with
         equivalent storage
 
         Parameters
@@ -138,13 +139,13 @@ def replace_Heq_par(graph, keys, nodes, path, label):
 
         keys : list
             list of edges keys to be removed
-        
+
         nodes : tuple
             tuple of edges nodes to be removed
-            
+
         path : str
             path to file containing pwl values of equivalent storage
-        
+
         label : str
             label of the equivalent storage
         """
@@ -154,11 +155,11 @@ def replace_Heq_par(graph, keys, nodes, path, label):
     Heq = pwl.Storage(label, nodes, **dic)
     graph += Heq
     warnings.warn('Replacing parallel storage with equivalent storage ' + label)
-    
+
 
 def replace_Heq_ser(graph, keys, nodeslist, path, label, firstnode, lastnode):
     """
-        Replace all serial storages within a serial graph with 
+        Replace all serial storages within a serial graph with
         equivalent storage
 
         Parameters
@@ -166,32 +167,32 @@ def replace_Heq_ser(graph, keys, nodeslist, path, label, firstnode, lastnode):
 
         graph : Graph
             Graph object to be modified
-            
+
         keys : list
             list of edges keys to be removed
-            
+
         nodeslist : list
             list of edges nodes to be removed
 
         path : str
             path to file containing pwl values of equivalent storage
-        
+
         label : str
             label of the equivalent storage
-            
+
         firstnode : str
             first node of the equivalent storage
-            
+
         lastnode : str
             last node of the equivalent storage
         """
     for key, nodes in zip(keys, nodeslist):
-        graph.remove_edge(*nodes, key) 
+        graph.remove_edge(*nodes, key)
     dic = {'file':path, 'integ':False, 'ctrl':'e'}
     Heq = pwl.Storage(label, (firstnode, lastnode), **dic)
     graph += Heq
     warnings.warn('Replacing serial storages with equivalent storage ' + label)
-    
+
 
 def graph_analysis_serial(graph):
     """
@@ -235,7 +236,7 @@ def graph_analysis_serial(graph):
         else:
             XX, YY, label, keys, nodeslist = initialize_Heq()
     graph.remove_nodes_from(nodesbin)
-    
+
 
 def graph_analysis_parallel(graph):
     """
@@ -264,7 +265,7 @@ def graph_analysis_parallel(graph):
         path = os.path.join(os.getcwd(), label + '_data.pwl')
         np.savetxt(path, np.vstack((Xeq, Yeq)))
         replace_Heq_par(graph, keys, nodes, path, label)
-        
+
 
 def graph_eq(splitgraph):
     """

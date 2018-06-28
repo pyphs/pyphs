@@ -11,7 +11,25 @@ from pyphs.config import datum
 
 def serial_next(graph, n1, n2):
     """
-    Return a list of
+    Continue the serial connnection [n1, n2, ...] and return an ordered list
+    of nodes in the chain.
+
+    Parameters
+    ----------
+
+    graph : pyphs.Graph
+        Graph object that describes the connections structure.
+
+    n1, n2 : nodes labels in the graph
+        Serial chain to be continued [n1, ..., ni] <- [n1, ..., ni, ni+1]
+        until degree(ni+1) > 2 or ni+1 is datum.
+
+    Output
+    ------
+
+    nodes : list of nodes labels in the graph
+        Ordered list of nodes in the serial chain.
+
     """
     # Undirected graph only
     assert not graph.is_directed()
@@ -19,7 +37,7 @@ def serial_next(graph, n1, n2):
     # Init list of nodes in the serial chain
     serial = [n1, n2]
     # COntinue serial chain until fork or datum
-    while graph.degree(serial[-1]) == 2 and not serial[-1] == datum:
+    while graph.degree(serial[-1]) == 2 and serial[-1] != datum:
         # get serial node label
         l = list(graph.neighbors(serial[-1]))
         l.pop(l.index(serial[-2]))
@@ -29,6 +47,23 @@ def serial_next(graph, n1, n2):
 
 
 def serial_edges(graph):
+    """
+    Return a list of the serial connections (tuples of edges) in the graph.
+
+    Parameter
+    ---------
+
+    graph: pyphs.Graph object
+
+    Output
+    ------
+
+    serialEdges : List of tuples
+        Each element in the list is a tuple (edges, nStart, nStop) with the
+        edges associated with a serial connection starting from node nStart
+        to node nStop in the graph.
+
+    """
     # Undirected graph only
     g = graph.to_undirected()
     # init lists
@@ -36,28 +71,55 @@ def serial_edges(graph):
     all_edges = list()
     # Check for datum termination
     datum_end = False
-    # for
+    # for each node with degree 2 in the graph
     for node in g.nodes():
-        if node not in serial_nodes and g.degree(node) == 2 \
-                and not node == datum:
+        if node not in serial_nodes and \
+                g.degree(node) == 2 and \
+                not node == datum:
+
+            # nodes connected to node
             n1, n2 = g[node]
+
+            # continue the serial connection toward n1
             s1 = serial_next(g, node, n1)
-            if s1[-1] == datum:
-                datum_end = True
+            datum_end = s1[-1] == datum
             s1.reverse()
+
+            # continue the serial connection toward n2
             s2 = serial_next(g, node, n2)
             if s2[-1] == datum and datum_end:
                 s2 = s2[:-1]
+
+            # nodes in the serial connection
             s = s1[:-1] + s2
             serial_nodes += s
+
+            # recover list of edges
             edges = list()
             for i, n in enumerate(s[:-1]):
                 edges.append(getedges(graph, (n, s[i+1]))[0])
             all_edges.append((edges, s[0], s[-1]))
+
     return all_edges
 
 
 def parallel_edges(graph):
+    """
+    Return a list of the parallel connections (tuples of edges) in the graph.
+
+    Parameter
+    ---------
+
+    graph: pyphs.Graph object
+
+    Output
+    ------
+
+    serialEdges : List of tuples
+        Each element in the list is a tuple of edges associated with a
+        parallel connection.
+
+    """
     g = graph.to_undirected()
     all_edges = list()
     for node in g.nodes():
@@ -70,20 +132,37 @@ def parallel_edges(graph):
     return all_edges
 
 
-def multi2single(graph):
-    g = nx.Graph()
-    for u, v, d in graph.edges(data=True):
-        g.add_edge(u, v, **d)
-    return g
-
-
 def getedges(graph, nodes):
+    """
+    Return a list of edges from graph that have both ends in the list of nodes.
+
+    Parameter
+    ---------
+
+    graph: pyphs.Graph object
+
+    nodes : list of nodes labels in graph
+
+    Output
+    ------
+
+    edges : List of edges
+        The list of all edges for which both nodes are in the list of nodes.
+
+    """
     s = set(nodes)
     edges = list()
     for e in graph.edges(data=True):
         if s.issuperset(set(e[:2])):
             edges.append(e)
     return edges
+
+
+def multi2single(graph):
+    g = nx.Graph()
+    for u, v, d in graph.edges(data=True):
+        g.add_edge(u, v, **d)
+    return g
 
 
 def forwardbackward(edges, nodes):

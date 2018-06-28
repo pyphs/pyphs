@@ -278,6 +278,9 @@ class Graph(nx.MultiDiGraph):
         Detect clusters of serial edges and replace them by equivalent
         subgraph.
         """
+
+        from .subgraph import SubGraphSerial
+
         # list of clusters of serial edges
         se = serial_edges(self)
         for edges in se:
@@ -288,7 +291,8 @@ class Graph(nx.MultiDiGraph):
             self._idser += 1
             sglabel = 'serial{0}'.format(self._idser)
             # instanciate a new subgraph
-            sg = Graph(label=sglabel)
+            sg = SubGraphSerial(sglabel)
+            sg.core = self.core
             # add serial cluster edges
             sg.add_edges_from(edges[0])
             # add serial cluster edges
@@ -304,25 +308,33 @@ class Graph(nx.MultiDiGraph):
                                                  'ctrl': '?',
                                                  'label': sglabel,
                                                  'graph': sg})
-            # remove orphan nodes (with 0 degree)
-            nodes_to_remove = list()
-            for degree in self.degree():
-                if degree[1] == 0:
-                    nodes_to_remove.append(degree[0])
-            for node in nodes_to_remove:
-                self.remove_node(node)
+        self.remove_orphan_nodes()
         # Return True if any change occured
         return bool(len(se))
+
+    def remove_orphan_nodes(self):
+        """
+        Remove orphan nodes (with degree 0).
+        """
+        nodes_to_remove = list()
+        for degree in self.degree():
+            if degree[1] == 0:
+                nodes_to_remove.append(degree[0])
+        for node in nodes_to_remove:
+            self.remove_node(node)
 
     def _split_parallel(self):
         """
         Detect clusters of parallel edges and replace them by equivalent
         subgraph.
         """
+
+        from .subgraph import SubGraphParallel
+
         # list of paralell edges
         pe = parallel_edges(self)
         for edges in pe:
-            # get nodes
+            # get the two nodes of the parallel connection
             n1, n2 = edges[0][:2]
             # remove forward edges
             self.remove_edges_from([(n1, n2, k) for k in self[n1][n2]])
@@ -335,7 +347,8 @@ class Graph(nx.MultiDiGraph):
             self._idpar += 1
             pglabel = 'parallel{0}'.format(self._idpar)
             # instanciate a new subgraph
-            pg = Graph(label=pglabel)
+            pg = SubGraphParallel(pglabel)
+            pg.core = self.core
             # add parallel edges
             pg.add_edges_from(edges)
             # build subgraph analysis object
@@ -355,6 +368,50 @@ class Graph(nx.MultiDiGraph):
         # Return True if any change occured
         return bool(len(pe))
 
+    def assemble(self):
+        """
+        Re-assemble the subgraphs in the current graph
+        """
+
+        def assemble_subgraph(graph):
+            """
+            Resursive import of edges from subgraphs.
+            """
+            for e in graph.edgeslist:
+                if e[-1]['type'] == 'graph':
+                    subgraph = e[-1]['graph']
+                    subgraph.core = Core()
+                    assemble_subgraph(subgraph)
+                    graph += subgraph
+
+        assemble_subgraph(self)
+
+        # remove edges
+        for e in self.edgeslist:
+
+            elabel = e[-1]['label']
+            etype = e[-1]['type']
+
+            if '_out_' in str(elabel) or etype == 'graph':
+                # Remove edge
+                self.remove_edge_from_list([e, ])
+
+    def remove_edge_from_list(self, edges):
+        """
+        Remove a list of edges.
+        """
+        for e in edges:
+            # Get edge key
+            n1, n2 = e[:2]
+            for key in self[n1][n2].keys():
+                if self[n1][n2][key]['label'] == e[-1]['label']:
+                    break
+
+            # Remove edge
+            self.remove_edge(n1, n2, key)
+
+        self.remove_orphan_nodes()
+
     def split_sp(self):
         """
         Split the graph into a tree graph of serial/parallel subgraphs.
@@ -365,7 +422,7 @@ class Graph(nx.MultiDiGraph):
             change_s = self._split_serial()
             # check for parallel connection
             change_p = self._split_parallel()
-            # Test for any change to iterate
+            # Test for any change
             change = any((change_s, change_p))
 
     @property
@@ -373,13 +430,43 @@ class Graph(nx.MultiDiGraph):
         """
         Get a list of subgraphs.
         """
-        subgraphs = dict()
-        for e in self.edges(data=True):
-            # if leaf is a subgraph
-            if e[-1]['type'] == 'graph':
-                print(e[-1]['label'])
-                subgraphs[e[-1]['label']] = e[-1]['graph']
-        return subgraphs
+
+        def getSubTree(graph):
+            labels = {graph.label: graph}
+            tree = {graph.label: dict()}
+            for e in graph.edges(data=True):
+                # if leaf is a subgraph
+                if e[-1]['type'] == 'graph':
+                    elabel = e[-1]['label']
+                    egraph = e[-1]['graph']
+                    labels[elabel] = graph
+                    sublabels, subtree = getSubTree(egraph)
+                    labels.update(sublabels)
+                    tree[graph.label][elabel] = subtree[elabel]
+            return labels, tree
+
+        labels, tree = getSubTree(self)
+
+        level = 0
+        levels = dict()
+        levels[level] = (list(tree.keys())[0], )
+        continu = True
+        while continu:
+            continu = False
+            level += 1
+            levels[level] = ()
+            for k in levels[level-1]:
+                try:
+                    gk = labels[k]
+                    for e in gk.edges(data=True):
+                        levels[level] += (e[-1]['label'], )
+                        # if leaf is a subgraph
+                        if e[-1]['type'] == 'graph':
+                            continu = True
+                except KeyError:
+                    pass
+
+        return labels, tree, levels
 
     def __add__(graph1, graph2):
         """

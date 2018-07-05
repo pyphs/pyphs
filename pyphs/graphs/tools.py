@@ -9,7 +9,7 @@ import networkx as nx
 from pyphs.config import datum
 
 
-def serial_next(graph, n1, n2):
+def serial_next(graph, n1, n2, testDatum=True):
     """
     Continue the serial connnection [n1, n2, ...] and return an ordered list
     of nodes in the chain.
@@ -22,7 +22,11 @@ def serial_next(graph, n1, n2):
 
     n1, n2 : nodes labels in the graph
         Serial chain to be continued [n1, ..., ni] <- [n1, ..., ni, ni+1]
-        until degree(ni+1) > 2 or ni+1 is datum.
+        until degree(ni+1) > 2 or ni+1 is n1 (loop) or ni+1 is datum if
+        testDatum parameter is True).
+
+    testDatum : bool (optional)
+        Stop at datum node. The default is True.
 
     Output
     ------
@@ -31,18 +35,23 @@ def serial_next(graph, n1, n2):
         Ordered list of nodes in the serial chain.
 
     """
-    # Undirected graph only
-    assert not graph.is_directed()
+    # Undirected graph
+    g = graph.to_undirected()
 
     # Init list of nodes in the serial chain
     serial = [n1, n2]
-    # COntinue serial chain until fork or datum
-    while graph.degree(serial[-1]) == 2 and serial[-1] != datum:
+    testDatumBool = serial[-1] != datum if testDatum else True
+    # Continue serial chain until fork or datum
+    while g.degree(serial[-1]) == 2 and testDatumBool:
         # get serial node label
-        l = list(graph.neighbors(serial[-1]))
+        l = list(g.neighbors(serial[-1]))
         l.pop(l.index(serial[-2]))
-        # append list of nodes in the serial chain
-        serial.append(l[0])
+        if not n1 == serial[-1]:
+            # append list of nodes in the serial chain
+            serial.append(l[0])
+        else:
+            break
+        testDatumBool = serial[-1] != datum if testDatum else True
     return serial
 
 

@@ -13,8 +13,8 @@ from .build import buildCore
 from ..core.core import Core
 from ..misc.plots.graphs import plot
 from .tools import serial_edges, parallel_edges
-from .exceptions import UndefinedPotential
-from ..config import datum, VERBOSE
+from .exceptions import IndeterminateRealizability
+from ..config import datum, VERBOSE, GRAPHS_LAYOUT, GRAPHS_ITERATIONS
 import os
 
 description = "\
@@ -60,7 +60,6 @@ class Graph(nx.MultiDiGraph):
             analysis.
 
         """.format(description)
-
 
         nx.MultiDiGraph.__init__(self)
 
@@ -109,19 +108,16 @@ class Graph(nx.MultiDiGraph):
         """
         Initialize the pyphs.graphs.analysis.GraphAnalysis object.
         """
+        # Build analysis object
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
-    def to_core(self, label=None, verbose=False, plot=False, connect=True,
-                force=True):
+    def perform_analysis(self, verbose=False, plot=False, solve_arc=True,
+                         force=True):
         """
-        Return the core PHS object associated with the graph.
+        Perform realizability analysis. Create analysis object first if needed.
 
-        Parameters
-        ----------
-
-        label : str (optional)
-            String label for the Core object (default None recovers the label
-            from the graph).
+        Parameter
+        ---------
 
         verbose : bool (optional)
             If True, the system pauses at each iteration of the graph analysis
@@ -133,10 +129,76 @@ class Graph(nx.MultiDiGraph):
             algorithm. The color scheme for the edges and nodes reflects the
             state of the analysis process. Default is False.
 
+        solve_arc : bool (optional)
+            If True, the anti-realizable components are merged to produce a
+            realizable graph. Te default is True.
+
+        force : bool (optional)
+            If False, the analysis is performed only if it has not been
+            performed previously. If True, the analysis is forced in any case.
+            Default is True.
+
+        """
+
+        # verbosity
+        if VERBOSE >= 1:
+            print('Analyze  {}...'.format(self.label))
+
+        # check for graph analysis object
+        if not hasattr(self, 'analysis') or force:
+
+            # Cope with anti-realizable connections
+            self.sp_split()
+            self.sp_merge_arc()
+            self.sp_assemble()
+
+            self._build_analysis(verbose=verbose, plot=plot)
+
+        # check for existing inverse Gamma matrix for flux-controled edges
+        # or force
+        if not hasattr(self.analysis, 'iGamma_fc') or force:
+            # Perform realizability analysis
+            self.analysis.perform()
+
+    def to_core(self, label=None, connect=True, merge_all=False, verbose=False,
+                plot=False, solve_arc=True, force=True):
+        """
+        Return the core PHS object associated with the graph.
+
+        Parameters
+        ----------
+
+        label : str (optional)
+            String label for the Core object (default None recovers the label
+            from the graph).
+
         connect : bool (optional)
             If True, the method core.connect() is called before output of the
             pyphs.Core object, so that the transformers and gyrators are
             resolved in the structure matrix. Default is True.
+
+        merge_all : bool (optional)
+            If True, the graph is split again into serial/parallel subgraphs to
+            merge all compatible components.
+
+        verbose : bool (optional)
+            If True, the system pauses at each iteration of the graph analysis
+            algorithm and a short description of the iteration is printed.
+            Default is False.
+
+        plot : bool (optional)
+            If True, plot the graph at each iteration of the graph analysis
+            algorithm. The color scheme for the edges and nodes reflects the
+            state of the analysis process. Default is False.
+
+        solve_arc : bool (optional)
+            If True, the anti-realizable components are merged to produce a
+            realizable graph. Te default is True.
+
+        force : bool (optional)
+            If False, the analysis is performed only if it has not been
+            performed previously. If True, the analysis is forced in any case.
+            Default is True.
 
         Output
         ------
@@ -145,22 +207,37 @@ class Graph(nx.MultiDiGraph):
             The PHS core object associated with the graph.
 
         """
+
+        if merge_all:
+            self.sp_split()
+            self.sp_merge_all()
+            # assemble serial/parallel edges into current graph
+            self.sp_assemble()
+
+        self.perform_analysis(verbose=verbose, plot=plot, solve_arc=solve_arc,
+                              force=force)
+
         # verbosity
         if VERBOSE >= 1:
             print('Build core {}...'.format(self.label))
 
-        # check for graph analysis object
-        if not hasattr(self, 'analysis'):
-            self._build_analysis(verbose=verbose, plot=plot)
-
-        # check for graph analysis object
-        if not hasattr(self.analysis, 'iGamma_fc') or force:
-            self.analysis.perform()
-
-        # build Core (after graph analysis)
+        # build Core
         buildCore(self)
 
-        # returned core is a copy
+        if merge_all:
+            # Read realizability for every edges
+            self.read_realizability_from_analysis()
+            # split into serial/parallel edges
+            self.sp_split()
+            self.sp_merge_all()
+            # assemble serial/parallel edges into current graph
+            self.sp_assemble()
+            # Perform realizability analysis again
+            self.perform_analysis(force=True)
+            # build Core again
+            buildCore(self)
+
+        # The returned core is a copy
         core = self.core.__copy__()
 
         # connect gyrators and transformers
@@ -179,6 +256,42 @@ class Graph(nx.MultiDiGraph):
             core._netlist = self.netlist
 
         return core
+
+    def read_realizability_from_analysis(self):
+        """
+        Read realizability for edges in self.analysis object and change
+        self.edges 'ctrl' data accordingly.
+        """
+
+        # init analysis if needed
+        self.perform_analysis()
+
+        def read_realizability(edges):
+            """
+            read realizability from list of edges indices and update self.edges
+            """
+
+            for i in edges:
+                label = self.analysis.get_edge_data(i, 'label')
+                if i in self.analysis.fc_edges:
+                    ctrl = 'f'
+                elif i in self.analysis.ec_edges:
+                    ctrl = 'e'
+                else:
+                    text = "Unnown realizablity for edge {}"
+                    edge = self.analysis.edges
+                    raise IndeterminateRealizability(text.format(edge))
+                for e in self.edgeslist:
+                    if e[-1]['label'] == label:
+                        e[-1]['ctrl'] = ctrl
+
+        # read realizibility for storages, dissipatives, ports and
+        # connectors edges
+        for edges in (self.analysis.stor_edges,
+                      self.analysis.diss_edges,
+                      self.analysis.port_edges,
+                      self.analysis.conn_edges):
+            read_realizability(edges)
 
     def to_method(self, label=None, config=None):
         """
@@ -312,17 +425,6 @@ class Graph(nx.MultiDiGraph):
         # Return True if any change occured
         return bool(len(se))
 
-    def remove_orphan_nodes(self):
-        """
-        Remove orphan nodes (with degree 0).
-        """
-        nodes_to_remove = list()
-        for degree in self.degree():
-            if degree[1] == 0:
-                nodes_to_remove.append(degree[0])
-        for node in nodes_to_remove:
-            self.remove_node(node)
-
     def _split_parallel(self):
         """
         Detect clusters of parallel edges and replace them by equivalent
@@ -368,9 +470,9 @@ class Graph(nx.MultiDiGraph):
         # Return True if any change occured
         return bool(len(pe))
 
-    def assemble(self):
+    def sp_assemble(self):
         """
-        Re-assemble the subgraphs in the current graph
+        Assemble subgraphs in current graph.
         """
 
         def assemble_subgraph(graph):
@@ -386,21 +488,32 @@ class Graph(nx.MultiDiGraph):
 
         assemble_subgraph(self)
 
-        # remove edges
+        # remove '_out_' and subgraphs edges
         for e in self.edgeslist:
-
+            # get type and label
             elabel = e[-1]['label']
             etype = e[-1]['type']
-
             if '_out_' in str(elabel) or etype == 'graph':
-                # Remove edge
-                self.remove_edge_from_list([e, ])
+                self.remove_edges_from_list([e, ])
 
-    def remove_edge_from_list(self, edges):
+    def remove_edges_from_list(self, *args, **kwargs):
         """
         Remove a list of edges.
+
+        Parameters
+        ----------
+
+        edges : list of edges
+            List of edges to remove from the graph. Each edge is a tuple
+            (N1, N2, data) with nodes labels N1, N2 and edge data (dict).
+
+        See also
+        --------
+
+        Graph.edgeslist
+
         """
-        for e in edges:
+        for e in args[0]:
             # Get edge key
             n1, n2 = e[:2]
             for key in self[n1][n2].keys():
@@ -412,10 +525,11 @@ class Graph(nx.MultiDiGraph):
 
         self.remove_orphan_nodes()
 
-    def split_sp(self):
+    def sp_split(self):
         """
         Split the graph into a tree graph of serial/parallel subgraphs.
         """
+
         change = True
         while change:
             # check for serial connection
@@ -425,39 +539,93 @@ class Graph(nx.MultiDiGraph):
             # Test for any change
             change = any((change_s, change_p))
 
-    @property
-    def subgraphs(self):
+    def sp_merge_all(self):
         """
-        Get a list of subgraphs.
+        Apply subgraph.merge_all() for all subgraphs.
+        """
+        subgraphs = self.sp_subgraphs
+        for label in subgraphs.keys():
+            try:
+                subgraphs[label].merge_all()
+            except AttributeError:
+                pass
+
+    def sp_merge_arc(self):
+        """
+        Apply subgraph.merge_arc() for all subgraphs.
+        """
+        subgraphs = self.sp_subgraphs
+        for label in subgraphs.keys():
+            try:
+                subgraphs[label].merge_arc()
+            except AttributeError:
+                pass
+
+    @property
+    def sp_subgraphs(self):
+        """
+        Return a dictionary with subgraphs labels as keys and associated
+        (serialor parallel) Subgraph objects as values for every subgraphs
+        rooted in self.
         """
 
-        def getSubTree(graph):
-            labels = {graph.label: graph}
+        def get_subgraphs(graph):
+            # list of labels
+            subgraphs = {graph.label: graph}
+            for e in graph.edges(data=True):
+                # if leaf is a subgraph
+                if e[-1]['type'] == 'graph':
+                    # get label and subgraphs
+                    elabel = e[-1]['label']
+                    egraph = e[-1]['graph']
+                    # update graph dictionary
+                    subgraphs[elabel] = egraph
+                    # get sub-sub-graphs
+                    subsubgraphs = get_subgraphs(egraph)
+                    subgraphs.update(subsubgraphs)
+            return subgraphs
+
+        return get_subgraphs(self)
+
+    @property
+    def sp_subgraphs_tree(self):
+        """
+        Get a tree of serial/parallel subgraphs objects rooted in self.
+        """
+
+        def get_subgraphs_tree(graph):
             tree = {graph.label: dict()}
             for e in graph.edges(data=True):
                 # if leaf is a subgraph
                 if e[-1]['type'] == 'graph':
                     elabel = e[-1]['label']
                     egraph = e[-1]['graph']
-                    labels[elabel] = graph
-                    sublabels, subtree = getSubTree(egraph)
-                    labels.update(sublabels)
+                    subtree = get_subgraphs_tree(egraph)
                     tree[graph.label][elabel] = subtree[elabel]
-            return labels, tree
+            return tree
 
-        labels, tree = getSubTree(self)
+        return get_subgraphs_tree(self)
+
+    @property
+    def sp_subgraphs_levels(self):
+        """
+        Get a dictionary with integers as keys and serial/parallel subgraphs
+        labels as values. The integers are associated with the levels of the
+        subgraphs in the tree returned by self.sp_subgraphs_tree.
+        """
 
         level = 0
         levels = dict()
-        levels[level] = (list(tree.keys())[0], )
+        levels[level] = (list(self.sp_subgraphs_tree.keys())[0], )
         continu = True
+        subgraphs = self.sp_subgraphs
         while continu:
             continu = False
             level += 1
             levels[level] = ()
             for k in levels[level-1]:
                 try:
-                    gk = labels[k]
+                    gk = subgraphs[k]
                     for e in gk.edges(data=True):
                         levels[level] += (e[-1]['label'], )
                         # if leaf is a subgraph
@@ -466,7 +634,18 @@ class Graph(nx.MultiDiGraph):
                 except KeyError:
                     pass
 
-        return labels, tree, levels
+        return levels
+
+    def remove_orphan_nodes(self):
+        """
+        Remove orphan nodes (with degree 0).
+        """
+        nodes_to_remove = list()
+        for degree in self.degree():
+            if degree[1] == 0:
+                nodes_to_remove.append(degree[0])
+        for node in nodes_to_remove:
+            self.remove_node(node)
 
     def __add__(graph1, graph2):
         """
@@ -476,8 +655,6 @@ class Graph(nx.MultiDiGraph):
             graph1.netlist += graph2.netlist
         graph1.core += graph2.core
         graph1.add_edges_from(graph2.edges(data=True))
-        if hasattr(graph1, 'positions'):
-            delattr(graph1, 'positions')
         return graph1
 
     def _get_edgeslist(self):
@@ -493,6 +670,40 @@ class Graph(nx.MultiDiGraph):
         """
         return set(self.nodes())
     nodeslist = property(_get_nodeslist)
+
+    def set_positions(self, reset=False, layout=None):
+        """
+        Set the positions of nodes for plots.
+
+        Parameter
+        ---------
+
+        reset : bool
+            If True, the positions are
+
+        layout : str in {'spring', 'circular'}
+            Specifies the layout for the nodes. If None, the layout defined in
+            pyphs.config.GRAPHS_LAYOUT is used.
+
+        Output
+        ------
+
+        positions : dict
+            Dictionary with nodes labels as keys and nodes positions as values.
+            Values are given as 1 dimension, 2 elements numpy.ndarray.
+        """
+        if not hasattr(self, 'positions') or reset:
+            if layout is None:
+                layout = GRAPHS_LAYOUT
+            else:
+                assert layout in ('circular', 'spring')
+            if layout == 'spring':
+                self.positions = nx.spring_layout(self,
+                                                  iterations=GRAPHS_ITERATIONS)
+            elif layout == 'circular':
+                self.positions = nx.circular_layout(self)
+
+        return self.positions
 
     @staticmethod
     def iter_analysis(graph):

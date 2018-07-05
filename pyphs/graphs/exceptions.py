@@ -21,3 +21,7 @@ class FluxCtrlIsEffortCtrl(Exception):
 
 class EffortCtrlIsFluxCtrl(Exception):
     pass
+
+
+class IndeterminateRealizability(Exception):
+    pass

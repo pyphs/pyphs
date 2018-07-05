@@ -24,30 +24,12 @@ def buildCore(graph):
                                      gamma.T),
                               hstack(-gamma,
                                      types.matrix_types[0](sympy.zeros(nfc))))
-    _sort_edges_J(graph.analysis)
+    all_edges = graph.analysis.stor_edges + graph.analysis.diss_edges + \
+        graph.analysis.port_edges + graph.analysis.conn_edges
+    graph.analysis.J = graph.analysis.J[all_edges, all_edges]
+
+    # Add core to graph
     _setCore(graph)
-
-
-def _sort_edges_J(analysis):
-    # according to storage, dissipation, ports and connectors
-    # get indices of storage edges
-    analysis.stor_edges = []
-    analysis.diss_edges = []
-    analysis.port_edges = []
-    analysis.conn_edges = []
-    for e in range(analysis.ne):
-        if analysis.get_edge_data(e, 'type') is 'storage':
-            analysis.stor_edges.append(e)
-        elif analysis.get_edge_data(e, 'type') is 'dissipative':
-            analysis.diss_edges.append(e)
-        elif analysis.get_edge_data(e, 'type') is 'port':
-            analysis.port_edges.append(e)
-        else:
-            assert analysis.get_edge_data(e, 'type') is 'connector'
-            analysis.conn_edges.append(e)
-    all_edges = analysis.stor_edges + analysis.diss_edges + \
-        analysis.port_edges + analysis.conn_edges
-    analysis.J = analysis.J[all_edges, all_edges]
 
 
 def _select_relations(graph):

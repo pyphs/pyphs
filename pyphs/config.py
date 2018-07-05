@@ -30,23 +30,26 @@ DTYPE = numpy.finfo(float).dtype.type
 # Default samplerate (Hz)
 FS = 48e3
 
-# Define the numerical tolerance such that |x|<EPS <=> x ~ 0
+# Define the numerical tolerance such that |x|<EPS <=> x = 0
 EPS = numpy.finfo(float).eps
 
-# Define the numerical tolerance for the discrete gradient |x|<EPS <=> dxH ~ H'
+# Define the numerical tolerance for the discrete gradient:
+# |dx|<EPS_DG <=> dxH = H'
 EPS_DG = numpy.finfo(float).eps
 
-# Activate the use of theano for numerical evaluations.
+# Activate the use of theano for python numerical evaluations. This produce
+# code that need to be compiled with inherent time cost but faster evaluations.
+# Need a proper theano installation.
 THEANO = False
 
-# Maximum number of iterations for implicit functions solvers
+# Maximum number of iterations for implicit functions solvers (Newton-Raphson).
 MAXIT = 100
 
 # Minimal conductance for accelerating convergence of NL-solver (used e.g. in
 # diodes, triode and bipolar-junction transistors):
 GMIN = 1e-12
 
-
+# Assemble dictionary of parameters
 CONFIG_NUMERIC = {'fs': FS,
                   'eps': EPS,
                   'epsdg': EPS_DG,
@@ -79,6 +82,15 @@ TIMEOUT = 10.
 # label of datum node
 datum = '#'
 
+###############################################################################
+
+# Graphs plot options
+
+# Nodes layout in {'circular', 'spring'}
+GRAPHS_LAYOUT = 'circular'
+
+# Number of iteration for layout optimization
+GRAPHS_ITERATIONS = 1000
 
 ###############################################################################
 

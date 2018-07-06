@@ -14,6 +14,7 @@ from .tools import serial_next
 from networkx import Graph as nwxGraph
 from networkx import chain_decomposition
 from networkx import contracted_nodes
+import copy
 
 
 def merge_warning(type, before, after):
@@ -176,21 +177,21 @@ class SubGraph(Graph):
     def z_fc(self):
         z = []
         for e in self.fc_dissipatives:
-            z.append(e[-1]['z'])
+            z.append(copy.copy(e[-1]['z']))
         return z
 
     @property
     def z_ic(self):
         z = []
         for e in self.ic_dissipatives:
-            z.append(e[-1]['z'])
+            z.append(copy.copy(e[-1]['z']))
         return z
 
     @property
     def z_ec(self):
         z = []
         for e in self.ec_dissipatives:
-            z.append(e[-1]['z'])
+            z.append(copy.copy(e[-1]['z']))
         return z
 
     def merge_arc_storages(self):
@@ -203,7 +204,7 @@ class SubGraph(Graph):
             else:
                 nodes = edges_stor[0][1], edges_stor[0][0]
             # give every edges the positive direction
-            oriented_dxH_arc = self.dxH_arc.copy()
+            oriented_dxH_arc = self.dxH_arc
             for i, xn in enumerate(self.x_arc):
                 if self.orientations_dic[xn] == -1:
                     oriented_dxH_arc[i] = -oriented_dxH_arc[i].subs(xn, -xn)
@@ -241,7 +242,7 @@ class SubGraph(Graph):
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
-            oriented_z_arc = self.z_arc.copy()
+            oriented_z_arc = self.z_arc
             for i, dic in enumerate(oriented_z_arc):
                 oriented_z_arc[i] = dic[self.anti_realizability + '_ctrl']
             for i, wn in enumerate(self.w_arc):
@@ -279,7 +280,7 @@ class SubGraph(Graph):
             else:
                 nodes = edges_stor[0][1], edges_stor[0][0]
             # give every edges the positive direction
-            oriented_dxH_rc = self.dxH_rc.copy()
+            oriented_dxH_rc = self.dxH_rc
             for i, xn in enumerate(self.x_rc):
                 if self.orientations_dic[xn] == -1:
                     oriented_dxH_rc[i] = -oriented_dxH_rc[i].subs(xn, -xn)
@@ -317,7 +318,7 @@ class SubGraph(Graph):
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
-            oriented_z_rc = self.z_rc.copy()
+            oriented_z_rc = self.z_rc
             for i, dic in enumerate(oriented_z_rc):
                 oriented_z_rc[i] = dic[self.realizability + '_ctrl']
             for i, wn in enumerate(self.w_rc):
@@ -354,21 +355,24 @@ class SubGraph(Graph):
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
-            # get edges rc
-            oriented_z_ic = self.z_ic.copy()
+
+            # get edges ic
+            oriented_z_ic = self.z_ic
             for i, dic in enumerate(oriented_z_ic):
                 oriented_z_ic[i] = dic[self.realizability + '_ctrl']
             for i, wn in enumerate(self.w_ic):
                 if self.orientations_dic[wn] == -1:
                     oriented_z_ic[i] = -oriented_z_ic[i].subs(wn, -wn)
             W, Zrc = realizable_merge_dissipatives(self.w_ic, oriented_z_ic)
+
             # get edges arc
-            oriented_z_ic = self.z_ic.copy()
+            oriented_z_ic = self.z_ic
             for i, dic in enumerate(oriented_z_ic):
                 oriented_z_ic[i] = dic[self.anti_realizability + '_ctrl']
             for i, wn in enumerate(self.w_ic):
                 if self.orientations_dic[wn] == -1:
                     oriented_z_ic[i] = -oriented_z_ic[i].subs(wn, -wn)
+
             W, Zarc = nonrealizable_merge_dissipatives(self.w_ic,
                                                        oriented_z_ic)
 

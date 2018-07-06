@@ -288,7 +288,7 @@ class Graph(nx.MultiDiGraph):
 
         # Core.label can be specified, else the Graph.label is recovered
         if label is None:
-            label = self.label
+            label = str(self.label)
         if not isinstance(label, str):
             raise TypeError('Core label not understood:\n{}'.format(label))
         core.label = label

@@ -126,9 +126,6 @@ def plot_rlc_with_split():
     # retrieve the pyphs.Core of a linear RLC from the examples
     from pyphs.examples.rlc.rlc import core as rlc
 
-    print(rlc.w)
-    print(rlc.z)
-
     simu = Simulation(rlc.to_method(), config=config)
 
     dur = 0.01
@@ -141,13 +138,12 @@ def plot_rlc_with_split():
     simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
     simu.process()
 
-    print(simu.nums.method.w)
-    print(simu.nums.method.z)
-
     dims = simu.nums.method.dims
+
     # plot u, y
     simu.data.plot([('u', i) for i in range(dims.y())] +
                    [('y', i) for i in range(dims.y())], show=False)
+
     # plot w, z
     simu.data.plot([('w', 0), ('z', 0)], show=False)
 
@@ -165,3 +161,13 @@ def TranferFunction():
     f, TF = transferFunction(sig1, sig2, fs=100, nfft=2**9)
     spectrogram(sig2, fs=100)
     return True
+
+
+if __name__ == '__main__':
+    all_tests = [dataH5File,
+                 plot_power_balance_rlc_with_split,
+                 plot_rlc_with_split,
+                 TranferFunction]
+
+    for test in all_tests:
+        test()

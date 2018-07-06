@@ -529,13 +529,12 @@ class Graph(nx.MultiDiGraph):
         """
         Split the graph into a tree graph of serial/parallel subgraphs.
         """
-
         change = True
         while change:
-            # check for serial connection
-            change_s = self._split_serial()
             # check for parallel connection
             change_p = self._split_parallel()
+            # check for serial connection
+            change_s = self._split_serial()
             # Test for any change
             change = any((change_s, change_p))
 

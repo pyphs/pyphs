@@ -11,7 +11,7 @@ from unittest import TestCase
 from .faustFx import test_faust_fx_generation
 from .signalsTest import signal_synthesis, signal_waves
 from .NetlistTests import test_netslist
-from .GraphTests import (graph, target_edges, target_M, split_sp,
+from .GraphTests import (graph, target_edges, target_M, sp_split,
                             plot_Graph, plot_GraphAnalysis)
 from .LatexTest import TestCore2Tex
 from .SimulationTest import (simulation_rlc_with_split,
@@ -76,8 +76,8 @@ class TestGraph(TestCase):
         results = (test_M == np.zeros(target_M.shape))
         self.assertTrue(all(list(results.flatten())))
 
-    def test_split_sp(self):
-        self.assertTrue(split_sp())
+    def test_sp_split(self):
+        self.assertTrue(sp_split())
 
     def test_plot_Graph(self):
         self.assertTrue(plot_Graph())

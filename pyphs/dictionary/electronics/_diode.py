@@ -71,7 +71,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         data_diode = {'label': w[0],
                       'z': {'e_ctrl': zd_ectrl, 'f_ctrl': zd_fctrl},
                       'type': 'dissipative',
-                      'ctrl': 'e',
+                      'ctrl': '?',
                       'link': None}
         # edge
         edge_diode = (N1, iN2, data_diode)

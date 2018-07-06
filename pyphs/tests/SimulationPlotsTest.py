@@ -56,10 +56,11 @@ def plot_power_balance_rlc_with_split():
 
     if not os.name.lower().startswith('nt'):
         shutil.rmtree(path)
+
     return True
 
 
-def plot_power_balance_nlcore_with_split():
+def dataH5File():
     # Define the simulation parameters
     config = {'fs': 48e3,               # Sample rate
               'grad': 'discret',    # in {'discret', 'theta', 'trapez'}
@@ -72,7 +73,6 @@ def plot_power_balance_nlcore_with_split():
               'timer': True,            # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
               }
-
 
     # retrieve the pyphs.Core of a nonlinear RLC from
     # the tutorial on Core
@@ -87,15 +87,26 @@ def plot_power_balance_nlcore_with_split():
         for el in u():
             yield (el, )
 
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    nt = int(dur*simu.config['fs'])
+    simu.init(u=sequ(), nt=nt)
     simu.process()
 
     simu.data.plot_powerbal(mode='single', show=False)
     simu.data.plot_powerbal(mode='multi', show=False)
 
-    if not os.name.lower().startswith('nt'):
-        shutil.rmtree(path)
-    return True
+    simu2 = Simulation(nlcore.to_method(), config=config, clear=False)
+
+    start = int(simu.data.nt/10.)
+    stop = int(9*simu.data.nt/10.)
+    step = 3
+
+    simu2.data.start = start
+    simu2.data.stop = stop
+    simu2.data.step = step
+
+    test = len(range(start, stop, step)) == len(simu2.data['x', :, 0])
+
+    return test
 
 
 def plot_rlc_with_split():
@@ -151,6 +162,6 @@ def plot_rlc_with_split():
 def TranferFunction():
     sig1 = np.random.rand(int(1e4))
     sig2 = lowpass(sig1, 0.1)
-    f, TF = transferFunction(sig1, sig2, 100)
+    f, TF = transferFunction(sig1, sig2, fs=100, nfft=2**9)
     spectrogram(sig2, fs=100)
     return True

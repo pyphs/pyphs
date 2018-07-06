@@ -21,7 +21,7 @@ from .SimulationTest import (simulation_rlc_with_split,
                                 simulation_nlcore_full,
                                 simulation_rlc_cpp)
 from .SimulationPlotsTest import (plot_rlc_with_split,
-                                     plot_power_balance_nlcore_with_split,
+                                     dataH5File,
                                      plot_power_balance_rlc_with_split,
                                      TranferFunction)
 
@@ -33,6 +33,7 @@ from .CoreTests import (test_allsymbs, test_build_eval, test_freesymbols,
 
 from .cppTest import cpp_nlcore_full
 from .JuceFxTest import test_method2jucefx
+
 import numpy as np
 
 
@@ -200,6 +201,11 @@ class TestExamples(TestCase):
         from pyphs.examples.oscillator_nl_dual.oscillator_nl_dual import core as oscillator_nl_dual_core
         self.assertTrue(True)
 
+    def test_import_examples21(self):
+        from pyphs.examples.sp_circuit.sp_circuit import core as sp_circuit_core
+        self.assertTrue(len(sp_circuit_core.x) == 3)
+
+
 class TestJuce(TestCase):
     def test_method2juce_fx(self):
         self.assertTrue(test_method2jucefx())
@@ -210,7 +216,7 @@ class TestPlots(TestCase):
         self.assertTrue(plot_rlc_with_split())
 
     def test_plot_power_balance_nlcore_with_split(self):
-        self.assertTrue(plot_power_balance_nlcore_with_split())
+        self.assertTrue(dataH5File())
 
     def test_plot_power_balance_rlc_with_split(self):
         self.assertTrue(plot_power_balance_rlc_with_split())

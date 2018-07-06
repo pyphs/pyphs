@@ -319,6 +319,8 @@ or an integer nt (number of time steps).'
         # store number of time steps
         self.config['nt'] = nt = int(nt)
 
+        self._h5new()
+
         # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
         if sequ is None:
             ny = self.method.dims.y()
@@ -432,6 +434,8 @@ or an integer nt (number of time steps).'
 
         self._open = False
 
+        self.config['nt'] = self._h5shape[0]
+
     # ----------------------------------------------------------------------- #
 
     @property
@@ -439,7 +443,17 @@ or an integer nt (number of time steps).'
         """
         return the number of timesteps in the timeserie
         """
-        return self.h5file[self.dname].shape
+        # close flag
+        if not self._open:
+            self.h5open()
+            close = True
+        else:
+            close = False
+        shape = self.h5file[self.dname].shape
+        if close:
+            self.h5close()
+
+        return shape
 
     # ----------------------------------------------------------------------- #
 

@@ -32,6 +32,7 @@ from .CoreTests import (test_allsymbs, test_build_eval, test_freesymbols,
 
 
 from .cppTest import cpp_nlcore_full
+from .JuceFxTest import test_method2jucefx
 import numpy as np
 
 
@@ -198,6 +199,11 @@ class TestExamples(TestCase):
     def test_import_examples20(self):
         from pyphs.examples.oscillator_nl_dual.oscillator_nl_dual import core as oscillator_nl_dual_core
         self.assertTrue(True)
+
+class TestJuce(TestCase):
+    def test_method2juce_fx(self):
+        self.assertTrue(test_method2jucefx())
+
 
 class TestPlots(TestCase):
     def test_plot_rlc_with_split(self):

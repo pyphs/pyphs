@@ -228,10 +228,6 @@ class SubGraph(Graph):
             self.core.x.append(X)
             # ADD new energy
             self.core.H += H
-            try:
-                delattr(self, 'positions')
-            except AttributeError:
-                pass
             # remove edges
             self.remove_edges_from_list(edges_stor, preserve_nodes=[nodes, ])
         return change
@@ -269,11 +265,6 @@ class SubGraph(Graph):
                            },
                           nodes)
             self.core.add_dissipations(W, Z)
-            # remove nodes positions
-            try:
-                delattr(self, 'positions')
-            except AttributeError:
-                pass
             # remove edges
             self.remove_edges_from_list(edges_diss, preserve_nodes=[nodes, ])
         return change
@@ -313,10 +304,6 @@ class SubGraph(Graph):
             self.core.x.append(X)
             # ADD new energy
             self.core.H += H
-            try:
-                delattr(self, 'positions')
-            except AttributeError:
-                pass
             # remove edges
             self.remove_edges_from_list(edges_stor, preserve_nodes=[nodes, ])
         return change
@@ -354,10 +341,6 @@ class SubGraph(Graph):
                            },
                           nodes)
             self.core.add_dissipations(W, Z)
-            try:
-                delattr(self, 'positions')
-            except AttributeError:
-                pass
             # remove edges
             self.remove_edges_from_list(edges_diss, preserve_nodes=[nodes, ])
         return change
@@ -407,10 +390,6 @@ class SubGraph(Graph):
                            },
                           nodes)
             self.core.add_dissipations(W, Zrc)
-            try:
-                delattr(self, 'positions')
-            except AttributeError:
-                pass
             # remove edges
             self.remove_edges_from_list(edges_diss, preserve_nodes=[nodes, ])
         return change
@@ -515,7 +494,7 @@ class SubGraphParallel(SubGraph):
     def new_edge(self, edata, nodes=None):
         if nodes is None:
             e1 = self.edgeslist[0]
-            n1, n2 = e1[:2]
+            nodes = e1[:2]
         self.add_edge(*nodes, **edata)
 
     @property
@@ -652,18 +631,13 @@ determined\n{}'.format(e))
 
                 undirected = self.to_undirected()
 
-                try:
-                    del_node, connect_node1 = n1, n2
-                    connect_node2 = list(undirected.neighbors(del_node))[0]
-#                    if connect_node2 in self.terminals:
-#                        (connect_node1, connect_node2) = (connect_node2,
-#                                                          connect_node1)
-                except IndexError:
+                if n1 in self.terminals:
                     del_node, connect_node1 = n2, n1
                     connect_node2 = list(undirected.neighbors(del_node))[0]
-#                    if connect_node2 in self.terminals:
-#                        (connect_node1, connect_node2) = (connect_node2,
-#                                                          connect_node1)
+                else:
+                    del_node, connect_node1 = n1, n2
+                    connect_node2 = list(undirected.neighbors(del_node))[0]
+
                 # Add edge with new node
                 contracted_edges = contracted_nodes(self,
                                                     connect_node1,

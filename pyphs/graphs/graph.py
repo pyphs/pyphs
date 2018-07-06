@@ -104,6 +104,8 @@ class Graph(nx.MultiDiGraph):
         # graph label
         self.label = label
 
+    # ----------------------------------------------------------------------- #
+
     def _build_analysis(self, verbose=False, plot=False):
         """
         Initialize the pyphs.graphs.analysis.GraphAnalysis object.
@@ -159,6 +161,46 @@ class Graph(nx.MultiDiGraph):
         if not hasattr(self.analysis, 'iGamma_fc') or force:
             # Perform realizability analysis
             self.analysis.perform()
+
+    # ----------------------------------------------------------------------- #
+
+    def read_realizability_from_analysis(self):
+        """
+        Read realizability for edges in self.analysis object and change
+        self.edges 'ctrl' data accordingly.
+        """
+
+        # init analysis if needed
+        self.perform_analysis()
+
+        def read_realizability(edges):
+            """
+            read realizability from list of edges indices and update self.edges
+            """
+
+            for i in edges:
+                label = self.analysis.get_edge_data(i, 'label')
+                if i in self.analysis.fc_edges:
+                    ctrl = 'f'
+                elif i in self.analysis.ec_edges:
+                    ctrl = 'e'
+                else:
+                    text = "Unnown realizablity for edge {}"
+                    edge = self.analysis.edges
+                    raise IndeterminateRealizability(text.format(edge))
+                for e in self.edgeslist:
+                    if e[-1]['label'] == label:
+                        e[-1]['ctrl'] = ctrl
+
+        # read realizibility for storages, dissipatives, ports and
+        # connectors edges
+        for edges in (self.analysis.stor_edges,
+                      self.analysis.diss_edges,
+                      self.analysis.port_edges,
+                      self.analysis.conn_edges):
+            read_realizability(edges)
+
+    # ----------------------------------------------------------------------- #
 
     def to_core(self, label=None, connect=True, merge_all=False, verbose=False,
                 plot=False, solve_arc=True, force=True):
@@ -257,41 +299,7 @@ class Graph(nx.MultiDiGraph):
 
         return core
 
-    def read_realizability_from_analysis(self):
-        """
-        Read realizability for edges in self.analysis object and change
-        self.edges 'ctrl' data accordingly.
-        """
-
-        # init analysis if needed
-        self.perform_analysis()
-
-        def read_realizability(edges):
-            """
-            read realizability from list of edges indices and update self.edges
-            """
-
-            for i in edges:
-                label = self.analysis.get_edge_data(i, 'label')
-                if i in self.analysis.fc_edges:
-                    ctrl = 'f'
-                elif i in self.analysis.ec_edges:
-                    ctrl = 'e'
-                else:
-                    text = "Unnown realizablity for edge {}"
-                    edge = self.analysis.edges
-                    raise IndeterminateRealizability(text.format(edge))
-                for e in self.edgeslist:
-                    if e[-1]['label'] == label:
-                        e[-1]['ctrl'] = ctrl
-
-        # read realizibility for storages, dissipatives, ports and
-        # connectors edges
-        for edges in (self.analysis.stor_edges,
-                      self.analysis.diss_edges,
-                      self.analysis.port_edges,
-                      self.analysis.conn_edges):
-            read_realizability(edges)
+    # ----------------------------------------------------------------------- #
 
     def to_method(self, label=None, config=None):
         """
@@ -363,6 +371,8 @@ class Graph(nx.MultiDiGraph):
         core = self.to_core(label=label)
         return core.to_simulation(config=config, inits=inits)
 
+    # ----------------------------------------------------------------------- #
+
     def _build_from_netlist(self):
         """
         build the graph of the system from the netlist structure (see \
@@ -386,6 +396,8 @@ class Graph(nx.MultiDiGraph):
         """
         plot(self, filename=filename, ax=ax, show=show)
 
+    # ----------------------------------------------------------------------- #
+
     def _split_serial(self):
         """
         Detect clusters of serial edges and replace them by equivalent
@@ -393,7 +405,6 @@ class Graph(nx.MultiDiGraph):
         """
 
         from .subgraph import SubGraphSerial
-
         # list of clusters of serial edges
         se = serial_edges(self)
         for edges in se:
@@ -495,35 +506,6 @@ class Graph(nx.MultiDiGraph):
             etype = e[-1]['type']
             if '_out_' in str(elabel) or etype == 'graph':
                 self.remove_edges_from_list([e, ])
-
-    def remove_edges_from_list(self, *args, **kwargs):
-        """
-        Remove a list of edges.
-
-        Parameters
-        ----------
-
-        edges : list of edges
-            List of edges to remove from the graph. Each edge is a tuple
-            (N1, N2, data) with nodes labels N1, N2 and edge data (dict).
-
-        See also
-        --------
-
-        Graph.edgeslist
-
-        """
-        for e in args[0]:
-            # Get edge key
-            n1, n2 = e[:2]
-            for key in self[n1][n2].keys():
-                if self[n1][n2][key]['label'] == e[-1]['label']:
-                    break
-
-            # Remove edge
-            self.remove_edge(n1, n2, key)
-
-        self.remove_orphan_nodes()
 
     def sp_split(self):
         """
@@ -635,6 +617,58 @@ class Graph(nx.MultiDiGraph):
 
         return levels
 
+    @staticmethod
+    def iter_analysis(graph):
+        """
+        Recursive graph analysis over a serial_parallel tree graph.
+
+        See Also
+        --------
+        pyphs.Graph.sp_split
+
+        """
+        # check for graph analysis object
+        if not hasattr(graph, 'analysis'):
+            graph._build_analysis()
+        # analyze root graph
+        graph.analysis.iteration()
+        # iterate over leaves
+        for e in graph.edges(data=True):
+            # if leaf is a subgraph
+            if e[-1]['type'] == 'graph':
+                # iterate
+                Graph.iter_analysis(e[-1]['graph'])
+
+    # ----------------------------------------------------------------------- #
+    def remove_edges_from_list(self, *args, **kwargs):
+        """
+        Remove a list of edges.
+
+        Parameters
+        ----------
+
+        edges : list of edges
+            List of edges to remove from the graph. Each edge is a tuple
+            (N1, N2, data) with nodes labels N1, N2 and edge data (dict).
+
+        See also
+        --------
+
+        Graph.edgeslist
+
+        """
+        for e in args[0]:
+            # Get edge key
+            n1, n2 = e[:2]
+            for key in self[n1][n2].keys():
+                if self[n1][n2][key]['label'] == e[-1]['label']:
+                    break
+
+            # Remove edge
+            self.remove_edge(n1, n2, key)
+
+        self.remove_orphan_nodes()
+
     def remove_orphan_nodes(self):
         """
         Remove orphan nodes (with degree 0).
@@ -646,6 +680,8 @@ class Graph(nx.MultiDiGraph):
         for node in nodes_to_remove:
             self.remove_node(node)
 
+    # ----------------------------------------------------------------------- #
+
     def __add__(graph1, graph2):
         """
         Graph summation.
@@ -656,19 +692,21 @@ class Graph(nx.MultiDiGraph):
         graph1.add_edges_from(graph2.edges(data=True))
         return graph1
 
-    def _get_edgeslist(self):
+    @property
+    def edgeslist(self):
         """
         Return a list of graph edges with data
         """
         return list(self.edges(data=True))
-    edgeslist = property(_get_edgeslist)
 
-    def _get_nodeslist(self):
+    @property
+    def nodeslist(self):
         """
         Return a set of graph nodes
         """
         return set(self.nodes())
-    nodeslist = property(_get_nodeslist)
+
+    # ----------------------------------------------------------------------- #
 
     def set_positions(self, reset=False, layout=None):
         """
@@ -703,25 +741,3 @@ class Graph(nx.MultiDiGraph):
                 self.positions = nx.circular_layout(self)
 
         return self.positions
-
-    @staticmethod
-    def iter_analysis(graph):
-        """
-        Recursive graph analysis over a serial_parallel tree graph.
-
-        See Also
-        --------
-        pyphs.Graph.split_sp
-
-        """
-        # check for graph analysis object
-        if not hasattr(graph, 'analysis'):
-            graph._build_analysis()
-        # analyze root graph
-        graph.analysis.iteration()
-        # iterate over leaves
-        for e in graph.edges(data=True):
-            # if leaf is a subgraph
-            if e[-1]['type'] == 'graph':
-                # iterate
-                Graph.iter_analysis(e[-1]['graph'])

@@ -74,7 +74,9 @@ def serial_edges(graph):
 
     """
     # Undirected graph only
-    g = graph.to_undirected()
+    nxgraph = nx.Graph()
+    nxgraph.add_edges_from(graph.edgeslist)
+    g = nxgraph.to_undirected()
     # init lists
     serial_nodes = list()
     all_edges = list()
@@ -82,12 +84,14 @@ def serial_edges(graph):
     datum_end = False
     # for each node with degree 2 in the graph
     for node in g.nodes():
+
         if node not in serial_nodes and \
                 g.degree(node) == 2 and \
                 not node == datum:
 
-            # nodes connected to node
-            n1, n2 = g[node]
+            # neighbors of node
+            neighbors = list(g.neighbors(node))
+            n1, n2 = neighbors
 
             # continue the serial connection toward n1
             s1 = serial_next(g, node, n1)

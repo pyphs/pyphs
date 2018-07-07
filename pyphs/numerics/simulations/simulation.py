@@ -335,12 +335,13 @@ class Simulation(object):
         path = self.src_path
         parameters_files = parameters(subs, self.objlabel)
         for e in ['cpp', 'h']:
-            filename = path + os.sep + 'parameters.{0}'.format(e)
+            filename = os.path.join(path, 'parameters.{0}'.format(e))
             string = parameters_files[e]
             _file = open(filename, 'w')
             _file.write(string)
             _file.close()
-        print('Parameters Files generated in \n{}'.format(path))
+        if VERBOSE >= 2:
+            print('Parameters Files generated in \n{}'.format(path))
 
     # -------------------------------------------------------------------------
     # Progressbar

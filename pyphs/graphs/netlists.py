@@ -11,7 +11,6 @@ import os
 import ast
 from pyphs.config import datum, VERBOSE
 
-
 def sep():
     return ','
 
@@ -107,12 +106,13 @@ components).
         """
         read data from netlist
         """
-        file_ = open(self.path, "r")
-        with file_ as openfileobject:
-            for line in openfileobject:
+        with open(self.path, "r") as openfileobject:
+            for i, line in enumerate(openfileobject.readlines()):
                 if line.startswith('#'):
                     if VERBOSE >= 1:
                         print('pass "{}"'.format(line[:-1]))
+                elif len(line) == 1:
+                    pass
                 else:
                     if VERBOSE >= 1:
                         print('read "{}"'.format(line[:-1]))
@@ -144,7 +144,6 @@ components).
                                 pass
                         pars.update({key: value})
                     self.arguments = list(self.arguments)+[pars, ]
-        file_.close()
 
     def netlist(self):
         """

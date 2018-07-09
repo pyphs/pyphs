@@ -80,11 +80,11 @@ target_M = np.array([
 
 os.remove(path)
 
-def split_sp():
+
+def sp_split():
     netlist = NetlistThieleSmallNL()
     graph = Graph(netlist=netlist)
-    print(graph.edges(data=True))
-    graph.split_sp()
+    graph.sp_split()
     os.remove(path)
     return True
 

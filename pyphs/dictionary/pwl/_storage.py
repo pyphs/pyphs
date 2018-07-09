@@ -52,6 +52,7 @@ zero (component {})'.format(label)
         data = {'label': x,
                 'type': 'storage',
                 'ctrl': ctrl,
+                'file': path,
                 'link': None}
         N1, N2 = nodes
 

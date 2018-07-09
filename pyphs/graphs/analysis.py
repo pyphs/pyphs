@@ -78,6 +78,50 @@ class GraphAnalysis:
             else:
                 i += 1
 
+    @property
+    def stor_edges(self):
+        """
+        Return the indices of storage edges in self.edgeslist
+        """
+        temp = []
+        for e in range(self.ne):
+            if self.get_edge_data(e, 'type') is 'storage':
+                temp.append(e)
+        return temp
+
+    @property
+    def diss_edges(self):
+        """
+        Return the indices of dissipative edges in self.edgeslist
+        """
+        temp = []
+        for e in range(self.ne):
+            if self.get_edge_data(e, 'type') is 'dissipative':
+                temp.append(e)
+        return temp
+
+    @property
+    def port_edges(self):
+        """
+        Return the indices of port edges in self.edgeslist
+        """
+        temp = []
+        for e in range(self.ne):
+            if self.get_edge_data(e, 'type') is 'port':
+                temp.append(e)
+        return temp
+
+    @property
+    def conn_edges(self):
+        """
+        Return the indices of connector edges in self.edgeslist
+        """
+        temp = []
+        for e in range(self.ne):
+            if self.get_edge_data(e, 'type') is 'connector':
+                temp.append(e)
+        return temp
+
     def iterate_fc(self):
         """
 Iteration over the list `graph.analysis.fc_edges` of a given graph.
@@ -169,6 +213,9 @@ Execute an iteration over the lists:
             self.iterate_ic()
 
     def perform(self):
+        """
+        Process realizability analysis.
+        """
         # realizability analysis on the ic_edges
         while (len(self.ic_edges) + len(self.ic_nodes) > 0):
             self.iteration()

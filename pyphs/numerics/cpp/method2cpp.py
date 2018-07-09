@@ -47,6 +47,8 @@ def init_eval(method, name):
                 sobj = substitute(sobj, method.subscpp)
                 if sobj == sobjpre:
                     freesymbs = free_symbols(sobj)
+                    if len(freesymbs) == 1:
+                        freesymbs = freesymbs.pop()
                     text = 'Missing substitution symbols: {}'.format(freesymbs)
                     raise AttributeError(text)
             if not isinstance(sobj, (float, list)):

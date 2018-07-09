@@ -9,8 +9,9 @@
 // ----------------------------------------------------------
 // Stereo input to stereo output
 // Constant inputs are defined here
+//
 
-process = (_,_) :> ${inputs} : recursion <: (_,_);
+process = (_*gainIn, _*gainIn) :> ${inputs} : recursion <: (_*gainOut, _*gainOut);
 
 // ----------------------------------------------------------
 // Imports
@@ -29,6 +30,15 @@ ${constPars}
 // Sample Rate
 
 ${fs} = ma.SR;
+
+// ----------------------------------------------------------
+// Sliders for I/O gains
+
+gainInExp = hslider("Gain IN", 0., -1, 1., 0.001);
+gainIn = pow(10, gainInExp);
+
+gainOutExp = hslider("Gain OUT", 0., -1, 1., 0.001);
+gainOut = pow(10, gainOutExp);
 
 // ----------------------------------------------------------
 // Sliders for ctrl parameters

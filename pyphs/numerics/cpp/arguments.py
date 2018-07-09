@@ -40,9 +40,14 @@ def _append_args_pointers(method, files):
     files['h']['private'] += \
         '\n{0} args;'.format(matrix_type(len(method.args()), 1))
     for i, arg in enumerate(method.args()):
-        files['h']['private'] += \
-            '\n{2} * {0} = & args({1}, 0);'.format(str(arg), i, CONFIG_CPP['float'])
-
+        # Create a pointer only if no substitution value is given for argument
+        if arg in method.subs.keys():
+            pass
+        else:
+            files['h']['private'] += \
+                '\n{2} * {0} = & args({1}, 0);'.format(str(arg),
+                                                       i,
+                                                       CONFIG_CPP['float'])
 
 def _append_args_accessors_vector(method, files, objlabel):
     """
@@ -56,13 +61,13 @@ def _append_args_accessors_vector(method, files, objlabel):
         arg = getattr(method, name+'_expr')
         dim = len(arg)
         files['h']['public'] += \
-            '\nvector<{1}> {0}_vector() const;'.format(name, CONFIG_CPP['float'])
+            '\nconst vector<{1}> & {0}_vector() const;'.format(name, CONFIG_CPP['float'])
         files['cpp']['public'] += \
-            "\nvector<{0}> ".format(CONFIG_CPP['float']) + \
+            "\nconst vector<{0}> & ".format(CONFIG_CPP['float']) + \
             "{0}::{1}".format(objlabel, name) + \
             "_vector() const {"
         files['cpp']['public'] += \
-            indent("\nvector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
+            indent("\nstatic vector<{1}> v = vector<{1}>({0});".format(dim, CONFIG_CPP['float']))
         for i, symb in enumerate(arg):
             files['cpp']['public'] += \
                 indent("\nv[{0}] = *{1};".format(i, str(symb)))
@@ -86,12 +91,12 @@ def _append_args_accessors_matrix(method, files, objlabel):
         else:
             dim1 = 1
         files['h']['public'] += \
-            '\n{0} {1}() const;'.format(matrix_type(dim0, dim1), name)
+            '\nconst {0} & {1}() const;'.format(matrix_type(dim0, dim1), name)
         files['cpp']['public'] += \
-            "\n{0} {1}::{2}() const".format(matrix_type(dim0, dim1),
+            "\nconst {0} & {1}::{2}() const".format(matrix_type(dim0, dim1),
                                             objlabel, name) + ' {'
         files['cpp']['public'] += \
-            indent('\n{0} m;'.format(matrix_type(dim0, dim1)))
+            indent('\nstatic {0} m;'.format(matrix_type(dim0, dim1)))
         for i, symb in enumerate(arg):
             files['cpp']['public'] += \
                 indent("\nm({0}, 0) = *{1};".format(i, str(symb)))
@@ -115,13 +120,14 @@ def _append_args_mutators_matrix(method, files, objlabel):
         else:
             dim1 = 1
         files['h']['public'] += '\nvoid set_' + name + \
-            '(Matrix<{2}, {0}, {1}> &);'.format(dim0, dim1, CONFIG_CPP['float'])
+            '(const Matrix<{2}, {0}, {1}> &);'.format(dim0, dim1, CONFIG_CPP['float'])
         files['cpp']['public'] += \
             "\nvoid {0}::set_{1}".format(objlabel, name) + \
-            "(Matrix<{2}, {0}, {1}> & m)".format(dim0, dim1, CONFIG_CPP['float']) + " {"
+            "(const Matrix<{2}, {0}, {1}> & m)".format(dim0, dim1, CONFIG_CPP['float']) + " {"
         for i, symb in enumerate(arg):
-            files['cpp']['public'] += \
-                '\n'+indent("*{0} = m({1}, 0);".format(str(symb), i))
+            if not symb in method.subs.keys():
+                files['cpp']['public'] += \
+                    '\n'+indent("*{0} = m({1}, 0);".format(str(symb), i))
         files['cpp']['public'] += "\n}"
 
 
@@ -136,13 +142,14 @@ def _append_args_mutators_vectors(method, files, objlabel):
     for name in method.args_names:
         arg = getattr(method, name+'_expr')
         files['h']['public'] += \
-            '\nvoid set_{0}(vector<{1}> &);'.format(name, CONFIG_CPP['float'])
+            '\nvoid set_{0}(const vector<{1}> &);'.format(name, CONFIG_CPP['float'])
         files['cpp']['public'] += \
-            "\nvoid {0}::set_{1}(vector<{2}> & v)".format(objlabel, name, CONFIG_CPP['float']) +\
+            "\nvoid {0}::set_{1}(const vector<{2}> & v)".format(objlabel, name, CONFIG_CPP['float']) +\
             " {"
         for i, symb in enumerate(arg):
-            files['cpp']['public'] += "\n" + \
-                indent("*{0} = v[{1}];".format(str(symb), i))
+            if not symb in method.subs.keys():
+                files['cpp']['public'] += "\n" + \
+                    indent("*{0} = v[{1}];".format(str(symb), i))
         files['cpp']['public'] += "\n}"
 
 
@@ -157,25 +164,28 @@ def _append_args_mutators_elements(method, files, objlabel):
     for name in method.args_names:
         arg = getattr(method, name+'_expr')
         files['h']['public'] += \
-            '\nvoid set_{0}({1} &, unsigned int &);'.format(name, CONFIG_CPP['float'])
+            '\nvoid set_{0}(const {1} &, unsigned int &);'.format(name, CONFIG_CPP['float'])
         files['cpp']['public'] += \
-            "\nvoid {0}::set_{1}({2} & value, unsigned int & index)".format(objlabel, name, CONFIG_CPP['float']) +\
+            "\nvoid {0}::set_{1}(const {2} & value, unsigned int & index)".format(objlabel, name, CONFIG_CPP['float']) +\
             " {"
         for i, symb in enumerate(arg):
-            if i == 0:
-                files['cpp']['public'] += "\n" + \
-                    indent("if(index == {0})".format(i)) + ' {' + \
-                    "\n" + \
-                    indent(indent("*{0} = value;".format(str(symb)))) + \
-                    "\n" + \
-                    indent('}')
-            else:
-                files['cpp']['public'] += "\n" + \
-                    indent("else if(index == {0})".format(i)) + ' {' + \
-                    "\n" + \
-                    indent(indent("*{0} = value;".format(str(symb)))) + \
-                    "\n" + \
-                    indent('}')
+            start = True
+            if not symb in method.subs.keys():
+                if start:
+                    files['cpp']['public'] += "\n" + \
+                        indent("if(index == {0})".format(i)) + ' {' + \
+                        "\n" + \
+                        indent(indent("*{0} = value;".format(str(symb)))) + \
+                        "\n" + \
+                        indent('}')
+                    start = False
+                else:
+                    files['cpp']['public'] += "\n" + \
+                        indent("else if(index == {0})".format(i)) + ' {' + \
+                        "\n" + \
+                        indent(indent("*{0} = value;".format(str(symb)))) + \
+                        "\n" + \
+                        indent('}')
         files['cpp']['public'] += "\n}"
 
 ###############################################################################

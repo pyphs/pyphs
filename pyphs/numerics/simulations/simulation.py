@@ -87,7 +87,8 @@ class Simulation(object):
     system_call = staticmethod(system_call)
     execute_bash = staticmethod(execute_bash)
 
-    def __init__(self, method, config=None, inits=None, label=None):
+    def __init__(self, method, config=None, inits=None,
+                 label=None, clear=True):
         """
         Parameters
         -----------
@@ -118,6 +119,15 @@ class Simulation(object):
             Dictionary with variable name as keys and initialization values
             as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
+
+        label : str of None (optional)
+            Simulation label. If None (the default), the method.label is used.
+
+        clear : bool (optional)
+            If True, any existing h5file with same path than data h5file is
+            erased. Else, it is used to initialize the data object.
+            The default is True.
+
         """
 
         self.method = method
@@ -158,7 +168,7 @@ class Simulation(object):
         if inits is not None:
             self.inits.update(inits)
 
-        self.init_numericalCore()
+        self.init_numericalCore(clear=clear)
 
     def config_numeric(self):
         dic = dict()
@@ -188,10 +198,19 @@ class Simulation(object):
     def objlabel(self):
         return self.method.label.upper()
 
-    def init_numericalCore(self):
+    def init_numericalCore(self, clear=True):
         """
         Build the Numeric from the Core.
         Additionnally, generate the c++ code if config['lang'] == 'c++'.
+
+        Parameter
+        ---------
+
+        clear : bool (optional)
+            If True, any existing h5file with same path than data h5file is
+            erased. Else, it is used to initialize the data object.
+            The default is True.
+
         """
         if not self.config['lang'] in ['c++', 'python']:
             text = 'Unknows language {}'
@@ -213,7 +232,7 @@ class Simulation(object):
                        inits=self.inits,
                        config=self.config_numeric())
 
-        self.data = H5Data(self.method, self.config, clear=True)
+        self.data = H5Data(self.method, self.config, clear=clear)
 
     def init_method(self):
         """
@@ -460,8 +479,16 @@ class Simulation(object):
 
             # Running commands
             try:
-                process = subprocess.run(cmd['build_tree'], **sp_config)
-                process = subprocess.run(cmd['compile_src'], **sp_config)
+                # subprocess.run has been introduced in py3.5
+                if hasattr(subprocess, 'run'):
+                    process = subprocess.run(cmd['build_tree'], **sp_config)
+                    process = subprocess.run(cmd['compile_src'], **sp_config)
+                else:
+                    sp_config.pop('check')
+                    process = system_call(cmd['build_tree'].split(),
+                                          **sp_config)
+                    process = system_call(cmd['compile_src'].split(),
+                                          **sp_config)
 
             except subprocess.CalledProcessError as error:
 
@@ -483,9 +510,14 @@ class Simulation(object):
 
         # Running executable simulation
         sp_config['stdout'] = subprocess.PIPE
-        process = subprocess.run('./bin/%s' % self.label, **sp_config)
 
-        print(process.stdout)
+        # subprocess.run has been introduced in py3.5
+        if hasattr(subprocess, 'run'):
+            process = subprocess.run('./bin/%s' % self.label, **sp_config)
+            print(process.stdout)
+
+        else:
+            process = system_call(['./bin/%s' % self.label, ], **sp_config)
 
         # go back to work folder
         os.chdir(self.work_path)

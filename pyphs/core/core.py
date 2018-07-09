@@ -520,6 +520,25 @@ class Core:
         else:
             return self._dxH
 
+    def Hx(self, x):
+        """
+        Return the part of H associated with x, i.e. int_x (dH(x)/dx) dx
+
+        Parameter
+        ---------
+
+        x : core symbol
+            Symbol for which the contribution to energy is returned
+
+        Output
+        ------
+
+        Hx : expression
+            The contribution to total energy associated with x
+
+        """
+
+
     def jacz(self):
         """
         jacz

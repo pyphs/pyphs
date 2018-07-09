@@ -1,0 +1,20 @@
+# Source
+electronics.source Ue ('N1', '#'): type=voltage;
+
+# Capacitors
+electronics.capacitor C1 ('N1', 'N3'): C=('C1', 1e-06);
+electronics.capacitor C2 ('N2', 'N3'): C=('C2', 2e-06);
+electronics.capacitor C3 ('N2', 'N3b'): C=('C3', 3e-06);
+electronics.capacitor C4 ('N3b', 'N3'): C=('C4', 4e-06);
+
+# Resistors
+electronics.resistor R1 ('N1', 'N2'): R=('R1', 1e-06);
+electronics.resistor R2 ('N3', '#'): R=('R2', 2e-06);
+electronics.resistor R3 ('N4', 'N6'): R=('R3', 3e-06);
+electronics.resistor R4 ('N8', '#'): R=('R4', 4e-06);
+electronics.resistor R5 ('N8', '#'): R=('R5', 4e-07);
+
+# Inductors
+electronics.inductor L1 ('N1', 'N4'): L=('L1', 3e-06);
+electronics.inductor L2 ('N6', 'N7'): L=('L2', 2e-06);
+electronics.inductor L3 ('N7', 'N8'): L=('L3', 1e-06);

@@ -76,6 +76,11 @@ class H5Data(object):
 
         self._build_readers()
 
+        # init load options
+        self.start = None
+        self.stop = None
+        self.step = None
+
     # ----------------------------------------------------------------------- #
     # fs
     @property
@@ -319,6 +324,8 @@ or an integer nt (number of time steps).'
         # store number of time steps
         self.config['nt'] = nt = int(nt)
 
+        self._h5new()
+
         # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
         if sequ is None:
             ny = self.method.dims.y()
@@ -432,6 +439,8 @@ or an integer nt (number of time steps).'
 
         self._open = False
 
+        self.config['nt'] = self._h5shape[0]
+
     # ----------------------------------------------------------------------- #
 
     @property
@@ -439,7 +448,17 @@ or an integer nt (number of time steps).'
         """
         return the number of timesteps in the timeserie
         """
-        return self.h5file[self.dname].shape
+        # close flag
+        if not self._open:
+            self.h5open()
+            close = True
+        else:
+            close = False
+        shape = self.h5file[self.dname].shape
+        if close:
+            self.h5close()
+
+        return shape
 
     # ----------------------------------------------------------------------- #
 
@@ -567,7 +586,11 @@ or an integer nt (number of time steps).'
 
         # update array with data values
         for i, name in enumerate(data):
-            a[:, slice(*self.inds[name])] = list(data[name])
+            if isinstance(data[name], list):
+                d = data[name]
+            else:
+                d = list(data[name])
+            a[:, slice(*self.inds[name])] = d
 
         # write array in h5 file at time t
         self.h5file[self.dname][tslice, :] = numpy.asarray(a, dtype=self.dtype)

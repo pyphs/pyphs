@@ -414,8 +414,10 @@ class Graph(nx.MultiDiGraph):
             # increment counter for parallel edges labels
             self._idser += 1
             sglabel = 'serial{0}'.format(self._idser)
+            # define subgraph terminals
+            terminals = edges[1], edges[2]
             # instanciate a new subgraph
-            sg = SubGraphSerial(sglabel)
+            sg = SubGraphSerial(sglabel, terminals)
             sg.core = self.core
             # add serial cluster edges
             sg.add_edges_from(edges[0])
@@ -459,8 +461,11 @@ class Graph(nx.MultiDiGraph):
             # increment counter for parallel edges labels
             self._idpar += 1
             pglabel = 'parallel{0}'.format(self._idpar)
+            # define subgraph terminals
+            terminals = n1, n2
             # instanciate a new subgraph
-            pg = SubGraphParallel(pglabel)
+            # instanciate a new subgraph
+            pg = SubGraphParallel(pglabel, terminals)
             pg.core = self.core
             # add parallel edges
             pg.add_edges_from(edges)

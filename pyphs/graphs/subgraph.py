@@ -81,8 +81,23 @@ def realizable_merge_dissipatives(w, z):
 
 class SubGraph(Graph):
 
-    def __init__(self, label):
+    def __init__(self, label, terminals):
+        """
+        Initialize an empty SubGraph.
+
+        Parameters
+        ----------
+
+        label : str
+            SubGraph label.
+
+        terminals : list of nodes labels
+            Ordered list of terminals. The subgraph is replaced in the root
+            graph by an edge terminals[0] -> terminals[1]
+
+        """
         Graph.__init__(self, label=label)
+        self._terminals = tuple(terminals)
         self._realizability = None
 
     @property
@@ -468,31 +483,32 @@ class SubGraph(Graph):
     def z_arc(self):
         return getattr(self, 'z_{0}c'.format(self.anti_realizability))
 
-    def set_orientation_reference(self, orientation):
-        if not hasattr(self, '_orientation'):
-            self._orientation = orientation
+#    def set_orientation_reference(self, orientation):
+#        if not hasattr(self, '_orientation'):
+#            self._orientation = orientation
 
     @property
     def terminals(self):
         """
         Get the terminal nodes associated with the subgraph.
         """
-        # read nodes from subgraph output edges
-        nodes = set()
-        for e in self.edges(data=True):
-            if '_out_' in str(e[-1]['label']):
-                nodes.update(e[:2])
-        # remove datum
-        if len(nodes) > 2:
-            nodes.remove(self.datum)
-        # return
-        return nodes
+#        # read nodes from subgraph output edges
+#        nodes = set()
+#        for e in self.edges(data=True):
+#            if '_out_' in str(e[-1]['label']):
+#                nodes.update(e[:2])
+#        # remove datum
+#        if len(nodes) > 2:
+#            nodes.remove(self.datum)
+#        # return
+#        return nodes
+        return self._terminals
 
 
 class SubGraphParallel(SubGraph):
 
-    def __init__(self, label):
-        SubGraph.__init__(self, label)
+    def __init__(self, label, terminals):
+        SubGraph.__init__(self, label, terminals)
         self._realizability = 'e'
 
     def new_edge(self, edata, nodes=None):
@@ -507,27 +523,29 @@ class SubGraphParallel(SubGraph):
         Return a list of orientations values in {+1, -1} associated with the
         list self.edgeslist with +1 for the first edge in the list.
         """
-        nodes = self.edgeslist[0][:2]
+
+        nodes = self.terminals
+
         orientations = list()
+
         for e in self.edgeslist:
-            print('nodes={}, edge={}'.format(nodes, e[:2]))
-            if e[:2] == nodes:
+            if tuple(e[:2]) == nodes:
                 orientation = +1
             elif (e[1], e[0]) == nodes:
                 orientation = -1
             elif '_out_' in str(e[-1]['label']):
-                pass
+                orientation = None
             else:
                 raise ValueError('Orientation of the following edge can not \
 be determined\n{}'.format(e))
             orientations.append(orientation)
-
-        n_pos = sum(map(lambda val: max(val, 0), orientations))
-        n_neg = -sum(map(lambda val: min(val, 0), orientations))
-        self.set_orientation_reference(int(n_pos >= n_neg)-int(n_neg > n_pos))
-
-        if self._orientation == -1:
-            orientations = [-o for o in orientations]
+#
+#        n_pos = sum(map(lambda val: max(val, 0), orientations))
+#        n_neg = -sum(map(lambda val: min(val, 0), orientations))
+#        self.set_orientation_reference(int(n_pos >= n_neg)-int(n_neg > n_pos))
+#
+#        if self._orientation == -1:
+#            orientations = [-o for o in orientations]
 
         return orientations
 
@@ -537,8 +555,8 @@ class SubGraphSerial(SubGraph):
     def serial_next(self, *args):
         return serial_next(self, *args)
 
-    def __init__(self, label):
-        SubGraph.__init__(self, label)
+    def __init__(self, label, terminals):
+        SubGraph.__init__(self, label, terminals)
         self._realizability = 'f'
 
     @property
@@ -585,12 +603,12 @@ class SubGraphSerial(SubGraph):
 determined\n{}'.format(e))
             orientations.append(orientation)
 
-        n_pos = sum(map(lambda val: max(val, 0), orientations))
-        n_neg = -sum(map(lambda val: min(val, 0), orientations))
-        self.set_orientation_reference(int(n_pos >= n_neg)-int(n_neg > n_pos))
-
-        if self._orientation == -1:
-            orientations = [-o for o in orientations]
+#        n_pos = sum(map(lambda val: max(val, 0), orientations))
+#        n_neg = -sum(map(lambda val: min(val, 0), orientations))
+#        self.set_orientation_reference(int(n_pos >= n_neg)-int(n_neg > n_pos))
+#
+#        if self._orientation == -1:
+#            orientations = [-o for o in orientations]
 
         return orientations
 

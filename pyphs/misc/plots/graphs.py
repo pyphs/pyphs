@@ -66,7 +66,10 @@ def orthogonal(v):
 
 
 def angle(d):
-    return np.degrees((np.arctan(d[1]/d[0]) + np.pi/2 % np.pi) - np.pi/2)
+    if d[0] == 0:
+        return 0
+    else:
+        return np.degrees((np.arctan(d[1]/d[0]) + np.pi/2 % np.pi) - np.pi/2)
 
 
 def type_colors(type_):

@@ -14,7 +14,7 @@ ${license}
 % -----------------------------------------------------------------------------
 % Date
 %
-\date{\today}                              % Activate to display a given date or no date
+\date{\today}                               % Activate to display a given date or no date
 %
 % -----------------------------------------------------------------------------
 % Title

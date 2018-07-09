@@ -560,7 +560,7 @@ class SubGraphSerial(SubGraph):
             root = None
 
         # Convert graph type to undirected graph with no parallel edge.
-        simple_graph = nwxGraph(self.to_undirected())
+        simple_graph = nwxGraph(self)
 
         # Return chain decomposition
         return list(chain_decomposition(simple_graph,
@@ -633,7 +633,7 @@ determined\n{}'.format(e))
             if not ((n1, n2) in preserve_nodes or
                     (n2, n1) in preserve_nodes):
 
-                undirected = self.to_undirected()
+                undirected = nwxGraph(self)
 
                 if n1 in self.terminals:
                     del_node, connect_node1 = n2, n1

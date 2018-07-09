@@ -5,10 +5,9 @@ Created on Sat Jun 11 19:41:09 2016
 @author: Falaize
 """
 
-import os
-from matplotlib.pyplot import text
-from pyphs.config import latex_compiler_path, plot_format
+from pyphs.config import plot_format
 from pyphs.misc.tools import decimate
+
 
 def dec(li, opts):
     """
@@ -27,8 +26,11 @@ def annotate(s, xy, ax=None):
     binx = xy[0]
     biny = xy[1]
     ax.text(binx, biny, s,
-         bbox=dict(facecolor='white', alpha=1.), horizontalalignment='center',
-                   verticalalignment='center', transform = ax.transAxes)
+            bbox=dict(facecolor='white', alpha=1.),
+            horizontalalignment='center',
+            verticalalignment='center',
+            transform=ax.transAxes)
+
 
 def whichplot(which, axe):
     """

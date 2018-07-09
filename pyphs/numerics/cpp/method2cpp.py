@@ -7,19 +7,19 @@ Created on Tue Jun 28 13:47:47 2016
 
 from __future__ import absolute_import, division, print_function
 
-from .preamble import str_preamble
 from .arguments import append_args
 from .functions import append_funcs, append_funcs_constructors
 from .operations import append_ops
-from .tools import indent, SEP, formatPath
+from .tools import indent, comment
 from pyphs.config import VERBOSE, CONFIG_NUMERIC, CONFIG_CPP
-from pyphs.misc.tools import geteval
+from pyphs.misc.tools import geteval, get_time
 from pyphs.core.tools import substitute, free_symbols
 from .tools import linesplit
 import numpy
 import sympy
 import os
 import copy
+
 
 standard_config = {'path': os.getcwd()}
 
@@ -155,6 +155,15 @@ def method2cpp(method, objlabel=None, path=None,
     if not os.path.exists(path):
         os.makedirs(path)
 
+    from pyphs import path_to_templates
+    import string
+
+    # read license template
+    with open(os.path.join(path_to_templates,
+                           'license.template'), 'r') as f:
+        _license = string.Template(f.read())
+    starting = comment(_license.substitute({'time': get_time()}))
+
     files = {}
     exts = ['cpp', 'h']
 
@@ -163,7 +172,7 @@ def method2cpp(method, objlabel=None, path=None,
                              'private': '',
                              'init': '',
                              'data': '',
-                             'starting': str_preamble(objlabel),
+                             'starting': starting,
                              'closing': ''}})
     files['h']['starting'] += '\n'
     files['h']['starting'] += "\n#ifndef {0}_H".format(objlabel)
@@ -262,8 +271,17 @@ def parameters(subs, objlabel):
     """
     Generates the C++ files associated with the parameters
     """
-    files = {'h': str_preamble(objlabel),
-             'cpp': str_preamble(objlabel)}
+    from pyphs import path_to_templates
+    import string
+
+    # read license template
+    with open(os.path.join(path_to_templates,
+                           'license.template'), 'r') as f:
+        _license = string.Template(f.read())
+    str_preamble = comment(_license.substitute({'time': get_time()}))
+
+    files = {'h': str_preamble,
+             'cpp': str_preamble}
     files['h'] += """
 #ifndef PARAMETERS_H
 #define PARAMETERS_H"""

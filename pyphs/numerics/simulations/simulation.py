@@ -24,7 +24,7 @@ import sys
 # -----------------------------------------------------------------------------
 # Functions for system call and bash execution
 
-def system_call(cmd):
+def system_call(cmd, **kwargs):
     """
     Execute a system command.
 
@@ -43,19 +43,23 @@ def system_call(cmd):
     >>> system_call(cmd)
 
     """
+    if isinstance(cmd, str):
+        cmd = cmd.split()
     if sys.platform.startswith('win'):
         shell = True
     else:
         shell = True
     if VERBOSE >= 1:
         print(cmd)
-    p = subprocess.Popen(cmd, shell=shell,
+
+    p = subprocess.Popen(cmd,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT)
-    for line in iter(p.stdout.readline, b''):
-        l = line.decode()
-        if VERBOSE >= 1:
+    for l in iter(p.stdout.readline, b''):
+        if isinstance(l, str):
             print(l)
+        else:
+            print(l.decode())
 
 
 def execute_bash(text):
@@ -83,9 +87,6 @@ class Simulation(object):
     """
     Object for the iterative solving of Method object.
     """
-
-    system_call = staticmethod(system_call)
-    execute_bash = staticmethod(execute_bash)
 
     def __init__(self, method, config=None, inits=None,
                  label=None, clear=True):
@@ -476,20 +477,19 @@ class Simulation(object):
 
         # Perform build
         with open(os.path.join(sp_config["cwd"], "build.log"), 'w') as fid:
+
             sp_config['stdout'] = fid
 
             # Running commands
             try:
                 # subprocess.run has been introduced in py3.5
                 if hasattr(subprocess, 'run'):
-                    process = subprocess.run(cmd['build_tree'], **sp_config)
-                    process = subprocess.run(cmd['compile_src'], **sp_config)
+                    subprocess.run(cmd['build_tree'], **sp_config)
+                    subprocess.run(cmd['compile_src'], **sp_config)
                 else:
                     sp_config.pop('check')
-                    process = system_call(cmd['build_tree'].split(),
-                                          **sp_config)
-                    process = system_call(cmd['compile_src'].split(),
-                                          **sp_config)
+                    system_call(cmd['build_tree'].split(), **sp_config)
+                    system_call(cmd['compile_src'].split(), **sp_config)
 
             except subprocess.CalledProcessError as error:
 
@@ -511,20 +511,24 @@ class Simulation(object):
 
         # Running executable simulation
         sp_config['stdout'] = subprocess.PIPE
+        sp_config.pop('check')
 
         # subprocess.run has been introduced in py3.5
-        if hasattr(subprocess, 'run'):
-            process = subprocess.run('./bin/%s' % self.label, **sp_config)
-            print(process.stdout)
+#        if hasattr(subprocess, 'run'):
+#            process = subprocess.run('./bin/%s' % self.label, **sp_config)
+#            print(process.stdout)
+#
+#        else:
+#            process = system_call(['./bin/%s' % self.label, ], **sp_config)
 
-        else:
-            process = system_call(['./bin/%s' % self.label, ], **sp_config)
+        cmd = './bin/{0}'.format(self.label)
+        self.system_call(cmd.split(), **sp_config)
 
         # go back to work folder
         os.chdir(self.work_path)
 
     @staticmethod
-    def system_call(cmd):
+    def system_call(cmd, **kwargs):
         """
         Execute a system command.
 
@@ -534,13 +538,15 @@ class Simulation(object):
         cmd : list
             List of arguments.
 
+        kwargs : keyword arguments to
+
         Example
         -------
         Change directory with
-        cmd = ['cd', './my/folder']
+        cmd = 'cd ./my/folder'
         system_call(cmd)
         """
-        system_call(cmd)
+        system_call(cmd, **kwargs)
 
     @staticmethod
     def execute_bash(text):

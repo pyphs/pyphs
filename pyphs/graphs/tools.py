@@ -36,7 +36,7 @@ def serial_next(graph, n1, n2, testDatum=True):
 
     """
     # Undirected graph
-    g = graph.to_undirected()
+    g = nx.Graph(graph)
 
     # Init list of nodes in the serial chain
     serial = [n1, n2]
@@ -74,9 +74,8 @@ def serial_edges(graph):
 
     """
     # Undirected graph only
-    nxgraph = nx.Graph()
-    nxgraph.add_edges_from(graph.edgeslist)
-    g = nxgraph.to_undirected()
+    g = nx.Graph(graph)
+
     # init lists
     serial_nodes = list()
     all_edges = list()
@@ -133,7 +132,8 @@ def parallel_edges(graph):
         parallel connection.
 
     """
-    g = graph.to_undirected()
+    g = nx.Graph(graph)
+
     all_edges = list()
     for node in g.nodes():
         if g.degree(node) > 1 and not node == datum:

@@ -24,7 +24,7 @@ VERBOSE = 0
 
 # Below are the options for NUMERICAL COMPUTATIONS also used in the DICTIONARY.
 
-# Define the data type (defualt is float 32bi)
+# Define the data type (default is float 32bit)
 DTYPE = numpy.finfo(float).dtype.type
 
 # Default samplerate (Hz)
@@ -95,9 +95,6 @@ GRAPHS_ITERATIONS = 1000
 ###############################################################################
 
 # Below are the options for LATEX RENDERING in generated .tex files and plots
-
-# path to latex compiler
-latex_compiler_path = '/Library/TeX/texbin'
 
 # In equations:
 # use “p/q” instead of “frac{p}{q}” when the denominator is simple enough

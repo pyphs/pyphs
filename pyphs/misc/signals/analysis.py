@@ -117,7 +117,7 @@ def spectrogram(x, fs, show=False, **kwargs):
 
 
 
-def transferFunction(sigin, sigout, fs, nfft=int(2e13), filtering=None,
+def transferFunction(sigin, sigout, fs, nfft=int(2e10), filtering=None,
                      limits=None):
     """
     Return frequencies and modulus of \
@@ -168,7 +168,7 @@ as a fraction of the sampling rate (in (0, 0.5)).
         fmin, fmax = limits
     from numpy import nonzero
     nfmax = len(f) if fmax >= f[-1] else nonzero(f > fmax)[0][0]
-    nfmin = nonzero(f > fmin)[0][0]
+    nfmin = nonzero(f >= fmin)[0][0]
     f = f[nfmin:nfmax]
     TF = [el**0.5 for el in TF[nfmin:nfmax]]
     return f, TF

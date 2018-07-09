@@ -510,6 +510,7 @@ class SubGraphParallel(SubGraph):
         nodes = self.edgeslist[0][:2]
         orientations = list()
         for e in self.edgeslist:
+            print('nodes={}, edge={}'.format(nodes, e[:2]))
             if e[:2] == nodes:
                 orientation = +1
             elif (e[1], e[0]) == nodes:

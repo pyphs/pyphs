@@ -43,18 +43,27 @@ def system_call(cmd, **kwargs):
     >>> system_call(cmd)
 
     """
-    if isinstance(cmd, str):
-        cmd = cmd.split()
+
     if sys.platform.startswith('win'):
         shell = True
     else:
         shell = True
+
     if VERBOSE >= 1:
         print(cmd)
 
-    p = subprocess.Popen(cmd,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
+    try:
+        kwargs.pop('check')
+    except KeyError:
+        pass
+
+    kwargs['stdout'] = subprocess.PIPE
+    kwargs['stdout'] = subprocess.PIPE
+
+    kwargs['shell'] = shell
+
+    p = subprocess.Popen(cmd, **kwargs)
+
     for l in iter(p.stdout.readline, b''):
         if isinstance(l, str):
             print(l)
@@ -487,9 +496,8 @@ class Simulation(object):
                     subprocess.run(cmd['build_tree'], **sp_config)
                     subprocess.run(cmd['compile_src'], **sp_config)
                 else:
-                    sp_config.pop('check')
-                    system_call(cmd['build_tree'].split(), **sp_config)
-                    system_call(cmd['compile_src'].split(), **sp_config)
+                    system_call(cmd['build_tree'], **sp_config)
+                    system_call(cmd['compile_src'], **sp_config)
 
             except subprocess.CalledProcessError as error:
 
@@ -510,8 +518,6 @@ class Simulation(object):
                 print(line)
 
         # Running executable simulation
-        sp_config['stdout'] = subprocess.PIPE
-        sp_config.pop('check')
 
         # subprocess.run has been introduced in py3.5
 #        if hasattr(subprocess, 'run'):

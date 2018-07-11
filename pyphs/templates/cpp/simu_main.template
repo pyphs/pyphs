@@ -53,6 +53,10 @@ int main() {
     const unsigned int nt = ${nt};
 
     //==========================================================================
+    // Define Progressbar refresh time
+    const float refreshTime = 0.1;
+
+    //==========================================================================
     // Initialize struct
 
     typedef struct argstruct{$vectors
@@ -105,6 +109,7 @@ int main() {
     //==========================================================================
     // Process
     timer t;
+    float t_temp = 0.0;
     t.start();
 
     for (unsigned int n = 0; n < nt; n++) {
@@ -144,28 +149,29 @@ int main() {
         //======================================================================
         // Progressbar
 
-        if(${pbar}){
-            // Progressbar position
-            int position = barWidth * progress;
-            // Print Progressbar
-            std::cout << "[";
-            for (int i = 0; i < barWidth; ++i) {
-            if (i < position) std::cout << "=";
-            else if (i == position) std::cout << ">";
-            else std::cout << " ";
-            }
+        if ((${pbar}) && ((t.elapsedTime() - t_temp > refreshTime) || (n == nt-1))){
             // Update progress for Progressbar
             progress = float(n+1)/float(nt);
+            // Progressbar position
+            unsigned int position = barWidth * progress;
+            // Print Progressbar
+            std::cout << "[";
+            for (unsigned int i = 0; i < barWidth; ++i) {
+                if (i < position) std::cout << "=";
+                else if (i == position) std::cout << ">";
+                else std::cout << " ";
+            }
             // Estimated Time of Arrival
-            ETA = (float(nt)/(n+1)-1.)*(t.elapsedTime());
+            ETA = (1./progress-1.)*(t.elapsedTime());
             // Estimated Time of Arrival in minutes
-            ETAm = int(floor(ETA))/60;
+            ETAm = int(floor(ETA/60.));
             // Estimated Time of Arrival rest in seconds
             ETAs = floor(ETA%60);
             // Print Estimated Time of Arrival
             std::cout << "] " << int(progress * 100.0) << "% done, ETA: " << ETAm << "m" << ETAs << "s" << endl ;
             // Flush output
             std::cout.flush();
+            t_temp = t.elapsedTime();
         }
     }
 

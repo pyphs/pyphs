@@ -269,6 +269,14 @@ class H5Data(object):
         return d
 
     # ----------------------------------------------------------------------- #
+    @property
+    def h5data(self):
+        """
+        Return substitution dictionary from method object and update samplerate
+        """
+        return self.h5file[self.dname]
+
+    # ----------------------------------------------------------------------- #
 
     @property
     def dtype(self):
@@ -577,23 +585,13 @@ or an integer nt (number of time steps).'
         else:
             close = False
 
-        for name in self.names:
-            if name not in data:
-                data[name] = self[name, tslice, :]
-
-        nt = tslice.stop - tslice.start
-        a = numpy.zeros((nt, self.dim))
-
+        dtype = self.dtype
         # update array with data values
-        for i, name in enumerate(data):
-            if isinstance(data[name], list):
-                d = data[name]
-            else:
-                d = list(data[name])
-            a[:, slice(*self.inds[name])] = d
-
-        # write array in h5 file at time t
-        self.h5file[self.dname][tslice, :] = numpy.asarray(a, dtype=self.dtype)
+        for name in data:
+            # write array in h5 file at time t
+            vslice = slice(*self.inds[name])
+            self.h5data[tslice, vslice] = numpy.asarray(data[name],
+                                                        dtype=dtype)
 
         if close:
             self.h5close()
@@ -666,8 +664,8 @@ or an integer nt (number of time steps).'
             close = False
 
         # open h5 file
-        output = self.h5file[self.dname][self._tslice(tslice),
-                                         self._tuple2slice(vname, vslice)]
+        output = self.h5data[self._tslice(tslice),
+                             self._tuple2slice(vname, vslice)]
 
         # close h5 file
         if close:
@@ -1224,7 +1222,8 @@ or an integer nt (number of time steps).'
         if tslice.step is None:
             tslice.step = max((1, (self.stop-self.start)//self.ntplot))
 
-        fig, ax = plot_powerbal(self, mode=mode, DtE=DtE, show=show, tslice=tslice)
+        fig, ax = plot_powerbal(self, mode=mode, DtE=DtE,
+                                show=show, tslice=tslice)
 
         if close:
             self.h5close()

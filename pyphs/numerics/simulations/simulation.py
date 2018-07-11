@@ -24,7 +24,7 @@ import sys
 # -----------------------------------------------------------------------------
 # Functions for system call and bash execution
 
-def system_call(cmd, **kwargs):
+def system_call(cmd, **popenArgs):
     """
     Execute a system command.
 
@@ -49,26 +49,42 @@ def system_call(cmd, **kwargs):
     else:
         shell = True
 
+    popenArgs['shell'] = shell
+
     if VERBOSE >= 1:
         print(cmd)
 
+    popenArgs['stderr'] = subprocess.STDOUT
+    popenArgs['stdout'] = subprocess.PIPE
+
     try:
-        kwargs.pop('check')
+        popenArgs.pop('check')
     except KeyError:
         pass
 
-    kwargs['stdout'] = subprocess.PIPE
-    kwargs['stdout'] = subprocess.PIPE
+    if VERBOSE >= 1:
+        pri = print
+    else:
+        def pri(*args):
+            pass
 
-    kwargs['shell'] = shell
+#
+#    p = subprocess.Popen(cmd, **popenArgs)
+#
+#    while(True):
+#        retcode = p.poll()  # returns None while subprocess is running
+#        line = p.stdout.readline()
+#        pri(line)
+#        if(retcode is not None):
+#            break
+#
 
-    p = subprocess.Popen(cmd, **kwargs)
+    p = subprocess.Popen(cmd, shell=shell,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
 
-    for l in iter(p.stdout.readline, b''):
-        if isinstance(l, str):
-            print(l)
-        else:
-            print(l.decode())
+    for line in iter(p.stdout.readline, b''):
+        pri(line.decode())
 
 
 def execute_bash(text):
@@ -528,7 +544,7 @@ class Simulation(object):
 #            process = system_call(['./bin/%s' % self.label, ], **sp_config)
 
         cmd = './bin/{0}'.format(self.label)
-        self.system_call(cmd.split(), **sp_config)
+        self.system_call(cmd, **sp_config)
 
         # go back to work folder
         os.chdir(self.work_path)

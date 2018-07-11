@@ -27,30 +27,31 @@ core = netlist.to_core()
 #    from pyphs.misc.signals.analysis import transferFunction
 #    import matplotlib.pyplot as plt
 #    import numpy as np
+#
 #    config = {'fs': 48e3,
 #              'split': True,
 #              'pbar': True,
 #              'timer': True,
-#              'lang': 'python'
+#              'lang': 'c++'
 #              }
 #
 #    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 10.
-#    u = signalgenerator(which='noise', tsig=dur, fs=simu.fs)
+#    u = signalgenerator(which='noise', tsig=dur, fs=simu.data.fs)
 #
 #    def sequ():
 #        for el in u():
 #            yield (el, )
 #
-#    simu.init(u=sequ(), nt=int(dur*simu.fs))
+#    simu.init(u=sequ(), nt=int(dur*simu.data.fs))
 #
 #    simu.process()
 #
-#    u = list(simu.data.u(0))
-#    y = list(simu.data.y(0))
+#    u = list(simu.data['u', :, 0])
+#    y = list(simu.data['y', :, 0])
 #
-#    f, TF = transferFunction(u, y, fs=simu.fs, nfft=2**13, limits=(1e2, 1e4))
+#    f, TF = transferFunction(u, y, fs=simu.data.fs, nfft=2**13, limits=(1e2, 1e4))
 #
 #    plt.close('all')
 #    plt.figure()

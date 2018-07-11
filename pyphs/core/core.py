@@ -1088,7 +1088,7 @@ add the connector'.format(i)
 
     # =========================================================================
 
-    def to_simulation(self, config=None, inits=None):
+    def to_simulation(self, config=None, inits=None, erase=True):
         """
         Return a simulation associated with the PHS core for the
         specified configuration.
@@ -1108,6 +1108,11 @@ add the connector'.format(i)
               'maxit': 10,          # Max number of iterations for NL solvers
               'eps': 1e-16,         # Global numerical tolerance
 
+        erase : bool (optional)
+            If True and a h5file exists with same path than simulation data,
+            it is erased. Else, it is used to initialize the data object. The
+            default is True.
+
         Output
         ------
 
@@ -1126,7 +1131,7 @@ add the connector'.format(i)
             if k in config.keys():
                 config_method.update({k: config[k]})
         method = Method(self, config=config_method)
-        return method.to_simulation(config=config, inits=inits)
+        return method.to_simulation(config=config, inits=inits, erase=erase)
 
     # =========================================================================
 

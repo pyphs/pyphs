@@ -193,4 +193,4 @@ CONFIG_SIMULATION = {'path': SIMULATION_PATH,
 # Below are the options for PLOTS
 
 # Export format:
-plot_format = 'png'
+plot_format = 'pdf'

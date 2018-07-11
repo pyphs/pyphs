@@ -98,7 +98,7 @@ class Simulation(object):
     """
 
     def __init__(self, method, config=None, inits=None,
-                 label=None, clear=True):
+                 label=None, erase=True):
         """
         Parameters
         -----------
@@ -133,7 +133,7 @@ class Simulation(object):
         label : str of None (optional)
             Simulation label. If None (the default), the method.label is used.
 
-        clear : bool (optional)
+        erase : bool (optional)
             If True, any existing h5file with same path than data h5file is
             erased. Else, it is used to initialize the data object.
             The default is True.
@@ -178,7 +178,7 @@ class Simulation(object):
         if inits is not None:
             self.inits.update(inits)
 
-        self.init_numericalCore(clear=clear)
+        self.init_numericalCore(erase=erase)
 
     def config_numeric(self):
         dic = dict()
@@ -208,7 +208,7 @@ class Simulation(object):
     def objlabel(self):
         return self.method.label.upper()
 
-    def init_numericalCore(self, clear=True):
+    def init_numericalCore(self, erase=True):
         """
         Build the Numeric from the Core.
         Additionnally, generate the c++ code if config['lang'] == 'c++'.
@@ -216,7 +216,7 @@ class Simulation(object):
         Parameter
         ---------
 
-        clear : bool (optional)
+        erase : bool (optional)
             If True, any existing h5file with same path than data h5file is
             erased. Else, it is used to initialize the data object.
             The default is True.
@@ -242,7 +242,7 @@ class Simulation(object):
                        inits=self.inits,
                        config=self.config_numeric())
 
-        self.data = H5Data(self.method, self.config, clear=clear)
+        self.data = H5Data(self.method, self.config, erase=erase)
 
     def init_method(self):
         """

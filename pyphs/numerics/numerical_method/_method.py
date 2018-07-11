@@ -276,7 +276,7 @@ class Method(Core):
         from pyphs import Numeric
         return Numeric(self, inits=inits, config=config)
 
-    def to_simulation(self, config=None, inits=None):
+    def to_simulation(self, config=None, inits=None, erase=True):
         """
         Return a Numeric object for the evaluation of the PHS numerical method.
 
@@ -288,13 +288,19 @@ class Method(Core):
             as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
 
-        Return
+        erase : bool (optional)
+            If True and a h5file exists with same path than simulation data,
+            it is erased. Else, it is used to initialize the data object. The
+            default is True.
+
+        Output
         ------
+
         numeric : pyphs.Simulation
             Object for the numerical evaluation of the PHS numerical method.
         """
         from pyphs import Simulation
-        return Simulation(self, inits=inits, config=config)
+        return Simulation(self, inits=inits, config=config, erase=erase)
 
 def set_structure(method):
     set_getters_I(method)

@@ -49,7 +49,7 @@ class H5Data(object):
 
     # ----------------------------------------------------------------------- #
 
-    def __init__(self, method, config, h5name='results.h5', clear=False):
+    def __init__(self, method, config, h5name='results.h5', erase=False):
 
         if VERBOSE >= 1:
             print('Build data i/o...')
@@ -67,7 +67,7 @@ class H5Data(object):
         # data names
         self.names = ['u', 'p'] + list(self.config['dnames'])
 
-        if clear or not os.path.exists(self.h5path):
+        if erase or not os.path.exists(self.h5path):
             # new hdf5 file
             self._h5new()
         else:

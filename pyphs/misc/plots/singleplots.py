@@ -35,8 +35,12 @@ def singleplot(x, y, show=True, **kwargs):
         y-axis label (the default is None).
 
     path : str, optional
-        Figure is saved in 'path.ext' if provided (the default is None).
-        Extension from pyphs config.py.
+        Figure is saved in 'path.ext' if provided (the default is None). See
+        'format' agument for extension.
+
+    format : str, optional
+        Extension in {'pdf', 'png'} for figure export. If not given, the
+        extension from pyphs.config.py is used.
 
     loc : int or string or pair of floats, default: 0
         The location of the legend. Possible codes are:

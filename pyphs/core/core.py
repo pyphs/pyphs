@@ -376,7 +376,7 @@ class Core:
     def dx(self):
         """
         dx
-        **
+        ==
 
         Returns the symbols "dxi" associated with the differentials of the
         state with symbol "xi" for each "xi" in state vector 'Core.x'. It
@@ -404,7 +404,7 @@ class Core:
     def z_symbols(self):
         """
         z_symbols
-        **********
+        =========
 
         Returns the symbols "zi" associated with the dissipation function
         "(zi, wi)" for each "wi" in dissipation variables vector
@@ -415,7 +415,7 @@ class Core:
     def g(self):
         """
         g
-        *
+        =
 
         Returns the symbols "gxi" associated with the gradient of the storage
         function w.r.t the state "xi" for each "xi" in state vector
@@ -428,7 +428,7 @@ class Core:
     def o(self):
         """
         o
-        *
+        =
 
         Returns the symbols "oi" associated with the i-th keyof dictionary
         'Core.observers'. It is used in the numerical methods as replacement
@@ -463,6 +463,51 @@ class Core:
             for s in free_symbols(self.subs[k]):
                 symbs.add(s)
         return symbs
+
+    def index(self, name, symb):
+        """
+        index
+        =====
+
+        Return the index of symb in attribute name.
+
+
+        Parameters
+        ----------
+
+        name : str
+            Name of attribute in self where to search for symb.
+
+        symb : symbol or str
+            Item to search in attribute 'name'.
+
+        """
+
+        attr = getattr(self, name)
+
+        if not isinstance(symb, sympy.Symbol):
+            symb = self.symbols(symb)
+
+        i = attr.index(symb)
+        return i
+#        try:
+#            print('try:')
+#            i = attr.get_index(symb)
+#            print(i)
+#        except AttributeError:
+#            # name and attribute type
+#            text = 'Attribute {} is not a list, it is a {}.'.format(name,
+#                                                                    type(attr))
+#            raise AttributeError(text)
+#
+#        except ValueError:
+#            # name and attribute type
+#            text = 'Attribute {} does not contain {}.'.format(name, symb)
+#            raise AttributeError(text)
+#        except:
+#            print('error')
+#        finally:
+#            return i
 
     # =========================================================================
 

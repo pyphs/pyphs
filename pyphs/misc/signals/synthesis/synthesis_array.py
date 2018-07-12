@@ -252,10 +252,13 @@ to PWM.
         Amplitude of an overall background noise from uniform p.d.f \
 (the default is 0.0).
 
-    Yields
+    offset : float, optional
+        An offset value applied during cycles.
+
+    Return
     ------
-    s : float
-        signal value
+    s : numpy.array of floats
+        Signal values.
     """
 
     parameters = build_parameters(**kwargs)
@@ -342,6 +345,10 @@ to PWM.
 
         cycle_end = background_noise(parameters['noff'])
 
+        if parameters['offset'] != 0:
+            cycle_deb += parameters['offset']
+            cycle_end += parameters['offset']
+
     # end
     end = background_noise(parameters['nend'])
 
@@ -369,6 +376,7 @@ def build_parameters(**kwargs):
     parameters.setdefault('decay_ratio', 0.)
     parameters.setdefault('ramp_on', False)
     parameters.setdefault('bkgrd_noise', 0.)
+    parameters.setdefault('offset', 0.)
     parameters.setdefault('phi', -90)
     parameters.setdefault('method', 'linear')
 

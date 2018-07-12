@@ -766,20 +766,28 @@ or an integer nt (number of time steps).'
 
         Parameters
         -----------
-    vslice: slice or None, optional
-        Slice in the returned value {0}[tslice, vslice]. If None, the full
-        vector is returned (default).
-    tslice: slice or None, optional
-        Slice in time {0}[tslice, vslice]. The default can be set with
-        data.start, data.stop and data.step (see also data.tstart, data.tstop).
+
+        vslice : slice or None, optional
+            Slice in the returned value {0}[tslice, vslice]. If None, the full
+            vector is returned (default).
+
+        tslice : slice or None, optional
+            Slice in time {0}[tslice, vslice]. The default can be set with
+            data.start, data.stop and data.step.
 
         Returns
         -------
 
-        t_generator: generator
+        t_generator : generator
             A python generator of scalar time value t[i] for each time step i
             starting from index start to index stop with stepation factor step
             (i.e. the value is generated if i-start % step == 0).
+
+        See also
+        --------
+
+        self.tstart, self.tstop
+
         """
         tslice = self._tslice(tslice)
         output = numpy.arange(tslice.start, tslice.stop, tslice.step)/self.fs

@@ -19,7 +19,7 @@ import progressbar
 import time
 import os
 import sys
-
+import shutil
 
 # -----------------------------------------------------------------------------
 # Functions for system call and bash execution
@@ -68,23 +68,23 @@ def system_call(cmd, **popenArgs):
         def pri(*args):
             pass
 
-#
-#    p = subprocess.Popen(cmd, **popenArgs)
-#
-#    while(True):
-#        retcode = p.poll()  # returns None while subprocess is running
-#        line = p.stdout.readline()
-#        pri(line)
-#        if(retcode is not None):
-#            break
-#
 
-    p = subprocess.Popen(cmd, shell=shell,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
+    p = subprocess.Popen(cmd, **popenArgs)
 
-    for line in iter(p.stdout.readline, b''):
-        pri(line.decode())
+    while(True):
+        retcode = p.poll()  # returns None while subprocess is running
+        line = p.stdout.readline()
+        pri(line)
+        if(retcode is not None):
+            break
+
+
+#    p = subprocess.Popen(cmd, shell=shell,
+#                         stdout=subprocess.PIPE,
+#                         stderr=subprocess.STDOUT)
+#
+#    for line in iter(p.stdout.readline, b''):
+#        pri(line.decode())
 
 
 def execute_bash(text):
@@ -248,12 +248,13 @@ class Simulation(object):
                                           config=self.config_numeric()))
         elif self.config['lang'] == 'c++':
             self.work_path = os.getcwd()
-            self.cpp_path = os.path.join(main_path(self), self.objlabel.lower())
+            self.cpp_path = os.path.join(main_path(self),
+                                         self.objlabel.lower())
             self.src_path = os.path.join(self.cpp_path, 'src')
-            if not os.path.exists(self.cpp_path):
-                os.mkdir(self.cpp_path)
-            if not os.path.exists(self.src_path):
-                os.mkdir(self.src_path)
+            if os.path.exists(self.cpp_path):
+                shutil.rmtree(self.cpp_path)
+            os.mkdir(self.cpp_path)
+            os.mkdir(self.src_path)
             method2cpp(self.method, objlabel=self.objlabel, path=self.src_path,
                        inits=self.inits,
                        config=self.config_numeric())

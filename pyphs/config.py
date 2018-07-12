@@ -17,7 +17,7 @@ path_to_configuration_file = os.path.join(here, 'config.py')
 # Below are the options for the INTERFACE
 
 # Verbose level in [0, 1, 2, 3]
-VERBOSE = 0
+VERBOSE = 1
 
 
 ###############################################################################

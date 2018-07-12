@@ -446,7 +446,7 @@ class Simulation(object):
         names = list(self.config['dnames'])
 
         # progressbar
-        if self.config['pbar']:
+        if self.config['pbar'] and VERBOSE >= 1:
             self._init_pb()
 
         # init time step
@@ -466,11 +466,11 @@ class Simulation(object):
             self.n += 1
 
             # update progressbar
-            if self.config['pbar']:
+            if self.config['pbar'] and VERBOSE >= 1:
                 self._update_pb()
 
         # progressbar
-        if self.config['pbar']:
+        if self.config['pbar'] and VERBOSE >= 1:
             self._close_pb()
 
         time.sleep(1e-3)

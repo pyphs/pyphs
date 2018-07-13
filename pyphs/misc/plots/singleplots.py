@@ -87,13 +87,21 @@ None).
     opts.update(kwargs)
 
     if (isinstance(y[0], (float, int)) or
-        (isinstance(y[0], numpy.ndarray) and len(y[0].shape) == 0)):
+       (isinstance(y[0], numpy.ndarray) and
+       len(y[0].shape) == 0)):
+
         y = [y]
 
     nplots = int(y.__len__())
 
     if opts['labels'] is None:
         opts['labels'] = [None, ]*nplots
+    elif len(opts['labels']) != nplots:
+        nlabels = len(opts['labels'])
+        if nplots % nlabels == 0:
+            N = nplots - nlabels
+            opts['labels'] = list(opts['labels']) + [None, ]*N
+
     if opts['log'] is None:
         opts['log'] = ''
 

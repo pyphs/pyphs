@@ -26,7 +26,8 @@ def singleplot(x, y, show=True, **kwargs):
         y-axis values for each curves curve.
 
     labels : list, optional
-        list of curve labels (the default is None).
+        list of curve labels (the default is None). The number of labels must
+        be a divisor of the number of plots.
 
     xlabel : str, optional
         x-axis label (the default is None).

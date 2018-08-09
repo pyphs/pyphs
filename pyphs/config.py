@@ -31,7 +31,8 @@ DTYPE = numpy.finfo(float).dtype.type
 FS = 48e3
 
 # Define the numerical tolerance such that |x|<EPS <=> x = 0
-EPS = numpy.finfo(float).eps
+# EPS = numpy.finfo(float).eps    # numpy tolerance
+EPS = 1e-12                     # custom tolerance
 
 # Define the numerical tolerance for the discrete gradient:
 # |dx|<EPS_DG <=> dxH = H'

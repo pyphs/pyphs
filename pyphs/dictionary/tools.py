@@ -72,7 +72,7 @@ $parameterstable
 Usage
 -----
 
-``$label = $dico.$component('$label', $nodes, $usepars)``
+``$label = $component('$label', $nodes, $usepars)``
 
 Netlist line
 ------------
@@ -148,7 +148,7 @@ def componentDoc(metadata):
             'parameterstable': parametersTable(metadata['parameters']),
             'parametersdesc': metadata['parametersdesc'],
             'expars': expars,
-            'usepars': ', '.join(['{}={}'.format(k, v) for (k, v) in zip(pars.keys(), pars.values())]),
+            'usepars': ', '.join(['{}={}'.format(k, "'" + v + "'" if isinstance(v, str) else str(v)) for (k, v) in zip(pars.keys(), pars.values())]),
             'linepars': '; '.join(['{}={}'.format(k, v) for (k, v) in zip(pars.keys(), pars.values())]) + ';',
             'references': references
             }

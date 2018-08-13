@@ -22,7 +22,7 @@ class Potentiometer(DissipativeNonLinear):
         # parameters
         pars = ['R', 'A', 'E']
         for par in pars:
-            assert par in kwargs.keys()
+            assert par in parameters.keys()
         R, A, E = symbols(pars)
         # dissipation variable
         w = symbols(["w"+label+str(i) for i in (1, 2)])
@@ -53,7 +53,7 @@ class Potentiometer(DissipativeNonLinear):
         # init component
         DissipativeNonLinear.__init__(self, label,
                                          [edge_1, edge_2],
-                                         w, z, **kwargs)
+                                         w, z, **parameters)
 
     metadata = {'title': 'Potentiometer',
                 'component': 'Potentiometer',

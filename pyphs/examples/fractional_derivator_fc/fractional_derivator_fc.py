@@ -12,19 +12,20 @@ import os
 from pyphs import Netlist
 
 label = 'fractional_derivator_fc'
-
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-
 netlist_filename = path + os.sep + label + '.net'
+
 netlist = Netlist(netlist_filename)
+
 core = netlist.to_core()
 
 
+# %% ------------------------------ SIMULATION ------------------------------ #
+
 # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
-# !!! Very long simulation with numpy
+# !!! Very long simulation with numpy (use c++ if possible)
 
 #if __name__ == '__main__':
-#
 #    from pyphs import Simulation, signalgenerator
 #    from pyphs.misc.signals.analysis import transferFunction
 #    import matplotlib.pyplot as plt
@@ -33,25 +34,20 @@ core = netlist.to_core()
 #    config = {'fs': 48e3,
 #              'split': True,
 #              'pbar': True,
-#              'timer': True,
-#              'lang': 'python'
+#              'lang': 'c++'  # in {'c++', 'pyhton'}
 #              }
 #
 #    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 10.
-#    u = signalgenerator(which='noise', tsig=dur, fs=simu.fs)
+#    u = signalgenerator(which='noise', tsig=dur, fs=simu.data.fs)
 #
-#    def sequ():
-#        for el in u():
-#            yield (el, )
-#
-#    simu.init(u=sequ(), nt=int(dur*simu.fs))
+#    simu.init(u=u[:, np.newaxis])
 #
 #    simu.process()
 #
-#    u = list(simu.data.u(0))
-#    y = list(simu.data.y(0))
+#    u = list(simu.data['u', :, 0])
+#    y = list(simu.data['y', :, 0])
 #
 #    f, TF = transferFunction(u, y, fs=simu.fs, nfft=2**13, limits=(1e2, 1e4))
 #

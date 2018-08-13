@@ -185,7 +185,6 @@ int main() {
 
     cout << endl;
     cout << "Results written in" << endl;
-    cout << endl;
     cout << "${h5path}"<< endl;
     cout << endl;
 

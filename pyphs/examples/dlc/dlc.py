@@ -23,36 +23,33 @@ netlist_filename = os.path.join(path, '{0}.net'.format(label))
 # read in Netlist object
 netlist = Netlist(netlist_filename)
 
-# Build Graph object
-graph = netlist.to_graph()
-
 # Build Core object
-core = graph.to_core()
+core = netlist.to_core()
 
+
+# %% ------------------------------ SIMULATION ------------------------------ #
+
+# UNCOMMENT BELOW FOR SIMULATION AND PLOTS
 
 #if __name__ == '__main__':
 #
-#    from pyphs import Simulation, signalgenerator
+#    from pyphs import signalgenerator
 #    import numpy as np
 #
 #    tsig = 0.01
-#    fs = 48000.
+#    fs = 192000.
 #
 #    config = {'fs': 48e3,
-#              'progressbar': True,
-#              }
-#    simu = Simulation(core.to_method(), config)
+#              'lang': 'python'}
 #
-#    sig = signalgenerator(which='sin', f0=500., A=200., tsig=tsig, fs=fs)
+#    simu = core.to_simulation(config=config)
 #
-#    def sequ():
-#        for u in sig():
-#            yield np.array([u, ])
+#    sig = signalgenerator(which='sin', f0=500., A=1., tsig=tsig, fs=fs)
+#    u = sig[:, np.newaxis]
 #
 #    nt = int(fs*tsig)
-#    simu.init(u=sequ(), nt=nt)
+#    simu.init(u=u)
 #
 #    simu.process()
 #
-#    simu.data.plot_powerbal()
-#    pass
+#    simu.data.plot(('u', 'y'))

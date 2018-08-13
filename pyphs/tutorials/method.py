@@ -50,6 +50,9 @@ core.linear_nonlinear()
 # instantiate a pyphs.Evaluation object associated with a pyphs.Core
 method = Method(core)
 
+#method.dxH = list(map(lambda g: g.subs(dict([(ex, ex+ 0.5*edx) for ex, edx in zip(core.x, core.dx())])), core.dxH()))
+method.dxH = core.dxH()
+
 # Explicit Euler update:
 # dx = Mxx*dxH(x) + Mxy*u
 # x = x + dx
@@ -65,11 +68,11 @@ op_MxxDotX_add_MxyDotU = method.Operation('add', (op_MxxDotdxH, op_MxyDotU))
 
 # dx = (Mxx * dxH + Mxy * u)/fs
 op_update_dx = method.Operation('div', (op_MxxDotX_add_MxyDotU, 'fs'))
-method.setOperation('ud_dx', op_update_dx)
+method.setoperation('ud_dx', op_update_dx)
 
 # x += dx
 op_update_x = method.Operation('add', ('x', 'dx'))
-method.setOperation('ud_x', op_update_x)
+method.setoperation('ud_x', op_update_x)
 
 # clear standard update:
 method.update_actions = list()
@@ -82,11 +85,11 @@ method.set_execaction([('x', 'ud_x'),       # x = x + dx
                        'H'                  # update H
                        ])
 
-#%%
-method.build_struc()
-nums = Numeric(method, build=False)
-nums.build()
+method.init_args()
+method.init_funcs()
 
+#%%
+nums = Numeric(method)
 
 def sig(t, mode='sin'):
     F = 100.
@@ -106,7 +109,6 @@ nums.set_x(x0)
 
 # init lists for results
 results_names = ['u', 'x', 'y', 'H']
-
 
 class Results:
     def __init__(self):

@@ -196,6 +196,10 @@ class Simulation(object):
 
         self.init_numericalCore(erase=erase)
 
+    @property
+    def fs(self):
+        return self.config['fs']
+
     def config_numeric(self):
         dic = dict()
         for k in CONFIG_NUMERIC.keys():

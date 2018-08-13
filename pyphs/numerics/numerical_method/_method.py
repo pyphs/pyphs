@@ -171,11 +171,21 @@ class Method(Core):
         names = remove_duplicates(get_strings(self.update_actions,
                                               remove=('exec', 'iter')))
 
+        updates = list()
+
+        def add_update(name):
+            if name not in updates:
+                if name in self.ops_names:
+                    deps = getattr(self, name+'_deps')
+                    for d in deps:
+                        add_update(d)
+                updates.append(name)
+
         # recover the dependencies for in-place updates 'ud_...'
         for name in names:
-            if name.startswith('ud_') and not name[3:] in names:
-                names.append(name[3:])
-        return names + ['dx', 'w', 'u', 'p']
+            add_update(name)
+
+        return remove_duplicates(updates + ['dx', 'w', 'u', 'p'])
 
     def args(self):
         return (self.x + self.dx() + self.w + self.u +
@@ -690,24 +700,20 @@ gradient evaluation: {}'.format(method.config['grad'])
 
 def build_structure_evaluation(method):
     """
-Build the substitutions of the state x associated with the Core core and
-the chosen value for the theta scheme.
+    Build the substitutions of the state x associated with the Core core and
+    the chosen value for the theta scheme.
 
-Parameters
-----------
+    Parameters
+    ----------
 
-core: Core:
-    Core structure on which the numerical evaluation is built.
+    method:
+        Core structure on which the numerical evaluation is built.
 
-theta: numeric in [0, 1] or 'trapez'
-    If numeric, a theta scheme is used f(x) <- f(x+theta*dx). Else if theta is
-    the string 'trapez', a trapezoidal rule is used f(x)<-0.5*(f(x)+f(x+dx)).
+    Output
+    ------
 
-Output
-------
-
-None:
-    In-place transformation of the Core.
+    None:
+        In-place transformation of method.
     """
 
     # define theta parameter for the function 'build_structure_evaluation'

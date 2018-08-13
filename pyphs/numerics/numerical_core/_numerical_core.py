@@ -7,6 +7,8 @@ Created on Fri Jun  3 15:27:55 2016
 
 from __future__ import absolute_import, division, print_function
 from pyphs.core.tools import types as core_types
+from pyphs.core.tools import free_symbols
+from pyphs.misc.tools import geteval, find
 from ..tools import types as num_types
 from ..tools import lambdify, Operation
 from pyphs.config import VERBOSE, CONFIG_NUMERIC
@@ -24,25 +26,25 @@ class Numeric(object):
     def __init__(self, method, inits=None, label=None, config=None):
         """
         Instanciate a Numeric.
-    
+
         Parameters
         ----------
-    
+
         method : pyphs.Method
             Symbolic numerical method to lambdify.
-        
+
         inits : dict or None (optional)
             Dictionary with variable name as keys and initialization values
             as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
-            
+
         Return
         ------
         numeric : pyphs.Numeric
         """
         # Save method object
         self.method = method
-        
+
         if label is None:
             label = self.method.label
         self.label = label
@@ -58,33 +60,33 @@ class Numeric(object):
         self.method.subs.update({self.method.fs: self.config['fs']})
 
         # Define inits
-        self.inits = {}        
+        self.inits = {}
         if inits is not None:
             self.inits.update(inits)
-            
+
         self.build()
-            
+
     def init(self):
         """
         Set initilization values of self.
-        
+
         """
         for k in self.inits.keys():
             val = self.inits[k]
             get_func = getattr(self, k)
             self_shape = get_func().shape
-            set_func = getattr(self, 'set_' + k)                
+            set_func = getattr(self, 'set_' + k)
             if val is None:
-                val = numpy.zeros(self_shape)                
+                val = numpy.zeros(self_shape)
                 set_func(val)
-            else:                
+            else:
                 val = numpy.asarray(val)
                 if not val.shape == self_shape:
                     text = 'Init value for {0} has wrong shape {1}'.format(k, val.shape)
                     raise TypeError(text)
                 else:
                     set_func(val)
-                
+
     def build(self):
 
         if VERBOSE >= 1:
@@ -96,14 +98,14 @@ class Numeric(object):
         # build evaluations for arguments
         for name in self.method.args_names:
             self._build_arg(name)
-            
+
         # init values for arguents
         self.init()
-        
 
         # build numerical evaluation for functions and operations
         for name in self.method.update_actions_deps():
-            self._build_eval(name)
+            if name not in self.method.args_names:
+                self._build_eval(name)
 
     def _build_arg(self, name):
         """
@@ -152,17 +154,17 @@ class Numeric(object):
         """
         if VERBOSE >= 2:
             print('    Build numerical evaluation of {}'.format(name))
-        # build for sympy.expression
-        if name in self.method.funcs_names:
-            self._build_func(name)
         # build for Operation
-        elif name in self.method.ops_names:
+        if name in self.method.ops_names:
             #  build of dependencies before hand
             deps = getattr(self.method, name + '_deps')
             for dep in deps:
                 if not hasattr(self, dep):
                     self._build_eval(dep)
             self._build_op(name)
+        # build for sympy.expression
+        else:
+            self._build_func(name)
 
     def update(self, u=None, p=None):
         """
@@ -256,9 +258,15 @@ def evalfunc_generator(nums, name):
     func : function
         Evaluator
     """
-    expr = getattr(nums.method, name + '_expr')
-    args = getattr(nums.method, name + '_args')
-    inds = getattr(nums.method, name + '_inds')
+    try:
+        expr = getattr(nums.method, name + '_expr')
+        args = getattr(nums.method, name + '_args')
+        inds = getattr(nums.method, name + '_inds')
+    except AttributeError:
+        expr = geteval(nums.method, name)
+        symbs = free_symbols(expr)
+        args, inds = find(symbs, nums.method.args())
+
     func = lambdify(args, expr, subs=nums.method.subs,
                     theano=nums.config['theano'])
 
@@ -279,7 +287,7 @@ def evalfunc_generator(nums, name):
     else:
         raise TypeError('Lambdified function output type not understood.')
 
-    eval_func.func_doc = """
+    eval_func.__doc__ = """
         Evaluate :code:`{0}`.
 
         Return
@@ -312,7 +320,7 @@ def evalop_generator(nums, name, op):
     def eval_func():
         return func()
 
-    eval_func.func_doc = """
+    eval_func.__doc__ = """
         Evaluate :code:`{0}`.
 
         Return
@@ -339,7 +347,7 @@ def getarg_generator(nums, name, inds):
     def get_func():
         return nums.args[inds]
 
-    get_func.func_doc = """
+    get_func.__doc__ = """
         Accessor to the value of :code:`{0}`.
 
         Return
@@ -365,7 +373,7 @@ def setarg_generator(nums, name, inds):
     def set_func(array):
         nums.args[inds] = array
 
-    set_func.func_doc = """
+    set_func.__doc__ = """
         Change the value of :code:`{0}`.
 
         Parameter
@@ -388,7 +396,7 @@ def getfunc_generator(nums, name):
     """
     def get_func():
         return getattr(nums, '_' + name)
-    get_func.func_doc = """
+    get_func.__doc__ = """
         Accessor to the value of {0}.
 
         Return
@@ -407,7 +415,7 @@ def setfunc_generator(nums, name):
 
     def set_func(array):
         setattr(nums, '_' + name, array)
-    set_func.func_doc = """
+    set_func.__doc__ = """
         Change the value of {0}.
 
         Parameter

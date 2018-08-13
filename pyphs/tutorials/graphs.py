@@ -329,7 +329,7 @@ vout = signalgenerator(which="sin",      # Sinusoidal signal
                        ramp_on=True,     # Linear increase
                       )
 
-u = list(([el, ] for el in vout()))
+u = list(([el, ] for el in vout))
 
 # Init simulation
 simu.init(u=u)

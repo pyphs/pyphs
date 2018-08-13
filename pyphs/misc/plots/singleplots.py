@@ -87,11 +87,14 @@ None).
     opts['ylabel'] = opts.pop('ylabels')
     opts.update(kwargs)
 
-    if (isinstance(y[0], (float, int)) or
-       (isinstance(y[0], numpy.ndarray) and
-       len(y[0].shape) == 0)):
+    try:
+        if (isinstance(y[0], (float, int)) or
+           (isinstance(y[0], numpy.ndarray) and
+           len(y[0].shape) == 0)):
 
-        y = [y]
+            y = [y]
+    except IndexError:
+        pass
 
     nplots = int(y.__len__())
 

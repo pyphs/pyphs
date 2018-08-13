@@ -335,14 +335,26 @@ or an integer nt (number of time steps).'
         self._h5new()
 
         # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
+        ny = self.method.dims.y()
         if sequ is None:
-            ny = self.method.dims.y()
             sequ = [[0]*ny for _ in range(nt)]
+        elif len(sequ.shape) == 1:
+            if not ny == 1:
+                text = 'Input shape should be ({}, {}).'
+                raise AttributeError(text.format(nt, ny))
+            else:
+                sequ = sequ[:, numpy.newaxis]
 
         # if seqp is not provided, a sequence of [[0]*np]*nt is assumed
+        np = self.method.dims.p()
         if seqp is None:
-            np = self.method.dims.p()
             seqp = [[0]*np for _ in range(nt)]
+        elif len(seqp.shape) == 1:
+            if not np == 1:
+                text = 'Parameters shape should be ({}, {}).'
+                raise AttributeError(text.format(nt, np))
+            else:
+                seqp = seqp[:, numpy.newaxis]
 
         # data to store in h5 dataset
         seqs = {'u': sequ, 'p': seqp}
@@ -1365,7 +1377,7 @@ or an integer nt (number of time steps).'
                                           self['dxH', tslice.stop-1],
                                           self['dtx', tslice.stop-1])/self.fs
             output = numpy.ediff1d(self.E(tslice=tslice),
-                                   to_end=last_dtH_value)*self.fs
+                                   to_end=last_dtH_value)*self.fs/tslice.step
 
         # Compute DtE = dxh.T * dtx
         elif DtE == 'DxhDtx':

@@ -10,6 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 from pyphs import Netlist, Graph
+import  matplotlib.pyplot as plt
 
 label = 'oscillator_nl'
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
@@ -18,31 +19,37 @@ netlist = Netlist(netlist_filename)
 graph = Graph(netlist=netlist)
 core = graph.to_core()
 
-# if __name__ == '__main__':
+# %% ------------------------------ SIMULATION ------------------------------ #
+
+# UNCOMMENT BELOW FOR SIMULATION AND PLOTS
+
+#if __name__ == '__main__':
 #
-#     from pyphs import Simulation, signalgenerator
-#     import numpy as np
+#    from pyphs import Simulation, signalgenerator
+#    import numpy as np
 #
-#     tsig = 0.01
-#     fs = 48000.
+#    tsig = 0.05
+#    fs = 48000.
 #
-#     config = {'fs': 48e3,
-#               'pbar': True,
-#               'split': True,
-#               'lang': 'python'
-#               }
-#     simu = Simulation(core.to_method(), config)
+#    config = {'fs': 48e3,
+#              'pbar': True,
+#              'lang': 'c++'
+#              }
+#    simu = Simulation(core.to_method(), config)
 #
-#     sig = signalgenerator(which='sin', f0=500., A=200., tsig=tsig, fs=fs)
+#    u = signalgenerator(which='sin', f0=500., A=200., tsig=tsig, fs=fs)
 #
-#     def sequ():
-#         for u in sig():
-#             yield np.array([u, ])
+#    simu.init(u=u[:, np.newaxis], inits={'x': [1e-2, 0.]})
 #
-#     nt = int(fs*tsig)
+#    simu.process()
 #
-#     simu.init(u=sequ(), nt=nt, inits={'x': [1e-3, 0.]})
+#    simu.data.plot_powerbal(mode='multi')
 #
-#     simu.process()
+#    x1 = simu.data['x',: , 0]
+#    x2 = simu.data['x',: , 1]
 #
-#     simu.data.plot_powerbal(mode='multi')
+#    plt.figure()
+#    plt.plot(x1, x2, ':o')
+#    plt.xlabel(r'$x(t)$')
+#    plt.ylabel(r'$\dot x(t)$')
+#    plt.grid('on')

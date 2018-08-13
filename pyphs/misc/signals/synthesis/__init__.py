@@ -1,4 +1,4 @@
 #
 
-from .synthesis_array import signalgenerator
-__all__ = ['signalgenerator']
+from .synthesis_array import signalgenerator, names
+__all__ = ['signalgenerator', 'names']

@@ -198,4 +198,4 @@ x3_vec = np.random.rand(N)*1e-3
 
 # In[22]:
 
-evals.H(x1_vec, x3_vec, x3_vec)
+evals.dxH(x1_vec, x2_vec, x3_vec)

@@ -3,36 +3,22 @@
 """
 Created on Sun Apr  2 20:11:16 2017
 
-@author: Falaize
+@author: afalaize
+
 """
+
 from numpy import (sqrt, sin, cos, cosh, sinh, array, pi, linspace,
                    nonzero, diff, sign, newaxis)
 from pyphs.dictionary.mechanics import Mass, Stiffness, Damper
 from pyphs.dictionary.connectors import Transformer
 from pyphs import Graph
 from pyphs.graphs import datum
+from ..tools import componentDoc, parametersDefault
+from ..beams import metadata as dicmetadata
 
 
-def parameters_JSV2016():
-    pars = {
-            # Fondamental frequency (Hz)
-            'F': 440.,
-            # [m] Radius of the cylinrical beam
-            'R': 1*1e-3,
-            # [#] Number of simulated eigen-modes
-            'N': 5,
-            # [s] Decay for the eigenmodes of the beam
-            'A': 1e-2,
-            # Coeficient for damping coefficient progression w.r.t wave number
-            'D': 2,
-            # [N/m**2] Young modulus of the Beam (steel = 180*1e9)
-            'E': 180*1e9,
-            # [kg/m**3] Mass density (steel = 7750)
-            'M': 7750.,
-    }
-
-    return pars
-
+# -----------------------------------------------------------------------------
+# Tools
 
 def beamLength(f0, Kb, Mb):
     """
@@ -119,7 +105,7 @@ def waveNumbers(N, Lb, Kb, Mb):
     # Add an axis to get k as a 2-dimensional array
     k = k[newaxis, :]
     # Indices of wavenumers in k satisfying eigen-modes cos(k*L)=-1./cosh(k*L)
-    Indices = nonzero((abs(diff(sign(1+ cosh(k*Lb)*cos(k*Lb))))).flatten())[0]
+    Indices = nonzero((abs(diff(sign(1 + cosh(k*Lb)*cos(k*Lb))))).flatten())[0]
     # [m] Corresponding wavenumners in k
     k = k[:, Indices]
     # [Hz] Frequencies associated to k
@@ -166,44 +152,25 @@ def omega_cosine(zp, wp, Lb, k):
     return omega
 
 
+# --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
+# Component
+
+
 class Cantilever(Graph):
-    """
-    Cantilever Beam
-    ================
-    Euler-Bernouilli cantilever Beam
 
-    Parameters
-    -----------
+    def __init__(self, label, nodes, **parameters):
 
-    label: str
-        Cantilever beam label.
+        pars = parametersDefault(self.metadata['parameters'])
 
-    nodes : (N1, )
-        Node for connection to an e-control port.
-
-    kwargs : dictionary with following "key: value" (default in parenthesis)
-        * 'F': [Hz] Fondamental frequency (440.),
-        * 'R': [m] Radius of the cylinrical beam (1*1e-3),
-        * 'N': [d.u] Number of simulated eigen-modes (5),
-        * 'A': [s] Decay for the eigenmodes of the beam (9e-3),
-        * 'D': [d.u] damping progression w.r.t wave number (6.),
-        * 'E': [N/m**2] Young modulus of the Beam (steel = 180*1e9),
-        * 'M': [kg/m**3] Mass density (steel = 7750),
-        * 'z#': [0-1] relative position of contact # w.r.t. beam length (0.15),
-        * 'w#': [m] width of contact # with the beam (1.5cm), if 0 a point
-            contact is assumed.
-    """
-    def __init__(self, label, nodes, **kwargs):
-
-        pars = parameters_JSV2016()
-
-        for k in kwargs.keys():
+        for k in parameters.keys():
             if k not in pars.keys() and str(k)[0] not in 'zw':
                 raise AttributeError('parameter {} unknown'.format(k))
 
         Graph.__init__(self, label=label)
 
-        pars.update(kwargs)
+        pars.update(parameters)
         pars.update({
                      # [kg] Modal mass density
                     'Mb': pi*(pars['R']**2)*pars['M'],
@@ -217,12 +184,6 @@ class Cantilever(Graph):
 
         # [1/m] list of the nkmax first cantilever beam  modes with length L
         k, fk = waveNumbers(pars['N'], pars['Lb'], pars['Kb'], pars['Mb'])
-
-        # truncate below the Nyquist frequency fe/2
-        # list of the nk first modes below the Nyquist frequency fe/2 [1/m]
-        # k = k[(fk < pars['n']/2).nonzero()]
-        # list of the nk first frequencies below the Nyquist frequency fe/2 [Hz]
-        # fk = fk[(fk < pars['fs']/2).nonzero()]
 
         # [#] number of simulated modes
         pars.update({'kmodes': k,
@@ -292,18 +253,37 @@ class Cantilever(Graph):
                 else:
                     A2 = label_n+str(i+1)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'F': 440.,
-                              'R': 1*1e-3,
-                              'N': 5,
-                              'A': 1e-2,
-                              'D': 0.,
-                              'E': 180*1e9,
-                              'M': 7750,
-                              'z1': 0.15,
-                              'w1': 1.5e-2,
-                              'z2': 1,
-                              'w2': 0.}
-                              }
+    metadata = {'title': 'Cantilever beam',
+                'label': 'beam',
+                'dico': 'beams',
+                'component': 'Cantilever',
+                'desc': 'Euler-Bernouilli cantilever beam as presented in [1]_ (section 4.2).',
+                'nodesdesc': "Any number of nodes associated with contact points. An effort-controlled port (u=force, y=velocity) is created for each node in the list. Two parameters (position 'w#' and width 'z#') must be provided for each contact point #.",
+                'nodes': ('N1', 'N2'),
+                'parametersdesc': 'The default values are taken from [1]_ (table 4) with two contact point N1 and N2.',
+                'parameters': [['F', 'Fondamental frequency', 'Hz', 440.],
+                               ['N', 'Number of eigen-modes', 'd.u', 5],
+                               ['R', 'Radius', 'm', 1e-3],
+                               ['E', 'Young modulus', 'N/m2', 180e9],
+                               ['M', 'Mass density', 'kg/m3', 7750],
+                               ['A', 'Damping coefficient', 'N/s', 5e-2],
+                               ['D', 'Modes damping progression', 'd.u', 6.],
+                               ['z1',
+                                'Relative position of contact 1',
+                                '[0, 1]',
+                                0.15],
+                               ['w1', 'width of contact 1', 'm', 1.5e-2],
+                               ['z2',
+                                'Relative position of contact 2',
+                                '[0, 1]',
+                                1.],
+                               ['w2', 'width of contact 2', 'm', 0.]],
+                'refs': {1: 'Antoine Falaize and Thomas Helie. Passive simulation of the nonlinear port-hamiltonian modeling of a Rhodes piano. Journal of Sound and Vibration, 2016.'},
+                'nedges': 35,
+                'nnodes': 16,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    __doc__ = componentDoc(metadata)
+    __init__.__doc__ = componentDoc(metadata)

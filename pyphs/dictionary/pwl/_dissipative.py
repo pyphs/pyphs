@@ -10,20 +10,26 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 import sympy as sp
+import os
 from .. import edges
 from pyphs import Graph
+from ..tools import componentDoc, parametersDefault
+from ..mechanics import metadata as dicmetadata
+from pyphs.misc.rst import equation
 
 from ..tools import symbols
 from .tools import pwl_func, data_generator
 
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+
 
 class Dissipative(Graph):
+
     def __init__(self, label, nodes, **kwargs):
 
         # instanciate a Graph object
         Graph.__init__(self, label=label)
 
-        assert 'file' in kwargs, "pwl.dissipative component need 'file' argument"
         path = kwargs.pop('file')
         data = np.vstack(map(np.array, data_generator(path)))
         w_vals = data[0, :]
@@ -32,11 +38,14 @@ class Dissipative(Graph):
         assert all(z_vals[np.nonzero(w_vals >= 0)] >= 0), 'All values z(w) for\
  w>=0 must be non-negative (component {})'.format(label)
 
-        assert all(z_vals[np.nonzero(w_vals >= 0)] >= 0), 'All values z(w) for\
+        assert all(z_vals[np.nonzero(w_vals < 0)] < 0), 'All values z(w) for\
  w<0 must be negative (component {})'.format(label)
 
         assert all(z_vals[np.nonzero(w_vals == 0)] == 0), 'z(0) must be zero \
 (component {})'.format(label)
+
+        assert all(np.diff(z_vals) > 0), "z'(0) must be positive\
+(component {})".format(label)
 
         ctrl = kwargs.pop('ctrl')
 
@@ -66,7 +75,23 @@ class Dissipative(Graph):
         # init component
         self += edges.DissipativeNonLinear(label, [edge, ], w, z, **kwargs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {}}
+    metadata = {'title': 'PWL Dissipation',
+                'component': 'Dissipative',
+                'label': 'diss',
+                'dico': 'pwl',
+                'desc': r'Piecewise-linear SISO dissipative component based on the PWL interpolation proposed in [1]_, (eq (2), known as the *Chua* interpolation). The file pointed by `file` argument should contains two lines, each blank separated list of floats for (x, y) values.',
+                'nodesdesc': "Positive flux N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parametersdesc': 'Component parameter.',
+                'parameters': [['file', "Path to data file for (w, z) values", 'string', 'example.txt'],
+                               ['start', "Index of first value", 'd.u.', None],
+                               ['stop', "Index of last value", 'd.u.', None],
+                               ['step', "step >= 1", 'd.u.', None]],
+                'refs': {1 : 'Chua, L., & Ying, R. (1983). Canonical piecewise-linear analysis. IEEE Transactions on Circuits and Systems, 30(3), 125-140.'},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    __doc__ = componentDoc(metadata)

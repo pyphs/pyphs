@@ -10,21 +10,20 @@ import sympy as sp
 import numpy as np
 
 
-def data_generator(path, ind=None, decim=None,
-                   postprocess=None, imin=None, imax=None):
+def data_generator(path, ind=None, step=None,
+                   postprocess=None, start=None, stop=None):
     """
     Generator that read file from path. Each line is returned as a list of
-    floats, if index i is such that imin <= i < imax, with decimation factor
-    decim. A function can be passed as postprocess, to be applied on each
+    floats, if index i is such that start <= i < stop, with step. A function can be passed as postprocess, to be applied on each
     output.
     """
 
-    if imin is None:
-        imin = 0
-    if imax is None:
-        imax = float('Inf')
-    if decim is None:
-        decim = 1
+    if start is None:
+        start = 0
+    if stop is None:
+        stop = float('Inf')
+    if step is None:
+        step = 1
 
     if ind is not None and not isinstance(ind, int):
         text = 'Index should be an integer. Got {0}'
@@ -35,7 +34,7 @@ def data_generator(path, ind=None, decim=None,
 
     with open(path, "r") as f:
         for line in f:
-            if imin <= i < imax and not bool((i-imin) % decim):
+            if start <= i < stop and not bool((i-start) % step):
                 # export full line
                 if ind is None:
                     out = [float(x) for x in line.split()]

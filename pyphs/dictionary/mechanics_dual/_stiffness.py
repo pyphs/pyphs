@@ -8,25 +8,13 @@ Created on Sun Jun 18 23:48:29 2017
 
 from __future__ import absolute_import, division, print_function
 from ..edges import StorageLinear
+from ..tools import componentDoc, parametersDefault
+from ..mechanics_dual import metadata as dicmetadata
+from pyphs.misc.rst import equation
 
 
 class Stiffness(StorageLinear):
-    """
-    Linear stiffness
 
-    Parameters
-    -----------
-
-    label : str, port label.
-
-    nodes: tuple of nodes labels
-
-        Edge is "nodes[0] -> nodes[1]".
-
-    kwargs: dic with following "keys:values"
-
-        * 'K' : stiffness value or symbol label or tuple (label, value).
-    """
     def __init__(self, label, nodes, **kwargs):
         par_name = 'K'
         par_val = kwargs[par_name]
@@ -36,7 +24,20 @@ class Stiffness(StorageLinear):
                   'ctrl': 'f'}
         StorageLinear.__init__(self, label, nodes, **kwargs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'K': ('K', 1e3)}}
+    metadata = {'title': 'Stiffness',
+                'component': 'Stiffness',
+                'label': 'stiff',
+                'dico': 'mechanics_dual',
+                'desc': r'Linear stiffness between two points in a 1D space. In Laplace domain with :math:`s\in\mathbb C`:' + equation(r'e(s) = \frac{K\,f(s)}{s}.'),
+                'nodesdesc': "Nodes associated with the component terminals with positive flux N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parametersdesc': 'Component parameter.',
+                'parameters': [['K', "Mechanical stiffness", 'N/m', 1e3]],
+                'refs': {},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    __doc__ = componentDoc(metadata)

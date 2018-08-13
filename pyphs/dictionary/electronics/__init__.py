@@ -1,5 +1,8 @@
 #
 
+metadata = {'flux': [r'i', 'Electrical current', 'A'],
+            'effort': [r'v', 'Electrical Voltage', 'V']}
+
 from ._bjt import Bjt
 from ._capacitor import Capacitor
 from ._diode import Diode

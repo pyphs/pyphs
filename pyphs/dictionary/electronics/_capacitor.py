@@ -9,6 +9,8 @@ Created on Sun Jun 18 23:55:52 2017
 from __future__ import absolute_import, division, print_function
 
 from ..edges import StorageLinear
+from ..tools import componentDoc, parametersDefault
+from ..electronics import metadata as dicmetadata
 
 
 class Capacitor(StorageLinear):
@@ -29,15 +31,30 @@ class Capacitor(StorageLinear):
         * 'C' : capacitance value or symbol label or tuple (label, value).
     """
     def __init__(self, label, nodes, **kwargs):
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
         par_name = 'C'
-        par_val = kwargs[par_name]
+        par_val = parameters[par_name]
         kwargs = {'name': par_name,
                   'value': par_val,
                   'inv_coeff': True,
                   'ctrl': 'f'}
         StorageLinear.__init__(self, label, nodes, **kwargs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'C': ('Csymbol', 1e-9)}}
+    metadata = {'title': 'Capacitor',
+                'component': 'Capacitor',
+                'label': 'capa',
+                'dico': 'electronics',
+                'desc': 'Linear capacitor.',
+                'nodesdesc': "Capacitor terminals with positive current N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parametersdesc': '',
+                'parameters': [['C', 'Capacitance', 'F', '1e-9']],
+                'refs': {},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+Capacitor.__doc__ = componentDoc(Capacitor.metadata)

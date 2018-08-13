@@ -9,35 +9,30 @@ Created on Fri Jun 16 12:14:22 2017
 from ..edges import Port
 from ..tools import symbols
 from pyphs.graphs import datum
+from ..tools import componentDoc, parametersDefault
+from ..mechanics import metadata as dicmetadata
+from pyphs.misc.rst import equation
+
 
 class Source(Port):
-    """
-    Voltage or current source
 
-    Parameters
-    -----------
-
-    label : str, port label.
-
-    nodes: tuple of nodes labels
-
-        if a single label in nodes, port edge is "datum -> node"; \
-else, the edge corresponds to "nodes[0] -> nodes[1]".
-
-    kwargs: dic with following "keys:values"
-
-        * 'type' : source type in ('force', 'velocity').
-        * 'const': if not None, the input will be replaced by the value (subs).
-    """
     def __init__(self, label, nodes, **kwargs):
-        type_ = kwargs['type']
+
+        # parameters
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
+
+        type_ = parameters['type']
         type_ = type_.lower()
+
         if not label == nodes[0]:
             text = "The node label associated with a heat source must be the\
  same as the component label:\n{}\nis not \n{}".format(label, nodes[0])
             raise NameError(text)
-        assert type_ in ('temperature', 'entropyvariation')
-        if type_ == 'entropyvariation':
+
+        assert type_ in ('temperature', 'entropyvar')
+
+        if type_ == 'entropyvar':
             ctrl = 'e'
             obs = {}
         elif type_ == 'temperature':
@@ -49,7 +44,20 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
                          (datum, nodes[0]), **kwargs)
         self.core.observers.update(obs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('T', ),
-                'arguments': {'type': 'temperature'}}
+    metadata = {'title': 'Mechanical Source',
+                'component': 'Source',
+                'label': 'T',
+                'dico': 'thermics',
+                'desc': r"Thermal source, i.e. imposed temperature delta (type='temp') or entropy variation (type='ev') between points.",
+                'nodesdesc': "Thermal point associated with the source with positive flux #->temp. The node label must be the same as the component label.",
+                'nodes': ('T', ),
+                'parametersdesc': 'Component parameter.',
+                'parameters': [['type', "Source type in {'entropyvar', 'temperature'}", 'string', 'temperature']],
+                'refs': {},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    __doc__ = componentDoc(metadata)

@@ -12,54 +12,18 @@ import sympy
 from ..tools import symbols, nicevarlabel
 from ..edges import DissipativeNonLinear
 from pyphs.config import GMIN
+from ..tools import componentDoc, parametersDefault
+from ..electronics import metadata as dicmetadata
 
 
 class Triode(DissipativeNonLinear):
-    """
-    Usage
-    -----
 
-    electronics.triode label ['K', 'P', 'G'] [mu, Ex, Kg, Kp, Kvb, Vcp, Va, \
-    Rgk]
-
-    Description
-    ------------
-
-    Triode model from [1] which includes Norman Koren modeling of plate to \
-    cathode current Ipk and grid effect for grid to cathod current Igk.
-
-    Nodes:
-        3 (cathode 'K', plate 'P' and grid 'G').
-
-    Edges:
-        2 (plate->cathode 'PK' and grid->cathode 'GK').
-
-    Parameters
-    -----------
-
-    +------------+---------+------------+---------+------------+---------+----\
---------+---------+
-    |    mu      |  Ex     |    Kg      |  Kp     |     Kvb    |    Vcp  \
-|  Va        |    Rgk  |
-    +------------+---------+------------+---------+------------+---------+---\
----------+---------+
-    | 88         | 1.4     | 1060       | 600     | 300        | 0.5     \
-| 0.33       | 3000    |
-    +------------+---------+------------+---------+------------+---------+---\
----------+---------+
-
-    Reference
-    ----------
-
-    [1] I. Cohen and T. Helie, Measures and parameter estimation of triodes \
-    for the real-time simulation of a multi-stage guitar preamplifier. 129th \
-    Convention of the AES, SF USA, 2009.
-
-    """
     def __init__(self, label, nodes, **kwargs):
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
         # parameters
-        pars = ['mu', 'Ex', 'Kg', 'Kp', 'Kvb', 'Vcp', 'Va', 'Rgk']
-        mu, Ex, Kg, Kp, Kvb, Vcp, Va, Rgk = symbols(pars)
+        pars = ['mu', 'Ex', 'Kg', 'Kp', 'Kvb', 'Vct', 'Va', 'Rgk']
+        mu, Ex, Kg, Kp, Kvb, Vct, Va, Rgk = symbols(pars)
         # dissipation variable
         vpk, vgk = symbols([nicevarlabel("w", label+el)
                             for el in ['pk', 'gk']])
@@ -91,7 +55,7 @@ class Triode(DissipativeNonLinear):
             """
             dissipation function for edge 'e = (p->k)'
             """
-            e1 = vgk + Vcp
+            e1 = vgk + Vct
             e2 = sympy.sqrt(Kvb + vpk**2)
             e3 = Kp*(mu**-1 + e1/e2)
             exprE = (vpk/Kp)*sympy.log(1 + sympy.exp(e3))
@@ -118,16 +82,31 @@ class Triode(DissipativeNonLinear):
 
         # init component
         DissipativeNonLinear.__init__(self, label, edges,
-                                      w, z, **kwargs)
+                                      w, z, **parameters)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('Nk', 'Np', 'Ng'),
-                'arguments': {'mu': ('mu', 88.),
-                              'Ex': ('Ex', 1.4),
-                              'Kg': ('Kg', 1060.),
-                              'Kp': ('Kp', 600.),
-                              'Kvb': ('Kvb', 300.),
-                              'Vcp': ('Vcp', 0.5),
-                              'Va': ('Va', 0.33),
-                              'Rgk': ('Rgk', 3000.)}}
+    metadata = {'title': 'Triode',
+                'component': 'Triode',
+                'label': 'tri',
+                'dico': 'electronics',
+                'desc': 'Triode model from [1]_ which includes Norman Koren modeling of plate to cathode current Ipk and grid effect for grid to cathod current Igk.',
+                'nodesdesc': "Cathode 'K', Plate 'P' and Grid 'G'",
+                'nodes': ('Nk', 'Np', 'Ng'),
+                'parametersdesc': '',
+                'parameters': [['mu', "Norman Koren's parameters", 'd.u.', 88.],
+                               ['Ex', "Norman Koren's parameters", 'd.u.', 1.4],
+                               ['Kg', "Norman Koren's parameters", 'd.u.', 1060.],
+                               ['Kp', "Norman Koren's parameters", 'd.u.', 600.],
+                               ['Kvb', "Norman Koren's parameters", 'd.u.', 300.],
+                               ['Vct', "Norman Koren's parameters", 'V', 0.5],
+                               ['Va', "Voltage threshold", 'V', 0.33],
+                               ['Rgk', "Grid current resistive behaviour", 'Ohms', 3000.]],
+                'refs': {1: 'I. Cohen and T. Helie, Measures and parameter estimation of triodes for the real-time simulation of a multi-stage guitar preamplifier. 129th Convention of the AES, SF USA, 2009.'},
+                'nnodes': 3,
+                'nedges': 2,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+Triode.__doc__ = componentDoc(Triode.metadata)

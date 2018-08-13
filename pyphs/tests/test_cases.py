@@ -215,7 +215,7 @@ class TestPlots(TestCase):
     def test_plot_rlc_with_split(self):
         self.assertTrue(plot_rlc_with_split())
 
-    def test_plot_power_balance_nlcore_with_split(self):
+    def test_dataH5File(self):
         self.assertTrue(dataH5File())
 
     def test_plot_power_balance_rlc_with_split(self):

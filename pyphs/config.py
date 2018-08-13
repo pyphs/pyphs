@@ -195,3 +195,12 @@ CONFIG_SIMULATION = {'path': SIMULATION_PATH,
 
 # Export format:
 plot_format = 'pdf'
+
+###############################################################################
+
+# Below are the options for RST rendering
+
+# RST equations format in {'mathjax', 'latex'}
+RST_EQUATIONS = 'mathjax'
+
+RST = {'equations': RST_EQUATIONS}

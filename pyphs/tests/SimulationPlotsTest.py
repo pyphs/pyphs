@@ -27,7 +27,6 @@ def plot_power_balance_rlc_with_split():
               'theta': 0.5,             # theta-scheme for the structure
               'split': False,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
@@ -44,11 +43,8 @@ def plot_power_balance_rlc_with_split():
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
-
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    sequ = u[:, np.newaxis]
+    simu.init(u=sequ)
     simu.process()
 
     simu.data.plot_powerbal(mode='single', show=False)
@@ -67,7 +63,6 @@ def dataH5File():
               'theta': 0.5,             # theta-scheme for the structure
               'split': True,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
@@ -83,18 +78,14 @@ def dataH5File():
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
-
-    nt = int(dur*simu.config['fs'])
-    simu.init(u=sequ(), nt=nt)
+    sequ = u[:, np.newaxis]
+    simu.init(u=sequ)
     simu.process()
 
     simu.data.plot_powerbal(mode='single', show=False)
     simu.data.plot_powerbal(mode='multi', show=False)
 
-    simu2 = Simulation(nlcore.to_method(), config=config, clear=False)
+    simu2 = Simulation(nlcore.to_method(), config=config, erase=False)
 
     start = int(simu.data.nt/10.)
     stop = int(9*simu.data.nt/10.)
@@ -116,7 +107,6 @@ def plot_rlc_with_split():
               'theta': 0.5,             # theta-scheme for the structure
               'split': False,           # apply core.split_linear() beforehand
               'maxit': 10,              # Max iteration for NL solvers
-              'eps': 1e-16,          # Global numerical tolerance
               'path': path,             # Path to the results folder
               'pbar': False,      # Display a progress bar
               'timer': True,            # Display minimal timing infos
@@ -131,11 +121,8 @@ def plot_rlc_with_split():
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
-
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    sequ = u[:, np.newaxis]
+    simu.init(u=sequ)
     simu.process()
 
     dims = simu.nums.method.dims

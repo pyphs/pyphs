@@ -20,7 +20,7 @@ from .structure.output import output_function as output
 from .structure.moves import move_stor, move_diss, move_port, move_connector
 from .structure.connectors import port2connector
 
-from .maths import gradient, jacobian, inverse, hessian
+from .maths import gradient, jacobian, inverse, hessian, matvecprod
 from .structure.dimensions import Dimensions
 from .structure.indices import Indices
 from .tools import (types, free_symbols, sympify,
@@ -49,6 +49,9 @@ class Core:
     move_port = move_port
     move_connector = move_connector
 
+    # =====================================================================
+    # Constructor
+
     def __init__(self, label=None):
         """
         Constructor for the Core Port-Hamiltonian structure object of pyphs.
@@ -57,14 +60,18 @@ class Core:
         ----------
 
         label: None or string
-            An optional label string used e.g. for plots (default is None).
+            An optional label string (default is None).
 
         Returns
         -------
 
         core : Core
             A Core Port-Hamiltonian structure object.
+
         """
+
+        # =====================================================================
+        # Label
 
         # Init label
         if label is None:
@@ -72,9 +79,13 @@ class Core:
         self.label = label
 
         # =====================================================================
+        # Symbols
 
         # assertions for sympy symbols
         self.assertions = {'real': True}
+
+        # =====================================================================
+        # Arguments
 
         # Ordered list of variables considered as the systems's arguments
         self.args_names = ('x', 'dx', 'w', 'u', 'p', 'o')
@@ -83,7 +94,7 @@ class Core:
                             'connectors', 'force_wnl', 'subs', 'M', '_dxH',
                             'symbs_names', 'exprs_names', 'observers'}
 
-        # Names for matrix structures
+        # Names for structure matrices
         self.struc_names = ['M', 'J', 'R']
 
         # =====================================================================
@@ -112,14 +123,12 @@ class Core:
         # List of dissipative variable symbols to be ignored in self.reduce_z
         self.force_wnl = list()
 
-        # =====================================================================
-
-        # init tools
+        # set Dimensions object
         self.dims = Dimensions(self)
+        # set Indices object
         self.inds = Indices(self)
 
         # init lists of symbols
-
         for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
             self.setsymb(name, types.vector_types[0]())
 
@@ -135,6 +144,9 @@ class Core:
         self.dims = Dimensions(self)
         self.inds = Indices(self)
 
+        # =====================================================================
+        # Accessors and mutators
+
         # get() and set() for structure matrices
         names = ('x', 'w', 'y', 'cy', 'xl', 'xnl', 'wl', 'wnl')
         self._struc_getset(names)
@@ -144,23 +156,23 @@ class Core:
             lnl_accessors = self._gen_lnl_accessors(name, 'x')
             setattr(self, name+'l', lnl_accessors[0])
             setattr(self, name+'nl', lnl_accessors[1])
+
         for name in {'w', 'z'}:
             lnl_accessors = self._gen_lnl_accessors(name, 'w')
             setattr(self, name+'l', lnl_accessors[0])
             setattr(self, name+'nl', lnl_accessors[1])
+    # =========================================================================
 
     # =========================================================================
+    # Save and Load
 
     def save(self, folder=None, label=None):
         """
         save
         ====
 
-        Save Core object to disk. The path is
-        * folder/label.phs
-
-        Notice the data appears on disk as
-        * folder/label.phs.db
+        Save Core object to disk. The path is `folder/label.phs`.
+        Notice the data appears on disk as `folder/label.phs.db`.
 
         Parameters
         ----------
@@ -265,6 +277,7 @@ class Core:
             print('Read Core from {0}'.format(path))
 
     # =========================================================================
+    # Copy
 
     def __copy__(self):
         core = Core(label=None)
@@ -288,27 +301,6 @@ class Core:
         core.label = copy.copy(self.label)
         return core
 
-# copy.deepcopy should no be used, see sympy issue here:
-# https://github.com/sympy/sympy/pull/7674
-#    def __deepcopy__(self, memo=None):
-#        core = Core(label=None)
-#        for name in (list(set().union(
-#                          self.attrstocopy,
-#                          self.exprs_names,
-#                          self.symbs_names))):
-#            if isinstance(name, str):
-#                source = self
-#                target = core
-#                attr_name = name
-#            else:
-#                source = getattr(self, name[0])
-#                target = getattr(core, name[0])
-#                attr_name = name[1]
-#            attr = getattr(source, attr_name)
-#            setattr(target, attr_name, copy.deepcopy(attr, memo))
-#        core.label = copy.copy(self.label)
-#        return core
-#
     # =========================================================================
 
     def __add__(core1, core2):
@@ -398,7 +390,8 @@ class Core:
         output = sympify(0)
         for w, z in zip(self.w, self.z):
             output += w*z
-        output += sympy.SparseMatrix(self.a()).dot(self.R().dot(self.a()))
+        output += sympy.SparseMatrix(self.a()).dot(matvecprod(self.R(),
+                                                              self.a()))
         return output
 
     def z_symbols(self):
@@ -1330,13 +1323,13 @@ add the connector'.format(i)
             return geteval(self, name)[dim:]
         nl_accessor.__doc__ = """
     =====
-    {0}l
+    {0}nl
     =====
     Accessor to the nonlinear part of vector {0}.
 
     Return
     ------
-    {0}l: list of sympy expressions
+    {0}nl: list of sympy expressions
         Nonlinear part of core.{0}. This is a shorcut for
     :code:`core.{0}[core.dims.{1}l():]`.
 
@@ -1349,7 +1342,7 @@ add the connector'.format(i)
     # =========================================================================
 
     # SYMBOLS
-    @ staticmethod
+    @staticmethod
     def symbols(obj, *args, **kwargs):
         """
         sympy.symbols function with Core.assertions.

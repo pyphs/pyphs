@@ -84,7 +84,6 @@ class Bjt(DissipativeNonLinear):
                 'desc': 'Bipolar junction transistor of NPN type according to the Ebers-Moll model [1]_.',
                 'nodesdesc': "base 'Nb', collector 'Nc', emitter 'Ne'.",
                 'nodes': ('Nb', 'Nc', 'Ne'),
-                'parametersdesc': '',
                 'parameters': [['Is', 'Reverse saturation current', 'A', 1e-12],
                                ['betaR', 'Reverse common emitter current gain in [0, 20]', 'd.u.', 10.],
                                ['betaF', 'Forward common emitter current gain in [20, 500]', 'd.u.', 200.],

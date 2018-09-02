@@ -31,7 +31,6 @@ class Inductor(StorageLinear):
                 'desc': 'Linear inductor.',
                 'nodesdesc': "Inductor terminals with positive current N1->N2.",
                 'nodes': ('N1', 'N2'),
-                'parametersdesc': '',
                 'parameters': [['L', 'Inductance', 'H', '1e-3']],
                 'refs': {},
                 'nnodes': 2,

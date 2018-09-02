@@ -48,7 +48,6 @@ class Capacitor(StorageLinear):
                 'desc': 'Linear capacitor.',
                 'nodesdesc': "Capacitor terminals with positive current N1->N2.",
                 'nodes': ('N1', 'N2'),
-                'parametersdesc': '',
                 'parameters': [['C', 'Capacitance', 'F', '1e-9']],
                 'refs': {},
                 'nnodes': 2,

@@ -29,7 +29,6 @@ class Resistor(DissipativeLinear):
                 'desc': 'Linear resistor.',
                 'nodesdesc': "Resistor terminals with positive current N1->N2.",
                 'nodes': ('N1', 'N2'),
-                'parametersdesc': '',
                 'parameters': [['R', 'Resistance', 'Ohms', 1e3]],
                 'refs': {},
                 'nnodes': 2,

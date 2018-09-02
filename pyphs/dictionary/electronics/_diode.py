@@ -84,7 +84,6 @@ class Diode(DissipativeNonLinear):
                 'desc': 'PN Diode governed by the Shockley diode equation [1]_.',
                 'nodesdesc': "The current is directed from 'N1' to 'N2'.",
                 'nodes': ('N1', 'N2'),
-                'parametersdesc': '',
                 'parameters': [['Is', 'Saturation current', 'A', 2e-9],
                                ['mu', 'Quality factor', 'd.u.', 1.7],
                                ['R', 'Connectors resistance', 'Ohms', 0.5],

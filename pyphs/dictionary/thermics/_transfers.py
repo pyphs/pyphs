@@ -70,8 +70,8 @@ class Transfer(DissipativeNonLinear):
                 'parametersdesc': 'Component parameter.',
                 'parameters': [['R', "Thermal transfer coefficient", 'W/K', 1e3]],
                 'refs': {},
-                'nnodes': 2,
-                'nedges': 1,
+                'nnodes': 3,
+                'nedges': 2,
                 'flux': dicmetadata['flux'],
                 'effort': dicmetadata['effort'],
                 }

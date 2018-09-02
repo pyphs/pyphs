@@ -91,7 +91,6 @@ class Triode(DissipativeNonLinear):
                 'desc': 'Triode model from [1]_ which includes Norman Koren modeling of plate to cathode current Ipk and grid effect for grid to cathod current Igk.',
                 'nodesdesc': "Cathode 'K', Plate 'P' and Grid 'G'",
                 'nodes': ('Nk', 'Np', 'Ng'),
-                'parametersdesc': '',
                 'parameters': [['mu', "Norman Koren's parameters", 'd.u.', 88.],
                                ['Ex', "Norman Koren's parameters", 'd.u.', 1.4],
                                ['Kg', "Norman Koren's parameters", 'd.u.', 1060.],

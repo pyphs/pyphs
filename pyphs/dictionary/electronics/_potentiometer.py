@@ -62,7 +62,6 @@ class Potentiometer(DissipativeNonLinear):
                 'desc': 'Potentiometer, i.e. two connected resistors with inverse varying resistance.',
                 'nodesdesc': "Resitances are: :math:`R_{12}=1 + R\,A^E` and :math:`R_{23}=1 + R\,(1-A^E)`.",
                 'nodes': ('N1', 'N2', 'N3'),
-                'parametersdesc': '',
                 'parameters': [['R', 'Total resistance', 'Ohms', 1e5],
                                ['A', 'Label for parameter', 'string', 'alpha'],
                                ['E', 'Exponent', 'd.u.', 1.]],

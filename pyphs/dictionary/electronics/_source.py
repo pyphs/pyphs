@@ -34,7 +34,6 @@ class Source(Port):
                 'desc': 'Controlled voltage or current source.',
                 'nodesdesc': "source terminals with positive current N1->N2.",
                 'nodes': ('N1', 'N2'),
-                'parametersdesc': '',
                 'parameters': [['type', "Source type in {'voltage', 'current'}", 'string', 'voltage']],
                 'refs': {},
                 'nnodes': 2,

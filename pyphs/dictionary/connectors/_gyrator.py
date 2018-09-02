@@ -11,6 +11,7 @@ from __future__ import absolute_import, division, print_function
 from ..edges.connectors import Connector
 from ..tools import componentDoc, parametersDefault
 from ..connectors import metadata as dicmetadata
+from pyphs.misc.rst import equation
 
 
 class Gyrator(Connector):
@@ -25,11 +26,11 @@ class Gyrator(Connector):
                 'component': 'Gyrator',
                 'label': 'gyr',
                 'dico': 'connectors',
-                'desc': 'Quadripole connector of gyrator type.',
-                'nodesdesc': "Connected edges are A1->A2 and B1->B2.",
+                'desc': r'Quadripole connector of gyrator type with:' +
+                        equation(r'\left\{\begin{array}{rcl} e_A &=& -\alpha\,f_B, \\ e_B &=& + \alpha\,f_A. \end{array}\right.'),
+                'nodesdesc': "Connected edges are edge A = A1->A2 and edge B = B1->B2.",
                 'nodes': ('A1', 'A2', 'B1', 'B2'),
-                'parametersdesc': '',
-                'parameters': [['alpha', 'Gyrator ratio', 'd.u.', 1.]],
+                'parameters': [['alpha', 'Ratio', 'unknown', 1.]],
                 'refs': {},
                 'nedges': 2,
                 'nnodes': 4,

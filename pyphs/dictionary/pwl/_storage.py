@@ -65,9 +65,9 @@ zero (component {})'.format(label)
         # init component
         self += edges.StorageNonLinear(label, [edge], x, h, **kwargs)
 
-    metadata = {'title': 'PWL Dissipation',
-                'component': 'Dissipative',
-                'label': 'diss',
+    metadata = {'title': 'PWL Storage',
+                'component': 'Storage',
+                'label': 'stor',
                 'dico': 'pwl',
                 'desc': r'Piecewise-linear SISO storage component based on the PWL interpolation proposed in [1]_, (eq (2), known as the *Chua* interpolation). The file pointed by `file` argument should contains two lines, each blank separated list of floats for (x, H) or (x, dxH) values. If (x, dxH) values are provided, the resulting interpolation must be integrated to yield a (x, H) mapping  (see `integrate` parameter below).',
                 'nodesdesc': "Positive flux N1->N2.",

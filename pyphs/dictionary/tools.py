@@ -89,9 +89,8 @@ Example
 >>> # Define component nodes
 >>> nodes = $nodes
 >>> # Define component parameters
->>> parameters = {
-$expars
-        }
+>>> parameters = {$expars
+...              }
 >>> # Instanciate component
 >>> component = $dico.$component(label, nodes, **parameters)
 >>> # Graph dimensions
@@ -110,6 +109,9 @@ def componentDoc(metadata):
     """
 
     from pyphs.misc.rst import title, indent
+
+    metadata.setdefault('parametersdesc',
+                        'Parameters description and default value.')
 
     pars = parametersDefault(metadata['parameters'])
 
@@ -133,8 +135,7 @@ def componentDoc(metadata):
     bmax = max(blanks) + 2
     for i, b in enumerate(blanks):
         blanks[i] = bmax - b
-    expars = '\n'.join(["'{0}': {1},{4}# {2} ({3})".format(k, v, d, u, b*' ') for ((k, d, u, v), b) in zip(temp, blanks)])
-    expars = indent(indent(expars))
+    expars = ('\n... ' + 14*' ').join(["'{0}': {1},{4}# {2} ({3})".format(k, v, d, u, b*' ') for ((k, d, u, v), b) in zip(temp, blanks)])
     realtitle = metadata['title'] if metadata['component'] == metadata['title'] else '{} ({})'.format(metadata['title'], metadata['component'])
     subs = {'title': title(realtitle, 0),
             'label': metadata['label'],
@@ -239,7 +240,6 @@ def nicevarlabel(var, label):
     return a formated string eg. xcapa if 'var' is 'x' and label is 'capa'.
     """
     return var + label
-
 
 
 dicdocTemplate = """

@@ -79,12 +79,12 @@ class Core:
         self.label = label
 
         # =====================================================================
-        # Symbols
-
-        # assertions for sympy symbols
-        self.assertions = {'real': True}
-
-        # =====================================================================
+        # Symbols 
+         
+        # assertions for sympy symbols 
+        self.assertions = {'real': True} 
+                          
+        # ===================================================================== 
         # Arguments
 
         # Ordered list of variables considered as the systems's arguments
@@ -1347,5 +1347,5 @@ add the connector'.format(i)
         """
         sympy.symbols function with Core.assertions.
         """
-        kwargs.update(Core().assertions)
+        kwargs.update(Core().assertions) 
         return sympy.symbols(obj, *args, **kwargs)

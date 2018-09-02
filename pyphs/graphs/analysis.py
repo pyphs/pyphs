@@ -449,7 +449,7 @@ compatible'.format(e_label, link_e_label)
                     self.set_edge_ec(link_e)
             # transformer case
             elif self.get_edge_data(e, 'connector_type') == 'transformer':
-                self.inverse_alpha(e)
+#                self.inverse_alpha(e)
                 # assert linked edge is not effort controlled
                 assert link_e not in self.ec_edges,\
                     'connector edges {0!s} and {1!s} are not \
@@ -484,10 +484,13 @@ compatible'.format(e_label, link_e_label)
             print('link', e_label, ctrl, link_e_label)
             self.verbose('link')
 
-    def inverse_alpha(self, e):
+    def inverse_alpha(self, e, minus=False):
         alpha = self.edges[e][2]['alpha']
         if alpha is not None:
-            self.edges[e][2]['alpha'] = alpha**-1
+            a = alpha**-1
+            if minus:
+                a = -a
+            self.edges[e][2]['alpha'] = a
 
 
 def isequal(M1, M2):

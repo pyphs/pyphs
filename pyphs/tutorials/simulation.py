@@ -23,8 +23,8 @@ import matplotlib.pyplot as plt  # plot tools
 
 # In[2]:
 
-# Plot appears in the notebook
-get_ipython().magic('matplotlib inline')
+# Uncomment to activate inline plots in notebooks
+#get_ipython().magic('matplotlib inline')
 
 
 # In[3]:

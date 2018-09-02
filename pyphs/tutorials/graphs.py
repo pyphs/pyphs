@@ -341,8 +341,9 @@ simu.process()
 # In[26]:
 
 import matplotlib.pyplot as plt
-# Shows the plots in the notebook
-get_ipython().magic('matplotlib inline')
+
+# Uncomment to activate inline plots in notebooks
+#get_ipython().magic('matplotlib inline')
 
 # plot power balance
 fig, ax = simu.data.plot_powerbal()

@@ -89,7 +89,9 @@ class TestGraph(TestCase):
 
 
 class TestCore2Latex(TestCase):
+
     def test_core_2_latex(self):
+
         self.assertTrue(TestCore2Tex())
 
 

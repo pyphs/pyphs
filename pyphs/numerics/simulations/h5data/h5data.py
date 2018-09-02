@@ -336,6 +336,8 @@ or an integer nt (number of time steps).'
 
         # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
         ny = self.method.dims.y()
+        if isinstance(sequ, list):
+            sequ = numpy.array(sequ)
         if sequ is None:
             sequ = [[0]*ny for _ in range(nt)]
         elif len(sequ.shape) == 1:
@@ -349,6 +351,8 @@ or an integer nt (number of time steps).'
         np = self.method.dims.p()
         if seqp is None:
             seqp = [[0]*np for _ in range(nt)]
+        if isinstance(seqp, list):
+            seqp = numpy.array(seqp)
         elif len(seqp.shape) == 1:
             if not np == 1:
                 text = 'Parameters shape should be ({}, {}).'

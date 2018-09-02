@@ -27,21 +27,6 @@ import shutil
 def system_call(cmd, **popenArgs):
     """
     Execute a system command.
-
-    Parameter
-    ---------
-
-    cmd : list
-        List of arguments.
-
-    Example
-    -------
-
-    Change directory with
-
-    >>> cmd = ['cd', './my/folder']
-    >>> system_call(cmd)
-
     """
 
     if sys.platform.startswith('win'):

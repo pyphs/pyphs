@@ -53,7 +53,6 @@ GMIN = 1e-12
 # Assemble dictionary of parameters
 CONFIG_NUMERIC = {'fs': FS,
                   'eps': EPS,
-                  'epsdg': EPS_DG,
                   'maxit': int(MAXIT),
                   'theano': THEANO,
                   'gmin': GMIN,
@@ -152,7 +151,8 @@ SPLIT = True
 
 CONFIG_METHOD = {'grad': GRADIENT,
                  'theta': THETA,
-                 'split': SPLIT}
+                 'split': SPLIT,
+                 'epsdg': EPS_DG}
 
 ###############################################################################
 

@@ -79,12 +79,12 @@ class Core:
         self.label = label
 
         # =====================================================================
-        # Symbols 
-         
-        # assertions for sympy symbols 
-        self.assertions = {'real': True} 
-                          
-        # ===================================================================== 
+        # Symbols
+
+        # assertions for sympy symbols
+        self.assertions = {'real': True}
+
+        # =====================================================================
         # Arguments
 
         # Ordered list of variables considered as the systems's arguments
@@ -680,6 +680,14 @@ class Core:
         simplify_core(self)
 
     # =========================================================================
+
+    @property
+    def subsexprs(self):
+        exprs_dic = {}
+        for k in self.subs.keys():
+            if not isinstance(self.subs[k], (int, float)):
+                exprs_dic[k] = self.subs[k]
+        return exprs_dic
 
     def substitute(self, **kwargs):
         """
@@ -1347,5 +1355,5 @@ add the connector'.format(i)
         """
         sympy.symbols function with Core.assertions.
         """
-        kwargs.update(Core().assertions) 
+        kwargs.update(Core().assertions)
         return sympy.symbols(obj, *args, **kwargs)

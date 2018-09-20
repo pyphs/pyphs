@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function
 import sympy as sp
 from pyphs.core.maths import matvecprod, jacobian, sumvecs
 from pyphs.core.tools import free_symbols, types
-from pyphs.config import CONFIG_METHOD, VERBOSE, EPS_DG, FS_SYMBS
+from pyphs.config import CONFIG_METHOD, VERBOSE, FS_SYMBS
 from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
 from pyphs import Core
 from ..cpp.method2cpp import method2cpp
@@ -83,9 +83,6 @@ class Method(Core):
                 attr_name = name[1]
             attr = getattr(source, attr_name)
             setattr(target, attr_name, copy.copy(attr))
-
-        # replace every expressions in subs
-        self.substitute(selfexprs=True)
 
         # ------------- CLASSES ------------- #
 
@@ -679,7 +676,7 @@ dictionary.
         dxHl = list(types.matrix_types[0](method.Q)*(types.matrix_types[0](method.xl()) +
                     0.5*types.matrix_types[0](method.dxl())))
         dxHnl = discrete_gradient(method.H, method.xnl(), method.dxnl(),
-                                  EPS_DG)
+                                  method.config['epsdg'])
         method._dxH = dxHl + dxHnl
 
     elif method.config['grad'] == 'theta':
@@ -689,9 +686,10 @@ dictionary.
                                      method.dx(),
                                      method.config['theta'])
     else:
-        assert method.config['grad'] == 'trapez', 'Unknown method for \
-gradient evaluation: {}'.format(method.config['grad'])
         # trapezoidal rule
+        if not method.config['grad'] == 'trapez':
+            errortext = 'Unknown method for gradient evaluation: {}'
+            raise NotImplementedError(errortext.format(method.config['grad']))
         method._dxH = gradient_trapez(method.H, method.x, method.dx())
 
     # reference the discrete gradient for the Core in core.exprs_names

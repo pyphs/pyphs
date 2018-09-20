@@ -15,6 +15,7 @@ import numpy
 from pyphs.misc.tools import geteval
 from pyphs.config import VERBOSE
 import h5py
+import warnings
 
 
 class H5Data(object):
@@ -338,6 +339,10 @@ or an integer nt (number of time steps).'
         ny = self.method.dims.y()
         if isinstance(sequ, list):
             sequ = numpy.array(sequ)
+        elif hasattr(sequ, '__next__'):
+            sequ = numpy.array(list(sequ))
+            # TODO: remoce warnings
+            warnings.warn('Use of generator as inputs to simulation objects is deprecated. Use lists or arrays instead.')
         if sequ is None:
             sequ = [[0]*ny for _ in range(nt)]
         elif len(sequ.shape) == 1:

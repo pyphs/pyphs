@@ -31,6 +31,10 @@ class Capacitor(StorageLinear):
         * 'C' : capacitance value or symbol label or tuple (label, value).
     """
     def __init__(self, label, nodes, **kwargs):
+
+        # Write documentation
+        self.__doc__ = componentDoc(Capacitor.metadata)
+
         parameters = parametersDefault(self.metadata['parameters'])
         parameters.update(kwargs)
         par_name = 'C'
@@ -56,4 +60,5 @@ class Capacitor(StorageLinear):
                 'effort': dicmetadata['effort'],
                 }
 
-Capacitor.__doc__ = componentDoc(Capacitor.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

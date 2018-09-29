@@ -70,4 +70,5 @@ class Capacitorsat(StorageNonLinear):
                 'effort': dicmetadata['effort'],
                 }
 
+    # Write documentation
     __doc__ = componentDoc(metadata)

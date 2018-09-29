@@ -44,4 +44,6 @@ class Source(Port):
                 'flux': dicmetadata['flux'],
                 'effort': dicmetadata['effort'],
                 }
-Source.__doc__ = componentDoc(Source.metadata)
+
+    # Write documentation
+    __doc__ = componentDoc(metadata)

@@ -108,4 +108,5 @@ class Triode(DissipativeNonLinear):
                 'effort': dicmetadata['effort'],
                 }
 
-Triode.__doc__ = componentDoc(Triode.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

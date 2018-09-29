@@ -38,4 +38,5 @@ class Gyrator(Connector):
                 'effort': dicmetadata['effort'],
                 }
 
-Gyrator.__doc__ = componentDoc(Gyrator.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

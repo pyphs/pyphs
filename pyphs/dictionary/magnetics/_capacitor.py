@@ -44,4 +44,5 @@ class Capacitor(StorageLinear):
                 'flux': dicmetadata['flux'],
                 'effort': dicmetadata['effort'],
                 }
-Capacitor.__doc__ = componentDoc(Capacitor.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

@@ -37,4 +37,5 @@ class Resistor(DissipativeLinear):
                 'effort': dicmetadata['effort'],
                 }
 
-Resistor.__doc__ = componentDoc(Resistor.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

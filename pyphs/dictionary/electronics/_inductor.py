@@ -16,6 +16,7 @@ from ..electronics import metadata as dicmetadata
 class Inductor(StorageLinear):
 
     def __init__(self, label, nodes, **kwargs):
+
         par_name = 'L'
         par_val = kwargs[par_name]
         kwargs = {'name': par_name,
@@ -39,4 +40,5 @@ class Inductor(StorageLinear):
                 'effort': dicmetadata['effort'],
                 }
 
-Inductor.__doc__ = componentDoc(Inductor.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

@@ -72,4 +72,5 @@ class Potentiometer(DissipativeNonLinear):
                 'effort': dicmetadata['effort'],
                 }
 
-Potentiometer.__doc__ = componentDoc(Potentiometer.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

@@ -39,6 +39,7 @@ class DissipativeLinear(Graph):
 
     """
     def __init__(self, label, nodes, **kwargs):
+
         Graph.__init__(self, label=label)
         if not isinstance(kwargs['coeff'], Argument):
             coeff = Argument(label + 'coeff', kwargs['coeff'])

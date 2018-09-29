@@ -78,7 +78,8 @@ class Fracintec(Graph):
                 'flux': dicmetadata['flux'],
                 'effort': dicmetadata['effort']
                 }
-Fracintec.__doc__ = componentDoc(Fracintec.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)
 
 
 # ======================================================================= #
@@ -144,7 +145,8 @@ class Fracintfc(Graph):
                 'flux': dicmetadata['flux'],
                 'effort': dicmetadata['effort'],
                 }
-Fracintfc.__doc__ = componentDoc(Fracintfc.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)
 
 # ======================================================================= #
 
@@ -234,4 +236,3 @@ def fractionalIntegratorWeights(p, beta, NbPoles=10,
         grid()
 
     return diagR, diagQ
-

@@ -19,6 +19,7 @@ from ..electronics import metadata as dicmetadata
 class Diode(DissipativeNonLinear):
 
     def __init__(self, label, nodes, **kwargs):
+
         parameters = parametersDefault(self.metadata['parameters'])
         parameters.update(kwargs)
         parameters.update({'gmin': ('gmin', GMIN)})
@@ -95,4 +96,5 @@ class Diode(DissipativeNonLinear):
                 'effort': dicmetadata['effort'],
                 }
 
-Diode.__doc__ = componentDoc(Diode.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

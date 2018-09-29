@@ -36,4 +36,5 @@ class Transformer(Connector):
                 'effort': dicmetadata['effort'],
                 }
 
-Transformer.__doc__ = componentDoc(Transformer.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

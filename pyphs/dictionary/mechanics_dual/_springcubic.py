@@ -65,4 +65,5 @@ class Springcubic(StorageNonLinear):
                 'flux': dicmetadata['flux'],
                 'effort': dicmetadata['effort'],
                 }
-
+    # Write documentation
+    __doc__ = componentDoc(metadata)

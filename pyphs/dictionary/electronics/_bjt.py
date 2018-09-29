@@ -20,12 +20,19 @@ from ..electronics import metadata as dicmetadata
 class Bjt(DissipativeNonLinear):
 
     def __init__(self, label, nodes, **kwargs):
+
+        self.__doc__ = componentDoc(Bjt.metadata)
+
         parameters = parametersDefault(self.metadata['parameters'])
         parameters.update(kwargs)
+
         pars = ['Is', 'betaR', 'betaF', 'Vt', 'mu', 'Rb', 'Rc', 'Re']
+
         for par in pars:
             assert par in parameters.keys()
+
         Is, betaR, betaF, Vt, mu, Rb, Rc, Re = symbols(pars)
+
         # dissipation variable
         wbjt = symbols(["w"+label+ind for ind in ['bc', 'be']])
         # bjt dissipation funcion
@@ -99,4 +106,5 @@ class Bjt(DissipativeNonLinear):
                 'effort': dicmetadata['effort'],
                 }
 
-Bjt.__doc__ = componentDoc(Bjt.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)

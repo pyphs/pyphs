@@ -88,7 +88,8 @@ class Fracderec(Graph):
                 'flux': dicmetadata['flux'],
                 'effort': dicmetadata['effort'],
                 }
-Fracderec.__doc__ = componentDoc(Fracderec.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)
 
 # ======================================================================= #
 
@@ -156,7 +157,8 @@ class Fracderfc(Graph):
                 'flux': dicmetadata['flux'],
                 'effort': dicmetadata['effort'],
                 }
-Fracderfc.__doc__ = componentDoc(Fracderfc.metadata)
+    # Write documentation
+    __doc__ = componentDoc(metadata)
 
 # ======================================================================= #
 

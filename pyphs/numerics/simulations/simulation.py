@@ -227,6 +227,15 @@ class Simulation(object):
             The default is True.
 
         """
+        self.cpp_path = os.path.join(main_path(self),
+                                     self.objlabel.lower())
+        self.work_path = os.getcwd()
+        self.src_path = os.path.join(self.cpp_path, 'src')
+        if os.path.exists(self.cpp_path):
+            shutil.rmtree(self.cpp_path)
+        os.mkdir(self.cpp_path)
+        os.mkdir(self.src_path)
+
         if not self.config['lang'] in ['c++', 'python']:
             text = 'Unknows language {}'
             raise AttributeError(text.format(self.config['lang']))
@@ -236,14 +245,6 @@ class Simulation(object):
                                           inits=self.inits,
                                           config=self.config_numeric()))
         elif self.config['lang'] == 'c++':
-            self.work_path = os.getcwd()
-            self.cpp_path = os.path.join(main_path(self),
-                                         self.objlabel.lower())
-            self.src_path = os.path.join(self.cpp_path, 'src')
-            if os.path.exists(self.cpp_path):
-                shutil.rmtree(self.cpp_path)
-            os.mkdir(self.cpp_path)
-            os.mkdir(self.src_path)
             method2cpp(self.method, objlabel=self.objlabel, path=self.src_path,
                        inits=self.inits,
                        config=self.config_numeric())

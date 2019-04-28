@@ -10,7 +10,7 @@ from pyphs.graphs import datum
 from ..edges import DissipativeNonLinear
 from ..tools import symbols
 from ..tools import componentDoc, parametersDefault
-from ..mechanics import metadata as dicmetadata
+from ..thermics import metadata as dicmetadata
 from pyphs.misc.rst import equation
 
 
@@ -63,7 +63,7 @@ class Transfer(DissipativeNonLinear):
                 'component': 'Transfer',
                 'label': 'trans',
                 'dico': 'thermics',
-                'desc': (r'Irreversible heat transfer between two thermal nodes. It is made from two dissipative edges. The dissipation variables are temperatures (:math:`w_1=T_1` and `w_2=T_2`). The dissipation functions are:' +
+                'desc': (r'Irreversible heat transfer between two thermal nodes. It is made from two dissipative edges. The dissipation variables are temperatures (:math:`w_1=T_1` and :math:`w_2=T_2`). The dissipation functions are:' +
                          equation(r'\begin{array}{rcl} \dot \sigma _1 = z_1(w_1, w_2) & = & R\frac{w_1-w_2}{w_1}, \\ \dot \sigma _2 = z_2(w_1, w_2) & = & R\frac{w_2-w_1}{w_2}.  \end{array}')),
                 'nodesdesc': "The thermal transfer occurs between thermal points 'T1' and 'T2'.",
                 'nodes': ('T1', 'T2'),

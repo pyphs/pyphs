@@ -9,7 +9,7 @@ Created on Mon May 15 15:14:37 2017
 from .moves import (movematrixcols, movesquarematrixcolnrow,
                     move_stor, move_diss)
 from ..tools import free_symbols
-from ..maths import hessian, jacobian
+from ..maths import hessian, jacobian, matvecprod
 import sympy
 
 
@@ -61,7 +61,9 @@ def linear_nonlinear(core, criterion=None):
     1. Detect the number of linear storage component (_nxl) and of linear
     dissipative components (_nwl).
     2. Sort components as [linear, nonlinear].
-    3. Build matrices Q and Zl.
+    3. Build matrices Q, bl and Zl such as
+       H_l(x_l) = 1/2 x_l^T.Q.x_l + x_l^T.bl
+       Z_l(w_l) = Zl.wl
 
     Parameters
     ----------
@@ -119,7 +121,13 @@ def linear_nonlinear(core, criterion=None):
 
     # number of linear components
     setattr(core.dims, '_xl', nxl)
-    core.setexpr('Q', hessian(core.H, core.xl()))
+    # Hamiltonian of linear components
+    # Quadratic part
+    Q = hessian(core.H, core.xl())
+    # Linear part
+    bl = jacobian(core.H, core.xl()) - matvecprod(Q, core.xl())
+    core.setexpr('Q', Q)
+    core.setexpr('bl', bl)
 
     # number of linear components
     setattr(core.dims, '_wl', nwl)

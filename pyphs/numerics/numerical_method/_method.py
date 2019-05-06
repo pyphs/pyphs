@@ -673,8 +673,9 @@ dictionary.
     # build discrete evaluation of the gradient
     if method.config['grad'] == 'discret':
         # discrete gradient
-        dxHl = list(types.matrix_types[0](method.Q)*(types.matrix_types[0](method.xl()) +
-                    0.5*types.matrix_types[0](method.dxl())))
+        mtype = types.matrix_types[0]
+        dxHl = list(mtype(method.Q)*(mtype(method.xl()) + 0.5*mtype(method.dxl()))
+                    + mtype(method.bl))
         dxHnl = discrete_gradient(method.H, method.xnl(), method.dxnl(),
                                   method.config['epsdg'])
         method._dxH = dxHl + dxHnl

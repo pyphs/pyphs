@@ -139,6 +139,7 @@ class Core:
         # Coefficient matrices for linear parts
         self.setexpr('Q', types.matrix_types[0](sympy.zeros(0, 0)))
         self.setexpr('Zl', types.matrix_types[0](sympy.zeros(0, 0)))
+        self.setexpr('bl', types.matrix_types[0](sympy.zeros(0, 0)))
 
         # init tools
         self.dims = Dimensions(self)

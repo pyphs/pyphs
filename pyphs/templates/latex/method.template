@@ -203,9 +203,13 @@ The Hessian matrix of the storage function is:
 \par\Resize{${hessH}}
 %
 \par
-The Hessian matrix of the linear part of the storage function is:
+The linear part of the storage function has Hessian matrix:
 %
 \par\Resize{${Q}}
+%
+and linear form:
+%
+\par\Resize{${bl}}
 %
 % ------------------------------------------------------------------------------
 %

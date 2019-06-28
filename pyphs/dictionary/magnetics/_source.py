@@ -9,52 +9,41 @@ Created on Sun Jun 18 23:21:59 2017
 from __future__ import absolute_import, division, print_function
 
 from ..edges import Port
+from ..tools import componentDoc, parametersDefault
+from ..magnetics import metadata as dicmetadata
+from pyphs.misc.rst import equation
 
 
 class Source(Port):
-    """
-    Source of variation of magnetic flux or magnetomotive force.
 
-    Usage
-    ------
-        magnetics.source label ('node1', 'node2'): type='type'
-
-        where 'type' is the source type in ('mmf', 'fluxvar').
-
-
-    Parameters
-    -----------
-
-    label : str, port label.
-
-    nodes: tuple of nodes labels
-
-        if a single label in nodes, port edge is "datum -> node"; \
-else, the edge corresponds to "nodes[0] -> nodes[1]".
-
-    kwargs: dic with following "keys:values"
-
-        * 'type' : source type in ('mmf', 'fluxvar').
-            With variation of magnetic flux (fluxvar) or
-            magnetomotive force (mmf).
-
-    Not implemented:
-    ----------------
-
-        * 'const': if not None, the input will be replaced by the value (subs).
-    """
     def __init__(self, label, nodes, **kwargs):
-        type_ = kwargs['type']
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
+        type_ = parameters['type']
         type_ = type_.lower()
         assert type_ in ('mmf', 'fluxvar')
         if type_ == 'mmf':
             ctrl = 'f'
         elif type_ == 'fluxvar':
             ctrl = 'e'
-        kwargs.update({'ctrl': ctrl})
-        Port.__init__(self, label, nodes, **kwargs)
+        parameters.update({'ctrl': ctrl})
+        Port.__init__(self, label, nodes, **parameters)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'type': 'mmf'}}
+    metadata = {'title': 'Magnetic source',
+                'component': 'Source',
+                'label': 'sourc',
+                'dico': 'magnetics',
+                'desc': r'Magnetic source from [1]_ (chap 7). Could be a source a magnetomotive force (mmf, e.g. a magnet) or a source of magnetic flux variation (mfv).',
+                'nodesdesc': "Component terminals with positive flux N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parametersdesc': 'Component parameters',
+                'parameters': [['type', "Source type in {'mmf', 'mfv'}", 'string', 'mmf']],
+                'refs': {1: "Antoine Falaize. Modelisation, simulation, generation de code et correction de systemes multi-physiques audios: Approche par reseau de composants et formulation hamiltonienne a ports. PhD thesis, ecole Doctorale d'Informatique, Telecommunication et electronique de Paris, Universite Pierre et Marie Curie, Paris 6, EDITE UPMC ED130, july 2016."},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    # Write documentation
+    __doc__ = componentDoc(metadata)

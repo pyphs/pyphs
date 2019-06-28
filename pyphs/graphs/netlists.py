@@ -11,7 +11,6 @@ import os
 import ast
 from pyphs.config import datum, VERBOSE
 
-
 def sep():
     return ','
 
@@ -107,12 +106,13 @@ components).
         """
         read data from netlist
         """
-        file_ = open(self.path, "r")
-        with file_ as openfileobject:
-            for line in openfileobject:
+        with open(self.path, "r") as openfileobject:
+            for i, line in enumerate(openfileobject.readlines()):
                 if line.startswith('#'):
                     if VERBOSE >= 1:
                         print('pass "{}"'.format(line[:-1]))
+                elif len(line) == 1:
+                    pass
                 else:
                     if VERBOSE >= 1:
                         print('read "{}"'.format(line[:-1]))
@@ -144,7 +144,6 @@ components).
                                 pass
                         pars.update({key: value})
                     self.arguments = list(self.arguments)+[pars, ]
-        file_.close()
 
     def netlist(self):
         """
@@ -285,7 +284,7 @@ components).
         core = self.to_core(label=label)
         return core.to_method(config=config)
 
-    def to_simulation(self, label=None, config=None, inits=None):
+    def to_simulation(self, label=None, config=None, inits=None, erase=True):
         """
         Return the PHS simulation object associated with the PHS netlist for the
         specified configuration.
@@ -309,6 +308,11 @@ components).
               'maxit': 10,          # Max number of iterations for NL solvers
               'eps': 1e-16,         # Global numerical tolerance
 
+        erase : bool (optional)
+            If True and a h5file exists with same path than simulation data,
+            it is erased. Else, it is used to initialize the data object. The
+            default is True.
+
         Output
         ------
 
@@ -318,7 +322,7 @@ components).
         """
 
         core = self.to_core(label=label)
-        return core.to_simulation(config=config, inits=inits)
+        return core.to_simulation(config=config, inits=inits, erase=erase)
 
 def print_netlist_line(dic):
     """

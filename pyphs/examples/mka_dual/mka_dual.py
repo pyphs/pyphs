@@ -18,6 +18,10 @@ netlist = Netlist(netlist_filename)
 graph = Graph(netlist=netlist)
 core = graph.to_core()
 
+# %% ------------------------------ SIMULATION ------------------------------ #
+
+# UNCOMMENT BELOW FOR SIMULATION AND PLOTS
+
 #if __name__ == '__main__':
 #
 #    from pyphs import Simulation, signalgenerator

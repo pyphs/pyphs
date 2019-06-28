@@ -82,7 +82,7 @@ The system's dimensions are given below.
 %
 Notice that a 0 value in the dimensions of the linear parts
 $$\bullet_{\mathbf{l}} = \bullet-\bullet_{\mathbf{nl}}$$ occurs if the system has
-not been split.
+not been split into linear/nonlinear parts.
 %
 ${dims}
 %
@@ -91,7 +91,7 @@ ${dims}
 %
 \subsection{Constants}
 %
-The system's constant substition values are given below.
+The constant substition values are given below.
 %
 ${subs}
 %
@@ -122,7 +122,7 @@ The system's internal variables are given below.
 %
 \subsection{External variables}
 %
-The controlled system's variables are given below.:
+The controlled variables are given below.:
 %
 \begin{itemize}
 %

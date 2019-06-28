@@ -9,26 +9,14 @@ Created on Sun Jun 18 23:56:00 2017
 from __future__ import absolute_import, division, print_function
 
 from ..edges import StorageLinear
+from ..tools import componentDoc, parametersDefault
+from ..electronics import metadata as dicmetadata
 
 
 class Inductor(StorageLinear):
-    """
-    Linear inductor
 
-    Parameters
-    -----------
-
-    label : str, port label.
-
-    nodes: tuple of nodes labels
-
-        Edge is "nodes[0] -> nodes[1]".
-
-    kwargs: dic with following "keys:values"
-
-        * 'L' : inductance value or symbol label or tuple (label, value).
-    """
     def __init__(self, label, nodes, **kwargs):
+
         par_name = 'L'
         par_val = kwargs[par_name]
         kwargs = {'name': par_name,
@@ -37,7 +25,20 @@ class Inductor(StorageLinear):
                   'ctrl': 'e'}
         StorageLinear.__init__(self, label, nodes, **kwargs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'L': ('Lsymbol', 1e-3)}}
+    metadata = {'title': 'Inductor',
+                'component': 'Inductor',
+                'label': 'induc',
+                'dico': 'electronics',
+                'desc': 'Linear inductor.',
+                'nodesdesc': "Inductor terminals with positive current N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parameters': [['L', 'Inductance', 'H', '1e-3']],
+                'refs': {},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    # Write documentation
+    __doc__ = componentDoc(metadata)

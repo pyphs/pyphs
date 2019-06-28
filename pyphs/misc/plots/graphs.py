@@ -10,42 +10,34 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 import networkx as nx
-
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-
-from pyphs.config import plot_format
-
+from pyphs.config import plot_format, GRAPHS_LAYOUT, GRAPHS_ITERATIONS
 from pyphs.graphs.netlists import datum
 from pyphs.graphs.tools import multi2single, getedges
-# pos = spring_layout(graph, iterations=200)
-
-
-LAYOUT = 'spring'
-ITERATIONS = 1000
 
 
 def node_color(node):
+    """
+    Set color for regular and datum nodes.
+    """
+    # Datum nodes
     if node == datum:
         return 'plum'
+    # Regular nodes
     else:
         return 'gainsboro'
 
 
 def draw_nodes(graph, ax=None, layout=None, colors=None):
+    """
+
+    """
     if ax is None:
         ax = plt.axes(frameon=False)
     if colors is None:
         colors = [node_color(node) for node in graph.nodes()]
-    if not hasattr(graph, 'positions'):
-        if layout is None:
-            layout = LAYOUT
-        else:
-            assert layout in ('circular', 'spring')
-        if layout == 'spring':
-            graph.positions = nx.spring_layout(graph, iterations=ITERATIONS)
-        elif layout == 'circular':
-            graph.positions = nx.circular_layout(graph)
+    graph.set_positions()
     nx.draw_networkx_nodes(graph, graph.positions, ax=ax,
                            node_size=800, node_color=colors, lw=2)
     nx.draw_networkx_labels(graph, graph.positions, ax=ax)
@@ -74,7 +66,10 @@ def orthogonal(v):
 
 
 def angle(d):
-    return np.degrees((np.arctan(d[1]/d[0]) + np.pi/2 % np.pi) - np.pi/2)
+    if d[0] == 0:
+        return 0
+    else:
+        return np.degrees((np.arctan(d[1]/d[0]) + np.pi/2 % np.pi) - np.pi/2)
 
 
 def type_colors(type_):

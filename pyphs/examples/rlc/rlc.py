@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import pyphs as phs
-
+import numpy
 label = 'rlc'
 
 here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
@@ -54,11 +54,9 @@ core = netlist.to_core()
 #    dur = 0.01
 #    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 #
-#    def sequ():
-#        for el in u():
-#            yield (el, )
+#    sequ = u[:, numpy.newaxis]
 #
-#    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+#    simu.init(u=sequ, nt=int(dur*simu.config['fs']))
 #
 #    # Run the simulation
 #    simu.process()
@@ -71,7 +69,6 @@ core = netlist.to_core()
 #
 #    # clean: delete folders 'data' and 'figures'
 #    shutil.rmtree(os.path.join(here, 'data'))
-#    shutil.rmtree(os.path.join(here, 'figures'))
 #
 #    # clean: delete folder 'rlc'
 #    if config['lang'] == 'c++':

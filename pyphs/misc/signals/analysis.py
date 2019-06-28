@@ -116,9 +116,8 @@ def spectrogram(x, fs, show=False, **kwargs):
         pltshow()
 
 
-
-def transferFunction(sigin, sigout, fs, nfft=int(2e13), filtering=None,
-                     limits=None):
+def transferFunction(sigin, sigout, fs, nfft=int(2e10), filtering=None,
+                     limits=None, noverlap=None):
     """
     Return frequencies and modulus of \
 transfer function T(iw) = sigout(iw)/sigin(iw).
@@ -145,6 +144,10 @@ as a fraction of the sampling rate (in (0, 0.5)).
         If provided, truncates the output between fmin and fmax \
 (the default is None).
 
+    noverlap : int, optional
+        Number of points to overlap between segments. If None, \
+noverlap = nperseg // 2. Defaults to None.
+
     Return
     ------
 
@@ -159,16 +162,17 @@ as a fraction of the sampling rate (in (0, 0.5)).
         sigin = lowpass(sigin, fc=filtering)
         sigout = lowpass(sigout, fc=filtering)
     import scipy.signal as sig
-    f, Pxx_den1 = sig.welch(sigin, fs, nperseg=nfft, scaling='spectrum')
-    f, Pxx_den2 = sig.welch(sigout, fs, nperseg=nfft, scaling='spectrum')
+    f, Pxx_den1 = sig.welch(sigin, fs, nperseg=nfft, scaling='spectrum',
+                            noverlap=noverlap)
+    f, Pxx_den2 = sig.welch(sigout, fs, nperseg=nfft, scaling='spectrum',
+                            noverlap=noverlap)
     TF = Pxx_den2/Pxx_den1
-    if limits is None:
-        fmin, fmax = 20., 20e3
-    else:
+    if limits is not None:
         fmin, fmax = limits
-    from numpy import nonzero
-    nfmax = len(f) if fmax >= f[-1] else nonzero(f > fmax)[0][0]
-    nfmin = nonzero(f > fmin)[0][0]
-    f = f[nfmin:nfmax]
-    TF = [el**0.5 for el in TF[nfmin:nfmax]]
+    else:
+        fmin, fmax = 0., fs/2.
+    nfmax = len(f) if fmax >= f[-1] else np.nonzero(f > fmax)[0][0]
+    nfmin = np.nonzero(f >= fmin)[0][0]
+    f = np.array(f[nfmin:nfmax])
+    TF = np.array(TF[nfmin:nfmax])**0.5
     return f, TF

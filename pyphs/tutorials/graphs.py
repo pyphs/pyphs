@@ -329,7 +329,7 @@ vout = signalgenerator(which="sin",      # Sinusoidal signal
                        ramp_on=True,     # Linear increase
                       )
 
-u = list(([el, ] for el in vout()))
+u = list(([el, ] for el in vout))
 
 # Init simulation
 simu.init(u=u)
@@ -341,8 +341,9 @@ simu.process()
 # In[26]:
 
 import matplotlib.pyplot as plt
-# Shows the plots in the notebook
-get_ipython().magic('matplotlib inline')
+
+# Uncomment to activate inline plots in notebooks
+#get_ipython().magic('matplotlib inline')
 
 # plot power balance
 fig, ax = simu.data.plot_powerbal()

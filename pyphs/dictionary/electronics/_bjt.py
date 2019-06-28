@@ -13,52 +13,26 @@ from ..tools import symbols
 from pyphs.config import GMIN
 from pyphs.core.tools import types
 from ..edges import DissipativeNonLinear
+from ..tools import componentDoc, parametersDefault
+from ..electronics import metadata as dicmetadata
 
 
 class Bjt(DissipativeNonLinear):
-    """
-    bipolar junction transistor of NPN type according to the Ebers-Moll model.
 
-    Usage
-    -----
-
-    electronics.bjt label (Nb, Nc, Ne): **kwargs
-
-    Parameters
-    -----------
-
-    +------------+----------------+------------------------------------------+
-    | Parameter  | Typical value  | Description (units)                      |
-    +------------+----------------+------------------------------------------+
-    | Is         | 1e-15 to 1e-12 | reverse saturation current (A)           |
-    +------------+----------------+------------------------------------------+
-    | betaR (d.u)| 0 to 20        | reverse common emitter current gain (d.u)|
-    +------------+----------------+------------------------------------------+
-    | betaF (d.u)| 20 to 500      | forward common emitter current gain (d.u)|
-    +------------+----------------+------------------------------------------+
-    | Vt (V)     | 26e-3          |  thermal voltage at room temperature (V) |
-    +------------+----------------+------------------------------------------+
-    | N (d.u)    | 1 o 2          |  ideality factor (d.u)                   |
-    +------------+----------------+------------------------------------------+
-    | Rb         | 20             |  zero bias base resistance (Ohms)        |
-    +------------+----------------+------------------------------------------+
-    | Rc         | 0.1            |  collector resistance (Ohms)             |
-    +------------+----------------+------------------------------------------+
-    | Re         | 0.1            |  emitter resistance (Ohms)               |
-    +------------+----------------+------------------------------------------+
-
-    Reference
-    ----------
-
-    [1] https://en.wikipedia.org/wiki/Bipolar_junction_\
-transistor#Ebers.E2.80.93Moll_model
-
-    """
     def __init__(self, label, nodes, **kwargs):
+
+        self.__doc__ = componentDoc(Bjt.metadata)
+
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
+
         pars = ['Is', 'betaR', 'betaF', 'Vt', 'mu', 'Rb', 'Rc', 'Re']
+
         for par in pars:
-            assert par in kwargs.keys()
+            assert par in parameters.keys()
+
         Is, betaR, betaF, Vt, mu, Rb, Rc, Re = symbols(pars)
+
         # dissipation variable
         wbjt = symbols(["w"+label+ind for ind in ['bc', 'be']])
         # bjt dissipation funcion
@@ -100,7 +74,7 @@ transistor#Ebers.E2.80.93Moll_model
                    'link': None}
         # edge
         Nb, Nc, Ne = nodes
-        iNb, iNc, iNe = [str(el)+label for el in (Nb, Nc, Ne)]
+        iNb, iNc, iNe = [label + '_' + str(el) for el in (Nb, Nc, Ne)]
         edges = [(iNb, iNc, data_bc),
                  (iNb, iNe, data_be),
                  (Nb, iNb, data_rb),
@@ -108,16 +82,29 @@ transistor#Ebers.E2.80.93Moll_model
                  (Ne, iNe, data_re)]
         # init component
         DissipativeNonLinear.__init__(self, label, edges, wbjt + wR,
-                                         list(zbjt) + list(zR), **kwargs)
+                                         list(zbjt) + list(zR), **parameters)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('Nb', 'Nc', 'Ne'),
-                'arguments': {'Is': ('Is', 2.39e-14),
-                              'betaR': ('betaR', 7.946),
-                              'betaF': ('betaF', 294.3),
-                              'mu': ('mu', 1.006),
-                              'Vt': ('Vt', 26e-3),
-                              'Rb': ('Rb', 1.),
-                              'Rc': ('Rc', 0.85),
-                              'Re': ('Re', 0.4683)}}
+    metadata = {'title': 'Bipolar junction transistor',
+                'component': 'Bjt',
+                'label': 'bjt',
+                'dico': 'electronics',
+                'desc': 'Bipolar junction transistor of NPN type according to the Ebers-Moll model [1]_.',
+                'nodesdesc': "base 'Nb', collector 'Nc', emitter 'Ne'.",
+                'nodes': ('Nb', 'Nc', 'Ne'),
+                'parameters': [['Is', 'Reverse saturation current', 'A', 1e-12],
+                               ['betaR', 'Reverse common emitter current gain in [0, 20]', 'd.u.', 10.],
+                               ['betaF', 'Forward common emitter current gain in [20, 500]', 'd.u.', 200.],
+                               ['Vt', 'Thermal voltage at room temperature', 'V', 26e-3],
+                               ['mu', 'Ideality factor in [1, 2]', 'd.u.', 1.],
+                               ['Rb', 'Zero bias base resistance', 'Ohms', 20.],
+                               ['Rc', 'Collector resistance', 'Ohms', 0.1],
+                               ['Re', 'Emitter resistance', 'Ohms', 0.1]],
+                'refs': {1: 'https://en.wikipedia.org/wiki/Bipolar_junction_transistor#Ebers.E2.80.93Moll_model'},
+                'nnodes': 6,
+                'nedges': 5,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    # Write documentation
+    __doc__ = componentDoc(metadata)

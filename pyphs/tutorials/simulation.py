@@ -9,12 +9,6 @@
 
 # In[1]:
 
-# Plot appears in the notebook
-get_ipython().magic('matplotlib inline')
-
-
-# In[2]:
-
 # Support for Python 2.x and Python 3.x
 from __future__ import division
 
@@ -25,6 +19,12 @@ warnings.simplefilter('ignore')
 # import of external packages
 import numpy                     # numerical tools
 import matplotlib.pyplot as plt  # plot tools
+
+
+# In[2]:
+
+# Uncomment to activate inline plots in notebooks
+#get_ipython().magic('matplotlib inline')
 
 
 # In[3]:
@@ -57,34 +57,22 @@ simu = core.to_simulation(config = config)
 # def simulation time
 tmax = 0.005
 nmax = int(tmax*simu.config['fs'])
-t = [n/simu.config['fs'] for n in range(nmax)]
-
+t = numpy.array([n/simu.config['fs'] for n in range(nmax)])
 
 # def input signal
-def sig(t, mode='sin'):
-    F = 1000.
-    A = 50.
-    if mode == 'sin':
-        out = A*numpy.sin(2*numpy.pi*F*t)
-    elif mode == 'impact':
-        dur = 0.5*1e-3
-        start = 0.001
-        out = A if start <= t < start + dur else 0.
-    elif mode == 'none':
-        out = 0.
-    return numpy.array([out])
+F = 1000.
+A = 50.
+sig = A*numpy.sin(2*numpy.pi*F*t)
 
 
 # def generator for sequence of inputs to feed in the PHSSimulation object
-def sequ(mode='sin'):
-    for tn in t:
-        yield sig(tn, mode)
+u = sig[:, numpy.newaxis]
 
 
 # In[6]:
 
 # Initialize the simulation
-simu.init(u=sequ(), nt=len(t))
+simu.init(u=u)
 
 # Proceed
 simu.process()

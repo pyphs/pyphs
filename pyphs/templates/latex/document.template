@@ -9,12 +9,12 @@ ${license}
 %
 \usepackage{geometry}                       % See geometry.pdf to learn the layout options. There are lots.
 \geometry{letterpaper}                      % ... or a4paper or a5paper or ...
-%\geometry{landscape}                       % Activate for for rotated page geometry
+%\geometry{landscape}                       % Activate for rotated page geometry
 %
 % -----------------------------------------------------------------------------
 % Date
 %
-\date{\today}                              % Activate to display a given date or no date
+\date{\today}                               % Activate to display a given date or no date
 %
 % -----------------------------------------------------------------------------
 % Title

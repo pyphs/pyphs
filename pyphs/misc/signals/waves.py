@@ -61,6 +61,7 @@ list or a generator. Got {0!s}'.format(type(sig))
 
     if fs_out is None:
         fs_out = fs_sig
+
     elif not fs_out == fs_sig:
         print('Resampling from {}Hz to {}Hz...'.format(fs_sig, fs_out))
         sig = resample(sig, int(nsig*fs_out*fs_sig**-1))
@@ -73,7 +74,7 @@ list or a generator. Got {0!s}'.format(type(sig))
     if isinstance(normalize, float):
         scale = normalize
     elif isinstance(normalize, bool) and normalize:
-        scale = max([abs(el) for el in sig])
+        scale = np.max(np.abs(sig))
         if scale == 0:
             scale = 1.
     else:

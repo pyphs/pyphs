@@ -8,27 +8,13 @@ Created on Sun Jun 18 23:47:47 2017
 
 from __future__ import absolute_import, division, print_function
 from ..edges import Port
+from ..tools import componentDoc, parametersDefault
+from ..mechanics_dual import metadata as dicmetadata
+from pyphs.misc.rst import equation
 
 
 class Source(Port):
-    """
-    Voltage or current source
 
-    Parameters
-    -----------
-
-    label : str, port label.
-
-    nodes: tuple of nodes labels
-
-        if a single label in nodes, port edge is "datum -> node"; \
-else, the edge corresponds to "nodes[0] -> nodes[1]".
-
-    kwargs: dic with following "keys:values"
-
-        * 'type' : source type in ('force', 'velocity').
-        * 'const': if not None, the input will be replaced by the value (subs).
-    """
     def __init__(self, label, nodes, **kwargs):
         type_ = kwargs['type']
         type_ = type_.lower()
@@ -40,7 +26,20 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
         kwargs.update({'ctrl': ctrl})
         Port.__init__(self, label, nodes, **kwargs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'type': 'force'}}
+    metadata = {'title': 'Mechanical Source',
+                'component': 'Source',
+                'label': 'sourc',
+                'dico': 'mechanics_dual',
+                'desc': r'Source of force or velocity imposed between two points.',
+                'nodesdesc': "Nodes associated with the component terminals with positive flux N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parametersdesc': 'Component parameter.',
+                'parameters': [['type', "Source type in {'velocity', 'force'}", 'string', 'force']],
+                'refs': {},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    __doc__ = componentDoc(metadata)

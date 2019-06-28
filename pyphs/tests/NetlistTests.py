@@ -10,10 +10,6 @@ from __future__ import absolute_import, division, print_function
 
 import os
 from pyphs import Netlist
-from pyphs.config import datum as config_datum
-
-config_datum = "'"+config_datum+"'"
-
 
 label = 'TSnl'
 here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
@@ -93,6 +89,7 @@ def NetlistThieleSmallNL(clear=True,
 
     return netlist
 
+
 def test_netslist():
     net = NetlistThieleSmallNL()
     datum = net.datum
@@ -117,10 +114,10 @@ def test_netslist():
                     ('D', 'E'),
                     ('E', 'F'),
                     ('F', datum)]
-    target_comps = ['source', 'resistor', 'inductor', 'gyrator', 'mass', 
+    target_comps = ['source', 'resistor', 'inductor', 'gyrator', 'mass',
                     'springcubic', 'damper']
     os.remove(path)
-    return all((net.dictionaries == target_dics, 
+    return all((net.dictionaries == target_dics,
                net.arguments == target_args,
                net.nodes == target_nodes,
                net.components == target_comps))

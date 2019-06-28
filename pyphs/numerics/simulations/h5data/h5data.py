@@ -15,6 +15,7 @@ import numpy
 from pyphs.misc.tools import geteval
 from pyphs.config import VERBOSE
 import h5py
+import warnings
 
 
 class H5Data(object):
@@ -49,7 +50,7 @@ class H5Data(object):
 
     # ----------------------------------------------------------------------- #
 
-    def __init__(self, method, config, h5name='results.h5', clear=False):
+    def __init__(self, method, config, h5name='results.h5', erase=False):
 
         if VERBOSE >= 1:
             print('Build data i/o...')
@@ -67,7 +68,7 @@ class H5Data(object):
         # data names
         self.names = ['u', 'p'] + list(self.config['dnames'])
 
-        if clear or not os.path.exists(self.h5path):
+        if erase or not os.path.exists(self.h5path):
             # new hdf5 file
             self._h5new()
         else:
@@ -75,6 +76,11 @@ class H5Data(object):
             self._read_h5infos()
 
         self._build_readers()
+
+        # init load options
+        self.start = None
+        self.stop = None
+        self.step = None
 
     # ----------------------------------------------------------------------- #
     # fs
@@ -264,6 +270,14 @@ class H5Data(object):
         return d
 
     # ----------------------------------------------------------------------- #
+    @property
+    def h5data(self):
+        """
+        Return substitution dictionary from method object and update samplerate
+        """
+        return self.h5file[self.dname]
+
+    # ----------------------------------------------------------------------- #
 
     @property
     def dtype(self):
@@ -319,15 +333,37 @@ or an integer nt (number of time steps).'
         # store number of time steps
         self.config['nt'] = nt = int(nt)
 
+        self._h5new()
+
         # if sequ is not provided, a sequence of [[0]*ny]*nt is assumed
+        ny = self.method.dims.y()
+        if isinstance(sequ, list):
+            sequ = numpy.array(sequ)
+        elif hasattr(sequ, '__next__'):
+            sequ = numpy.array(list(sequ))
+            # TODO: remoce warnings
+            warnings.warn('Use of generator as inputs to simulation objects is deprecated. Use lists or arrays instead.')
         if sequ is None:
-            ny = self.method.dims.y()
             sequ = [[0]*ny for _ in range(nt)]
+        elif len(sequ.shape) == 1:
+            if not ny == 1:
+                text = 'Input shape should be ({}, {}).'
+                raise AttributeError(text.format(nt, ny))
+            else:
+                sequ = sequ[:, numpy.newaxis]
 
         # if seqp is not provided, a sequence of [[0]*np]*nt is assumed
+        np = self.method.dims.p()
         if seqp is None:
-            np = self.method.dims.p()
             seqp = [[0]*np for _ in range(nt)]
+        if isinstance(seqp, list):
+            seqp = numpy.array(seqp)
+        elif len(seqp.shape) == 1:
+            if not np == 1:
+                text = 'Parameters shape should be ({}, {}).'
+                raise AttributeError(text.format(nt, np))
+            else:
+                seqp = seqp[:, numpy.newaxis]
 
         # data to store in h5 dataset
         seqs = {'u': sequ, 'p': seqp}
@@ -432,6 +468,8 @@ or an integer nt (number of time steps).'
 
         self._open = False
 
+        self.config['nt'] = self._h5shape[0]
+
     # ----------------------------------------------------------------------- #
 
     @property
@@ -439,7 +477,17 @@ or an integer nt (number of time steps).'
         """
         return the number of timesteps in the timeserie
         """
-        return self.h5file[self.dname].shape
+        # close flag
+        if not self._open:
+            self.h5open()
+            close = True
+        else:
+            close = False
+        shape = self.h5file[self.dname].shape
+        if close:
+            self.h5close()
+
+        return shape
 
     # ----------------------------------------------------------------------- #
 
@@ -558,19 +606,13 @@ or an integer nt (number of time steps).'
         else:
             close = False
 
-        for name in self.names:
-            if name not in data:
-                data[name] = self[name, tslice, :]
-
-        nt = tslice.stop - tslice.start
-        a = numpy.zeros((nt, self.dim))
-
+        dtype = self.dtype
         # update array with data values
-        for i, name in enumerate(data):
-            a[:, slice(*self.inds[name])] = list(data[name])
-
-        # write array in h5 file at time t
-        self.h5file[self.dname][tslice, :] = numpy.asarray(a, dtype=self.dtype)
+        for name in data:
+            # write array in h5 file at time t
+            vslice = slice(*self.inds[name])
+            self.h5data[tslice, vslice] = numpy.asarray(data[name],
+                                                        dtype=dtype)
 
         if close:
             self.h5close()
@@ -643,8 +685,8 @@ or an integer nt (number of time steps).'
             close = False
 
         # open h5 file
-        output = self.h5file[self.dname][self._tslice(tslice),
-                                         self._tuple2slice(vname, vslice)]
+        output = self.h5data[self._tslice(tslice),
+                             self._tuple2slice(vname, vslice)]
 
         # close h5 file
         if close:
@@ -745,20 +787,28 @@ or an integer nt (number of time steps).'
 
         Parameters
         -----------
-    vslice: slice or None, optional
-        Slice in the returned value {0}[tslice, vslice]. If None, the full
-        vector is returned (default).
-    tslice: slice or None, optional
-        Slice in time {0}[tslice, vslice]. The default can be set with
-        data.start, data.stop and data.step (see also data.tstart, data.tstop).
+
+        vslice : slice or None, optional
+            Slice in the returned value {0}[tslice, vslice]. If None, the full
+            vector is returned (default).
+
+        tslice : slice or None, optional
+            Slice in time {0}[tslice, vslice]. The default can be set with
+            data.start, data.stop and data.step.
 
         Returns
         -------
 
-        t_generator: generator
+        t_generator : generator
             A python generator of scalar time value t[i] for each time step i
             starting from index start to index stop with stepation factor step
             (i.e. the value is generated if i-start % step == 0).
+
+        See also
+        --------
+
+        self.tstart, self.tstop
+
         """
         tslice = self._tslice(tslice)
         output = numpy.arange(tslice.start, tslice.stop, tslice.step)/self.fs
@@ -1201,7 +1251,8 @@ or an integer nt (number of time steps).'
         if tslice.step is None:
             tslice.step = max((1, (self.stop-self.start)//self.ntplot))
 
-        fig, ax = plot_powerbal(self, mode=mode, DtE=DtE, show=show, tslice=tslice)
+        fig, ax = plot_powerbal(self, mode=mode, DtE=DtE,
+                                show=show, tslice=tslice)
 
         if close:
             self.h5close()
@@ -1335,7 +1386,7 @@ or an integer nt (number of time steps).'
                                           self['dxH', tslice.stop-1],
                                           self['dtx', tslice.stop-1])/self.fs
             output = numpy.ediff1d(self.E(tslice=tslice),
-                                   to_end=last_dtH_value)*self.fs
+                                   to_end=last_dtH_value)*self.fs/tslice.step
 
         # Compute DtE = dxh.T * dtx
         elif DtE == 'DxhDtx':

@@ -1,4 +1,7 @@
 #
+metadata = {'flux': [r'f', 'Force', 'N'],
+            'effort': [r'v', 'Velocity', 'm/s']}
+
 from ._mass import Mass
 from ._stiffness import Stiffness
 from ._damper import Damper

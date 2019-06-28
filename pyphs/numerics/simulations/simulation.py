@@ -19,43 +19,57 @@ import progressbar
 import time
 import os
 import sys
-
+import shutil
 
 # -----------------------------------------------------------------------------
 # Functions for system call and bash execution
 
-def system_call(cmd):
+def system_call(cmd, **popenArgs):
     """
     Execute a system command.
-
-    Parameter
-    ---------
-
-    cmd : list
-        List of arguments.
-
-    Example
-    -------
-
-    Change directory with
-
-    >>> cmd = ['cd', './my/folder']
-    >>> system_call(cmd)
-
     """
+
     if sys.platform.startswith('win'):
         shell = True
     else:
         shell = True
+
+    popenArgs['shell'] = shell
+
     if VERBOSE >= 1:
         print(cmd)
-    p = subprocess.Popen(cmd, shell=shell,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
-    for line in iter(p.stdout.readline, b''):
-        l = line.decode()
-        if VERBOSE >= 1:
-            print(l)
+
+    popenArgs['stderr'] = subprocess.STDOUT
+    popenArgs['stdout'] = subprocess.PIPE
+
+    try:
+        popenArgs.pop('check')
+    except KeyError:
+        pass
+
+    if VERBOSE >= 1:
+        pri = print
+    else:
+        def pri(*args):
+            pass
+
+
+    p = subprocess.Popen(cmd, **popenArgs)
+
+    while(True):
+        retcode = p.poll()  # returns None while subprocess is running
+        line = p.stdout.readline()
+        pri(line)
+        if(retcode is not None):
+            break
+
+
+#    p = subprocess.Popen(cmd, shell=shell,
+#                         stdout=subprocess.PIPE,
+#                         stderr=subprocess.STDOUT)
+#
+#    for line in iter(p.stdout.readline, b''):
+#        pri(line.decode())
 
 
 def execute_bash(text):
@@ -84,10 +98,8 @@ class Simulation(object):
     Object for the iterative solving of Method object.
     """
 
-    system_call = staticmethod(system_call)
-    execute_bash = staticmethod(execute_bash)
-
-    def __init__(self, method, config=None, inits=None, label=None):
+    def __init__(self, method, config=None, inits=None,
+                 label=None, erase=True):
         """
         Parameters
         -----------
@@ -118,6 +130,15 @@ class Simulation(object):
             Dictionary with variable name as keys and initialization values
             as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
+
+        label : str of None (optional)
+            Simulation label. If None (the default), the method.label is used.
+
+        erase : bool (optional)
+            If True, any existing h5file with same path than data h5file is
+            erased. Else, it is used to initialize the data object.
+            The default is True.
+
         """
 
         self.method = method
@@ -158,7 +179,11 @@ class Simulation(object):
         if inits is not None:
             self.inits.update(inits)
 
-        self.init_numericalCore()
+        self.init_numericalCore(erase=erase)
+
+    @property
+    def fs(self):
+        return self.config['fs']
 
     def config_numeric(self):
         dic = dict()
@@ -188,11 +213,29 @@ class Simulation(object):
     def objlabel(self):
         return self.method.label.upper()
 
-    def init_numericalCore(self):
+    def init_numericalCore(self, erase=True):
         """
         Build the Numeric from the Core.
         Additionnally, generate the c++ code if config['lang'] == 'c++'.
+
+        Parameter
+        ---------
+
+        erase : bool (optional)
+            If True, any existing h5file with same path than data h5file is
+            erased. Else, it is used to initialize the data object.
+            The default is True.
+
         """
+        self.cpp_path = os.path.join(main_path(self),
+                                     self.objlabel.lower())
+        self.work_path = os.getcwd()
+        self.src_path = os.path.join(self.cpp_path, 'src')
+        if os.path.exists(self.cpp_path):
+            shutil.rmtree(self.cpp_path)
+        os.mkdir(self.cpp_path)
+        os.mkdir(self.src_path)
+
         if not self.config['lang'] in ['c++', 'python']:
             text = 'Unknows language {}'
             raise AttributeError(text.format(self.config['lang']))
@@ -202,18 +245,11 @@ class Simulation(object):
                                           inits=self.inits,
                                           config=self.config_numeric()))
         elif self.config['lang'] == 'c++':
-            self.work_path = os.getcwd()
-            self.cpp_path = os.path.join(main_path(self), self.objlabel.lower())
-            self.src_path = os.path.join(self.cpp_path, 'src')
-            if not os.path.exists(self.cpp_path):
-                os.mkdir(self.cpp_path)
-            if not os.path.exists(self.src_path):
-                os.mkdir(self.src_path)
             method2cpp(self.method, objlabel=self.objlabel, path=self.src_path,
                        inits=self.inits,
                        config=self.config_numeric())
 
-        self.data = H5Data(self.method, self.config, clear=True)
+        self.data = H5Data(self.method, self.config, erase=erase)
 
     def init_method(self):
         """
@@ -316,12 +352,13 @@ class Simulation(object):
         path = self.src_path
         parameters_files = parameters(subs, self.objlabel)
         for e in ['cpp', 'h']:
-            filename = path + os.sep + 'parameters.{0}'.format(e)
+            filename = os.path.join(path, 'parameters.{0}'.format(e))
             string = parameters_files[e]
             _file = open(filename, 'w')
             _file.write(string)
             _file.close()
-        print('Parameters Files generated in \n{}'.format(path))
+        if VERBOSE >= 2:
+            print('Parameters Files generated in \n{}'.format(path))
 
     # -------------------------------------------------------------------------
     # Progressbar
@@ -400,7 +437,7 @@ class Simulation(object):
         names = list(self.config['dnames'])
 
         # progressbar
-        if self.config['pbar']:
+        if self.config['pbar'] and VERBOSE >= 1:
             self._init_pb()
 
         # init time step
@@ -420,11 +457,11 @@ class Simulation(object):
             self.n += 1
 
             # update progressbar
-            if self.config['pbar']:
+            if self.config['pbar'] and VERBOSE >= 1:
                 self._update_pb()
 
         # progressbar
-        if self.config['pbar']:
+        if self.config['pbar'] and VERBOSE >= 1:
             self._close_pb()
 
         time.sleep(1e-3)
@@ -456,12 +493,18 @@ class Simulation(object):
 
         # Perform build
         with open(os.path.join(sp_config["cwd"], "build.log"), 'w') as fid:
+
             sp_config['stdout'] = fid
 
             # Running commands
             try:
-                process = subprocess.run(cmd['build_tree'], **sp_config)
-                process = subprocess.run(cmd['compile_src'], **sp_config)
+                # subprocess.run has been introduced in py3.5
+                if hasattr(subprocess, 'run'):
+                    subprocess.run(cmd['build_tree'], **sp_config)
+                    subprocess.run(cmd['compile_src'], **sp_config)
+                else:
+                    system_call(cmd['build_tree'], **sp_config)
+                    system_call(cmd['compile_src'], **sp_config)
 
             except subprocess.CalledProcessError as error:
 
@@ -482,16 +525,23 @@ class Simulation(object):
                 print(line)
 
         # Running executable simulation
-        sp_config['stdout'] = subprocess.PIPE
-        process = subprocess.run('./bin/%s' % self.label, **sp_config)
 
-        print(process.stdout)
+        # subprocess.run has been introduced in py3.5
+#        if hasattr(subprocess, 'run'):
+#            process = subprocess.run('./bin/%s' % self.label, **sp_config)
+#            print(process.stdout)
+#
+#        else:
+#            process = system_call(['./bin/%s' % self.label, ], **sp_config)
+
+        cmd = './bin/{0}'.format(self.label)
+        self.system_call(cmd, **sp_config)
 
         # go back to work folder
         os.chdir(self.work_path)
 
     @staticmethod
-    def system_call(cmd):
+    def system_call(cmd, **kwargs):
         """
         Execute a system command.
 
@@ -501,13 +551,15 @@ class Simulation(object):
         cmd : list
             List of arguments.
 
+        kwargs : keyword arguments to
+
         Example
         -------
         Change directory with
-        cmd = ['cd', './my/folder']
+        cmd = 'cd ./my/folder'
         system_call(cmd)
         """
-        system_call(cmd)
+        system_call(cmd, **kwargs)
 
     @staticmethod
     def execute_bash(text):

@@ -41,7 +41,7 @@ def core2tex(core):
     for name in ['x', 'w', 'y', 'o', 'p', 'cy', ]:
         subs['n'+name] = latexcore.dims[name]
     # --------------------------------------------------------------------------
-    for name in ['x', 'dx', 'dxH', 'H', 'hessH', 'Q',
+    for name in ['x', 'dx', 'dxH', 'H', 'hessH', 'Q', 'bl',
                  'w', 'z', 'jacz', 'Zl',
                  'u', 'y',
                  'cu', 'cy',

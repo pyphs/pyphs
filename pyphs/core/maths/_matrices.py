@@ -7,6 +7,7 @@ Created on Mon May 15 20:19:21 2017
 """
 
 from ..tools import types, simplify
+from sympy import Matrix
 
 
 def inverse(Mat, dosimplify=False):
@@ -39,8 +40,9 @@ def matvecprod(mat, vec):
         raise IndexError(text.format((m, n), l))
 
     if l == 0:
-        res = [0]*m
-
+        res = [0,]*m
     else:
-        res = list(mat*vec)
+        res = list(mat * Matrix(vec))
+#        if m == 1:
+#            res = [res, ]
     return res

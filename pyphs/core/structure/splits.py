@@ -129,7 +129,6 @@ def linear_nonlinear(core, criterion=None):
 
     core.setexpr('Q', Q)
     core.setexpr('bl', bl)
-    print(core.label, core.Q, core.bl)
 
     # number of linear components
     setattr(core.dims, '_wl', nwl)

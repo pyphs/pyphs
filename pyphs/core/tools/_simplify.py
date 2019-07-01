@@ -7,7 +7,6 @@ Created on Mon May 15 15:53:53 2017
 """
 
 import sympy
-import stopit
 from pyphs.config import TIMEOUT, SIMPLIFY
 from . import types
 from pyphs.misc.tools import geteval

@@ -4,7 +4,8 @@ python:
 #  - "3.4"
   - "3.5"
   - "3.6"
-  - "3.7"
+  # Cannot Test for py3.7 on travis (1st jul 2019)
+  # - "3.7"
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the

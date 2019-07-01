@@ -113,7 +113,7 @@ def plot(data, vars, tslice=None, show=True,
     datay = list()
     labels = list()
 
-    def append_sig(datay, labels, name, index):
+    def append_sig(name, index):
         sig = data[name, tslice, index]
         datay.append(sig)
         labels.append(nice_label(data.method, (name, index)))
@@ -131,13 +131,13 @@ def plot(data, vars, tslice=None, show=True,
                }
     for var in vars:
         if isinstance(var, (tuple, list)):
-            append_sig(datay, labels, *var)
+            append_sig(*var)
             if path is not None:
                 path += '_'+var[0]+str(var[1])
         elif isinstance(var, str):
             dim = dimsmap[var]
             for i in range(getattr(data.method.dims, dim)()):
-                append_sig(datay, labels, var, i)
+                append_sig(var, i)
                 if path is not None:
                     path += '_'+var+str(i)
         else:

@@ -9,7 +9,7 @@ Created on Mon May 15 15:14:37 2017
 from .moves import (movematrixcols, movesquarematrixcolnrow,
                     move_stor, move_diss)
 from ..tools import free_symbols
-from ..maths import hessian, jacobian, matvecprod
+from ..maths import hessian, jacobian, gradient, matvecprod
 import sympy
 
 
@@ -125,9 +125,11 @@ def linear_nonlinear(core, criterion=None):
     # Quadratic part
     Q = hessian(core.H, core.xl())
     # Linear part
-    bl = jacobian(core.H, core.xl()) - matvecprod(Q, core.xl())
+    bl = [a-b for a, b in zip(gradient(core.H, core.xl()), matvecprod(Q, core.xl()))]
+
     core.setexpr('Q', Q)
     core.setexpr('bl', bl)
+    print(core.label, core.Q, core.bl)
 
     # number of linear components
     setattr(core.dims, '_wl', nwl)

@@ -64,6 +64,7 @@ class Method(Core):
 
         # init linear part size to 0
         self._core.dims._xl = 0
+        self._core.bl = []
         self._core.dims._wl = 0
         self._core.Q = self._core.Q[:0, :0]
         self._core.Zl = self._core.Zl[:0, :0]
@@ -674,11 +675,16 @@ dictionary.
     if method.config['grad'] == 'discret':
         # discrete gradient
         mtype = types.matrix_types[0]
-        dxHl = list(mtype(method.Q)*(mtype(method.xl()) + 0.5*mtype(method.dxl()))
-                    + mtype(method.bl))
+
+        print(method.label, method.dxHl(), list(method.bl))
+        dxHl = list(
+            mtype(method.Q)*(
+                mtype(method.xl()) + 0.5*mtype(method.dxl())) +
+            mtype(method.bl)
+            )
         dxHnl = discrete_gradient(method.H, method.xnl(), method.dxnl(),
                                   method.config['epsdg'])
-        method._dxH = dxHl + dxHnl
+        method._dxH = list(dxHl) + dxHnl
 
     elif method.config['grad'] == 'theta':
         # theta scheme

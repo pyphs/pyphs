@@ -116,7 +116,6 @@ core.subs.update({B:BL_value})
 
 # Simplify inversed symbols
 core.subsinverse()
-
 # Print the structure
 #print('Thiele-Small with nonlinear interconnection PHS:')
 #core.pprint()

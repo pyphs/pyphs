@@ -81,24 +81,39 @@ def realizable_merge_dissipatives(w, z):
 
 class SubGraph(Graph):
 
-    def __init__(self, label, terminals):
+    _registered = {}
+
+    def __init__(self, label=None, terminals=None):
         """
         Initialize an empty SubGraph.
 
         Parameters
         ----------
 
-        label : str
-            SubGraph label.
+        label : str (optional)
+            SubGraph label. If None, a label is generated (default).
 
         terminals : list of nodes labels
             Ordered list of terminals. The subgraph is replaced in the root
             graph by an edge terminals[0] -> terminals[1]
 
         """
+
+        if label is None:
+            label = 'subgraph'+str(len(SubGraph._registered))
+
+        if terminals is None:
+            terminals = []
+
+        self.register(self, label)
+
         Graph.__init__(self, label=label)
         self._terminals = tuple(terminals)
         self._realizability = None
+
+    @classmethod
+    def register(cls, obj, label=None):
+        cls._registered[label] = obj
 
     @property
     def orientations_dic(self):
@@ -507,7 +522,7 @@ class SubGraph(Graph):
 
 class SubGraphParallel(SubGraph):
 
-    def __init__(self, label, terminals):
+    def __init__(self, label=None, terminals=None):
         SubGraph.__init__(self, label, terminals)
         self._realizability = 'e'
 
@@ -555,7 +570,7 @@ class SubGraphSerial(SubGraph):
     def serial_next(self, *args):
         return serial_next(self, *args)
 
-    def __init__(self, label, terminals):
+    def __init__(self, label=None, terminals=None):
         SubGraph.__init__(self, label, terminals)
         self._realizability = 'f'
 
@@ -625,11 +640,14 @@ determined\n{}'.format(e))
         Remove a list of edges from the current serial subgraph.
         """
 
+        # init nodes to current nodes
         new_nodes = dict([(n, n) for n in self.nodes])
 
+        # init list of preserved nodes
         if preserve_nodes is None:
             preserve_nodes = []
 
+        # loop over edges
         for e in edges:
 
             # Allow setitem
@@ -652,6 +670,7 @@ determined\n{}'.format(e))
             if not ((n1, n2) in preserve_nodes or
                     (n2, n1) in preserve_nodes):
 
+                # new undirected graph
                 undirected = nwxGraph(self)
 
                 if n1 in self.terminals:

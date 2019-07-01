@@ -61,7 +61,7 @@ def _append_ops_defs(method, files):
 
 def _str_mat_op_def(method, name, mat):
     if len(mat.shape) == 1:
-        mat = numpy.matrix(mat).T
+        mat = numpy.array(mat)[:, numpy.newaxis]
     if not bool(numpy.prod(mat.shape)):
         shape = (0, 0)
     else:
@@ -130,7 +130,7 @@ def _append_ops_get_vector(method, files, objlabel):
 def _str_mat_op_get(method, name, objlabel):
     mat = method.inits_evals[name]
     if len(mat.shape) == 1:
-        mat = numpy.matrix(mat).T
+        mat = numpy.array(mat)[:, numpy.newaxis]
     if not bool(numpy.prod(mat.shape)):
         shape = (0, 0)
     else:
@@ -146,7 +146,7 @@ def _str_mat_op_get(method, name, objlabel):
 def _str_mat_op_get_vector(method, name, objlabel):
     mat = method.inits_evals[name]
     if len(mat.shape) == 1:
-        mat = numpy.matrix(mat).T
+        mat = numpy.array(mat)[:, numpy.newaxis]
     mtype = 'vector<{0}>'.format(CONFIG_CPP['float'])
     get_h = '\n{0} {1}_vector() const;'.format(mtype, name)
     get_cpp = \
@@ -176,4 +176,3 @@ def _append_ops_init(method, files, objlabel):
     for name in method.update_actions_deps():
         if name in method.ops_names:
             files['cpp']['init'] += '\n' + '{0}_update();'.format(name)
-

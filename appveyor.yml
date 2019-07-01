@@ -2,13 +2,15 @@ build: false
 
 environment:
   matrix:
-    - PYTHON_VERSION: 2.7
-      MINICONDA: C:\Miniconda
+#    - PYTHON_VERSION: 2.7
+#      MINICONDA: C:\Miniconda
 #    - PYTHON_VERSION: 3.4
 #      MINICONDA: C:\Miniconda3
     - PYTHON_VERSION: 3.5
       MINICONDA: C:\Miniconda3
     - PYTHON_VERSION: 3.6
+      MINICONDA: C:\Miniconda3
+    - PYTHON_VERSION: 3.7
       MINICONDA: C:\Miniconda3
 
 init:
@@ -18,8 +20,7 @@ install:
   - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
-  - conda info -a
-  - "conda create -q -n test-environment python=%PYTHON_VERSION% numpy scipy nose"
+  - conda info -a "conda create -q -n test-environment python=%PYTHON_VERSION% numpy scipy nose"
   - activate test-environment
   - pip install coverage
   - pip install -r requirements.txt

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PyPHS (Posts about thermics)</title><link>https://pyphs.github.io/pyphs/</link><description></description><atom:link href="https://pyphs.github.io/pyphs/categories/thermics.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Sun, 28 Apr 2019 10:31:34 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Index - thermics</title><link>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-index/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Index of sub-dictionary &lt;strong&gt;thermics&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-index/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>thermics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-index/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Thermal transfer (Transfer)</title><link>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Transfer/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Irreversible heat transfer between two thermal nodes. It is made from two dissipative edges. The dissipation variables are temperatures (&lt;span class="math"&gt;\(w_1=T_1\)&lt;/span&gt; and &lt;span class="math"&gt;\(w_2=T_2\)&lt;/span&gt;). The dissipation functions are:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{array}{rcl} \dot \sigma _1 = z_1(w_1, w_2) &amp;amp; = &amp;amp; R\frac{w_1-w_2}{w_1}, \\ \dot \sigma _2 = z_2(w_1, w_2) &amp;amp; = &amp;amp; R\frac{w_2-w_1}{w_2}.  \end{array}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Transfer/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>thermics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Transfer/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Mechanical Source (Source)</title><link>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Source/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Thermal source, i.e. imposed temperature delta (type='temp') or entropy variation (type='ev') between points.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Source/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>thermics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Source/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Thermal Capacitor (Capacitor)</title><link>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Capacitor/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Heat capacity (or mass) with entropy &lt;span class="math"&gt;\(\sigma\in\mathbb R\)&lt;/span&gt;, energy (exponential law):&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+H(\sigma)= C\,T_0\,\exp{\left(\frac{\sigma}{C}\right)},
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;and temperature:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\theta(\sigma) = \frac{d H}{d \sigma}(\sigma) = T_0\,\exp{\left(\frac{\sigma}{C}\right)}.
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Capacitor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>thermics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Capacitor/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item></channel></rss>

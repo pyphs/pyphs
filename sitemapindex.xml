@@ -11,11 +11,19 @@
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/authors/pyphs-project.xml</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/authors/tlebrun.xml</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/beams.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/cat_component.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/cat_documentation.xml</loc>
@@ -26,6 +34,10 @@
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/cat_index.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/cat_tutorial.xml</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </sitemap>
@@ -34,16 +46,44 @@
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/connectors.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/dissipatives.xml</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/electronics.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/fraccalc.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/magnetics.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/mathjax.xml</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/mechanics.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/mechanics_dual.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/phs.xml</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/pwl.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/storages.xml</loc>
@@ -54,31 +94,39 @@
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/thermics.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://pyphs.github.io/pyphs/categories/thiele-small-mathjax.xml</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>https://pyphs.github.io/pyphs/categories/transducers.xml</loc>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://pyphs.github.io/pyphs/galleries/intro/rss.xml</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/galleries/intro1/rss.xml</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/galleries/intro2/rss.xml</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/galleries/rss.xml</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/rss.xml</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-04-28T10:31:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://pyphs.github.io/pyphs/sitemap.xml</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
  </sitemap>
 </sitemapindex>

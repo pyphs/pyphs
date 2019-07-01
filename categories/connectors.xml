@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PyPHS (Posts about connectors)</title><link>https://pyphs.github.io/pyphs/</link><description></description><atom:link href="https://pyphs.github.io/pyphs/categories/connectors.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Sun, 28 Apr 2019 10:31:35 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Index - connectors</title><link>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-index/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Index of sub-dictionary &lt;strong&gt;connectors&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-index/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>connectors</category><category>mathjax</category><guid>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-index/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Transformer</title><link>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-Transformer/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Quadripole connector of transformer type with:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\left\{\begin{array}{rcl} f_A &amp;amp;=&amp;amp; -\alpha\, f_B, \\ e_B &amp;amp;=&amp;amp; + \alpha\,e_A. \end{array}\right.
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-Transformer/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>connectors</category><category>mathjax</category><guid>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-Transformer/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Gyrator</title><link>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-Gyrator/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Quadripole connector of gyrator type with:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\left\{\begin{array}{rcl} e_A &amp;amp;=&amp;amp; -\alpha\,f_B, \\ e_B &amp;amp;=&amp;amp; + \alpha\,f_A. \end{array}\right.
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-Gyrator/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>connectors</category><category>mathjax</category><guid>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-Gyrator/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item></channel></rss>

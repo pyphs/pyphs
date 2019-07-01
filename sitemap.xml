@@ -7,7 +7,7 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://pyphs.github.io/pyphs/</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-04-28T10:29:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/2016/</loc>
@@ -18,8 +18,16 @@
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </url>
  <url>
+  <loc>https://pyphs.github.io/pyphs/2018/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/2019/</loc>
+  <lastmod>2019-04-28T10:29:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://pyphs.github.io/pyphs/archive.html</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/authors/</loc>
@@ -39,11 +47,27 @@
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/blog/</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2018-08-12T17:12:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/blog/index-1.html</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/blog/index-2.html</loc>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/blog/index-3.html</loc>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/blog/index-4.html</loc>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/blog/index-5.html</loc>
+  <lastmod>2019-07-01T22:55:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/building/</loc>
@@ -51,7 +75,15 @@
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/categories/</loc>
-  <lastmod>2018-03-04T22:06:00Z</lastmod>
+  <lastmod>2018-08-13T12:15:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/categories/beams/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/categories/cat_component/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/categories/cat_documentation/</loc>
@@ -62,6 +94,10 @@
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </url>
  <url>
+  <loc>https://pyphs.github.io/pyphs/categories/cat_index/</loc>
+  <lastmod>2018-08-10T13:29:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://pyphs.github.io/pyphs/categories/cat_tutorial/</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </url>
@@ -70,16 +106,44 @@
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </url>
  <url>
+  <loc>https://pyphs.github.io/pyphs/categories/connectors/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://pyphs.github.io/pyphs/categories/dissipatives/</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/categories/electronics/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/categories/fraccalc/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/categories/magnetics/</loc>
+  <lastmod>2018-08-11T16:01:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/categories/mathjax/</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </url>
  <url>
+  <loc>https://pyphs.github.io/pyphs/categories/mechanics/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/categories/mechanics_dual/</loc>
+  <lastmod>2018-08-12T11:30:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://pyphs.github.io/pyphs/categories/phs/</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/categories/pwl/</loc>
+  <lastmod>2018-08-13T12:15:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/categories/storages/</loc>
@@ -90,8 +154,16 @@
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </url>
  <url>
+  <loc>https://pyphs.github.io/pyphs/categories/thermics/</loc>
+  <lastmod>2018-08-12T17:06:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://pyphs.github.io/pyphs/categories/thiele-small-mathjax/</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/categories/transducers/</loc>
+  <lastmod>2018-08-12T17:06:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/galleries/</loc>
@@ -110,12 +182,68 @@
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </url>
  <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/beams/beams-Cantilever/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/beams/beams-index/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-Gyrator/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-Transformer/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/connectors/connectors-index/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/capacitor/</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/diode/</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-Bjt/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-Capacitor/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-Diode/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-Inductor/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-Potentiometer/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-Resistor/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-Source/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-Triode/</loc>
+  <lastmod>2018-08-10T13:14:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics-index/</loc>
+  <lastmod>2018-08-10T13:29:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/electronics/</loc>
@@ -132,6 +260,154 @@
  <url>
   <loc>https://pyphs.github.io/pyphs/posts/dicos/electronics/source/</loc>
   <lastmod>2018-03-04T22:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/fraccalc/fraccalc-Fracderec/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/fraccalc/fraccalc-Fracderfc/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/fraccalc/fraccalc-Fracintec/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/fraccalc/fraccalc-Fracintfc/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/fraccalc/fraccalc-index/</loc>
+  <lastmod>2018-08-10T14:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitor/</loc>
+  <lastmod>2018-08-11T16:01:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitorsat/</loc>
+  <lastmod>2018-08-11T16:01:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Resistor/</loc>
+  <lastmod>2018-08-11T16:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Source/</loc>
+  <lastmod>2018-08-11T16:01:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-index/</loc>
+  <lastmod>2018-08-11T16:01:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Damper/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Felt/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Mass/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Source/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springcubic/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springsat/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Stiffness/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-index/</loc>
+  <lastmod>2018-08-12T10:21:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics_dual/mechanics_dual-Damper/</loc>
+  <lastmod>2018-08-12T11:31:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics_dual/mechanics_dual-Felt/</loc>
+  <lastmod>2018-08-12T11:31:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics_dual/mechanics_dual-Mass/</loc>
+  <lastmod>2018-08-12T11:31:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics_dual/mechanics_dual-Source/</loc>
+  <lastmod>2018-08-12T11:31:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics_dual/mechanics_dual-Springcubic/</loc>
+  <lastmod>2018-08-12T11:31:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics_dual/mechanics_dual-Springsat/</loc>
+  <lastmod>2018-08-12T11:31:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics_dual/mechanics_dual-Stiffness/</loc>
+  <lastmod>2018-08-12T11:31:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/mechanics_dual/mechanics_dual-index/</loc>
+  <lastmod>2018-08-12T11:31:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/pwl/pwl-Dissipative/</loc>
+  <lastmod>2018-08-13T12:17:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/pwl/pwl-Storage/</loc>
+  <lastmod>2018-08-13T12:15:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/pwl/pwl-index/</loc>
+  <lastmod>2018-08-13T12:15:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Capacitor/</loc>
+  <lastmod>2018-08-12T17:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Source/</loc>
+  <lastmod>2018-08-12T17:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-Transfer/</loc>
+  <lastmod>2018-08-12T17:12:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/thermics/thermics-index/</loc>
+  <lastmod>2018-08-12T17:12:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/thermics/transducers-Pickup/</loc>
+  <lastmod>2018-08-12T17:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/thermics/transducers-index/</loc>
+  <lastmod>2018-08-12T17:06:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/transducers/transducers-Pickup/</loc>
+  <lastmod>2018-08-12T17:12:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://pyphs.github.io/pyphs/posts/dicos/transducers/transducers-index/</loc>
+  <lastmod>2018-08-12T17:12:00Z</lastmod>
  </url>
  <url>
   <loc>https://pyphs.github.io/pyphs/posts/docs/port-hamiltonian-systems/</loc>

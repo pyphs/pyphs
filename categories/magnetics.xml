@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PyPHS (Posts about magnetics)</title><link>https://pyphs.github.io/pyphs/</link><description></description><atom:link href="https://pyphs.github.io/pyphs/categories/magnetics.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Sun, 28 Apr 2019 10:31:34 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Index - magnetics</title><link>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-index/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Index of sub-dictionary &lt;strong&gt;magnetics&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-index/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>magnetics</category><category>mathjax</category><guid>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-index/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Magnetic source (Source)</title><link>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Source/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Magnetic source from &lt;a class="footnote-reference" href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Source/#id3" id="id1"&gt;[1]&lt;/a&gt; (chap 7). Could be a source a magnetomotive force (mmf, e.g. a magnet) or a source of magnetic flux variation (mfv).&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Source/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>magnetics</category><category>mathjax</category><guid>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Source/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Magnetic resistor (Resistor)</title><link>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Resistor/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Magnetic resistance from &lt;a class="footnote-reference" href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Resistor/#id3" id="id1"&gt;[1]&lt;/a&gt; (chap 7). In Laplace domain with &lt;span class="math"&gt;\(s\in\mathbb C\)&lt;/span&gt;:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+e(s) = R \, f(s).
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Resistor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>magnetics</category><category>mathjax</category><guid>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Resistor/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Saturating magnetic capacitor (Capacitorsat)</title><link>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitorsat/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Saturating magnetic capacity from &lt;a class="footnote-reference" href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitorsat/#id3" id="id1"&gt;[1]&lt;/a&gt; (chap 7) with state &lt;span class="math"&gt;\(\phi\in [-\phi_{sat}, \phi_{sat}]\)&lt;/span&gt; and parameters described below. The energy is&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+H(\phi) = \frac{1}{C_{0}} \, \left( \frac{\phi^2}{2} +  C_{sat} H_{sat}(\phi)\right),
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;with&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+H_{sat}(\phi) = -  \frac{8 \phi_{sat}}{\pi \left(4-\pi\right)} \, \left(\frac{\pi^{2} \phi^{2}}{8\phi_{sat}^{2}} + \log{\left (\cos{\left (\frac{\pi \phi}{2 \phi_{sat}} \right)} \right)}\right).
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;The resulting magnetomotive force is:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\psi(\phi)= \frac{d\,H(\phi)}{d \phi} = \frac{ 1}{C_{0}} \left(\phi + C_{sat} \frac{d\,H_{sat}(\phi)}{d \phi}\right),
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;with&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\frac{d\,H_{sat}(\phi)}{d \phi}= \frac{4}{4- \pi} \left(\tan{\left (\frac{\pi \phi}{2 \phi_{sat}} \right )} - \frac{\pi \phi}{2\phi_{sat}} \right).
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitorsat/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>magnetics</category><category>mathjax</category><guid>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitorsat/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Magnetic capacitor (Capacitor)</title><link>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitor/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Magnetic capacity from &lt;a class="footnote-reference" href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitor/#id3" id="id1"&gt;[1]&lt;/a&gt; (chap 7). In Laplace domain with &lt;span class="math"&gt;\(s\in\mathbb C\)&lt;/span&gt;:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+e(s) = \frac{1}{C s} \, f(s).
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitor/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>magnetics</category><category>mathjax</category><guid>https://pyphs.github.io/pyphs/posts/dicos/magnetics/magnetics-Capacitor/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item></channel></rss>

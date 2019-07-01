@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cantilever beam (Cantilever) | PyPHS</title>
+<link href="../../../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../../../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#618AC8">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../rss.xml">
+<link rel="canonical" href="https://pyphs.github.io/pyphs/posts/dicos/beams/beams-Cantilever/">
+<!--[if lt IE 9]><script src="../../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="PyPHS project">
+<link rel="prev" href="../../pwl/pwl-index/" title="Index - pwl" type="text/html">
+<link rel="next" href="../beams-index/" title="Index - beams" type="text/html">
+<meta property="og:site_name" content="PyPHS">
+<meta property="og:title" content="Cantilever beam (Cantilever)">
+<meta property="og:url" content="https://pyphs.github.io/pyphs/posts/dicos/beams/beams-Cantilever/">
+<meta property="og:description" content="Euler-Bernouilli cantilever beam as presented in [1] (section 4.2).
+
+
+Cantilever beam (Cantilever)
+Euler-Bernouilli cantilever beam as presented in [1] (section 4.2).
+
+Power variables
+flux: Force \(f\">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-04-28T12:31:26+02:00">
+<meta property="article:tag" content="beams">
+<meta property="article:tag" content="mathjax">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://pyphs.github.io/pyphs/">
+                <img src="../../../../MyAwesomeIcon.png" alt="PyPHS" id="logo"><span id="blog-title">PyPHS</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Documentation <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../../../docs/port-hamiltonian-systems/">Port-Hamiltonian Systems</a>
+                    </li>
+<li>
+<a href="../../../docs/pyphs-method/">PyPHS.Method</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tutorials <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../../../tutos/pyphs-core/">PyPHS.Core</a>
+                    </li>
+<li>
+<a href="../../../tutos/pyphs-evaluation/">PyPHS.Evaluation</a>
+                    </li>
+<li>
+<a href="../../../tutos/pyphs-graph/">PyPHS.Graph</a>
+                    </li>
+<li>
+<a href="../../../tutos/pyphs-simulation/">PyPHS.Simulation</a>
+            </li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dictionary <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+<li>
+<a href="../../electronics/electronics-index">Electronic</a>
+                    </li>
+<li>
+<a href="../../magnetics/magnetics-index">Magnetic</a>
+                    </li>
+<li>
+<a href="../../mechanics/mechanics-index">Mechanics</a>
+                    </li>
+<li>
+<a href="../../thermics/thermics-index">Thermics</a>
+                    </li>
+<li>
+<a href="../../mechanics_dual/mechanics_dual-index">Mechanics dual</a>
+                    </li>
+<li>
+<a href="../../connectors/connectors-index">Connectors</a>
+                    </li>
+<li>
+<a href="../../pwl/pwl-index">Piece-Wise Linear</a>
+                    </li>
+<li>
+<a href="../../fraccalc/fraccalc-index">Fractional Calculus</a>
+                    </li>
+<li>
+<a href="../beams-index">Beams</a>
+                    </li>
+<li>
+<a href="../../transducers/transducers-index">Transducers</a>
+            </li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+    <a href="index.rst" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Cantilever beam (Cantilever)</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                    <a href="../../../../authors/pyphs-project/">PyPHS project</a>
+            </span></p>
+            <p class="dateline"><a href="." rel="bookmark"><time class="published dt-published" datetime="2019-04-28T12:31:26+02:00" itemprop="datePublished" title="2019-04-28 12:31">2019-04-28 12:31</time></a></p>
+            
+        <p class="sourceline"><a href="index.rst" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>Euler-Bernouilli cantilever beam as presented in <a class="footnote-reference" href="#id4" id="id1">[1]</a> (section 4.2).</p>
+<!-- TEASER_END -->
+<div class="section" id="cantilever-beam-cantilever">
+<h2>Cantilever beam (Cantilever)</h2>
+<p>Euler-Bernouilli cantilever beam as presented in <a class="footnote-reference" href="#id4" id="id2">[1]</a> (section 4.2).</p>
+<div class="section" id="power-variables">
+<h3>Power variables</h3>
+<p><strong>flux</strong>: Force <span class="math">\(f\)</span>   (N)</p>
+<p><strong>effort</strong>: Velocity <span class="math">\(v\)</span>   (m.s)</p>
+</div>
+<div class="section" id="arguments">
+<h3>Arguments</h3>
+<dl class="docutils">
+<dt>label <span class="classifier-delimiter">:</span> <span class="classifier">str</span>
+</dt>
+<dd>Cantilever label.</dd>
+<dt>nodes <span class="classifier-delimiter">:</span> <span class="classifier">('N1', 'N2')</span>
+</dt>
+<dd>Any number of nodes associated with contact points. An effort-controlled port (u=force, y=velocity) is created for each node in the list. Two parameters (position 'w#' and width 'z#') must be provided for each contact point #.</dd>
+<dt>parameters <span class="classifier-delimiter">:</span> <span class="classifier">keyword arguments</span>
+</dt>
+<dd>The default values are taken from <a class="footnote-reference" href="#id4" id="id3">[1]</a> (table 4) with two contact point N1 and N2.</dd>
+</dl>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%">
+<col width="52%">
+<col width="13%">
+<col width="26%">
+</colgroup>
+<thead valign="bottom"><tr>
+<th class="head">Key</th>
+<th class="head">Description</th>
+<th class="head">Unit</th>
+<th class="head">Default</th>
+</tr></thead>
+<tbody valign="top">
+<tr>
+<td>F</td>
+<td>Fondamental frequency</td>
+<td>Hz</td>
+<td>440.0</td>
+</tr>
+<tr>
+<td>N</td>
+<td>Number of eigen-modes</td>
+<td>d.u</td>
+<td>5</td>
+</tr>
+<tr>
+<td>R</td>
+<td>Radius</td>
+<td>m</td>
+<td>0.001</td>
+</tr>
+<tr>
+<td>E</td>
+<td>Young modulus</td>
+<td>N/m2</td>
+<td>180000000000.0</td>
+</tr>
+<tr>
+<td>M</td>
+<td>Mass density</td>
+<td>kg/m3</td>
+<td>7750</td>
+</tr>
+<tr>
+<td>A</td>
+<td>Damping coefficient</td>
+<td>N/s</td>
+<td>0.05</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Modes damping progression</td>
+<td>d.u</td>
+<td>6.0</td>
+</tr>
+<tr>
+<td>z1</td>
+<td>Relative position of contact 1</td>
+<td>[0, 1]</td>
+<td>0.15</td>
+</tr>
+<tr>
+<td>w1</td>
+<td>width of contact 1</td>
+<td>m</td>
+<td>0.015</td>
+</tr>
+<tr>
+<td>z2</td>
+<td>Relative position of contact 2</td>
+<td>[0, 1]</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>w2</td>
+<td>width of contact 2</td>
+<td>m</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="usage">
+<h3>Usage</h3>
+<p><tt class="docutils literal">beam = <span class="pre">Cantilever('beam',</span> ('N1', <span class="pre">'N2'),</span> F=440.0, N=5, R=0.001, E=180000000000.0, M=7750, A=0.05, D=6.0, z1=0.15, w1=0.015, z2=1.0, w2=0.0)</tt></p>
+</div>
+<div class="section" id="netlist-line">
+<h3>Netlist line</h3>
+<p><tt class="docutils literal">beams.cantilever beam ('N1', <span class="pre">'N2'):</span> F=440.0; N=5; R=0.001; E=180000000000.0; M=7750; A=0.05; D=6.0; z1=0.15; w1=0.015; z2=1.0; w2=0.0;</tt></p>
+</div>
+<div class="section" id="example">
+<h3>Example</h3>
+<pre class="doctest-block">
+&gt;&gt;&gt; # Import dictionary
+&gt;&gt;&gt; from pyphs.dictionary import beams
+&gt;&gt;&gt; # Define component label
+&gt;&gt;&gt; label = 'beam'
+&gt;&gt;&gt; # Define component nodes
+&gt;&gt;&gt; nodes = ('N1', 'N2')
+&gt;&gt;&gt; # Define component parameters
+&gt;&gt;&gt; parameters = {'F': 440.0,           # Fondamental frequency (Hz)
+...               'N': 5,               # Number of eigen-modes (d.u)
+...               'R': 0.001,           # Radius (m)
+...               'E': 180000000000.0,  # Young modulus (N/m2)
+...               'M': 7750,            # Mass density (kg/m3)
+...               'A': 0.05,            # Damping coefficient (N/s)
+...               'D': 6.0,             # Modes damping progression (d.u)
+...               'z1': 0.15,           # Relative position of contact 1 ([0, 1])
+...               'w1': 0.015,          # width of contact 1 (m)
+...               'z2': 1.0,            # Relative position of contact 2 ([0, 1])
+...               'w2': 0.0,            # width of contact 2 (m)
+...              }
+&gt;&gt;&gt; # Instanciate component
+&gt;&gt;&gt; component = beams.Cantilever(label, nodes, **parameters)
+&gt;&gt;&gt; # Graph dimensions
+&gt;&gt;&gt; len(component.nodes)
+16
+&gt;&gt;&gt; len(component.edges)
+35
+</pre>
+</div>
+<div class="section" id="reference">
+<h3>Reference</h3>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup>
+<col class="label">
+<col>
+</colgroup>
+<tbody valign="top"><tr>
+<td class="label">[1]</td>
+<td>
+<em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>, <a class="fn-backref" href="#id3">3</a>)</em> Antoine Falaize and Thomas Helie. Passive simulation of the nonlinear port-hamiltonian modeling of a Rhodes piano. Journal of Sound and Vibration, 2016.</td>
+</tr></tbody>
+</table>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../../../categories/beams/" rel="tag">beams</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../../pwl/pwl-index/" rel="prev" title="Index - pwl">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../beams-index/" rel="next" title="Index - beams">Next post</a>
+            </li>
+        </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha256-SDRP1VVYu+tgAGKhddBSl5+ezofHKZeI+OzxakbIe/Y=" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2019         <a href="mailto:pyphs.project@gmail.com">PyPHS project</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../../../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

@@ -26,7 +26,7 @@ The PHS formalism decomposes network systems into **conservative** parts, **diss
 	:width: 650
 	:align: center
 
-The main objects of the library are introduced in `this presentation <https://pyphs.github.io/pyphs/PyPHS_IRCAM_seminar_041217.pdf>`_.
+The main objects of the library are introduced in `this presentation <https://afalaize.github.io/posts/pyphs-seminar/>`_.
 The standard workflow is as follows.
 
 1. Inputs are **netlist descriptions** of network systems (very similar to SPICE netlists).
@@ -50,7 +50,7 @@ Status
 
 This package is in development status Beta. The continuous integration is checked with Travis for Unix systems and AppVeyor for Windows systems (see build status below).
 
-|Travis| |Appveyor| |Codecov| |Landscape|
+|Travis|  |Appveyor|  |Codecov|  |Landscape|
 
 .. |Travis| image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/pyphs/pyphs
@@ -88,7 +88,6 @@ The `PyPHS <https://github.com/pyphs/pyphs/>`_ package run on Python 2.7 and Pyt
 - `matplotlib <http://matplotlib.org/>`_
 - `networkx <http://networkx.github.io/>`_
 - `h5py <http://docs.h5py.org/en/latest/index.html>`_
-- `stopit <https://pypi.python.org/pypi/stopit>`_
 - `progressbar2 <https://pypi.python.org/pypi/progressbar2>`_
 - `nose <https://github.com/nose-devs/nose>`_ (to run the tests)
 
@@ -213,8 +212,8 @@ Documentation
 Most of the documentation can be found in the `website <https://pyphs.github.io/pyphs/>`_.
 In particular, you can see the two following resources:
 
-- The `slides <https://pyphs.github.io/pyphs/PyPHS_IRCAM_seminar_041217.pdf>`_ from a talk given at IRCAM that introduces most the scientific background.
-- The `tutorial <https://pyphs.github.io/pyphs/PyPHS_TUTORIAL.zip>`_ that shows practical usage of most PyPHS objects (3Mb).
+- The `slides <https://afalaize.github.io/posts/pyphs-seminar/>`_ from a talk given at IRCAM that introduces most the scientific background.
+- The `tutorial <https://afalaize.github.io/posts/pyphs-tutorial/>`_ that shows practical usage of most PyPHS objects (3Mb).
 
 
 

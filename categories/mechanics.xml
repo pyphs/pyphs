@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PyPHS (Posts about mechanics)</title><link>https://pyphs.github.io/pyphs/</link><description></description><atom:link href="https://pyphs.github.io/pyphs/categories/mechanics.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Sun, 28 Apr 2019 10:31:34 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Index - mechanics</title><link>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-index/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Index of sub-dictionary &lt;strong&gt;mechanics&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-index/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>mechanics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-index/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Stiffness</title><link>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Stiffness/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Linear stiffness between two points in a 1D space. In Laplace domain with &lt;span class="math"&gt;\(s\in\mathbb C\)&lt;/span&gt;:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+f(s) = \frac{K\,e(s)}{s}.
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Stiffness/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>mechanics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Stiffness/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Saturating spring (Springsat)</title><link>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springsat/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Saturating spring from &lt;a class="footnote-reference" href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springsat/#id3" id="id1"&gt;[1]&lt;/a&gt; (chap 7) with state &lt;span class="math"&gt;\(q\in [-q_{sat}, q_{sat}]\)&lt;/span&gt; and parameters described below. The energy is&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+H(q) = K_0 \, \left( \frac{q^2}{2} +  K_{sat} H_{sat}(q)\right),
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;with&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+H_{sat}(q) = -  \frac{8 q_{sat}}{\pi \left(4-\pi\right)} \, \left(\frac{\pi^{2} q^{2}}{8q_{sat}^{2}} + \log{\left (\cos{\left (\frac{\pi q}{2 q_{sat}} \right)} \right)}\right).
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;The resulting force is:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+f(q)= \frac{d\,H(q)}{d q} = K_{0} \left(q + K_{sat} \frac{d\,H_{sat}(q)}{d q}\right),
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;with&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\frac{d\,H_{sat}(q)}{d q}= \frac{4}{4- \pi} \left(\tan{\left (\frac{\pi q}{2 q_{sat}} \right )} - \frac{\pi q}{2q_{sat}} \right).
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springsat/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>mechanics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springsat/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Cubic spring (Springcubic)</title><link>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springcubic/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Cubic spring with state &lt;span class="math"&gt;\(q\in \mathbb R\)&lt;/span&gt; and parameters described below. The energy is&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+H(q) = \frac{F_1\,q^2}{2\,q_{ref}} + \frac{F_3\,q^4}{4q_{ref}^3}.
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;The resulting force is:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+f(q)= \frac{d \, H(q)}{d q} = F_1 \,\frac{q}{q_{ref}} + F_3 \, \frac{q^3}{q_{ref}^3}.
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;so that &lt;span class="math"&gt;\(f(q_{ref}) = F1+F3\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springcubic/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>mechanics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Springcubic/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Mechanical Source (Source)</title><link>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Source/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Source of force or velocity imposed between two points.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Source/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>mechanics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Source/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Mass</title><link>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Mass/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Mass moving in 1D space. In Laplace domain with &lt;span class="math"&gt;\(s\in\mathbb C\)&lt;/span&gt;:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+e(s) = \frac{f(s)}{M\,s}.
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Mass/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>mechanics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Mass/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Felt material (Felt)</title><link>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Felt/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Nonlinear felt material used in piano-hammer. The model is that found in &lt;a class="footnote-reference" href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Felt/#id3" id="id1"&gt;[1]&lt;/a&gt; eq. (11). It includes a nonlinear restoring force and a nonlinear damper as follows:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+f_{total}\left(c, \dot c\right) = f_{elastic}(c) + f_{damper}\left(c, \dot c\right),
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;with&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+f_{elastic}(c)  = F \,c ^B,
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;and&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+f_{damper}\left(c, \dot c\right) = \frac{A \, L}{B} c^{B-1} \,\dot c,
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;where &lt;span class="math"&gt;\(c = \frac{\max (q, 0)}{L}\)&lt;/span&gt; is the crush of the hammer with contraction &lt;span class="math"&gt;\(q\in\mathbb R\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Felt/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>mechanics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Felt/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item><item><title>Linear Damper (Damper)</title><link>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Damper/</link><dc:creator>PyPHS project</dc:creator><description>&lt;div&gt;&lt;p&gt;Linear mechanical damping (i.e. opposing force proportional to the velocity). In Laplace domain with &lt;span class="math"&gt;\(s\in\mathbb C\)&lt;/span&gt;:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+f(s) = A \, e(s).
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Damper/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><category>mechanics</category><guid>https://pyphs.github.io/pyphs/posts/dicos/mechanics/mechanics-Damper/</guid><pubDate>Sun, 28 Apr 2019 10:31:26 GMT</pubDate></item></channel></rss>

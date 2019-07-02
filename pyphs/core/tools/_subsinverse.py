@@ -12,8 +12,7 @@ from . import _types as types
 
 
 def subsinverse_scalar(expr, subs, symbols):
-    if isinstance(expr, (sp.Symbol, sp.Float, float)):
-        return expr
+
     if isinstance(expr, (sp.Symbol, sp.Float, float)):
         return expr
     else:
@@ -34,7 +33,6 @@ def subsinverse_scalar(expr, subs, symbols):
             if not (a in expr.atoms() or a in subs.keys()):
                 args[i] = subsinverse_scalar(a, subs, symbols)
         return expr.func(*args)
-
 
 
 def subsinverse_vector(expr, subs, symbols):

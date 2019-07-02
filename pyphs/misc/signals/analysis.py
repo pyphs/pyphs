@@ -80,7 +80,7 @@ def spectrogram(x, fs, show=False, **kwargs):
                                         cmap=opts['cmap'])
     Pxx = Pxx/np.max(Pxx)
     extent = [tbins.min(), tbins.max(), 0., fbins.max()]
-    print(extent)
+
     im = ax.imshow(10*np.log10(Pxx), extent=extent, origin='lower',
                    aspect='auto', cmap=opts['cmap'],
                    vmin=-opts['dynamics'], vmax=0)

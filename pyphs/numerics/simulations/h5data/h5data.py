@@ -1273,11 +1273,8 @@ or an integer nt (number of time steps).'
             indices of variable name are ploted. For each tuple element, the
             element index of variable name is ploted.
 
-        tslice : dict
-            dictionary of signal load options, with keys
-                * 'start': starting index,
-                * 'stop': stoping index,
-                * 'step': stepation factor.
+        tslice : slice
+            slice for signal: slice(start, stop, step)
 
         show : bool (optional)
             Acivate the call to matplotlib.pyplot.show
@@ -1304,7 +1301,10 @@ or an integer nt (number of time steps).'
             tslice = self._tslice(tslice)
 
         if tslice.step is None:
-            tslice.step = max((1, (self.stop-self.start)//self.ntplot))
+            tslice = slice(
+                tslice.start,
+                tslice.stop,
+                max((1, (self.stop-self.start)//self.ntplot)))
 
         fig, ax = plot(self, vars, show=show, label=label, tslice=tslice)
 

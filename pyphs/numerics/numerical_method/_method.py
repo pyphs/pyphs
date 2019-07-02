@@ -60,7 +60,10 @@ class Method(Core):
         Core.__init__(self, label=label)
 
         # Save core
-        self._core = core
+        self._core = core.__copy__()
+
+        # Remove expressions in self._core.subs
+        self._core.substitute(selfexprs=True)
 
         # init linear part size to 0
         self._core.dims._xl = 0
@@ -676,7 +679,6 @@ dictionary.
         # discrete gradient
         mtype = types.matrix_types[0]
 
-        print(method.label, method.dxHl(), list(method.bl))
         dxHl = list(
             mtype(method.Q)*(
                 mtype(method.xl()) + 0.5*mtype(method.dxl())) +

@@ -13,7 +13,7 @@ from . import _types as types
 
 def subsinverse_scalar(expr, subs, symbols):
 
-    if isinstance(expr, (sp.Symbol, sp.Float, float)):
+    if isinstance(expr, (sp.Symbol, sp.Float, float)) or expr.is_number:
         return expr
     else:
         expr = sp.simplify(expr)

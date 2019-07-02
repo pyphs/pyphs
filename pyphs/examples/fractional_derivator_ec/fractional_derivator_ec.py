@@ -25,7 +25,7 @@ core = netlist.to_core()
 # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
 # !!! Very long simulation with numpy (use c++ if possible)
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    from pyphs import Simulation, signalgenerator
 #    from pyphs.misc.signals.analysis import transferFunction
 #    import matplotlib.pyplot as plt
@@ -60,3 +60,4 @@ core = netlist.to_core()
 #    plt.xlabel('freq (Hz)')
 #    plt.ylabel(r'$\mathrm{abs}(y(f)/u(f))$ ($\Omega$)')
 #    plt.title('Transfer function')
+#    plt.show()

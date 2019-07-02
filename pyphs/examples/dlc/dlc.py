@@ -31,7 +31,7 @@ core = netlist.to_core()
 
 # UNCOMMENT BELOW FOR SIMULATION AND PLOTS
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs import signalgenerator
 #    import numpy as np

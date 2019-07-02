@@ -20,7 +20,7 @@ graph = Graph(netlist=netlist)
 core = graph.to_core()
 
 #    # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs import Simulation, signalgenerator
 #    from pyphs.misc.signals.analysis import transferFunction
@@ -39,16 +39,14 @@ core = graph.to_core()
 #    dur = 10.
 #    u = signalgenerator(which='noise', tsig=dur, fs=config['fs'])
 #
-#    def sequ():
-#        for el in u():
-#            yield (el, )
+#    sequ = [(el, ) for el in u]
 #
-#    simu.init(u=sequ(), nt=int(dur*config['fs']))
+#    simu.init(u=sequ, nt=int(dur*config['fs']))
 #
 #    simu.process()
 #
-#    u = list(simu.data.u(0))
-#    y = list(simu.data.y(0))
+#    u = list(simu.data.u(vslice=0))
+#    y = list(simu.data.y(vslice=0))
 #
 #    f, TF = transferFunction(y, u, fs=config['fs'],
 #                             nfft=2**15, limits=(1e1, 5e3))
@@ -56,5 +54,4 @@ core = graph.to_core()
 #    plt.close('all')
 #    plt.figure()
 #    plt.semilogx(f, TF)
-#
-#    pass
+#    plt.show()

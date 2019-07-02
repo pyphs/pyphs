@@ -34,7 +34,7 @@ core = netlist.to_core()
 
 # UNCOMMENT BELOW FOR SIMULATION AND PLOTS
 
-#if __name__ is "__main__":
+# if __name__ == "__main__":
 #
 #    from pyphs import Simulation, Netlist, Graph, signalgenerator
 #    from pyphs.misc.tools import ordering
@@ -77,6 +77,9 @@ core = netlist.to_core()
 #
 #    # Proceed
 #    simu.process()
+#
+#    # Plot
+#    simu.data.plot('x')
 #
 #    # write wave
 #    simu.data.wavwrite('y', order[1])

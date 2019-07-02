@@ -28,7 +28,7 @@ core = netlist.to_core()
 
 # UNCOMMENT BELOW FOR SIMULATION AND PLOTS
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs import signalgenerator, Evaluation, Simulation
 #    from pyphs.misc.plots.singleplots import singleplot
@@ -75,7 +75,7 @@ core = netlist.to_core()
 #    sigma2 = simu.data['dtx'][:, 1]
 #    sigmay = simu.data['y'][:, 0]
 #
-##    simu.data.plot_powerbal()
+# #    simu.data.plot_powerbal()
 #
 #    fig, ax = singleplot(t, (theta1-273.16,
 #                             theta2-273.16),

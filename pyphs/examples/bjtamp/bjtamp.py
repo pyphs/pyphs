@@ -32,7 +32,7 @@ core.reduce_z()
 
 # UNCOMMENT BELOW FOR SIMULATION AND PLOTS
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs import signalgenerator, Simulation
 #    import numpy

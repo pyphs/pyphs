@@ -292,7 +292,6 @@ def generateDicDoc(folder):
             dcomps.sort()
             for c in dcomps:
                 comp = getattr(dic, c)
-                print(d, c)
                 realtitle = comp.metadata['title'] if comp.metadata['component'] == comp.metadata['title'] else '{} ({})'.format(comp.metadata['title'], comp.metadata['component'])
                 comps[c] = '{}-{}'.format(d, c)
                 titles[c] = realtitle

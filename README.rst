@@ -44,10 +44,12 @@ Status
 
 This package is in development status Beta. The continuous integration is checked with Travis for Unix systems and AppVeyor for Windows systems (see build status below).
 
-|Travis| |Appveyor| |Codecov| |Landscape|
+|Travis|  |Appveyor|  |Codecov|  |Landscape|
+
 
 .. |Travis| image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
     :target: https://www.travis-ci.org/pyphs/pyphs
+
 
 .. |Appveyor| image:: https://ci.appveyor.com/api/projects/status/53d7phhgksrd4fvn?svg=true
     :target: https://ci.appveyor.com/project/pyphsadmin/pyphs

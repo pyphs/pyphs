@@ -36,12 +36,14 @@ multifigure
 
     datax = [el for el in data.t(tslice=tslice)]
 
+    dte = data.dtE(tslice=tslice, DtE=DtE)
+    ps = data.ps(tslice=tslice)
+    pd = data.pd(tslice=tslice)
+
     if mode == 'single':
         datay = list()
-        datay.append([el for el in data.dtE(tslice=tslice, DtE=DtE)])
-        Psd = map(lambda x, y: - float(x) - float(y),
-                  data.ps(tslice=tslice),
-                  data.pd(tslice=tslice))
+        datay.append(dte)
+        Psd = map(lambda x, y: - float(x) - float(y), ps, pd)
         datay.append(tuple(Psd))
         config.update({'linestyles': ('-', '--'),
                        'ylabel': r'Power (W)',
@@ -50,12 +52,10 @@ multifigure
     else:
         assert mode == 'multi'
         datay = list()
-        datay.append([el for el in data.dtE(tslice=tslice, DtE=DtE)])
-        datay.append([el for el in data.pd(tslice=tslice)])
-        datay.append([el for el in data.ps(tslice=tslice)])
-        deltaP = [sum(el) for el in zip(data.dtE(tslice=tslice, DtE=DtE),
-                                        data.pd(tslice=tslice),
-                                        data.ps(tslice=tslice))]
+        datay.append(dte)
+        datay.append(pd)
+        datay.append(ps)
+        deltaP = [sum(el) for el in zip(dte, pd, ps)]
         datay.append(deltaP)
         config.update({'linestyles': [('-b', ), ('-g', ), ('-r', ), ('-k', )],
                        'ylabels': [r' (W)']*4,
@@ -113,7 +113,7 @@ def plot(data, vars, tslice=None, show=True,
     datay = list()
     labels = list()
 
-    def append_sig(datay, labels, name, index):
+    def append_sig(name, index):
         sig = data[name, tslice, index]
         datay.append(sig)
         labels.append(nice_label(data.method, (name, index)))
@@ -131,17 +131,17 @@ def plot(data, vars, tslice=None, show=True,
                }
     for var in vars:
         if isinstance(var, (tuple, list)):
-            append_sig(datay, labels, *var)
+            append_sig(*var)
             if path is not None:
                 path += '_'+var[0]+str(var[1])
         elif isinstance(var, str):
             dim = dimsmap[var]
             for i in range(getattr(data.method.dims, dim)()):
-                append_sig(datay, labels, var, i)
+                append_sig(var, i)
                 if path is not None:
                     path += '_'+var+str(i)
         else:
-            raise TypeError('variable {} not understood'.format(var))
+            raise TypeError('Variable {} not available for ploting.'.format(var))
 
     if len(datay) > 1:
         plotopts = {'xlabel': 'time $t$ (s)',

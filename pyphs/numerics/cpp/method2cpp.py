@@ -7,19 +7,19 @@ Created on Tue Jun 28 13:47:47 2016
 
 from __future__ import absolute_import, division, print_function
 
-from .preamble import str_preamble
 from .arguments import append_args
 from .functions import append_funcs, append_funcs_constructors
 from .operations import append_ops
-from .tools import indent, SEP, formatPath
+from .tools import indent, comment
 from pyphs.config import VERBOSE, CONFIG_NUMERIC, CONFIG_CPP
-from pyphs.misc.tools import geteval
+from pyphs.misc.tools import geteval, get_time
 from pyphs.core.tools import substitute, free_symbols
 from .tools import linesplit
 import numpy
 import sympy
 import os
 import copy
+
 
 standard_config = {'path': os.getcwd()}
 
@@ -47,6 +47,8 @@ def init_eval(method, name):
                 sobj = substitute(sobj, method.subscpp)
                 if sobj == sobjpre:
                     freesymbs = free_symbols(sobj)
+                    if len(freesymbs) == 1:
+                        freesymbs = freesymbs.pop()
                     text = 'Missing substitution symbols: {}'.format(freesymbs)
                     raise AttributeError(text)
             if not isinstance(sobj, (float, list)):
@@ -99,7 +101,7 @@ def method2cpp(method, objlabel=None, path=None,
 
     inits : dictionary (default is None)
         Dictionary of initialization values `{name: array}` with `name` in
-        ('x', 'dx', 'w', 'u', 'p', 'o') and `array` an vector of floats with
+        ('x', 'dx', 'w', 'u', 'p', 'o') and `array` a vector of floats with
         appropriate shape.
 
     config : dictionary (default is None)
@@ -153,6 +155,15 @@ def method2cpp(method, objlabel=None, path=None,
     if not os.path.exists(path):
         os.makedirs(path)
 
+    from pyphs import path_to_templates
+    import string
+
+    # read license template
+    with open(os.path.join(path_to_templates,
+                           'license.template'), 'r') as f:
+        _license = string.Template(f.read())
+    starting = comment(_license.substitute({'time': get_time()}))
+
     files = {}
     exts = ['cpp', 'h']
 
@@ -161,7 +172,7 @@ def method2cpp(method, objlabel=None, path=None,
                              'private': '',
                              'init': '',
                              'data': '',
-                             'starting': str_preamble(objlabel),
+                             'starting': starting,
                              'closing': ''}})
     files['h']['starting'] += '\n'
     files['h']['starting'] += "\n#ifndef {0}_H".format(objlabel)
@@ -260,8 +271,18 @@ def parameters(subs, objlabel):
     """
     Generates the C++ files associated with the parameters
     """
-    files = {'h': str_preamble(objlabel),
-             'cpp': str_preamble(objlabel)}
+    from pyphs import path_to_templates
+    import string
+
+    # read license template
+    with open(os.path.join(path_to_templates,
+                           'license.template'), 'r') as f:
+        _license = string.Template(f.read())
+    str_preamble = comment(_license.substitute({'time': get_time()}))
+
+    files = {'h': str_preamble,
+             'cpp': str_preamble}
+
     files['h'] += """
 #ifndef PARAMETERS_H
 #define PARAMETERS_H"""
@@ -282,33 +303,59 @@ def _append_include(files):
 """
 
 
-def _append_subs(subs, files):
+def _append_subs(listOfSubs, files):
     """
-    Used in .parameters()
+    Used in .parameters(): Actually add to files the definition of subs pointers
     """
-    if isinstance(subs, (tuple, list)):
-        nsubs = len(subs)
+
+    # `listOfSubs` is a list of dictionaries
+    # each with the structure of `method.subs`
+    if isinstance(listOfSubs, (tuple, list)):
+        nsubs = len(listOfSubs)  # Number of subs dict
+    elif isinstance(listOfSubs, dict):
+        listOfSubs = [listOfSubs, ]  # Recast as list
+        nsubs = 1  # Number of subs dict
     else:
-        nsubs = 1
-        subs = [subs, ]
-    npars = len(subs[0])
+        text = 'listOfSubs must be dict or iterable of dict, got {}.'
+        raise TypeError(text.format(type(listOfSubs)))
+
+    # Get the number of keys of the first subs dict
+    npars = len(listOfSubs[0])
+    # parameters are keys of first dict in listOfSubs
+    parameters = listOfSubs[0].keys()
+
+    # Start writing in `files`
     if npars > 0:
+        # define subs array in header
         files['h'] += """\n
 extern const {2} subs[{0}][{1}];""".format(nsubs, npars, CONFIG_CPP['float'])
+
+        # Write correpondance between items in c++ array and subs
         files['cpp'] += """\n
 // Correspondance is
 """
-        for i, k in enumerate(subs[0].keys()):
-            if not str(k) == 'F_S':
+        # for each parameter
+        for i, k in enumerate(parameters):
+            if not str(k) == 'F_S':  # F_S is defined elsewhere
+                # Write correpondance between subs[key][i] and listOfSubs[0][k]
                 files['cpp'] += '// subs[key][{}] = {}\n'.format(i, k)
+
+        # write content in .cpp
         files['cpp'] += """\n
 const {0} subs[{1}][{2}]""".format(CONFIG_CPP['float'], nsubs, npars) + """ = { """
-        for i, s in enumerate(subs):
+        # for each dictionary in listOfSubs
+        for i, s in enumerate(listOfSubs):
+            # Set key as index in listOfSubs
             files['cpp'] += indent(linesplit + '\n// key {}'.format(i))
+
+            # Open brackets
             files['cpp'] += """
     {"""
-            for k in s.keys():
+            # For each parameter
+            for k in parameters:
+                # Write value
                 files['cpp'] += str(float(s[k])) + ', '
+            # Close brackets
             files['cpp'] = files['cpp'][:-2] + """},
 };"""
 

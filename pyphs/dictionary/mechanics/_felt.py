@@ -9,46 +9,19 @@ from __future__ import absolute_import, division, print_function
 from ..tools import symbols, mappars
 from pyphs import Graph
 import sympy as sp
+from ..tools import componentDoc, parametersDefault
+from ..mechanics import metadata as dicmetadata
+from pyphs.misc.rst import equation
 
 
 class Felt(Graph):
-    """
-    Piano hammer felt
-    ==================
 
-
-    Usage
-    -----
-
-    mechanics.felt label nodes: **kwargs
-
-    Parameters:
-    -----------
-
-    label : str
-        Felt label.
-
-    nodes : (N1, N2)
-        tuple of nodes labels (int or string). The edge (ie. the velocity 'v')
-        is directed from N1 to N2.
-
-    kwargs : dictionary with following "key: value"
-
-        * 'L': [m] Height of the felt at rest (1.5cm),
-        * 'F': [N] Elastic characteristic force (13.8),
-        * 'A': [N.s/m] Felt damping coefficient (1e2),
-        * 'B': [d.u] Hysteresis coefficient for the felt (2.5),
-
-    """
     def __init__(self, label, nodes, **kwargs):
         Graph.__init__(self, label=label)
-        dic = {'A': 1e2,  # [N.s/m] Felt damping coefficient
-               'B': 2.5,  # [#] Hysteresis coefficient for the felt
-               'F': 13.8,  # [N/m] Elastic characteristic force
-               'L': 1.5*1e-2,  # [m] Height of the felt at rest
-               }
-        dic.update(kwargs)
-        dicpars, subs = mappars(self, **dic)
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
+
+        dicpars, subs = mappars(self, **parameters)
         # parameters
         pars = ['L', 'F', 'A', 'B']
         L, F, A, B = symbols(pars)
@@ -79,10 +52,29 @@ class Felt(Graph):
 
         self.core.subs.update(subs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'L': ('L', 1.5e-2),
-                              'K': ('K', 5e5),
-                              'A': ('A', 1e2),
-                              'B': ('B', 2.5)}}
+    metadata = {'title': 'Felt material',
+                'component': 'Felt',
+                'label': 'felt',
+                'dico': 'mechanics',
+                'desc': (r'Nonlinear felt material used in piano-hammer. The model is that found in [1]_ eq. (11). It includes a nonlinear restoring force and a nonlinear damper as follows:' +
+                         equation(r'f_{total}\left(c, \dot c\right) = f_{elastic}(c) + f_{damper}\left(c, \dot c\right),') +
+                         'with' +
+                         equation(r'f_{elastic}(c)  = F \,c ^B,') +
+                         'and' +
+                         equation(r'f_{damper}\left(c, \dot c\right) = \frac{A \, L}{B} c^{B-1} \,\dot c,') +
+                         'where :math:`c = \\frac{\\max (q, 0)}{L}` is the crush of the hammer with contraction :math:`q\\in\\mathbb R`.'),
+                'nodesdesc': "Mechanical points associated with the felt endpoints with positive flux N1->N2.",
+                'nodes': ('P1', 'P2'),
+                'parametersdesc': 'Component parameters.',
+                'parameters': [['L', "Height at rest", 'm', 1e-2],
+                               ['F', "Elastic characteristic force", 'N', 10.],
+                               ['A', "Damping coefficient", 'N.s/m', 1e2],
+                               ['B', "Hysteresis coefficient", 'd.u.', 2.5]],
+                'refs': {1: 'Antoine Falaize and Thomas Helie. Passive simulation of the nonlinear port-hamiltonian modeling of a rhodes piano. Journal of Sound and Vibration, 2016.'},
+                'nnodes': 2,
+                'nedges': 2,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    __doc__ = componentDoc(metadata)

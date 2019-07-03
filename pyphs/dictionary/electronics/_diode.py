@@ -12,44 +12,19 @@ import sympy
 from ..tools import symbols
 from pyphs.config import GMIN
 from ..edges import DissipativeNonLinear
-
-
-default = {'Is': ('Is', 2e-09),
-           'R': ('Rd', 0.5),
-           'v0': ('v0', 26e-3),
-           'mu': ('mu', 1.7)}
+from ..tools import componentDoc, parametersDefault
+from ..electronics import metadata as dicmetadata
 
 
 class Diode(DissipativeNonLinear):
-    """
-    Electronic nonlinear dissipative component: diode PN
 
-    Usage
-    -----
-
-    electronics.diodepn label nodes: **kwargs
-
-    Parameters:
-    -----------
-
-    nodes : (N1, N2)
-        tuple of nodes labels (int or string). The edge (ie. the current 'i') \
-is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
-
-    kwargs : dictionary with following "key: value"
-
-         * 'Is': saturation current (A)
-         * 'v0': quality factor (V)
-         * 'R': connectors resistance (Ohms)
-         * 'mu': quality factor (d.u.)
-    """
     def __init__(self, label, nodes, **kwargs):
-        kwargs.update({'gmin': ('gmin', GMIN)})
+
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
+        parameters.update({'gmin': ('gmin', GMIN)})
         # parameters
         pars = ['Is', 'v0', 'R', 'mu']
-        for par in pars:
-            if par not in kwargs.keys():
-                kwargs[par] = default[par]
         Is, v0, R, mu, gmin = symbols(pars+['gmin'])
         # dissipation variable
         w = symbols(["w"+label, "w"+label+"_R", "w"+label+"_gmin"])
@@ -71,7 +46,7 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
         data_diode = {'label': w[0],
                       'z': {'e_ctrl': zd_ectrl, 'f_ctrl': zd_fctrl},
                       'type': 'dissipative',
-                      'ctrl': 'e',
+                      'ctrl': '?',
                       'link': None}
         # edge
         edge_diode = (N1, iN2, data_diode)
@@ -101,9 +76,25 @@ is directed from N1 to N2, with 'i(v))=Is*(exp(v/v0)-1)'.
                                           edge_gmin],
                                          w,
                                          [zd_fctrl, z_fctrl, zgmin_fctrl],
-                                         **kwargs)
+                                         **parameters)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': default}
+    metadata = {'title': 'PN Diode',
+                'component': 'Diode',
+                'label': 'D',
+                'dico': 'electronics',
+                'desc': 'PN Diode governed by the Shockley diode equation [1]_.',
+                'nodesdesc': "The current is directed from 'N1' to 'N2'.",
+                'nodes': ('N1', 'N2'),
+                'parameters': [['Is', 'Saturation current', 'A', 2e-9],
+                               ['mu', 'Quality factor', 'd.u.', 1.7],
+                               ['R', 'Connectors resistance', 'Ohms', 0.5],
+                               ['v0', 'Thermal voltage', 'V', 26e-3]],
+                'refs': {1: 'https://en.wikipedia.org/wiki/Shockley_diode_equation'},
+                'nnodes': 3,
+                'nedges': 3,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    # Write documentation
+    __doc__ = componentDoc(metadata)

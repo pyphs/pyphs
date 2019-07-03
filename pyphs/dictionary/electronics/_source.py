@@ -9,38 +9,12 @@ Created on Sun Jun 18 23:55:44 2017
 from __future__ import absolute_import, division, print_function
 
 from ..edges import Port
+from ..tools import componentDoc, parametersDefault
+from ..electronics import metadata as dicmetadata
 
 
 class Source(Port):
-    """
-    Voltage or current source
 
-    Usage
-    ------
-        electronics.source label ('node1', 'node2'): type='type'
-
-        where 'type' is the source type in ('voltage', 'current').
-
-
-    Parameters
-    -----------
-
-    label : str, port label.
-
-    nodes: tuple of nodes labels
-
-        if a single label in nodes, port edge is "datum -> node"; \
-else, the edge corresponds to "nodes[0] -> nodes[1]".
-
-    kwargs: dic with following "keys:values"
-
-        * 'type' : source type in ('voltage', 'current').
-
-    Not implemented:
-    ----------------
-
-        * 'const': if not None, the input will be replaced by the value (subs).
-    """
     def __init__(self, label, nodes, **kwargs):
         type_ = kwargs['type']
         type_ = type_.lower()
@@ -53,7 +27,20 @@ else, the edge corresponds to "nodes[0] -> nodes[1]".
 #        kwargs.update({'units': units})
         Port.__init__(self, label, nodes, **kwargs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'type': 'voltage'}}
+    metadata = {'title': 'Electrical source',
+                'component': 'Source',
+                'label': 'sourc',
+                'dico': 'electronics',
+                'desc': 'Controlled voltage or current source.',
+                'nodesdesc': "source terminals with positive current N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parameters': [['type', "Source type in {'voltage', 'current'}", 'string', 'voltage']],
+                'refs': {},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    # Write documentation
+    __doc__ = componentDoc(metadata)

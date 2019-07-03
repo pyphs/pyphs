@@ -10,69 +10,25 @@ from ..connectors import Gyrator
 from ..magnetics import Source, Capacitor
 from ..edges import Observerec
 from ..tools import mappars
-__all__ = ['Pickup']
-
-
-def parameters_JSV2016():
-    pars = {
-            # Inductance of the pickup [Henries]
-            'Ccoil': 3.30*1e-5,
-            # Nb of pickup coil wire turns
-            'Ncoil': 100.,
-            # Magnetic material radius
-            'Rb': 1e-3,
-            # Pickup coil radius
-            'Rp': 1e-3,
-            # Magnetomotive force of the magnet
-            'H0': -1.,
-            # [m] horizontal position of the pick-up w.r.t the beam at rest
-            'Lh': 1.5*1e-3,
-            # [m] vertical position of the pick-up w.r.t the beam at rest
-            'Lv': 5e-4,
-    }
-
-    return pars
+from ..tools import componentDoc, parametersDefault
+from ..transducers import metadata as dicmetadata
 
 
 class Pickup(Graph):
-    """
-======
-Pickup
-======
-Electro-mecanique Pickup as found in electric instruments (guitars and piano)
 
-Parameters
------------
-
-label: str
-    Pickup label.
-
-nodes : (MEC, N1, N2)
-    Nodes for connection
-    * MEC is a mechanical node,
-    * EL1, EL2 are electrical nodes.
-
-kwargs : dictionary with following "key: value" (default in parenthesis)
-    * 'Ccoil': [H] Pickup coil inductance (3.3*1e-5),
-    * 'Ncoil': [d.u] Number of pickup coil wire turns (1e2),
-    * 'Rb': [m] Moving ball radius (1e-3),
-    * 'Rp': [m] pickup coil radius (1e-3),
-    * 'H0': [A] Constant magnetomotive force of pickup magnet (1.),
-    * 'Lv': [m] Vertical distance (1.5*1e-3),
-    * 'Lh': [m] Horizontal distance (5e-4),
-    """
     def __init__(self, label, nodes, **kwargs):
 
         Graph.__init__(self, label=label)
 
-        pars = parameters_JSV2016()
-        pars.update(kwargs)
-        Ccoil = float(pars.pop('Ccoil'))
-        Ncoil = float(pars.pop('Ncoil'))
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
+
+        Ccoil = float(parameters.pop('Ccoil'))
+        Ncoil = float(parameters.pop('Ncoil'))
 
         # remove H0
-        pars.pop('H0')
-        dicpars, subs = mappars(self, **pars)
+        parameters.pop('H0')
+        dicpars, subs = mappars(self, **parameters)
 
         # parameters
         pars = ['Rb', 'Rp', 'Lh', 'Lv']
@@ -85,9 +41,7 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
 
         self += Source(label+'Magnet',
                        (self.datum, NMagnet),
-                       **{'type': 'mmf',
-#                          'const': H0,
-                          })
+                       **{'type': 'mmf'})
 
         MASS_obs = Observerec(label+'OBS', (self.datum, MASS))
         self += MASS_obs
@@ -116,15 +70,26 @@ kwargs : dictionary with following "key: value" (default in parenthesis)
                         alpha=(label+'Ncoil', Ncoil))
         self.core.subs.update(subs)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('MECA', 'ELEC1', 'ELEC2'),
-                'arguments': {'Lp': 330*1e-9,
-                              'Ncoil': 100.,
-                              'murel': 700.,
-                              'Rb': 1e-3,
-                              'Rp': 1e-2,
-                              'H0': -1.,
-                              'Lh': 1.5*1e-3,
-                              'Lv': 5e-4, }
+    metadata = {'title': 'Electro-magnetic Pickup',
+                'component': 'Pickup',
+                'label': 'pick',
+                'dico': 'transducers',
+                'desc': 'Electro-magnetic pickup as found in electric instruments (guitars and piano). See [1]_ for details.',
+                'nodesdesc': "MEC is a mechanical node. EL1, EL2 are electrical nodes with positive output current EL1->EL2.",
+                'nodes': ('MEC', 'EL1', 'EL2'),
+                'parametersdesc': 'Component parameter.',
+                'parameters': [['Lv', "Vertical distance", 'm', 1e-3],
+                               ['Lh', "Horizontal distance", 'm', 5e-4],
+                               ['Ccoil', "Pickup coil inductance", 'W/K2', 3e-5],
+                               ['Ncoil', "Number of pickup coil wire turns", 'd.u.', 1e2],
+                               ['Rb', "Moving ball radius", 'm', 1e-3],
+                               ['Rp', "Pickup coil radius", 'm', 1e-3],
+                               ['H0', "Constant mmf of pickup magnet", 'A', 1.]],
+                'refs': {1: 'Antoine Falaize and Thomas Helie. Passive simulation of the nonlinear port-hamiltonian modeling of a rhodes piano. Journal of Sound and Vibration, 2016.'},
+                'nnodes': 6,
+                'nedges': 7,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
                 }
+
+    __doc__ = componentDoc(metadata)

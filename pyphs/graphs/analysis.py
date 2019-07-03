@@ -78,6 +78,50 @@ class GraphAnalysis:
             else:
                 i += 1
 
+    @property
+    def stor_edges(self):
+        """
+        Return the indices of storage edges in self.edgeslist
+        """
+        temp = []
+        for e in range(self.ne):
+            if self.get_edge_data(e, 'type') is 'storage':
+                temp.append(e)
+        return temp
+
+    @property
+    def diss_edges(self):
+        """
+        Return the indices of dissipative edges in self.edgeslist
+        """
+        temp = []
+        for e in range(self.ne):
+            if self.get_edge_data(e, 'type') is 'dissipative':
+                temp.append(e)
+        return temp
+
+    @property
+    def port_edges(self):
+        """
+        Return the indices of port edges in self.edgeslist
+        """
+        temp = []
+        for e in range(self.ne):
+            if self.get_edge_data(e, 'type') is 'port':
+                temp.append(e)
+        return temp
+
+    @property
+    def conn_edges(self):
+        """
+        Return the indices of connector edges in self.edgeslist
+        """
+        temp = []
+        for e in range(self.ne):
+            if self.get_edge_data(e, 'type') is 'connector':
+                temp.append(e)
+        return temp
+
     def iterate_fc(self):
         """
 Iteration over the list `graph.analysis.fc_edges` of a given graph.
@@ -169,6 +213,9 @@ Execute an iteration over the lists:
             self.iterate_ic()
 
     def perform(self):
+        """
+        Process realizability analysis.
+        """
         # realizability analysis on the ic_edges
         while (len(self.ic_edges) + len(self.ic_nodes) > 0):
             self.iteration()
@@ -402,7 +449,7 @@ compatible'.format(e_label, link_e_label)
                     self.set_edge_ec(link_e)
             # transformer case
             elif self.get_edge_data(e, 'connector_type') == 'transformer':
-                self.inverse_alpha(e)
+#                self.inverse_alpha(e)
                 # assert linked edge is not effort controlled
                 assert link_e not in self.ec_edges,\
                     'connector edges {0!s} and {1!s} are not \
@@ -437,10 +484,13 @@ compatible'.format(e_label, link_e_label)
             print('link', e_label, ctrl, link_e_label)
             self.verbose('link')
 
-    def inverse_alpha(self, e):
+    def inverse_alpha(self, e, minus=False):
         alpha = self.edges[e][2]['alpha']
         if alpha is not None:
-            self.edges[e][2]['alpha'] = alpha**-1
+            a = alpha**-1
+            if minus:
+                a = -a
+            self.edges[e][2]['alpha'] = a
 
 
 def isequal(M1, M2):

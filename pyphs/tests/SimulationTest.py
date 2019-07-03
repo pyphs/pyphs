@@ -41,7 +41,7 @@ def simulation_rlc_with_split():
               'pbar': True,         # Display a progress bar
               'timer': True,        # Display minimal timing infos
               'lang': 'python',     # in {'python', 'c++'}
-              }  
+              }
 
     simu = Simulation(rlc.to_method(), config=config)
 
@@ -49,11 +49,9 @@ def simulation_rlc_with_split():
     u = signalgenerator(which='sin', f0=800.,
                         tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
+    sequ = u[:, numpy.newaxis]
 
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ, nt=int(dur*simu.config['fs']))
 
     simu.process()
 
@@ -84,11 +82,9 @@ def simulation_rlc_cpp():
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
+    sequ = u[:, numpy.newaxis]
 
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ, nt=int(dur*simu.config['fs']))
     simu2cpp(simu)
 
     if not os.name.lower().startswith('nt'):
@@ -117,11 +113,9 @@ def simulation_rlc_without_split():
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
+    sequ = u[:, numpy.newaxis]
 
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ, nt=int(dur*simu.config['fs']))
 
     simu.process()
 
@@ -150,11 +144,9 @@ def simulation_rlc_without_split_trapez():
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
+    sequ = u[:, numpy.newaxis]
 
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ, nt=int(dur*simu.config['fs']))
 
     simu.process()
 
@@ -183,11 +175,9 @@ def simulation_rlc_without_split_theta():
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
+    sequ = u[:, numpy.newaxis]
 
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ, nt=int(dur*simu.config['fs']))
 
     simu.process()
 
@@ -216,11 +206,9 @@ def simulation_rlc_plot():
     dur = 0.01
     u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
 
-    def sequ():
-        for el in u():
-            yield (el, )
+    sequ = u[:, numpy.newaxis]
 
-    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+    simu.init(u=sequ)
 
     simu.process()
     simu.data.plot_powerbal(mode='multi')
@@ -245,7 +233,6 @@ def simulation_nlcore_full():
               'lang': 'python',     # in {'python', 'c++'}
               }
 
-
     # state initialization
     # !!! must be array with shape (core.dims.x(), )
     x0 = list(map(sympy.sympify, (0., 0., 0.)))
@@ -256,38 +243,19 @@ def simulation_nlcore_full():
     # def simulation time
     tmax = 0.02
     nmax = int(tmax*simu.config['fs'])
-    t = [n/simu.config['fs'] for n in range(nmax)]
-    nt = len(t)
+    t = numpy.array([n/simu.config['fs'] for n in range(nmax)])
 
     # def input signal
-    def sig(tn, mode='impact'):
-        freq = 1000.
-        amp = 1000.
-        if mode == 'sin':
-            pi = numpy.pi
-            sin = numpy.sin
-            out = amp * sin(2*pi*freq*tn)
-        elif mode == 'impact':
-            dur = 0.5*1e-3  # duration: 0.5ms
-            start = 0.001   # start at 1ms
-            out = amp if start <= tn < start + dur else 0.
-        elif mode == 'const':
-            out = 1.
-        return out
 
-    # def generator for sequence of inputs to feed in the Simulation object
-    def sequ():
-        """
-        generator of input sequence for Simulation
-        """
-        for tn in t:
-            u1 = sig(tn)
+    freq = 1000.
+    amp = 1000.
+    sig = amp * numpy.sin(2*numpy.pi*freq*t)
 
-            # !!! must be array with shape (core.dims.u(), )
-            yield numpy.array([u1, ])  # numpy.array([u1, u2, ...])
+    # def inputs to feed in the Simulation object
+    sequ = sig[:, numpy.newaxis]
 
     # Initialize the simulation
-    simu.init(u=sequ(), nt=nt)
+    simu.init(u=sequ)
 
     # Proceed
     simu.process()

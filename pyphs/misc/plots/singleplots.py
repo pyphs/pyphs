@@ -26,7 +26,8 @@ def singleplot(x, y, show=True, **kwargs):
         y-axis values for each curves curve.
 
     labels : list, optional
-        list of curve labels (the default is None).
+        list of curve labels (the default is None). The number of labels must
+        be a divisor of the number of plots.
 
     xlabel : str, optional
         x-axis label (the default is None).
@@ -35,8 +36,12 @@ def singleplot(x, y, show=True, **kwargs):
         y-axis label (the default is None).
 
     path : str, optional
-        Figure is saved in 'path.ext' if provided (the default is None).
-        Extension from pyphs config.py.
+        Figure is saved in 'path.ext' if provided (the default is None). See
+        'format' agument for extension.
+
+    format : str, optional
+        Extension in {'pdf', 'png'} for figure export. If not given, the
+        extension from pyphs.config.py is used.
 
     loc : int or string or pair of floats, default: 0
         The location of the legend. Possible codes are:
@@ -82,14 +87,25 @@ None).
     opts['ylabel'] = opts.pop('ylabels')
     opts.update(kwargs)
 
-    if (isinstance(y[0], (float, int)) or
-        (isinstance(y[0], numpy.ndarray) and len(y[0].shape) == 0)):
-        y = [y]
+    try:
+        if (isinstance(y[0], (float, int)) or
+           (isinstance(y[0], numpy.ndarray) and
+           len(y[0].shape) == 0)):
+
+            y = [y]
+    except IndexError:
+        pass
 
     nplots = int(y.__len__())
 
     if opts['labels'] is None:
         opts['labels'] = [None, ]*nplots
+    elif len(opts['labels']) != nplots:
+        nlabels = len(opts['labels'])
+        if nplots % nlabels == 0:
+            N = nplots - nlabels
+            opts['labels'] = list(opts['labels']) + [None, ]*N
+
     if opts['log'] is None:
         opts['log'] = ''
 

@@ -168,7 +168,7 @@ def multiplot(x, y, show=True, **kwargs):
             # get number of signals in yn
             len_yn = len(yn)
 
-            # Set appropriate
+            # Set appropriate len of labels
             if opts['labels'][n] is None:
                 opts['labels'][n] = (None, )*len_yn
             elif not len(opts['labels'][n]) == len_yn:

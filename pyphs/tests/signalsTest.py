@@ -20,7 +20,7 @@ def signal_waves():
     """
     path = os.path.join(here, 'test.wav')
 
-    s = np.array(list(signalgenerator()()))
+    s = signalgenerator()
     s /= np.max(np.abs(s))
 
     fs = 1000
@@ -38,5 +38,5 @@ def signal_synthesis():
     # test for all synthesis methods
     for w in sig.synthesis.names:
         kwargs = {'which': w}
-        sigs.append(list(signalgenerator(**kwargs)()))
+        sigs.append(signalgenerator(**kwargs))
     return True

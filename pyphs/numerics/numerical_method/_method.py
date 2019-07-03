@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function
 import sympy as sp
 from pyphs.core.maths import matvecprod, jacobian, sumvecs
 from pyphs.core.tools import free_symbols, types
-from pyphs.config import CONFIG_METHOD, VERBOSE, EPS_DG, FS_SYMBS
+from pyphs.config import CONFIG_METHOD, VERBOSE, FS_SYMBS
 from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
 from pyphs import Core
 from ..cpp.method2cpp import method2cpp
@@ -60,10 +60,14 @@ class Method(Core):
         Core.__init__(self, label=label)
 
         # Save core
-        self._core = core
+        self._core = core.__copy__()
+
+        # Remove expressions in self._core.subs
+        self._core.substitute(selfexprs=True)
 
         # init linear part size to 0
         self._core.dims._xl = 0
+        self._core.bl = []
         self._core.dims._wl = 0
         self._core.Q = self._core.Q[:0, :0]
         self._core.Zl = self._core.Zl[:0, :0]
@@ -83,9 +87,6 @@ class Method(Core):
                 attr_name = name[1]
             attr = getattr(source, attr_name)
             setattr(target, attr_name, copy.copy(attr))
-
-        # replace every expressions in subs
-        self.substitute(selfexprs=True)
 
         # ------------- CLASSES ------------- #
 
@@ -171,11 +172,21 @@ class Method(Core):
         names = remove_duplicates(get_strings(self.update_actions,
                                               remove=('exec', 'iter')))
 
+        updates = list()
+
+        def add_update(name):
+            if name not in updates:
+                if name in self.ops_names:
+                    deps = getattr(self, name+'_deps')
+                    for d in deps:
+                        add_update(d)
+                updates.append(name)
+
         # recover the dependencies for in-place updates 'ud_...'
         for name in names:
-            if name.startswith('ud_') and not name[3:] in names:
-                names.append(name[3:])
-        return names + ['dx', 'w', 'u', 'p']
+            add_update(name)
+
+        return remove_duplicates(updates + ['dx', 'w', 'u', 'p'])
 
     def args(self):
         return (self.x + self.dx() + self.w + self.u +
@@ -276,7 +287,7 @@ class Method(Core):
         from pyphs import Numeric
         return Numeric(self, inits=inits, config=config)
 
-    def to_simulation(self, config=None, inits=None):
+    def to_simulation(self, config=None, inits=None, erase=True):
         """
         Return a Numeric object for the evaluation of the PHS numerical method.
 
@@ -288,13 +299,19 @@ class Method(Core):
             as value. E.g: inits = {'x': [0, 0, 1]} to initalize state x
             with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
 
-        Return
+        erase : bool (optional)
+            If True and a h5file exists with same path than simulation data,
+            it is erased. Else, it is used to initialize the data object. The
+            default is True.
+
+        Output
         ------
+
         numeric : pyphs.Simulation
             Object for the numerical evaluation of the PHS numerical method.
         """
         from pyphs import Simulation
-        return Simulation(self, inits=inits, config=config)
+        return Simulation(self, inits=inits, config=config, erase=erase)
 
 def set_structure(method):
     set_getters_I(method)
@@ -660,11 +677,16 @@ dictionary.
     # build discrete evaluation of the gradient
     if method.config['grad'] == 'discret':
         # discrete gradient
-        dxHl = list(types.matrix_types[0](method.Q)*(types.matrix_types[0](method.xl()) +
-                    0.5*types.matrix_types[0](method.dxl())))
+        mtype = types.matrix_types[0]
+
+        dxHl = list(
+            mtype(method.Q)*(
+                mtype(method.xl()) + 0.5*mtype(method.dxl())) +
+            mtype(method.bl)
+            )
         dxHnl = discrete_gradient(method.H, method.xnl(), method.dxnl(),
-                                  EPS_DG)
-        method._dxH = dxHl + dxHnl
+                                  method.config['epsdg'])
+        method._dxH = list(dxHl) + dxHnl
 
     elif method.config['grad'] == 'theta':
         # theta scheme
@@ -673,9 +695,10 @@ dictionary.
                                      method.dx(),
                                      method.config['theta'])
     else:
-        assert method.config['grad'] == 'trapez', 'Unknown method for \
-gradient evaluation: {}'.format(method.config['grad'])
         # trapezoidal rule
+        if not method.config['grad'] == 'trapez':
+            errortext = 'Unknown method for gradient evaluation: {}'
+            raise NotImplementedError(errortext.format(method.config['grad']))
         method._dxH = gradient_trapez(method.H, method.x, method.dx())
 
     # reference the discrete gradient for the Core in core.exprs_names
@@ -684,24 +707,20 @@ gradient evaluation: {}'.format(method.config['grad'])
 
 def build_structure_evaluation(method):
     """
-Build the substitutions of the state x associated with the Core core and
-the chosen value for the theta scheme.
+    Build the substitutions of the state x associated with the Core core and
+    the chosen value for the theta scheme.
 
-Parameters
-----------
+    Parameters
+    ----------
 
-core: Core:
-    Core structure on which the numerical evaluation is built.
+    method:
+        Core structure on which the numerical evaluation is built.
 
-theta: numeric in [0, 1] or 'trapez'
-    If numeric, a theta scheme is used f(x) <- f(x+theta*dx). Else if theta is
-    the string 'trapez', a trapezoidal rule is used f(x)<-0.5*(f(x)+f(x+dx)).
+    Output
+    ------
 
-Output
-------
-
-None:
-    In-place transformation of the Core.
+    None:
+        In-place transformation of method.
     """
 
     # define theta parameter for the function 'build_structure_evaluation'

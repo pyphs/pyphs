@@ -80,36 +80,53 @@ def listToPassAllExcept(l, i):
 
 
 def multirecursive(method, process, nin, nout, inits):
+
+    # init string with "process" content
     string = process
+
+    # get dims
+    nx = method.dims.x()
+    nw = method.dims.w()
+    nu = method.dims.y()
+
+    # for each input to recursion process
     for i in range(nin):
-        if i < method.dims.x():
+        # select name and index depending on the type of recursion input
+        if i < nx:
+            # State increment
             initname = 'dx'
             initstart = 0
-        elif i < method.dims.x()+method.dims.w():
+        elif i < nx + nw:
+            # Dissipative variable
             initname = 'w'
-            initstart = method.dims.x()
-        elif i < initstart+method.dims.w()+method.dims.x():
+            initstart = nx
+        elif i < nx + nw + nx:
+            # State
             initname = 'x'
-            initstart = method.dims.x()+method.dims.w()
-        elif i < initstart+method.dims.x()+method.dims.y():
+            initstart = nx + nw
+        elif i < nx + nw + nx + nu:
+            # Input
             initname = 'u'
-            initstart = method.dims.x()+method.dims.w()+method.dims.x()
+            initstart = nx + nw + nx
         else:
+            # Observer
             initname = 'o'
-            initstart += method.dims.x() + \
-                method.dims.w() + \
-                method.dims.x() + \
-                method.dims.y()
+            initstart += nx + nw + nx + nu
 
+        # parameters for recursion
         p1 = listToPassAllExcept([None, ]*(nin-i), 0)+',' if nin-i > 0 else ''
         p2 = listToAllPass([None, ]*(nout-nin))
+
+        # faust init (prefix)
         prefix = 'prefix({0}, _)'.format(inits[initname][i-initstart])
+
+        # recursion
         string = '(' + string + ') ~ {2} <: {0}{1}'.format(p1, p2, prefix)
     return string
 
 
 def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
-                   nIt=3):
+                   nIt=10):
     """
     write a Faust process (.dsp)
 
@@ -157,44 +174,50 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     for y in outputs:
         iout.append(method.y.index(method.symbols(str(y))))
 
+    # initializations
     if inits is None:
         inits = {}
     for name in ('x', 'dx', 'w', 'u', 'o', 'p'):
         if name not in inits.keys():
             inits[name] = [0., ]*len(geteval(method, name))
 
+    # set path
     if path is None:
         path = method.label + '.dsp'
     argsnames = ['dx', 'w', 'x', 'o', 'u']
 
+    # inputs processes
     cinputs = '('
-    for i in range(len(method.u)):
+    for i, ui in enumerate(method.u):
         if i in iin:
             cinputs += '_, '
         else:
-            cinputs += str(method.u[i]) + ', '
-
+            cinputs += str(ui) + ', '
     cinputs = cinputs[:-2] + ')'
 
+    # constant values for parameters
     constPars = ''
     for k in method.subs.keys():
         constPars += '\n{0} = {1};'.format(str(k), method.subs[k])
     if constPars == '':
         constPars = '// None'
 
+    # constant values for inputs
     constInputs = ''
-    for i, k in enumerate(method.u):
+    for i, ui in enumerate(method.u):
         if i not in iin:
-            constInputs += '\n{0} = {1};'.format(str(k), inputs[i])
+            constInputs += '\n{0} = {1};'.format(str(ui), inputs[i])
     if constInputs == '':
         constInputs = '// None'
 
+    # sliders for controlled parameters
     sliders = ''
     for p in method.p:
         sliders += '\n{0} = hslider("{0}", 0.5, 0., 1., 0.001);'.format(str(p))
     if sliders == '':
         sliders = '// None'
 
+    # all-pass processes
     def code_pass(name):
         a = geteval(method, name)
         if len(a) > 0:
@@ -216,6 +239,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
         if cr:
             cpass += '\n'
 
+    # all-cut processes
     def code_terminate(name):
         a = geteval(method, name)
         if len(a) > 0:
@@ -236,23 +260,29 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
         if cr:
             cstop += '\n'
 
+    # update vl = (dxl, wl)
     udvl = faust_vector('udvl', method.ud_vl, argsnames, method.subs, method)
+    udL = 'iterationL' if len(method.vl()) > 0 else 'args'
+
+    # update vnl = (dxnl, wnl)
     udvnl = faust_vector('udvnl',
                          method.ud_vnl,
                          argsnames,
                          method.subs,
                          method)
+    udNL = ('iterationNL : '*nIt)[:-1] if len(method.vnl()) > 0 else ''
+
+    # update x and y
+    udXY = '<: (udx, y)' if len(method.x) > 0 else '<: y'
     y = faust_vector('y', [method.output()[i] for i in iout],
                      argsnames, method.subs, method)
 
-    udNL = ('iterationNL : '*nIt)[:-1] if len(method.vnl()) > 0 else ''
-    udL = 'iterationL' if len(method.vl()) > 0 else 'args'
-    udXY = '<: (udx, y)' if len(method.x) > 0 else '<: y'
-
+    # Faust recursion
     nin = len(method.x)*2 + len(method.w) + len(method.observers)
     nout = nin + len(outputs)
     recursion = multirecursive(method, 'iteration', nin, nout, inits)
 
+    # Faust comments
     infoIn = ''
     for i in range(len(method.u)):
         if i in iin:
@@ -267,6 +297,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     for p in method.p:
         infoPars += str(p) + ', '
 
+    # Substitutions
     subs = {'inputs': cinputs,
             'label': method.label,
             'fs': str(method.fs),
@@ -288,6 +319,7 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
 
     cfaust = template.substitute(subs)
 
+    # Write FAUST .dsp file
     with open(path, 'w') as f:
         for i, l in enumerate(cfaust.splitlines()):
             if i > 0:

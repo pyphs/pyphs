@@ -7,7 +7,6 @@ Created on Mon May 15 15:53:53 2017
 """
 
 import sympy
-import stopit
 from pyphs.config import TIMEOUT, SIMPLIFY
 from . import types
 from pyphs.misc.tools import geteval
@@ -88,10 +87,10 @@ Output
 expr_simp: sympy.Expr or str
     Simplified expression if succeed, else returns 'not finished'
     """
-    @stopit.threading_timeoutable(default=expr)
-    def func():
-        return getattr(sympy, method)(expr) if method is not None else expr
-    return func(timeout=timeout)
+    #@stopit.threading_timeoutable(default=expr)
+    # def func():
+    return getattr(sympy, method)(expr) if method is not None else expr
+    # return func(timeout=timeout)
 
 
 def simplify_scalar(expr, **kwargs):

@@ -17,39 +17,42 @@ path_to_configuration_file = os.path.join(here, 'config.py')
 # Below are the options for the INTERFACE
 
 # Verbose level in [0, 1, 2, 3]
-VERBOSE = 3
+VERBOSE = 1
 
 
 ###############################################################################
 
 # Below are the options for NUMERICAL COMPUTATIONS also used in the DICTIONARY.
 
-# Define the data type (defualt is float 32bi)
+# Define the data type (default is float 32bit)
 DTYPE = numpy.finfo(float).dtype.type
 
 # Default samplerate (Hz)
 FS = 48e3
 
-# Define the numerical tolerance such that |x|<EPS <=> x ~ 0
-EPS = numpy.finfo(float).eps
+# Define the numerical tolerance such that |x|<EPS <=> x = 0
+# EPS = numpy.finfo(float).eps    # numpy tolerance
+EPS = 1e-12                     # custom tolerance
 
-# Define the numerical tolerance for the discrete gradient |x|<EPS <=> dxH ~ H'
+# Define the numerical tolerance for the discrete gradient:
+# |dx|<EPS_DG <=> dxH = H'
 EPS_DG = numpy.finfo(float).eps
 
-# Activate the use of theano for numerical evaluations.
+# Activate the use of theano for python numerical evaluations. This produce
+# code that need to be compiled with inherent time cost but faster evaluations.
+# Need a proper theano installation.
 THEANO = False
 
-# Maximum number of iterations for implicit functions solvers
+# Maximum number of iterations for implicit functions solvers (Newton-Raphson).
 MAXIT = 100
 
 # Minimal conductance for accelerating convergence of NL-solver (used e.g. in
 # diodes, triode and bipolar-junction transistors):
 GMIN = 1e-12
 
-
+# Assemble dictionary of parameters
 CONFIG_NUMERIC = {'fs': FS,
                   'eps': EPS,
-                  'epsdg': EPS_DG,
                   'maxit': int(MAXIT),
                   'theano': THEANO,
                   'gmin': GMIN,
@@ -79,13 +82,19 @@ TIMEOUT = 10.
 # label of datum node
 datum = '#'
 
+###############################################################################
+
+# Graphs plot options
+
+# Nodes layout in {'circular', 'spring'}
+GRAPHS_LAYOUT = 'circular'
+
+# Number of iteration for layout optimization
+GRAPHS_ITERATIONS = 1000
 
 ###############################################################################
 
 # Below are the options for LATEX RENDERING in generated .tex files and plots
-
-# path to latex compiler
-latex_compiler_path = '/Library/TeX/texbin'
 
 # In equations:
 # use “p/q” instead of “frac{p}{q}” when the denominator is simple enough
@@ -142,7 +151,8 @@ SPLIT = True
 
 CONFIG_METHOD = {'grad': GRADIENT,
                  'theta': THETA,
-                 'split': SPLIT}
+                 'split': SPLIT,
+                 'epsdg': EPS_DG}
 
 ###############################################################################
 
@@ -153,8 +163,7 @@ CONFIG_METHOD = {'grad': GRADIENT,
 SIMULATION_PATH = None
 
 # Simulation language in {'python', 'c++'}
-# Notice the 'c++' option need an appropriate configuration
-# of SCRIPT above.
+# Notice the 'c++' option need an appropriate configuration (see website).
 LANGUAGE = 'python'
 
 # Data names in the global datasapce of the hdf5 file saved in PATH/data.
@@ -186,3 +195,12 @@ CONFIG_SIMULATION = {'path': SIMULATION_PATH,
 
 # Export format:
 plot_format = 'pdf'
+
+###############################################################################
+
+# Below are the options for RST rendering
+
+# RST equations format in {'mathjax', 'latex'}
+RST_EQUATIONS = 'mathjax'
+
+RST = {'equations': RST_EQUATIONS}

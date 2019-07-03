@@ -5,6 +5,7 @@ Created on Sat Mar  5 13:53:43 2016
 @author: Falaize
 """
 from datetime import datetime
+import sympy
 
 
 # =========================================================================== #
@@ -43,7 +44,7 @@ def geteval(obj, attr):
 else return value.
     """
     elt = getattr(obj, attr)
-    if hasattr(elt, '__call__'):
+    if hasattr(elt, '__call__') and not isinstance(elt, sympy.Symbol):
         return elt()
     else:
         return elt
@@ -138,6 +139,33 @@ Example
         if obj not in remove:
             strings.append(obj)
     return strings
+
+
+# =========================================================================== #
+
+def ordering(core, name, args):
+    """
+    Returns a list of indices of elements of 'args' in 'core' attribute 'name'.
+
+    Parameters
+    ----------
+
+    core : pyphs.Core
+
+    name : string
+
+    args : list of strings
+
+    Return
+    ------
+
+    inds : list of int
+
+    """
+    def get_index(e):
+        symb = core.symbols(e)
+        return getattr(core, name).index(symb)
+    return list(map(get_index, args))
 
 
 # =========================================================================== #

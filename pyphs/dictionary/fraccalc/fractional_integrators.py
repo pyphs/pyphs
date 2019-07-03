@@ -9,42 +9,30 @@ Created on Sat May 13 17:57:10 2017
 from pyphs import Graph
 import numpy as np
 from pyphs.dictionary.edges import DissipativeLinear, StorageLinear
+from pyphs.misc.rst import equation
 from pyphs.config import EPS
-
+from ..tools import componentDoc, parametersDefault
+from ..fraccalc import metadata as dicmetadata
 
 
 # ======================================================================= #
 
 
 class Fracintec(Graph):
-    """
-Effort-controlled fractional integrator:
-.. math:: f(s) = p \\, s^{-\\beta}  \\, e(s)
 
-Usage
------
-
-.. code:: fraccalc.fracintec label ('n1','n2'): p=1; beta=0.5; NbPoles=10; \
-PolesMinMax=(-10,10); NbFreqPoints=200; FreqsMinMax=(1, 48e3); \
-DoPlot=False;
-    """
     def __init__(self, label, nodes, **kwargs):
         Graph.__init__(self, label=label)
 
-        if 'p' not in kwargs:
-            p = 1
-        else:
-            p = kwargs.pop('p')
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
 
-        if 'beta' not in kwargs:
-            beta = 0.5
-        else:
-            beta = kwargs.pop('beta')
+        g = parameters.pop('g')
+        beta = parameters.pop('beta')
 
-        self.core.subs.update({self.core.symbols('p_'+label): p,
+        self.core.subs.update({self.core.symbols('g_'+label): g,
                                self.core.symbols('beta_'+label): beta})
 
-        diagRmu, diagQmu = fractionalIntegratorWeights(p, beta, **kwargs)
+        diagRmu, diagQmu = fractionalIntegratorWeights(g, beta, **parameters)
 
         # Truncation of poles with null Q
         nbPoles = diagRmu.__len__()
@@ -69,45 +57,46 @@ DoPlot=False;
                                         ctrl='e')
             self += comp
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'p': 1.,
-                              'beta': 0.5,
-                              'NbPoles': 20,
-                              'PolesMinMax': (-5, 10),
-                              'NbFreqPoints': 200,
-                              'FreqsMinMax': (1, 48e3)}}
+    metadata = {'title': 'Effort-controlled fractional integrator',
+                'component': 'Fracintec',
+                'label': 'fracint',
+                'dico': 'fraccalc',
+                'desc': 'Effort-controlled fractional integrator from [1]_ (chap 7):' + equation(r'f(s) = g \, s^{-beta}  \, e(s).'),
+                'nodesdesc': "Component terminals with positive flux N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parametersdesc': 'Component parameters',
+                'parameters': [['g', "Gain", 'unknown', 1.],
+                               ['beta', "Integration order in (0, 1)", 'd.u.', 0.5],
+                               ['NbPoles', "Approximation order", 'd.u.', 20],
+                               ['PolesMinMax', "Poles modules in :math:`(10^{min}, 10^{max})`", 'Hz', (-5, 10)],
+                               ['NbFreqPoints', "Number of optimization points", 'd.u.', 200],
+                               ['FreqsMinMax', "Optimization interval", 'Hz', (1, 48e3)],
+                               ['DoPlot', "Plot transfer function", 'bool', False]],
+                'refs': {1: "Antoine Falaize. Modelisation, simulation, generation de code et correction de systemes multi-physiques audios: Approche par reseau de composants et formulation hamiltonienne a ports. PhD thesis, ecole Doctorale d'Informatique, Telecommunication et electronique de Paris, Universite Pierre et Marie Curie, Paris 6, EDITE UPMC ED130, july 2016."},
+                'nnodes': 19,
+                'nedges': 34,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort']
+                }
+    # Write documentation
+    __doc__ = componentDoc(metadata)
 
 
 # ======================================================================= #
 
 
 class Fracintfc(Graph):
-    """ 
-Flux-controlled fractional integrator:
-.. math:: e(s) = p \\, s^{-\\beta}  \\, f(s)
 
-Usage
------
-
-.. code:: fraccalc.fracintfc label ('n1','n2'): p=1; beta=0.5; NbPoles=10; \
-PolesMinMax=(-10,10); NbFreqPoints=200; FreqsMinMax=(1, 48e3); \
-DoPlot=False;
-    """
     def __init__(self, label, nodes, **kwargs):
         Graph.__init__(self, label=label)
-        if 'p' not in kwargs:
-            p = 1
-        else:
-            p = kwargs.pop('p')
 
-        if 'beta' not in kwargs:
-            beta = 0.5
-        else:
-            beta = kwargs.pop('beta')
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
 
-        diagR, diagQ = fractionalIntegratorWeights(p, beta, **kwargs)
+        g = parameters.pop('g')
+        beta = parameters.pop('beta')
+
+        diagR, diagQ = fractionalIntegratorWeights(g, beta, **parameters)
 
         # Truncation of poles with null Q
         nbPoles = diagR.__len__()
@@ -122,28 +111,42 @@ DoPlot=False;
             # here, diagRmu[n] is a conductance (effort-controlled)
             Rn = diagR[n]
             self += DissipativeLinear(label + 'R' + str(n),
-                                         nodes,
-                                         coeff=Rn,
-                                         inv_coeff=True,
-                                         ctrl='e')
+                                      nodes,
+                                      coeff=Rn,
+                                      inv_coeff=True,
+                                      ctrl='e')
 
             Qn = diagQ[n]
             self += StorageLinear(label + 'Q' + str(n),
-                                     nodes,
-                                     value=Qn,
-                                     inv_coeff=False,
-                                     ctrl='f')
+                                  nodes,
+                                  value=Qn,
+                                  inv_coeff=False,
+                                  ctrl='f')
             N = Ncomp
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'p': 1.,
-                              'beta': 0.5,
-                              'NbPoles': 20,
-                              'PolesMinMax': (-5, 10),
-                              'NbFreqPoints': 200,
-                              'FreqsMinMax': (1, 48e3)}}
 
+    metadata = {'title': 'Flux-controlled fractional integrator',
+                'component': 'Fracintfc',
+                'label': 'fracint',
+                'dico': 'fraccalc',
+                'desc': r'Flux-controlled fractional integrator from [1]_ (chap 7)' + equation(r'e(s) = g \, s^{-beta}  \, f(s).'),
+                'nodesdesc': "Component terminals with positive flux N1->N2.",
+                'nodes': ('N1', 'N2'),
+                'parametersdesc': 'Component parameters',
+                'parameters': [['g', "Gain", 'unknown', 1.],
+                               ['beta', "Integration order in (0, 1)", 'd.u.', 0.5],
+                               ['NbPoles', "Approximation order", 'd.u.', 20],
+                               ['PolesMinMax', "Poles modules in :math:`(10^{min}, 10^{max})`", 'Hz', (-5, 10)],
+                               ['NbFreqPoints', "Number of optimization points", 'd.u.', 200],
+                               ['FreqsMinMax', "Optimization interval", 'Hz', (1, 48e3)],
+                               ['DoPlot', "Plot transfer function", 'bool', False]],
+                'refs': {1: "Antoine Falaize. Modelisation, simulation, generation de code et correction de systemes multi-physiques audios: Approche par reseau de composants et formulation hamiltonienne a ports. PhD thesis, ecole Doctorale d'Informatique, Telecommunication et electronique de Paris, Universite Pierre et Marie Curie, Paris 6, EDITE UPMC ED130, july 2016."},
+                'nnodes': 18,
+                'nedges': 34,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+    # Write documentation
+    __doc__ = componentDoc(metadata)
 
 # ======================================================================= #
 
@@ -233,4 +236,3 @@ def fractionalIntegratorWeights(p, beta, NbPoles=10,
         grid()
 
     return diagR, diagQ
-

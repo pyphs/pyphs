@@ -105,6 +105,9 @@ class LatexCore(object):
         self.Q = obj2tex(self.core.Q, r'\mathbf{Q}',
                          '', self.sn)
 
+        self.bl = obj2tex(self.core.bl, r'\mathbf{b_l}',
+                         '', self.sn)
+
         self.Zl = obj2tex(self.core.Zl, r'\mathbf{Z_l}',
                           '', self.sn)
 

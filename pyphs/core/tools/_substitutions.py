@@ -196,9 +196,7 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
         subs.update(core.subs)
     # append only exprs in core subs dic
     elif selfexprs:
-        for k in core.subs.keys():
-            if not isinstance(core.subs[k], (int, float)):
-                subs[k] = core.subs[k]
+        subs.update(core.subsexprs)
 
     # substitutions in core's own subsitution dictionary
     core.subs = substitute_dict(core.subs, subs)

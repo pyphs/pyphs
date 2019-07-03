@@ -29,15 +29,18 @@ def movesquarematrixcolnrow(M, indi, indf):
 
     Example
     -------
-    >>> import numpy as np
-    >>> M = np.eye(3)
-    >>> print(M)
-    [[ 1.  0.  0.]
-     [ 0.  1.  0.]
-     [ 0.  0.  1.]]
+    >>> import sympy as sp
+    >>> # Define a skew-symmetric matrix
+    >>> M = sp.Matrix([[ 0, +1,  0],
+    ...                [-1,  0, +2],
+    ...                [ 0, -2,  0]])
+    >>> # Move row/column from index 0 to index 2
     >>> from pyphs.core.structure.moves import movesquarematrixcolnrow
-    >>> A = movesquarematrixcolnrow(M, 0, 2)
-    >>> print(A)
+    >>> movesquarematrixcolnrow(M, 0, 2)
+    Matrix([
+    [ 0, 2, -1],
+    [-2, 0,  0],
+    [ 1, 0,  0]])
     """
     n = M.shape[0]
     new_indices = myrange(n, indi, indf)

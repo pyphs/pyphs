@@ -24,7 +24,7 @@ core.subsinverse()
 core.reduce_z()
 
 ## ---------------------------  SIMULATION  ---------------------------------- #
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs.core.tools import sympify
 #    import numpy
@@ -64,26 +64,50 @@ core.reduce_z()
 #
 #    # state initialization
 #    list_v_hammer = numpy.linspace(1, 10, 10)
-#    # !!! must be array with shape (core.dims.x(), )
+#
+#    # array with shape (core.dims.x(), )
 #    x0 = sympify([0, ] * method.dims.x())
 #
-#    # Init Hammer velocity
-#    # v_hammer = 1  # Hammer velocity (m/s)
-#    symbol_hammer_velocity = core.symbols('Vhammer')
-#    symbol_hammer_mass = core.symbols('Mhammer')
-#    m_hammer = core.subs[symbol_hammer_mass]  # Hammer mass (kg)
-#    # Set mass momentum (N.s)
-#    ixHammerMass = method.x.index(core.symbols('xHammerMass'))
-#    x0[ixHammerMass] = symbol_hammer_velocity * symbol_hammer_mass
-#    method.subs[symbol_hammer_velocity] = list_v_hammer[0]
+#    # ---------------------------------------------------------------------------
+#    # Init Hammer velocity:
+#    # The prescibed hammer velocity (m.s^-1) has to be converted to
+#    # momentum (N.s) wich is the dimension of the state of the hammer mass to be
+#    # initialized. For efficiency when simulating with several initial hammer
+#    # velocity, this init value is not hard coded.
 #
-#    symbol_tinit = core.symbols('tinit')
-#    tinit = 2e-2  # [s] time between init of velocity and impact
-#    method.subs[symbol_tinit] = tinit
-#    qh0 = -symbol_hammer_velocity*symbol_tinit  # [m] Hammer's initial position w.r.t contact
+#    # Define new symbols
+#    hammer_V_symb = core.symbols('Vhammer')
+#    hammer_M_symb = core.symbols('Mhammer')
+#
+#    # `xHammerMass` is the state p associated with the hammer mass
+#    # Store expression pinit = m * vinit
+#    index = method.index('x', 'xHammerMass')
+#    x0[index] = hammer_M_symb * hammer_V_symb
+#
+#    # Store a dummy substitution value to be updated
+#    method.subs[hammer_V_symb] = list_v_hammer[0]
+#
+#    # ---------------------------------------------------------------------------
+#    # Init Hammer's initial position w.r.t contact:
+#    # The time between simulation start and impact of the hammer on the beam
+#    # is kept constant by defining the initial position as qinit = -tinit * vinit
+#
+#    # Time between simulation start and impact
+#    tinit = 2e-2  # [s]
+#
+#    # Store substitution value
+#    tinit_symb = core.symbols('tinit')
+#    method.subs[tinit_symb] = tinit
+#
+#    # Store expression qinit = -tinit * vinit
+#    qh0 = -tinit_symb * hammer_V_symb  # (m)
 #    iqHammerFelt = method.x.index(core.symbols('qHammerFelt'))
 #    x0[iqHammerFelt] = qh0  # (m)
 #
+#    # ---------------------------------------------------------------------------
+#    # Init SIMULATION
+#
+#    # define dynamic dicitonary of substitutions
 #    subs = method.subs.copy()
 #
 #    # Instanciate Simulation class
@@ -95,42 +119,47 @@ core.reduce_z()
 #    nt = int(tmax*simu.config['fs'])
 #    t = [n/simu.config['fs'] for n in range(nt)]
 #
-#    # def generator for sequence of inputs to feed in the Simulation
-#    def sequ():
-#        """
-#        generator of input sequence for Simulation
-#        """
-#        for tn in t:
-#            # numpy.array([u1, u2, ...])
-#            yield numpy.array([[0., 1.][i] for i in order])
+#    # def sequence of inputs to feed in the Simulation
+#    sequ = [numpy.array([[0., 1.][i] for i in order]) for _ in t]
 #
 #    # ---------------------------  LOOP  --------------------------------
-#    sig = list()
+#    # list of signals to be concatenated
+#    signals = list()
 #
+#    # path to folder where to write .wav files
 #    waves_path = os.path.join(here, 'waves')
+#
+#    # create folder where to write .wav files
 #    if not os.path.exists(waves_path):
 #        os.mkdir(waves_path)
 #
+#    # for each hammer load
 #    for v_hammer in list_v_hammer:
 #
-#        subs[symbol_hammer_velocity] = v_hammer
+#        # update hammer load
+#        subs[hammer_V_symb] = v_hammer
 #
-#        # Initialize the simulation
-#        simu.init(u=sequ(), nt=nt, subs=subs)
+#        # Initialize the simulation with updated hammer load
+#        simu.init(u=sequ,
+#                  nt=nt,
+#                  subs=subs)
 #
 #        # Proceed
 #        simu.process()
 #
+#        # Write signal as .wav file
 #        wave_name = 'PickupOut_{}={}'.format('vHammer', str(v_hammer))
 #        simu.data.wavwrite('y', order[1],
 #                           path=os.path.join(waves_path, wave_name))
 #
-#        sig += list(simu.data.y(order[1], decim=1))
-#        simu.data.plot([('x', 0), ('dtx', 0), ('y', order[0])],
-#                       load={'imin': 0, 'imax': 2500}, label=str(v_hammer))
+#        # append signal to concatenated signals
+#        signals += list(simu.data.y(vslice=order[1]))
 #
-#        pass
+#        # Plot signal
+#        # simu.data.plot([('x', 0), ('dtx', 0), ('y', order[0])],
+#        #                label=str(v_hammer))
 #
-#    wavwrite(sig, simu.config['fs'],
-#             os.path.join(here, 'PickupOut'),
+#    # Write concatenated signals as .wav file
+#    wavwrite(signals, simu.config['fs'],
+#             path=os.path.join(waves_path, 'PickupOut'),
 #             normalize=True)

@@ -11,45 +11,48 @@ Here, we build the  core asssociated with the
 from __future__ import absolute_import, division, print_function
 
 import os
-from pyphs import Netlist, Graph
+from pyphs import Netlist
 
 
+# def netlist file name
 label = 'bjtamp'
+here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+netlist_filename = here + os.sep + label + '.net'
 
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-
-netlist_filename = path + os.sep + label + '.net'
-
+# read netlist
 netlist = Netlist(netlist_filename)
 
-graph = Graph(netlist=netlist)
+# build core
+core = netlist.to_core()
 
-core = graph.to_core()
-
+# reduce linear dissipative part
 core.reduce_z()
 
-#if __name__ == '__main__':
+# %% ------------------------------ SIMULATION ------------------------------ #
+
+# UNCOMMENT BELOW FOR SIMULATION AND PLOTS
+
+# if __name__ == '__main__':
 #
 #    from pyphs import signalgenerator, Simulation
+#    import numpy
+#
 #    config = {'fs': 48e3,
-#              'split': True,
-#              'progressbar': True,
-#              'timer': True,
-#              }
+#              'lang': 'python'}
 #
 #    simu = Simulation(core.to_method(), config=config)
 #
 #    dur = 0.01
 #
-#    u = signalgenerator(which='sin', f0=800., tsig=dur, fs=simu.config['fs'])
+#    A = 1e-3
+#    Vcc = 9.
+#    uIN = signalgenerator(which='sin', A=A, f0=800., tsig=dur, fs=simu.fs)
+#    uVCC = signalgenerator(which='const', A=Vcc, tsig=dur, fs=simu.fs)
+#    uOUT = signalgenerator(which='zero', tsig=dur, fs=simu.fs)
 #
-#    def sequ():
-#        for el in u():
-#            yield (0, 1e-3*el, 9.)
-#
-#    simu.init(u=sequ(), nt=int(dur*simu.config['fs']))
+#    u = numpy.vstack((uOUT, uIN, uVCC)).T
+#    simu.init(u=u)
 #
 #    simu.process()
 #
 #    simu.data.plot_powerbal(mode='multi')
-#    pass

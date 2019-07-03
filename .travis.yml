@@ -4,6 +4,8 @@ python:
 #  - "3.4"
   - "3.5"
   - "3.6"
+  # Cannot Test for py3.7 on travis (1st jul 2019)
+  # - "3.7"
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
@@ -20,10 +22,10 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda_deps='pip libgfortran cython numpy scipy networkx matplotlib nose sympy h5py'
+  - conda_deps='pip numpy scipy networkx matplotlib nose sympy h5py'
   - conda create -q -n test-environment "python=$TRAVIS_PYTHON_VERSION" $conda_deps
   - source activate test-environment
-  - pip_deps='stopit progressbar2 nose nose-exclude codecov coveralls'
+  - pip_deps='progressbar2 nose nose-exclude codecov'
   - pip install $pip_deps
   - pip install .
 before_script: # configure a headless display to test plot generation

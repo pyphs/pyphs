@@ -8,39 +8,25 @@ Created on Sat May 21 16:29:43 2016
 from __future__ import absolute_import, division, print_function
 from ..edges import StorageNonLinear
 from ..tools import symbols
+from ..tools import componentDoc, parametersDefault
+from ..mechanics import metadata as dicmetadata
+from pyphs.misc.rst import equation
 
 
 class Springcubic(StorageNonLinear):
-    """
-    Spring with cubic nonlinearity F(q)=K0*(q + K2*q**3)
 
-    Usage
-    -----
-
-    mechanics.springcubic label nodes: **kwargs
-
-    Parameters:
-    -----------
-
-    nodes : (N1, N2)
-        tuple of nodes labels (int or string). The edge (ie. the velocity \
-'v') is directed from N1 to N2.
-
-    kwargs : dictionary with following "key: value"
-
-         * 'K0': Stiffness (N/m)
-         * 'K2': Nonlinear contribution (dimensionless unit)
-    """
     def __init__(self, label, nodes, **kwargs):
+
+        parameters = parametersDefault(self.metadata['parameters'])
+        parameters.update(kwargs)
+
         # parameters
-        pars = ['K0', 'K2']
-        for par in pars:
-            assert par in kwargs.keys()
-        K0, K2 = symbols(pars)
+        pars = ['F1', 'F3', 'xref']
+        F1, F3, xref = symbols(pars)
         # state  variable
         x = symbols("x"+label)
         # storage funcion
-        H = K0*x*(x + K2*x**3/2)/2
+        H = F1*x**2/(2.*xref) + F3*x**4/(4*xref**3)
         N1, N2 = nodes
 
         # edge data
@@ -54,10 +40,28 @@ class Springcubic(StorageNonLinear):
 
         # init component
         StorageNonLinear.__init__(self, label, [edge],
-                                     x, H, **kwargs)
+                                     x, H, **parameters)
 
-    @staticmethod
-    def metadata():
-        return {'nodes': ('N1', 'N2'),
-                'arguments': {'K0': ('K0', 1e3),
-                              'K2': ('K2', 1e3)}}
+    metadata = {'title': 'Cubic spring',
+                'component': 'Springcubic',
+                'label': 'spring',
+                'dico': 'mechanics',
+                'desc': (r'Cubic spring with state :math:`q\in \mathbb R` and parameters described below. The energy is' +
+                         equation(r'H(q) = \frac{F_1\,q^2}{2\,q_{ref}} + \frac{F_3\,q^4}{4q_{ref}^3}.') +
+                         'The resulting force is:' +
+                         equation(r'f(q)= \frac{d \, H(q)}{d q} = F_1 \,\frac{q}{q_{ref}} + F_3 \, \frac{q^3}{q_{ref}^3}.') +
+                         'so that :math:`f(q_{ref}) = F1+F3`.'),
+                'nodesdesc': "Mechanical points associated with component endpoints (positive flux P1->P2).",
+                'nodes': ('P1', 'P2'),
+                'parametersdesc': 'Component parameters',
+                'parameters': [['F1', "Linear contribution to restoring force", 'N', 1e1],
+                               ['F3', "Cubic contribution to restoring force", 'N', 1e1],
+                               ['xref', "Reference elongation", 'N', 1e-2]],
+                'refs': {},
+                'nnodes': 2,
+                'nedges': 1,
+                'flux': dicmetadata['flux'],
+                'effort': dicmetadata['effort'],
+                }
+
+    __doc__ = componentDoc(metadata)

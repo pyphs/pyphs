@@ -61,7 +61,6 @@ This package is in development status Beta. The continuous integration is checke
 
 .. |Landscape| image:: https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat
    :target: https://landscape.io/github/pyphs/pyphs/master
-   :alt: Code Health
    
 
 Licence

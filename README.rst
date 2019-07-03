@@ -59,8 +59,8 @@ This package is in development status Beta. The continuous integration is checke
     :target: https://codecov.io/gh/pyphs/pyphs
 
 
-.. |Landscape| image:: https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/pyphs/pyphs/master
+.. |Codecov| image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/pyphs/pyphs
    
 
 Licence

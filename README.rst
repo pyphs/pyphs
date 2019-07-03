@@ -44,7 +44,7 @@ Status
 
 This package is in development status Beta. The continuous integration is checked with Travis for Unix systems and AppVeyor for Windows systems (see build status below).
 
-|Travis|  |Appveyor|  |Codecov|  |Landscape|
+|Travis|  |Appveyor|  |Codecov|
 
 
 .. |Travis| image:: https://www.travis-ci.org/pyphs/pyphs.svg?branch=master
@@ -57,10 +57,6 @@ This package is in development status Beta. The continuous integration is checke
 
 .. |Codecov| image:: https://codecov.io/gh/pyphs/pyphs/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/pyphs/pyphs
-
-
-.. |Landscape| image:: https://landscape.io/github/pyphs/pyphs/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/pyphs/pyphs/master
    
 
 Licence

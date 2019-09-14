@@ -73,20 +73,9 @@ Python prerequisites
 --------------------
 
 The `PyPHS <https://github.com/pyphs/pyphs/>`_ package run on Python 2.7 and Python
-3.5 or newer (3.4 is no longer tested), with the following packages installed:
-
-- `sympy <http://www.sympy.org/fr/>`_
-- `numpy <http://www.numpy.org>`_
-- `scipy <http://www.scipy.org>`_
-- `matplotlib <http://matplotlib.org/>`_
-- `networkx <http://networkx.github.io/>`_
-- `h5py <http://docs.h5py.org/en/latest/index.html>`_
-- `stopit <https://pypi.python.org/pypi/stopit>`_
-- `progressbar2 <https://pypi.python.org/pypi/progressbar2>`_
-- `nose <https://github.com/nose-devs/nose>`_ (optional to run the tests)
-
-Please refer to the `requirements.txt <requirements.txt>`_ file for the required
-versions and make sure that these modules are up to date.
+3.5 or newer (3.4 is no longer tested).
+Please refer to the `requirements.txt <requirements.txt>`_ file for the required 
+packages and make sure they are up to date.
 
 Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if it can be found on the system, for faster numerical evaluation of symbolic expressions.
 

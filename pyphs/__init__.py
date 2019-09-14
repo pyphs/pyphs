@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # ==============================================================================
 #
 # Copyright or (C) or Copr:
@@ -5,7 +7,6 @@
 #
 # Affiliation:
 #     Team M2N (Mathematical and Numerical Methods),
-#     Laboratoire des Sciences de l'Ingénieur pour l'Environnement (LaSIE),
 #     UMR CNRS 7356, La Rochelle Université,
 #     La Rochelle, France.
 #

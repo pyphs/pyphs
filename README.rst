@@ -72,11 +72,8 @@ It is possible to install `PyPHS <https://github.com/pyphs/pyphs/>`_ from packag
 Python prerequisites
 --------------------
 
-The `PyPHS <https://github.com/pyphs/pyphs/>`_ package run on Python 2.7 and Python
-3.5 or newer (3.4 is no longer tested).
-Please refer to the `requirements.txt <requirements.txt>`_ file for the required 
-packages and make sure they are up to date.
-
+The `PyPHS <https://github.com/pyphs/pyphs/>`_ package run on Python 2.7 and Python 3.5 or newer (3.4 is no longer tested).
+Please refer to the `requirements.txt <requirements.txt>`_ file for the required packages and make sure they are up to date.
 Additionally, `theano <http://deeplearning.net/software/theano/>`_ is used if it can be found on the system, for faster numerical evaluation of symbolic expressions.
 
 C++ prerequisites

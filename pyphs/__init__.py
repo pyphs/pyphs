@@ -28,7 +28,7 @@ __author__ = "Antoine Falaize"
 __url__ = "https://pyphs.github.io/pyphs/"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2019"
-__version__ = '0.5'
+__version__ = '0.5.1'
 __author_email__ = 'antoine.falaize@univ-lr.fr'
 
 __all__ = ['Core', 'Netlist', 'Simulation', 'Graph', 'datum',

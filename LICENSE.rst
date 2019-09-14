@@ -6,7 +6,7 @@ Copyright or © or Copr:
 	Antoine Falaize
 
 Affiliation:
-    Team M2N (Mathematical and Numerical Methods), Laboratoire des Sciences de l’Ingénieur pour l’Environnement (LaSIE) - UMR CNRS 7356, La Rochelle Université, La Rochelle, France.
+    Team M2N (Mathematical and Numerical Methods), Laboratoire des Sciences de l'Ingénieur pour l'Environnement (LaSIE) - UMR CNRS 7356, La Rochelle Université, La Rochelle, France.
 
 Contact:
 	antoine.falaize@univ-lr.fr

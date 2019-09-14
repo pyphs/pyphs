@@ -15,6 +15,8 @@ from pyphs.config import VERBOSE, CONFIG_NUMERIC, CONFIG_CPP
 from pyphs.misc.tools import geteval, get_time
 from pyphs.core.tools import substitute, free_symbols
 from .tools import linesplit
+import pyphs
+
 import numpy
 import sympy
 import os
@@ -162,7 +164,9 @@ def method2cpp(method, objlabel=None, path=None,
     with open(os.path.join(path_to_templates,
                            'license.template'), 'r') as f:
         _license = string.Template(f.read())
-    starting = comment(_license.substitute({'time': get_time()}))
+    starting = comment(_license.substitute({
+        'time': get_time(),
+        'url_pyphs': pyphs.__url__}))
 
     files = {}
     exts = ['cpp', 'h']
@@ -278,7 +282,9 @@ def parameters(subs, objlabel):
     with open(os.path.join(path_to_templates,
                            'license.template'), 'r') as f:
         _license = string.Template(f.read())
-    str_preamble = comment(_license.substitute({'time': get_time()}))
+    str_preamble = comment(_license.substitute({
+        'time': get_time(),
+        'url_pyphs': pyphs.__url__}))
 
     files = {'h': str_preamble,
              'cpp': str_preamble}

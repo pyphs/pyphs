@@ -11,7 +11,7 @@ import os
 from pyphs.config import CONFIG_CPP
 import string
 from pyphs.misc.tools import get_time, geteval
-
+import pyphs
 
 def simu2cpp(simu):
     objlabel = simu.label
@@ -29,7 +29,9 @@ def simu2cpp(simu):
 
     # substitutions for templates
     subs = dict()
-    subs['license'] = comment(_license.substitute({'time': get_time()}))
+    subs['license'] = comment(_license.substitute({
+        'time': get_time(),
+        'url_pyphs': pyphs.__url__}))
     subs['vectors'] = _str_vectors(simu)
     subs['nt'] = simu.data.nt
     subs['dim'] = simu.data.dim
@@ -59,7 +61,12 @@ def simu2cpp(simu):
         _bash = string.Template(f.read())
 
     # Generate bash script
-    subs['license'] = comment(_license.substitute({'time': get_time()}), '#')
+    subs['license'] = comment(
+        _license.substitute({
+            'time': get_time(),
+            'url_pyphs': pyphs.__url__
+        }),
+        '#')
     subs['folder'] = path
     subs['cmakepath'] = simu.config['cmake']
     subs['sep'] = os.path.sep

@@ -25,6 +25,7 @@ from .templates import path_to_templates
 __license__ = \
     "CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)"
 __author__ = "Antoine Falaize"
+__url__ = "https://pyphs.github.io/pyphs/"
 __maintainer__ = "Antoine Falaize"
 __copyright__ = "Copyright 2012-2019"
 __version__ = '0.4'

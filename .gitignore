@@ -1,3 +1,6 @@
+# Allow local makefile
+makefile
+
 # For mac only.
 .nojekyll
 

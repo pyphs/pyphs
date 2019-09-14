@@ -5,8 +5,8 @@ PyPHS
 
 .. |pypi version| image:: https://badge.fury.io/py/pyphs.svg
     :target: https://badge.fury.io/py/pyphs
-.. |Licence badge| image:: https://img.shields.io/badge/licence-CeCILL--B-blue.svg
-    :target: http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+.. |Licence badge| image:: https://img.shields.io/badge/license-GPL3-blue
+    :target: https://www.gnu.org/licenses/gpl-3.0.en.html
 .. |python versions| image:: https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6%2C%203.7-blue.svg
     :target: https://github.com/pyphs/pyphs
 .. |Website badge| image:: https://img.shields.io/badge/documentation-website-blue.svg

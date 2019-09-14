@@ -1,11 +1,9 @@
 language: python
 python:
   - "2.7"
-#  - "3.4"
   - "3.5"
   - "3.6"
-  # Cannot Test for py3.7 on travis (1st jul 2019)
-  # - "3.7"
+  - "3.7"
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
@@ -30,7 +28,6 @@ install:
   - pip install .
 before_script: # configure a headless display to test plot generation
   - "export DISPLAY=:99.0"
-  - sleep 10 # give xvfb some time to start
 services:
   - xvfb
 # command to run tests

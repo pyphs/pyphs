@@ -10,7 +10,7 @@ PyPHS
 .. |python versions| image:: https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6%2C%203.7-blue.svg
     :target: https://github.com/pyphs/pyphs
 .. |Website badge| image:: https://img.shields.io/badge/documentation-website-blue.svg
-    :target: https://pyphs.github.io/pyphs/
+    :target: https://pyphs.github.io/pyphs
 
 A Python software (Py) dedicated to the simulation of multi-physical Port-Hamiltonian Systems (PHS) described by graph structures.
 

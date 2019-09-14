@@ -1,6 +1,6 @@
 # ==============================================================================
 #
-# Copyright or © or Copr:
+# Copyright or (C) or Copr:
 #     Antoine Falaize
 #
 # Affiliation:

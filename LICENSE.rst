@@ -13,7 +13,11 @@ Contact:
 
 This python software is a computer program whose purpose is to generate C++ code for the simulation of multiphysics systems described by networks of components.
 
-		Created on Mon Oct 2 2016
+Created:
+	October 2nd, 2016.
+
+Modification:
+	Switch from Cecill license to GPL3 on September 14th, 2019.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,6 +31,7 @@ GNU General Public License for more details.
 
 A copy of the GNU General Public License is given below (see also <https://www.gnu.org/licenses/>).
 
+In short, permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.
 
 GNU GENERAL PUBLIC LICENSE
 ==========================

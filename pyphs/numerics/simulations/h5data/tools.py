@@ -16,18 +16,17 @@ from_iterable = itertools.chain.from_iterable
 
 
 # Naive method: Python-side scan of the iterable
-def set_dataset_from_iterable_naive(dataset, iterable, chunksize=1024):
-    """
-    Dump data from iterable in an h5py dataset naively, expecting elements of
-    iterable are numpy arrays.
-    """
-    offset, npt = 0, chunksize
-    while npt:
-        buffer = [el for ind, el in zip(range(chunksize), iterable)]
-        npt = len(buffer)
-        dataset[offset:offset+npt] = buffer
-        offset += npt
-
+# def set_dataset_from_iterable_naive(dataset, iterable, chunksize=1024):
+#     """
+#     Dump data from iterable in an h5py dataset naively, expecting elements of
+#     iterable are numpy arrays.
+#     """
+#     offset, npt = 0, chunksize
+#     while npt:
+#         buffer = [el for ind, el in zip(range(chunksize), iterable)]
+#         npt = len(buffer)
+#         dataset[offset:offset+npt] = buffer
+#         offset += npt
 
 # Numpy method
 def set_dataset_from_iterable(dataset, iterable, rslice=None, cslice=None, chunksize=1024):
@@ -42,7 +41,7 @@ def set_dataset_from_iterable(dataset, iterable, rslice=None, cslice=None, chunk
         Dataset where to store values from iterable.
 
     iterable : self-typed
-        Iterable of whose each element is a 1D array with appropriate shape
+        Iterable whose each element is a 1D array with appropriate shape
         w.r.t cslice. The number of elements is prescribed by rslice.
 
     rslice : slice or None (optional)
@@ -96,8 +95,6 @@ def set_dataset_from_iterable(dataset, iterable, rslice=None, cslice=None, chunk
             if rslice is not None:
                 buffer_rslice = range(rslice.stop)[rslice][buffer_rslice]
             count = (nrows-offset) * ncols
-            print(nrows, chunksize, offset)
-            print(buffer_rslice, cslice)
             buffer = np.fromiter(flattened_iterable, dataset.dtype)
             dataset[buffer_rslice, cslice] = buffer.reshape(-1, ncols)
             break

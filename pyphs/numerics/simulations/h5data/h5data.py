@@ -610,22 +610,20 @@ or an integer nt (number of time steps).'
         dtype = self.dtype
         # update array with data values
         for name in data:
-            if VERBOSE > 0:
-                print('Write {0} to hdf5 file...'.format(name))
             # write data in h5 file
             vslice = slice(*self.inds[name])
-            print(name, self.inds[name], vslice, tslice)
-            for i, v in zip(range(10), data[name]):
-                print(i, v)
-
-            set_dataset_from_iterable(
-                self.h5data, data[name],
-                tslice, vslice,
-                chunksize=1024
-            )
-            if VERBOSE > 0:
-                print('Write {0} to hdf5 file: Done.'.format(name))
-
+            temp_nt = len(range(tslice.stop)[tslice])
+            temp_nv = len(range(vslice.stop)[vslice])
+            if temp_nt*temp_nv > 0:
+                if VERBOSE > 0:
+                    print('Write {0} to hdf5 file...'.format(name))
+                set_dataset_from_iterable(
+                    self.h5data, data[name],
+                    tslice, vslice,
+                    chunksize=1024
+                )
+                if VERBOSE > 0:
+                    print('Write {0} to hdf5 file: Done.'.format(name))
         if close:
             self.h5close()
 

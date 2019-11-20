@@ -59,6 +59,7 @@ DTYPE = numpy.finfo(float).dtype.type
 FS = 48e3
 
 # Define the numerical tolerance such that |x|<EPS <=> x = 0
+# Used in the Newton-Raphson method as a condition on convergence
 # EPS = numpy.finfo(float).eps    # numpy tolerance
 EPS = 1e-12                     # custom tolerance
 

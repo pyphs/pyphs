@@ -6,12 +6,12 @@ Created on Fri Jun  3 01:46:04 2016
 """
 from __future__ import absolute_import, division, print_function
 import sympy
-from pyphs.config import EPS
+from pyphs.config import EPS_DG
 from pyphs.core.tools import types
 from pyphs.core.maths import gradient
 
 
-def discrete_gradient(H, x, dx, numtol=EPS):
+def discrete_gradient(H, x, dx, numtol=EPS_DG):
     """
     Symbolic computation here. Return the discrete gradient of scalar function\
  H between x and x+dx, with H separable with respect to x: H = sum_i[H_i(x_i)].
@@ -51,8 +51,8 @@ def discrete_gradient(H, x, dx, numtol=EPS):
         Hpost = H.subs(x[i], x[i] + dx[i])
         dxh = (Hpost - H)/dx[i]
         dxh0 = H.diff(x[i]).doit()
-        dxhi = sympy.Piecewise((dxh, dx[i] < -(numtol**2)),
-                               (dxh0, dx[i] < numtol**2),
+        dxhi = sympy.Piecewise((dxh, dx[i] < -numtol),
+                               (dxh0, dx[i] < numtol),
                                (dxh, True))
         dxHd.append(dxhi)
     return dxHd

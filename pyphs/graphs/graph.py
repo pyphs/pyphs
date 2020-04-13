@@ -132,8 +132,8 @@ class Graph(nx.MultiDiGraph):
             state of the analysis process. Default is False.
 
         solve_arc : bool (optional)
-            If True, the anti-realizable components are merged to produce a
-            realizable graph. Te default is True.
+            If True, the anti-realizable components (edges) are merged to
+            produce a realizable graph. The default is True.
 
         force : bool (optional)
             If False, the analysis is performed only if it has not been

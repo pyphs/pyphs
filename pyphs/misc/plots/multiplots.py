@@ -100,7 +100,7 @@ def multiplot(x, y, show=True, **kwargs):
     if opts['ylabels'] is None:
         opts['ylabels'] = ['', ]*nplots
     elif not len(opts['ylabels']) == nplots:
-        raise AttributeError('wrong number of y labels')
+        raise AttributeError('wrong number of y labels (got {} labels for {} axes)'.format(len(opts['ylabels']), nplots))
 
     if opts['labels'] is None:
         opts['labels'] = [None, ]*nplots

@@ -7,6 +7,7 @@ Created on Sat Jun  9 12:37:43 2018
 """
 
 from pyphs.core.maths import gradient
+from pyphs.core.tools import types
 from .graph import Graph
 import sympy
 import warnings
@@ -165,7 +166,7 @@ class SubGraph(Graph):
         x = []
         for e in self.fc_storages:
             x.append(e[-1]['label'])
-        return x
+        return types.PHSVector(*x)
 
     @property
     def dxH_fc(self):
@@ -176,7 +177,7 @@ class SubGraph(Graph):
         x = []
         for e in self.ec_storages:
             x.append(e[-1]['label'])
-        return x
+        return types.PHSVector(*x)
 
     @property
     def dxH_ec(self):
@@ -187,21 +188,21 @@ class SubGraph(Graph):
         w = []
         for e in self.fc_dissipatives:
             w.append(e[-1]['label'])
-        return w
+        return types.PHSVector(*w)
 
     @property
     def w_ic(self):
         w = []
         for e in self.ic_dissipatives:
             w.append(e[-1]['label'])
-        return w
+        return types.PHSVector(*w)
 
     @property
     def w_ec(self):
         w = []
         for e in self.ec_dissipatives:
             w.append(e[-1]['label'])
-        return w
+        return types.PHSVector(*w)
 
     @property
     def z_fc(self):
@@ -234,7 +235,7 @@ class SubGraph(Graph):
             else:
                 nodes = edges_stor[0][1], edges_stor[0][0]
             # give every edges the positive direction
-            oriented_dxH_arc = self.dxH_arc
+            oriented_dxH_arc = list(self.dxH_arc)
             for i, xn in enumerate(self.x_arc):
                 if self.orientations_dic[xn] == -1:
                     oriented_dxH_arc[i] = -oriented_dxH_arc[i].subs(xn, -xn)
@@ -272,7 +273,7 @@ class SubGraph(Graph):
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
-            oriented_z_arc = self.z_arc
+            oriented_z_arc = list(self.z_arc)
             for i, dic in enumerate(oriented_z_arc):
                 oriented_z_arc[i] = dic[self.anti_realizability + '_ctrl']
             for i, wn in enumerate(self.w_arc):
@@ -310,7 +311,7 @@ class SubGraph(Graph):
             else:
                 nodes = edges_stor[0][1], edges_stor[0][0]
             # give every edges the positive direction
-            oriented_dxH_rc = self.dxH_rc
+            oriented_dxH_rc = list(self.dxH_rc)
             for i, xn in enumerate(self.x_rc):
                 if self.orientations_dic[xn] == -1:
                     oriented_dxH_rc[i] = -oriented_dxH_rc[i].subs(xn, -xn)
@@ -348,7 +349,7 @@ class SubGraph(Graph):
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
-            oriented_z_rc = self.z_rc
+            oriented_z_rc = list(self.z_rc)
             for i, dic in enumerate(oriented_z_rc):
                 oriented_z_rc[i] = dic[self.realizability + '_ctrl']
             for i, wn in enumerate(self.w_rc):
@@ -377,7 +378,7 @@ class SubGraph(Graph):
         return change
 
     def merge_ic_dissipatives(self):
-        edges_diss = self.ic_dissipatives
+        edges_diss = list(self.ic_dissipatives)
         change = len(edges_diss) > 1
         if change:
             # get nodes for new component
@@ -385,9 +386,8 @@ class SubGraph(Graph):
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
-
             # get edges ic
-            oriented_z_ic = self.z_ic
+            oriented_z_ic = list(self.z_ic)
             for i, dic in enumerate(oriented_z_ic):
                 oriented_z_ic[i] = dic[self.realizability + '_ctrl']
             for i, wn in enumerate(self.w_ic):
@@ -396,7 +396,7 @@ class SubGraph(Graph):
             W, Zrc = realizable_merge_dissipatives(self.w_ic, oriented_z_ic)
 
             # get edges arc
-            oriented_z_ic = self.z_ic
+            oriented_z_ic = list(self.z_ic)
             for i, dic in enumerate(oriented_z_ic):
                 oriented_z_ic[i] = dic[self.anti_realizability + '_ctrl']
             for i, wn in enumerate(self.w_ic):

@@ -59,13 +59,11 @@ def substitute_vector(expr, subs=None):
         The resulting expression.
     """
     # recast as list
-    if not isinstance(expr, types.vector_types[0]):
-        expr = types.vector_types[0](expr)
-
+    temp = list(expr)
     # iterate over list elements
-    for i, e in enumerate(expr):
-        expr[i] = substitute_scalar(e, subs)
-    return expr
+    for i, e in enumerate(temp):
+        temp[i] = substitute_scalar(e, subs)
+    return types.PHSVector(*temp)
 
 
 def substitute_matrix(expr, subs=None):

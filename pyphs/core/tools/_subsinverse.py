@@ -55,13 +55,11 @@ def subsinverse_vector(expr, subs, symbols):
         The resulting expression.
     """
     # recast as list
-    if not isinstance(expr, types.vector_types[0]):
-        expr = types.vector_types[0](expr)
-
+    temp = list(expr)
     # iterate over list elements
-    for i, e in enumerate(expr):
-        expr[i] = subsinverse_scalar(e, subs, symbols)
-    return expr
+    for i, e in enumerate(temp):
+        temp[i] = subsinverse_scalar(e, subs, symbols)
+    return types.PHSVector(*temp)
 
 
 def subsinverse_matrix(expr, subs, symbols):

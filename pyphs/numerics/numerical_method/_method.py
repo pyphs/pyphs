@@ -67,7 +67,7 @@ class Method(Core):
 
         # init linear part size to 0
         self._core.dims._xl = 0
-        self._core.bl = []
+        self._core.bl = self.Vector()
         self._core.dims._wl = 0
         self._core.Q = self._core.Q[:0, :0]
         self._core.Zl = self._core.Zl[:0, :0]
@@ -189,14 +189,14 @@ class Method(Core):
         return remove_duplicates(updates + ['dx', 'w', 'u', 'p'])
 
     def args(self):
-        return (self.x + self.dx() + self.w + self.u +
-                self.p + self.o())
+        return self.Vector(*(self.x + self.dx() + self.w + self.u +
+                             self.p + self.o()))
 
     def dtx(self):
-        return [dx*self.fs for dx in self.dx()]
+        return self.Vector(*(dx*self.fs for dx in self.dx()))
 
     def c(self):
-        return (self.x + self.u + self.p + self.o())
+        return self.Vector(*(self.x + self.u + self.p + self.o()))
 
     def init_args(self):
         needed = self.update_actions_deps()
@@ -441,11 +441,11 @@ def set_getters_tempF(method):
                 Mvy = geteval(method, 'Mvy')
                 f = geteval(method, 'f')
                 u = geteval(method, 'u')
-                temp = [sp.sympify(0), ]*len(geteval(method, 'v'))
+                temp = types.PHSVector(*((sp.sympify(0), )*len(geteval(method, 'v'))))
                 temp = sumvecs(temp,
                                matvecprod(method.I(''), v),
-                               [-e for e in matvecprod(Mvv, f)],
-                               [-e for e in matvecprod(Mvy, u)])
+                               types.PHSVector(*(-e for e in matvecprod(Mvv, f))),
+                               types.PHSVector(*(-e for e in matvecprod(Mvy, u))))
                 return temp
         else:
             def func():
@@ -457,12 +457,12 @@ def set_getters_tempF(method):
                 fl = geteval(method, 'fl')
                 fnl = geteval(method, 'fnl')
                 u = geteval(method, 'u')
-                temp = [sp.sympify(0), ]*len(geteval(method, 'v'+suffix))
+                temp = types.PHSVector(*((sp.sympify(0), )*len(geteval(method, 'v'+suffix))))
                 temp = sumvecs(temp,
                                matvecprod(method.I(suffix), v),
-                               [-e for e in matvecprod(Mvvl, fl)],
-                               [-e for e in matvecprod(Mvvnl,fnl)],
-                               [-e for e in matvecprod(Mvy, u)])
+                               types.PHSVector(*(-e for e in matvecprod(Mvvl, fl))),
+                               types.PHSVector(*(-e for e in matvecprod(Mvvnl,fnl))),
+                               types.PHSVector(*(-e for e in matvecprod(Mvy, u))))
                 return temp
         doc = """
 Getter for function
@@ -501,15 +501,15 @@ def set_getters_G(method):
                 vl = geteval(method, 'vl')
                 JacFl = jacobian(F, vl)
                 G = sumvecs(F,
-                            [-e for e in matvecprod(JacFl, vl)])
-                return list(G)
+                            types.PHSVector(*(-e for e in matvecprod(JacFl, vl))))
+                return G
         else:
             def func():
                 Fa = geteval(method, 'tempF'+a)
                 vl = geteval(method, 'vl')
                 JacFal = geteval(method, 'jactempF'+a+'l',)
                 return sumvecs(Fa,
-                               [-e for e in matvecprod(JacFal, vl)])
+                               types.PHSVector(*(-e for e in matvecprod(JacFal, vl))))
         return func
 
     method.setexpr('G', func_generator_G(''))
@@ -551,7 +551,7 @@ def set_update_x(method):
 
 def set_update_observers(method):
     # update the value of 'o' with the evaluation of 'ud_o'
-    method.setexpr('ud_o', [method.observers[k] for k in method.o()])
+    method.setexpr('ud_o', types.PHSVector(*(method.observers[k] for k in method.o())))
     # add execaction to the update queue
     method.preimplicit.append(('o', 'ud_o'))
 
@@ -686,7 +686,7 @@ dictionary.
             )
         dxHnl = discrete_gradient(method.H, method.xnl(), method.dxnl(),
                                   method.config['epsdg'])
-        method._dxH = list(dxHl) + dxHnl
+        method._dxH = method.Vector(*(list(dxHl) + dxHnl))
 
     elif method.config['grad'] == 'theta':
         # theta scheme
@@ -743,8 +743,10 @@ def build_structure_evaluation(method):
         # Substitute symbols in core.M
         method.M = method.M.subs(subs)
         # Substitute symbols in core.z
-        for i, z in enumerate(method.z):
-            method.z[i] = z.subs(subs)
+        temp = list(method.z)
+        for i, z in enumerate(temp):
+            temp[i] = z.subs(subs)
+        method.z = method.Vector(*temp)
 
     # else if theta == 'trapez' => trapezoidal
     else:
@@ -754,5 +756,7 @@ def build_structure_evaluation(method):
         # Substitute symbols in core.M
         method.M = 0.5*(method.M + method.M.subs(subs))
         # Substitute symbols in core.z
-        for i, z in enumerate(method.z):
-            method.z[i] = 0.5*(z + z.subs(subs))
+        temp = list(method.z)
+        for i, z in enumerate(temp):
+            temp[i] = 0.5*(z + z.subs(subs))
+        method.z = method.Vector(*temp)

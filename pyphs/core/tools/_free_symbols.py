@@ -73,5 +73,5 @@ expr must be a sympy.SparseMatrix
     """
     types.matrix_test(mat)
     m, n = mat.shape
-    symbs = free_symbols_vec([e for (_, _, e) in mat.row_list()])
+    symbs = free_symbols_vec(types.PHSVector(*(e for (_, _, e) in mat.row_list())))
     return symbs

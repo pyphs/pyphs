@@ -45,7 +45,7 @@ def gradient(scalar_func, vars_, simplify=False):
         grad[i] = scalar_func.diff(vars_[i]).doit()
     if simplify:
         grad = simplify_func(grad)
-    return grad
+    return types.PHSVector(*grad)
 
 
 def hessian(scalar_func, vars_, simplify=False):
@@ -112,7 +112,7 @@ def jacobian(func, vars_, simplify=False):
     types.vector_test(vars_)
     types.vector_test(func)
     nv, nf = len(vars_), len(func)
-    Jac = types.matrix_types[0](sympy.zeros(nf, nv))
+    Jac = types.PHSMatrix(sympy.zeros(nf, nv))
     for i in range(nf):
         for j in range(nv):
             Jac[i, j] = func[i].diff(vars_[j]).doit()

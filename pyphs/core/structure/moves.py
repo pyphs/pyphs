@@ -93,9 +93,9 @@ def move_stor(core, indi, indf):
         Initial and final storage indices in the set of storages.
     """
     new_indices = myrange(core.dims.x(), indi, indf)
-    core.x = [core.x[el] for el in new_indices]
+    core.x = core.Vector(*(core.x[el] for el in new_indices))
     if core._dxH is not None:
-        core._dxH = [core._dxH[el] for el in new_indices]
+        core._dxH = core.Vector(*(core._dxH[el] for el in new_indices))
     moveCoreMcolnrow(core, indi, indf)
 
 
@@ -112,8 +112,8 @@ def move_diss(core, indi, indf):
         Initial and final dissipation indices in the set of dissipations.
     """
     new_indices = myrange(core.dims.w(), indi, indf)
-    core.w = [core.w[el] for el in new_indices]
-    core.z = [core.z[el] for el in new_indices]
+    core.w = core.Vector(*[core.w[el] for el in new_indices])
+    core.z = core.Vector(*[core.z[el] for el in new_indices])
     moveCoreMcolnrow(core, core.dims.x()+indi, core.dims.x()+indf)
     if (not core.Zl.is_zero and
             indi < core.dims.wl() and
@@ -136,8 +136,8 @@ def move_port(core, indi, indf):
         Initial and final port indices in the set of ports.
     """
     new_indices = myrange(core.dims.y(), indi, indf)
-    core.u = [core.u[el] for el in new_indices]
-    core.y = [core.y[el] for el in new_indices]
+    core.u = core.Vector(*[core.u[el] for el in new_indices])
+    core.y = core.Vector(*[core.y[el] for el in new_indices])
     moveCoreMcolnrow(core, core.dims.x()+core.dims.w()+indi,
                      core.dims.x()+core.dims.w()+indf)
 
@@ -155,7 +155,7 @@ def move_connector(core, indi, indf):
         Initial and final connector indices in the set of connectors.
     """
     new_indices = myrange(core.dims.cy(), indi, indf)
-    core.cu = [core.cu[el] for el in new_indices]
-    core.cy = [core.cy[el] for el in new_indices]
+    core.cu = core.Vector(*[core.cu[el] for el in new_indices])
+    core.cy = core.Vector(*[core.cy[el] for el in new_indices])
     moveCoreMcolnrow(core, core.dims.x()+core.dims.w()+core.dims.y()+indi,
                      core.dims.x()+core.dims.w()+core.dims.y()+indf)

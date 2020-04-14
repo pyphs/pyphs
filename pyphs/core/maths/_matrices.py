@@ -40,9 +40,7 @@ def matvecprod(mat, vec):
         raise IndexError(text.format((m, n), l))
 
     if l == 0:
-        res = [0,]*m
+        res = types.PHSVector(*([0,]*m))
     else:
-        res = list(mat * Matrix(vec))
-#        if m == 1:
-#            res = [res, ]
+        res = types.PHSVector(*(mat * Matrix(vec)))
     return res

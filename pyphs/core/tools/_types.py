@@ -52,7 +52,50 @@ def scalar_test(obj, metadata=(None, None)):
 
 # ============================== VECTORS ==================================== #
 
-vector_types = (list, tuple)
+class PHSVector(sympy.Tuple):
+
+    @property
+    def has_subarray(self):
+        all_types = set()
+        for elt in self:
+            all_types.append(map(type, elt.free_symbols))
+        return PHSSubArray in all_types
+
+    @property
+    def dim(self):
+        return len(self)
+
+    def remove(self, symb):
+        out = tuple()
+        for elt in self:
+            if elt != symb:
+                out += (elt, )
+        self._args = out
+
+    def __add__(self, other):
+        return PHSVector(*super().__add__(other))
+
+    def __iadd__(self, other):
+        return PHSVector(*super().__add__(other))
+
+    def __getitem__(self, key):
+        item = super().__getitem__(key)
+        if hasattr(item, "__iter__"):
+            return PHSVector(*item)
+        else:
+            return item
+
+    def append(self, obj):
+        self._args = self._args + (obj,)
+
+    def pop(self, i):
+        args = list(self._args)
+        arg = args.pop(i)
+        self._args = tuple(args)
+        return arg
+
+
+vector_types = (PHSVector, )
 
 
 class VectorExprTypeError(Exception):
@@ -77,7 +120,66 @@ def vector_test(obj, metadata=(None, None)):
 
 # ============================ MATRICES ===================================== #
 
-matrix_types = (sympy.SparseMatrix, )
+class PHSMatrix(sympy.SparseMatrix):
+
+    def get_ith_col(self, i):
+        for elt in self.row_list():
+            if elt[1] == i:
+                yield elt
+
+    def get_ith_row(self, i):
+        for elt in self.col_list():
+            if elt[0] == i:
+                yield elt
+
+
+class PHSSubArray(sympy.Symbol):
+
+    is_scalar = False
+
+    def __new__(self, name, *args, **kwargs):
+        attrs = dict()
+        for attr in ['shape', 'array']:
+            kwargs.setdefault(attr, None)
+            attrs[attr] = kwargs.pop(attr)
+
+        kwargs['commutative'] = False
+
+        obj = super().__new__(self, name, *args, **kwargs)
+
+        if attrs['shape'] is not None:
+            obj._phs_array = None
+            obj._shape = attrs['shape']
+        elif attrs['array'] is not None:
+            if isinstance(attrs['array'], (list, tuple)):
+                a = sympy.Array(attrs['array'])
+                if len(a.shape) == 1:
+                    obj._phs_array = PHSVector(*attrs['array'])
+                elif len(a.shape) == 2:
+                    obj._phs_array = PHSMatrix(attrs['array'])
+                else:
+                    raise AttributeError('`array` in SubArray must be 1 dimensional (vector) or 2 dimensional (Matrix), got {}.'.format(a))
+            obj._shape = None
+        else:
+            raise AttributeError('Either `shape` or `array` argument must be specified to SubArray.')
+        return obj
+
+    @property
+    def array(self):
+        return self._phs_array
+
+    @property
+    def shape(self):
+        if self.array is not None:
+            return self.array.shape
+        else:
+            return self._shape
+
+    def __getitem__(self, i):
+        return self.array[i]
+
+
+matrix_types = (PHSMatrix, )
 
 
 class MatrixExprTypeError(Exception):

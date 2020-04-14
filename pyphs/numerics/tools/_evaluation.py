@@ -48,7 +48,7 @@ class Evaluation(object):
             print('Build numerical evaluations...')
 
         self.core = core.__copy__()
-        self.core.o = list(self.core.observers.values())
+        self.core.o = core.Vector(*self.core.observers.values())
 
         self.core.substitute(selfall=True)
 
@@ -80,8 +80,13 @@ class Evaluation(object):
             setattr(self, name+'_inds', inds)
 
     def args(self):
-        return (self.core.x + self.core.dx() + self.core.w + self.core.u +
-                self.core.p + list(self.core.observers.keys()))
+        return (list(self.core.x) +
+                list(self.core.dx()) +
+                list(self.core.w) +
+                list(self.core.u) +
+                list(self.core.p) +
+                list(self.core.observers.keys())
+                )
 
     @staticmethod
     def expr_to_numeric(core, name, allargs, theano=None, vectorize=True):

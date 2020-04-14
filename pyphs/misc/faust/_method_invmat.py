@@ -51,13 +51,14 @@ class MethodInvMat(Method):
         if VERBOSE >= 2:
             print('    Build {}'.format('ud_vl'))
         ud_vl = matvecprod(-self.ijactempFll, self.Gl())
-        self.setexpr('ud_vl', list(ud_vl))
+        self.setexpr('ud_vl', types.PHSVector(*ud_vl))
 
         if VERBOSE >= 2:
             print('    Build {}'.format('Fnl'))
         temp = matvecprod(self.jactempFnll()*self.ijactempFll, self.Gl())
-        Fnl = list(types.matrix_types[0](self.Gnl()) -
-                   types.matrix_types[0](temp))
+        Fnl = types.PHSVector(*list(types.matrix_types[0](self.Gnl()) -
+                                    types.matrix_types[0](temp))
+                              )
 
         if VERBOSE >= 2:
             print('    Simplify {}'.format('jacFnlnl'))
@@ -74,8 +75,8 @@ class MethodInvMat(Method):
         if VERBOSE >= 2:
             print('    Build {} for Faust code generation'.format('ud_vnl'))
         ud_vnl = list(sympy.simplify(types.matrix_types[0](self.vnl()) -
-                      types.matrix_types[0]((matvecprod(ijacFnlnl, Fnl)))))
-        self.setexpr('ud_vnl', list(ud_vnl))
+                                     types.matrix_types[0]((matvecprod(ijacFnlnl, Fnl)))))
+        self.setexpr('ud_vnl', types.PHSVector(*ud_vnl))
 
         self.init_funcs()
 

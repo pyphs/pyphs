@@ -47,7 +47,7 @@ Return a formated string associated with the path in simu.config['path']
 
 
 def dereference(method):
-    return method.args() + [k for k in method.subscpp]
+    return method.args() + method.Vector(*[k for k in method.subscpp])
 
 
 def matrix_type(dim1, dim2):

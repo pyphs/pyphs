@@ -35,8 +35,8 @@ No output (inplace change of the Core)
     moveCoreMcolnrow(core, core.dims.x()+core.dims.w()+i, core.dims.tot())
 
     # append port symbols to the list of connectors symbols
-    core.cu += [core.u[i], ]
-    core.cy += [core.y[i], ]
+    core.cu += core.Vector(core.u[i])
+    core.cy += core.Vector(core.y[i])
 
     # remove symbols from the list of port symbols
     for name in ['u', 'y']:

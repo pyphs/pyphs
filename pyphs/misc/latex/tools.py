@@ -77,6 +77,9 @@ def obj2tex(obj, label, description, symbol_names, toMatrix=True):
     ------
     string
     """
+    if isinstance(obj, list):
+        obj = types.PHSVector(*obj)
+
     obj = simplify(obj)
     if toMatrix:
         obj = types.matrix_types[0](obj)

@@ -54,6 +54,10 @@ def scalar_test(obj, metadata=(None, None)):
 
 class PHSVector(sympy.Tuple):
 
+    def __new__(cls, *args, **kwargs):
+        obj = sympy.Tuple.__new__(cls, *args)
+        return obj
+
     @property
     def has_subarray(self):
         all_types = set()
@@ -73,13 +77,13 @@ class PHSVector(sympy.Tuple):
         self._args = out
 
     def __add__(self, other):
-        return PHSVector(*super().__add__(other))
+        return PHSVector(*super(PHSVector, self).__add__(other))
 
     def __iadd__(self, other):
-        return PHSVector(*super().__add__(other))
+        return PHSVector(*super(PHSVector, self).__add__(other))
 
     def __getitem__(self, key):
-        item = super().__getitem__(key)
+        item = super(PHSVector, self).__getitem__(key)
         if hasattr(item, "__iter__"):
             return PHSVector(*item)
         else:
@@ -145,7 +149,7 @@ class PHSSubArray(sympy.Symbol):
 
         kwargs['commutative'] = False
 
-        obj = super().__new__(self, name, *args, **kwargs)
+        obj = super(PHSSubArray, self).__new__(self, name, *args, **kwargs)
 
         if attrs['shape'] is not None:
             obj._phs_array = None

@@ -491,24 +491,6 @@ class Core:
 
         i = attr.index(symb)
         return i
-#        try:
-#            print('try:')
-#            i = attr.get_index(symb)
-#            print(i)
-#        except AttributeError:
-#            # name and attribute type
-#            text = 'Attribute {} is not a list, it is a {}.'.format(name,
-#                                                                    type(attr))
-#            raise AttributeError(text)
-#
-#        except ValueError:
-#            # name and attribute type
-#            text = 'Attribute {} does not contain {}.'.format(name, symb)
-#            raise AttributeError(text)
-#        except:
-#            print('error')
-#        finally:
-#            return i
 
     # =========================================================================
 

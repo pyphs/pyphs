@@ -44,6 +44,7 @@ def geteval(obj, attr):
 else return value.
     """
     elt = getattr(obj, attr)
+    # print('in geteval', obj, attr, elt)
     if hasattr(elt, '__call__') and not isinstance(elt, sympy.Symbol):
         return elt()
     else:

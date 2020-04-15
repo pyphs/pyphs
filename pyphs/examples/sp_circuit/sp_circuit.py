@@ -28,7 +28,5 @@ netlist = Netlist(netlist_filename)
 # Build Graph object
 graph = netlist.to_graph()
 
-graph.sp_split()
-
 # Build Core object
 core = graph.to_core(merge_all=True)

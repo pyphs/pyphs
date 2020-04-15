@@ -20,4 +20,4 @@ sums vectors (list elements)
         types.vector_test(v)
         assert len(v) == l, '{} not equal to {}'.format(len(v), l)
         v0 = [e1 + e2 for e1, e2 in zip(v0, v)]
-    return v0
+    return types.PHSVector(*v0)

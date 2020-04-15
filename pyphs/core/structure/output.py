@@ -46,6 +46,6 @@ y: list
         out = list(Vyx + Vyw + Vyu)
 
     else:
-        out = types.matrix_types[0](list(list()))
+        out = list()
 
-    return list(out)
+    return types.PHSVector(*out)

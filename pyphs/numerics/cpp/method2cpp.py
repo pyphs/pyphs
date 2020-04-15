@@ -53,7 +53,7 @@ def init_eval(method, name):
                         freesymbs = freesymbs.pop()
                     text = 'Missing substitution symbols: {}'.format(freesymbs)
                     raise AttributeError(text)
-            if not isinstance(sobj, (float, list)):
+            if not isinstance(sobj, method.Vector):
                 sobj = numpy.asarray(sobj.tolist(), dtype=float)
             else:
                 sobj = numpy.asarray(sobj, dtype=float)

@@ -93,13 +93,13 @@ def gradient_theta(H, x, dx, theta=0.):
     nx = len(x)
     assert len(dx) == nx, \
         'dim(dx)={0!s} is not equal to dim(x)={1!s}'.format(len(dx), nx)
-    dxHd = gradient(H, x)
+    dxHd = list(gradient(H, x))
     subs = {}
     for i, (xi, dxi) in enumerate(zip(x, dx)):
         subs[xi] = xi+theta*dxi
     for i, dxh in enumerate(dxHd):
         dxHd[i] = dxh.subs(subs)
-    return dxHd
+    return types.PHSVector(*dxHd)
 
 
 def gradient_trapez(H, x, dx):
@@ -136,10 +136,10 @@ def gradient_trapez(H, x, dx):
     nx = len(x)
     assert len(dx) == nx, \
         'dim(dx)={0!s} is not equal to dim(x)={1!s}'.format(len(dx), nx)
-    dxHd = gradient(H, x)
+    dxHd = list(gradient(H, x))
     subs = {}
     for i, (xi, dxi) in enumerate(zip(x, dx)):
         subs[xi] = xi+dxi
     for i, dxh in enumerate(dxHd):
         dxHd[i] = 0.5*(dxh + dxh.subs(subs))
-    return dxHd
+    return types.PHSVector(*dxHd)

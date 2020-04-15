@@ -15,7 +15,7 @@ def test_method2jucefx():
 
     path = 'temp'
 
-    core.subsinverse()
+    # core.subsinverse()
 
     method = core.to_method()
 

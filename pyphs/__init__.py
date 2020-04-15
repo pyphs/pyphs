@@ -36,6 +36,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from .core.tools._types import PHSMatrix, PHSSubArray
 from .core.core import Core
 from .graphs.graph import Graph
 from .graphs import datum

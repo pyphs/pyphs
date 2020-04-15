@@ -27,8 +27,8 @@ def netlist2tex(netlist):
         for comp in netlist:
             l += 1
             latex_line = r"$\ell_" + str(l) + r"$"
-            latex_dic = str(comp['dictionary'])
-            latex_comp = str(comp['component'])
+            latex_dic = str(comp['dictionary']).replace('_','\_')
+            latex_comp = str(comp['component']).replace('_','\_')
             latex_label = str(comp['label'])
             latex_nodes = str(comp['nodes'])
             latex_args = r'$\left\{ ' + dic2array(comp['arguments']) +\

@@ -132,8 +132,8 @@ class Graph(nx.MultiDiGraph):
             state of the analysis process. Default is False.
 
         solve_arc : bool (optional)
-            If True, the anti-realizable components are merged to produce a
-            realizable graph. Te default is True.
+            If True, the anti-realizable components (edges) are merged to
+            produce a realizable graph. The default is True.
 
         force : bool (optional)
             If False, the analysis is performed only if it has not been
@@ -534,23 +534,19 @@ class Graph(nx.MultiDiGraph):
         """
         Apply subgraph.merge_all() for all subgraphs.
         """
-        subgraphs = self.sp_subgraphs
-        for label in subgraphs.keys():
-            try:
-                subgraphs[label].merge_all()
-            except AttributeError:
-                pass
+        for label in self.sp_subgraphs:
+            subgraph = self.sp_subgraphs[label]
+            if hasattr(subgraph, "merge_all"):
+                subgraph.merge_all()
 
     def sp_merge_arc(self):
         """
         Apply subgraph.merge_arc() for all subgraphs.
         """
-        subgraphs = self.sp_subgraphs
-        for label in subgraphs.keys():
-            try:
-                subgraphs[label].merge_arc()
-            except AttributeError:
-                pass
+        for label in self.sp_subgraphs:
+            subgraph = self.sp_subgraphs[label]
+            if hasattr(subgraph, "merge_arc"):
+                subgraph.merge_arc()
 
     @property
     def sp_subgraphs(self):

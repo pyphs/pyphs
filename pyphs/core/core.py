@@ -37,6 +37,14 @@ class Core:
     in PyPHS.
     """
 
+
+    # =====================================================================
+    # Retrieve custom types
+
+    Matrix = types.PHSMatrix
+    Vector = types.PHSVector
+    SubArray = types.PHSSubArray
+
     # =====================================================================
     # Retrieve structure methods
 
@@ -72,7 +80,6 @@ class Core:
 
         # =====================================================================
         # Label
-
         # Init label
         if label is None:
             label = 'phs'
@@ -109,7 +116,7 @@ class Core:
         self.exprs_names = set()
 
         # Init structure
-        self.M = types.matrix_types[0](sympy.zeros(0))
+        self.M = self.Matrix(sympy.zeros(0))
 
         # List of connectors
         self.connectors = list()
@@ -130,16 +137,16 @@ class Core:
 
         # init lists of symbols
         for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
-            self.setsymb(name, types.vector_types[0]())
+            self.setsymb(name, self.Vector())
 
         # init functions
         self.setexpr('H', sympify(0))
-        self.setexpr('z', types.vector_types[0]())
+        self.setexpr('z', self.Vector())
 
         # Coefficient matrices for linear parts
-        self.setexpr('Q', types.matrix_types[0](sympy.zeros(0, 0)))
-        self.setexpr('Zl', types.matrix_types[0](sympy.zeros(0, 0)))
-        self.setexpr('bl', types.matrix_types[0](sympy.zeros(0, 0)))
+        self.setexpr('Q', self.Matrix(sympy.zeros(0, 0)))
+        self.setexpr('Zl', self.Matrix(sympy.zeros(0, 0)))
+        self.setexpr('bl', self.Matrix(sympy.zeros(0, 0)))
 
         # init tools
         self.dims = Dimensions(self)
@@ -325,7 +332,7 @@ class Core:
             for varj in core.dims.names:
                 Mij1 = getattr(core1, 'M'+vari+varj)()
                 Mij2 = getattr(core2, 'M'+vari+varj)()
-                Mij = types.matrix_types[0](sympy.diag(Mij1, Mij2))
+                Mij = core1.Matrix(sympy.diag(Mij1, Mij2))
                 if all(dim > 0 for dim in Mij.shape):
                     set_func = getattr(core, 'set_M'+vari+varj)
                     set_func(Mij)
@@ -376,10 +383,10 @@ class Core:
         is used in the numerical methods as the state increment
         :code:`x[n+1]=x[n]+dx[n]`.
         """
-        return [self.symbols('d'+str(x)) for x in self.x]
+        return self.Vector(*[self.symbols('d'+str(x)) for x in self.x])
 
     def dtx(self):
-        return [self.symbols('dt'+str(x)) for x in self.x]
+        return self.Vector(*[self.symbols('dt'+str(x)) for x in self.x])
 
     def b(self):
         return self.dtx() + self.w + self.y
@@ -417,7 +424,7 @@ class Core:
         for the discrete evaluation of Hamiltonian's gradient in the structure
         matrix and dissipation function z.
         """
-        return [self.symbols('g'+str(x)) for x in self.x]
+        return self.Vector(*[self.symbols('g'+str(x)) for x in self.x])
 
     def o(self):
         """
@@ -429,7 +436,7 @@ class Core:
         symbols for the discrete evaluation of observers in the structure
         matrix and dissipation function z.
         """
-        return list(self.observers.keys())
+        return self.Vector(*self.observers.keys())
 
     def setsymb(self, name, symbs):
         """
@@ -484,24 +491,6 @@ class Core:
 
         i = attr.index(symb)
         return i
-#        try:
-#            print('try:')
-#            i = attr.get_index(symb)
-#            print(i)
-#        except AttributeError:
-#            # name and attribute type
-#            text = 'Attribute {} is not a list, it is a {}.'.format(name,
-#                                                                    type(attr))
-#            raise AttributeError(text)
-#
-#        except ValueError:
-#            # name and attribute type
-#            text = 'Attribute {} does not contain {}.'.format(name, symb)
-#            raise AttributeError(text)
-#        except:
-#            print('error')
-#        finally:
-#            return i
 
     # =========================================================================
 
@@ -608,7 +597,7 @@ class Core:
         Initialize the structure matrix M with appropriate number of zeros.
 
         """
-        self.M = types.matrix_types[0](sympy.zeros(self.dims.tot()))
+        self.M = self.Matrix(sympy.zeros(self.dims.tot()))
 
     def J(self):
         """
@@ -817,14 +806,14 @@ add the connector'.format(i)
         Mswitch_list = [alpha * sympy.Matrix([[0, -1],
                                               [1, 0]])
                         for alpha in all_alpha]
-        Mswitch = types.matrix_types[0](sympy.diag(*Mswitch_list))
+        Mswitch = self.Matrix(sympy.diag(*Mswitch_list))
 
         nxwy = self.dims.x() + self.dims.w() + self.dims.y()
         # Gain matrix
         G_connectors = self.M[:nxwy, nxwy:]
         # Observation matrix
         O_connectors = self.M[nxwy:, :nxwy]
-        N_connectors = types.matrix_types[0](sympy.eye(self.dims.cy()) -
+        N_connectors = self.Matrix(sympy.eye(self.dims.cy()) -
                                              self.Mcycy() * Mswitch)
 
         try:
@@ -834,11 +823,11 @@ add the connector'.format(i)
             M_connectors = G_connectors*Mswitch*iN_connectors*O_connectors
 
             # Store new structure
-            self.M = types.matrix_types[0](self.M[:nxwy, :nxwy] + M_connectors)
+            self.M = self.Matrix(self.M[:nxwy, :nxwy] + M_connectors)
 
             # clean
-            setattr(self, 'cy', list())
-            setattr(self, 'cu', list())
+            setattr(self, 'cy', self.Vector())
+            setattr(self, 'cu', self.Vector())
             setattr(self, 'connectors', list())
 
         except ValueError:
@@ -868,15 +857,21 @@ add the connector'.format(i)
             Must be a valid storage function with respect to the state
             :math:`\\mathbf{x}` with :math:`\\nabla^2\\mahtrm H(\\mathbf{x}) \\succeq 0`.
         """
-        if isinstance(x, types.scalar_types):
-            x = [x, ]
-        elif isinstance(x, types.vector_types):
+
+        if isinstance(x, types.vector_types):
             pass
+        elif isinstance(x, types.scalar_types):
+            x = types.PHSVector(x)
+        elif hasattr(x, "__iter__"):
+            x = types.PHSVector(*x)
         else:
-            x_types = types.scalar_types+types.vector_types
-            raise TypeError('Type of x should be one of {}'.format(x_types))
+            raise TypeError('x should be a scalar or a vector, got {}'.format(x))
         types.scalar_test(H)
-        self.x += x
+
+
+        self._insert_rows_and_cols(self.dims.x(), len(x))
+
+        self.x = self.x + x
         self.H += H
 
     def add_dissipations(self, w, z):
@@ -900,17 +895,28 @@ add the connector'.format(i)
         :math:`\\mathbf{w}` with :math:`\\nabla\\mahtrm z(\\mathbf{w}) \succeq 0`.
         """
         if isinstance(w, types.vector_types):
-            types.vector_test(z)
+            pass
         elif isinstance(w, types.scalar_types):
-            types.scalar_test(z)
-            w = [w, ]
-            z = [z, ]
-            w_types = types.scalar_types+types.vector_types
+            w = types.PHSVector(w)
+        elif hasattr(w, "__iter__"):
+            w = types.PHSVector(*w)
         else:
-            text = 'Type of w and z should be one of {}'.format(w_types)
-            raise TypeError(text)
+            raise TypeError('w should be a scalar or a vector, got {}'.format(w))
+
+        if isinstance(z, types.vector_types):
+            pass
+        elif isinstance(z, types.scalar_types):
+            z = types.PHSVector(z)
+        elif hasattr(z, "__iter__"):
+            z = types.PHSVector(*z)
+        else:
+            raise TypeError('z should be a scalar or a vector, got {}'.format(z))
+
         if not len(w) == len(z):
             raise TypeError('w and z should have same dimension.')
+
+        self._insert_rows_and_cols(self.dims.x() + self.dims.w(), len(w))
+
         self.w += w
         self.z += z
 
@@ -933,18 +939,31 @@ add the connector'.format(i)
         y : one or several sympy.Expr
             Outputs symbols. Can be a single symbol or a list of symbols.
         """
+
         if isinstance(u, types.vector_types):
-            types.vector_test(y)
+            pass
         elif isinstance(u, types.scalar_types):
-            types.scalar_test(y)
-            u = [u, ]
-            y = [y, ]
-            y_types = types.scalar_types+types.vector_types
+            u = types.PHSVector(u)
+        elif hasattr(u, "__iter__"):
+            u = types.PHSVector(*u)
         else:
-            text = 'Type of u and y should be one of {}'.format(y_types)
-            raise TypeError(text)
+            raise TypeError('u should be a scalar or a vector, got {}'.format(u))
+
+
+        if isinstance(y, types.vector_types):
+            pass
+        elif isinstance(y, types.scalar_types):
+            y = types.PHSVector(y)
+        elif hasattr(y, "__iter__"):
+            y = types.PHSVector(*y)
+        else:
+            raise TypeError('y should be a scalar or a vector, got {}'.format(y))
+
         if not len(u) == len(y):
             raise TypeError('u and y should have same dimension.')
+
+        self._insert_rows_and_cols(self.dims.x() + self.dims.w(), len(u))
+
         self.u += u
         self.y += y
 
@@ -964,7 +983,7 @@ add the connector'.format(i)
         if isinstance(p, types.vector_types):
             pass
         elif isinstance(p, types.scalar_types):
-            p = [p, ]
+            p = self.Vector(p)
         self.p += p
 
         for par in p:
@@ -984,6 +1003,16 @@ add the connector'.format(i)
             simulation at the begining of each time step.
         """
         self.observers.update(obs)
+
+
+    def _insert_rows_and_cols(self, idx, n):
+        # insert n rows and columns of zeros around self.M[idx, idx]
+        for i in range(n):
+            if self.M.shape[0] == 0:
+                self.M = self.Matrix([[0.0]])
+            else:
+                self.M = self.Matrix(self.M.col_insert(idx, self.Matrix([0]*(self.M.shape[0]))))
+                self.M = self.Matrix(self.M.row_insert(idx, self.Matrix([0]*(self.M.shape[1])).T))
 
     # =========================================================================
 
@@ -1052,12 +1081,12 @@ add the connector'.format(i)
 
         sympy.init_printing()
 
-        b = types.matrix_types[0](self.dtx() +
+        b = self.Matrix(self.dtx() +
                                   self.w +
                                   self.y +
                                   self.cy)
 
-        a = types.matrix_types[0](self.dxH() +
+        a = self.Matrix(self.dxH() +
                                   self.z +
                                   self.u +
                                   self.cu)
@@ -1069,7 +1098,7 @@ add the connector'.format(i)
     def to_evaluation(self, names='all', vectorize=True):
         """
         Return an object with all the numerical function associated with all
-        or a selected set of symbolic functions from a given pyphs.Core.
+        or a selected set of symbolic functions from a given pyphs.nnectre.
 
         Notice this is not a dynamical object, so it has to be rebuild if the
         original core object is changed in any way.
@@ -1255,9 +1284,9 @@ add the connector'.format(i)
         def set_mat(mat):
             vari, varj = dims_names
             if self.M.shape[0] != self.dims.tot():
-                self.M = types.matrix_types[0](sympy.zeros(self.dims.tot()))
+                self.M = self.Matrix(sympy.zeros(self.dims.tot()))
             if name == 'J':
-                Jab = types.matrix_types[0](mat)
+                Jab = self.Matrix(mat)
                 Rab = getattr(self, 'R'+vari + varj)()
                 Rba = getattr(self, 'R'+varj + vari)()
                 Mab = Jab - Rab
@@ -1265,17 +1294,17 @@ add the connector'.format(i)
             if name == 'R':
                 Jab = getattr(self, 'J'+vari + varj)()
                 Jba = getattr(self, 'J'+varj + vari)()
-                R = types.matrix_types[0](mat)
+                R = self.Matrix(mat)
                 Mab = Jab - R
                 Mba = Jba - R.T
             if name == 'M':
-                Mab = types.matrix_types[0](mat)
+                Mab = self.Matrix(mat)
                 Mba = getattr(self, 'M'+varj + vari)()
             debi, endi = getattr(self.inds, vari)()
             debj, endj = getattr(self.inds, varj)()
-            self.M[debi:endi, debj:endj] = types.matrix_types[0](Mab)
+            self.M[debi:endi, debj:endj] = self.Matrix(Mab)
             if vari != varj:
-                self.M[debj:endj, debi:endi] = types.matrix_types[0](Mba)
+                self.M[debj:endj, debi:endi] = self.Matrix(Mba)
         set_mat.__doc__ = """
         =========
         set_{0}{1}{2}
@@ -1308,7 +1337,7 @@ add the connector'.format(i)
 
         def l_accessor():
             dim = getattr(self.dims, dim_label+'l')()
-            return geteval(self, name)[:dim]
+            return self.Vector(*geteval(self, name)[:dim])
         l_accessor.__doc__ = """
     =====
     {0}l

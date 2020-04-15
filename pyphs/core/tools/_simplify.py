@@ -144,9 +144,10 @@ vec_simp: same type as vec or str
     Simplified expressions if succeed, else returns 'not finished'
     """
     types.vector_test(vec)
-    for i, e in enumerate(vec):
-        vec[i] = simplify_scalar(e, **kwargs)
-    return 'not finished' if 'not finished' in vec else vec
+    temp = list(vec)
+    for i, e in enumerate(temp):
+        temp[i] = simplify_scalar(e, **kwargs)
+    return 'not finished' if 'not finished' in vec else types.PHSVector(*temp)
 
 
 def simplify_matrix(mat, **kwargs):

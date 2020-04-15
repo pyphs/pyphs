@@ -8,7 +8,7 @@ Created on Mon May 15 15:14:37 2017
 
 from .moves import (movematrixcols, movesquarematrixcolnrow,
                     move_stor, move_diss)
-from ..tools import free_symbols
+from ..tools import free_symbols, types
 from ..maths import hessian, jacobian, gradient, matvecprod
 import sympy
 
@@ -22,7 +22,7 @@ def monovar_multivar(core):
     i = 0
     for _ in range(core.dims.x()):
         hess = hessian(core.H, core.x)
-        hess_line = list(hess[i, :].T)
+        hess_line = types.PHSVector(*hess[i, :].T)
         # remove i-th element
         hess_line.pop(i)
         # if other elements are all 0
@@ -39,7 +39,7 @@ def monovar_multivar(core):
     # split dissipative part
     i = 0
     for _ in range(core.dims.w()):
-        Jacz_line = list(core.Jacz[i, :].T)
+        Jacz_line = types.PHSVector(*core.Jacz[i, :].T)
         # remove i-th element
         Jacz_line.pop(i)
         # if other elements are all 0
@@ -89,7 +89,7 @@ def linear_nonlinear(core, criterion=None):
     arg = criterion[0][1]
     for _ in range(hess.shape[1]):
         # hess_row = list(hess[nxl, :].T)
-        hess_col = list(hess[:, nxl])
+        hess_col = types.PHSVector(*hess[:, nxl])
         # collect line symbols
         symbs = free_symbols(hess_col)
         # if symbols are not states
@@ -107,7 +107,7 @@ def linear_nonlinear(core, criterion=None):
     arg = criterion[1][1]
     for _ in range(jacz.shape[1]):
         # jacz_row = list(jacz[nwl, :].T)
-        jacz_col = list(jacz[:, nwl])
+        jacz_col = types.PHSVector(*jacz[:, nwl])
         # collect line symbols
         symbs = free_symbols(jacz_col)
         # if symbols are not dissipation variables
@@ -125,7 +125,7 @@ def linear_nonlinear(core, criterion=None):
     # Quadratic part
     Q = hessian(core.H, core.xl())
     # Linear part
-    bl = [a-b for a, b in zip(gradient(core.H, core.xl()), matvecprod(Q, core.xl()))]
+    bl = core.Vector(*(a-b for a, b in zip(gradient(core.H, core.xl()), matvecprod(Q, core.xl()))))
 
     core.setexpr('Q', Q)
     core.setexpr('bl', bl)

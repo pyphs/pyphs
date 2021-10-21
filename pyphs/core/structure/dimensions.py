@@ -41,9 +41,8 @@ class Dimensions:
         self._xl = 0
         self._wl = 0
 
-        # init number of separable components to 0
-        self._xs = 0
-        self._ws = 0
+        # init number of monovariate components to 0
+        self._xnl_mono = 0
 
     def tot(self):
         """

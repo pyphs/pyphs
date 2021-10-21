@@ -153,7 +153,7 @@ FLOAT = 'double'
 # Example Linux: r'/usr/local/bin/cmake'
 # Example MaOSX: r'/opt/local/bin/cmake'
 
-CMAKE_PATH = r'/usr/bin/cmake'
+CMAKE_PATH = r'/usr/local/bin/cmake'
 
 
 CONFIG_CPP = {'float': FLOAT,

@@ -16,8 +16,10 @@ from pyphs.misc.tools import geteval, find, get_strings, remove_duplicates
 from pyphs import Core
 from ..cpp.method2cpp import method2cpp
 from ..tools import Operation
-from ._discrete_calculus import (discrete_gradient, gradient_theta,
-                                 gradient_trapez)
+from ._discrete_calculus import (
+    discrete_gradient_monovar, discrete_gradient_multivar,
+    gradient_theta, gradient_trapez
+    )
 import copy
 
 
@@ -123,17 +125,24 @@ class Method(Core):
         # set sample rate as a symbol...
         self.fs = self.symbols(FS_SYMBS)
 
+        # identify linear components and split linear/nonlinear
         if self.config['split']:
             if VERBOSE >= 2:
                 print('    Split Linear/Nonlinear...')
             self.linear_nonlinear()
 
+        # identify separable components and split separable/nonseparable
+        self.monovar_multivar()
+
         if VERBOSE >= 2:
             print('    Build numerical structure...')
+
         # build the discrete evaluation for the gradient
         build_gradient_evaluation(self)
+
         # build the discrete evaluation for the structure
         build_structure_evaluation(self)
+
         # build method updates
         set_structure(self)
 
@@ -684,9 +693,23 @@ dictionary.
                 mtype(method.xl()) + 0.5*mtype(method.dxl())) +
             mtype(method.bl)
             )
-        dxHnl = discrete_gradient(method.H, method.xnl(), method.dxnl(),
-                                  method.config['epsdg'])
-        method._dxH = list(dxHl) + dxHnl
+        # monovariate
+        dxHnl_sep = discrete_gradient_monovar(
+            method.H,
+            method.xnl()[:method.dims.xnl_mono()],
+            method.dxnl()[:method.dims.xnl_mono()],
+            method.config['epsdg']
+            )
+        # multivariate
+        dxHnl_nonsep = discrete_gradient_multivar(
+            method.H,
+            method.xnl()[method.dims.xnl_mono():],
+            method.dxnl()[method.dims.xnl_mono():],
+            method.config['epsdg']
+            )
+
+        method._dxH = list(dxHl) + dxHnl_sep + dxHnl_nonsep
+        print(f"len(method._dxH) = {len(method._dxH)}")
 
     elif method.config['grad'] == 'theta':
         # theta scheme

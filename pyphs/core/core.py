@@ -1067,7 +1067,7 @@ add the connector'.format(i)
 
     # =========================================================================
     # Evaluation
-    def to_evaluation(self, names='all', vectorize=True):
+    def to_evaluation(self, names='all', vectorize=True, vslice=None):
         """
         Return an object with all the numerical function associated with all
         or a selected set of symbolic functions from a given pyphs.Core.
@@ -1098,7 +1098,7 @@ add the connector'.format(i)
 
         """
         from pyphs.numerics.tools._evaluation import Evaluation
-        return Evaluation(self, names=names, vectorize=vectorize)
+        return Evaluation(self, names=names, vectorize=vectorize, vslice=vslice)
 
     # =========================================================================
 

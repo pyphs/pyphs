@@ -148,12 +148,15 @@ special_chars = ['#']
 # Data type for real numbers in {'float', 'double'}.
 FLOAT = 'double'
 
-# We use the CMAKE build system to build the generated c++ sources. Below is
-# the path to cmake executable (as returned e.g. on UNIX by `which cmake`).
-# Example Linux: r'/usr/local/bin/cmake'
-# Example MaOSX: r'/opt/local/bin/cmake'
+# We use the CMAKE build system to build the generated c++ sources. If your
+# cmake executable is not in yout $PATH, please give it below.
+# Examples:
+# r'cmake'
+# r'/usr/bin/cmake'
+# r'/usr/local/bin/cmake'
+# r'/opt/local/bin/cmake'
 
-CMAKE_PATH = r'/usr/local/bin/cmake'
+CMAKE_PATH = r'cmake'
 
 
 CONFIG_CPP = {'float': FLOAT,

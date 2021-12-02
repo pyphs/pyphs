@@ -150,7 +150,7 @@ FLOAT = 'double'
 
 # We use the CMAKE build system to build the generated c++ sources. If your
 # cmake executable is not in yout $PATH, please give it below.
-# Examples:
+# Examples:t
 # r'cmake'
 # r'/usr/bin/cmake'
 # r'/usr/local/bin/cmake'

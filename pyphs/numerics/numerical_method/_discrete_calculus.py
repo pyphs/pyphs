@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 import sympy
 from pyphs.config import EPS_DG
 from pyphs.core.tools import types
-from pyphs.core.maths import gradient
+from pyphs.core.maths import gradient, hessian
 
 
 def discrete_gradient_monovar(H, x, dx, numtol=EPS_DG):
@@ -95,7 +95,7 @@ def discrete_gradient_multivar(H, x, dx, numtol=EPS_DG):
     assert len(dx) == nx, \
         'dim(dx)={0!s} is not equal to dim(x)={1!s}'.format(len(dx), nx)
 
-    # initialize the discrete gradient by midpoint evaluation of the gradient
+    # initialize the discrete gradient by the midpoint rule
     dxHd = gradient_theta(H, x, dx, theta=0.5)
 
     # define correction coefficient
@@ -103,12 +103,14 @@ def discrete_gradient_multivar(H, x, dx, numtol=EPS_DG):
     corr = H.subs(dict((xi, xi + dxi) for xi, dxi in zip(x, dx))) - H
     corr -= sum(dxHdi*dxi for dxHdi, dxi in zip(dxHd, dx))
     corr /= squarred_norm_dx
-    corr = sympy.Piecewise((corr, squarred_norm_dx < -numtol),
-                           (0.0, squarred_norm_dx < numtol),
+
+    # correction to the midpoint discrete gradient
+    corr = sympy.Piecewise((corr, squarred_norm_dx < -numtol**2),
+                           (0, squarred_norm_dx < numtol**2),
                            (corr, True))
-    # correction midpoint gradient
     for i in range(nx):
-        dxHd[i] = dxHd[i] + corr*dx[i]
+        dxHd[i] += corr*dx[i]
+
     return dxHd
 
 

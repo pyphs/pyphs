@@ -65,7 +65,7 @@ EPS = 1e-12                     # custom tolerance
 
 # Define the numerical tolerance for the discrete gradient:
 # |dx|<EPS_DG <=> dxH = H'
-EPS_DG = numpy.sqrt(numpy.finfo(float).eps)
+EPS_DG = numpy.finfo(float).eps
 
 # Activate the use of theano for python numerical evaluations. This produce
 # code that need to be compiled with inherent time cost but faster evaluations.
@@ -77,7 +77,8 @@ MAXIT = 100
 
 # Minimal conductance for accelerating convergence of NL-solver (used e.g. in
 # diodes, triode and bipolar-junction transistors):
-GMIN = 1e-12
+# GMIN = 1e-12
+GMIN = EPS
 
 # Assemble dictionary of parameters
 CONFIG_NUMERIC = {'fs': FS,

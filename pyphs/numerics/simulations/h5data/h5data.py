@@ -753,7 +753,7 @@ or an integer nt (number of time steps).'
 
     def __getitem__(self, value):
         """
-        Read from g5file[global].
+        Read from h5file[global].
         """
 
         # vname: variable name
@@ -822,6 +822,7 @@ or an integer nt (number of time steps).'
         """
         tslice = self._tslice(tslice)
         output = numpy.arange(tslice.start, tslice.stop, tslice.step)/self.fs
+
         if postprocess is None:
             return output
         else:

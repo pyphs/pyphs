@@ -709,7 +709,6 @@ dictionary.
             )
 
         method._dxH = list(dxHl) + dxHnl_sep + dxHnl_nonsep
-        print(f"len(method._dxH) = {len(method._dxH)}")
 
     elif method.config['grad'] == 'theta':
         # theta scheme

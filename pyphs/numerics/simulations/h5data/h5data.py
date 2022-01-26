@@ -16,6 +16,7 @@ from pyphs.misc.tools import geteval
 from pyphs.config import VERBOSE
 import h5py
 import warnings
+from .tools import set_dataset_from_iterable
 
 
 class H5Data(object):
@@ -289,8 +290,8 @@ class H5Data(object):
 
     def init_data(self, nt=None, sequ=None, seqp=None):
         """
-        Initialize the object and save the sequences for input u, parameters p
-        and state initialisation x0 to files in the folder specified by the
+        Initialize the object and save the sequences for inputs u, parameters p
+        and state initialisation x0 to files in the folder specified in the
         simulation configuration.
 
         Parameters
@@ -347,8 +348,8 @@ or an integer nt (number of time steps).'
             sequ = [[0]*ny for _ in range(nt)]
         elif len(sequ.shape) == 1:
             if not ny == 1:
-                text = 'Input shape should be ({}, {}).'
-                raise AttributeError(text.format(nt, ny))
+                text = 'Expected input shape is ({}, {}), got ({}, )'
+                raise AttributeError(text.format(nt, ny, sequ.shape))
             else:
                 sequ = sequ[:, numpy.newaxis]
 
@@ -360,8 +361,8 @@ or an integer nt (number of time steps).'
             seqp = numpy.array(seqp)
         elif len(seqp.shape) == 1:
             if not np == 1:
-                text = 'Parameters shape should be ({}, {}).'
-                raise AttributeError(text.format(nt, np))
+                text = 'Expected parameter shape is ({}, {}), got ({}, )'
+                raise AttributeError(text.format(nt, np, seqp.shape))
             else:
                 seqp = seqp[:, numpy.newaxis]
 
@@ -609,11 +610,20 @@ or an integer nt (number of time steps).'
         dtype = self.dtype
         # update array with data values
         for name in data:
-            # write array in h5 file at time t
+            # write data in h5 file
             vslice = slice(*self.inds[name])
-            self.h5data[tslice, vslice] = numpy.asarray(data[name],
-                                                        dtype=dtype)
-
+            temp_nt = len(range(tslice.stop)[tslice])
+            temp_nv = len(range(vslice.stop)[vslice])
+            if temp_nt*temp_nv > 0:
+                if VERBOSE > 0:
+                    print('Write {0} to hdf5 file...'.format(name))
+                set_dataset_from_iterable(
+                    self.h5data, data[name],
+                    tslice, vslice,
+                    chunksize=1024
+                )
+                if VERBOSE > 0:
+                    print('Write {0} to hdf5 file: Done.'.format(name))
         if close:
             self.h5close()
 
@@ -647,7 +657,7 @@ or an integer nt (number of time steps).'
 
     def _tuple2slice(self, vname, vslice):
         """
-        return slice in the data from item spicifier
+        return slice in the data from item specifier
         """
 
         # read variable slice from data object indices
@@ -743,7 +753,7 @@ or an integer nt (number of time steps).'
 
     def __getitem__(self, value):
         """
-        Read from g5file[global].
+        Read from h5file[global].
         """
 
         # vname: variable name
@@ -812,6 +822,7 @@ or an integer nt (number of time steps).'
         """
         tslice = self._tslice(tslice)
         output = numpy.arange(tslice.start, tslice.stop, tslice.step)/self.fs
+
         if postprocess is None:
             return output
         else:
@@ -865,7 +876,7 @@ or an integer nt (number of time steps).'
 
         expectedNt = (tslice.stop-tslice.start)//tslice.step
 
-        evalobj = self.method.to_evaluation(names=[name])
+        evalobj = self.method.to_evaluation(names=[name], vslice=vslice)
 
         # cope with functions that have no arguments (see Evaluation object)
         if name == 'o':
@@ -879,11 +890,7 @@ or an integer nt (number of time steps).'
         else:
             args = numpy.zeros((expectedNt, 1))
 
-        # Try to slice the output
-        try:
-            output = getattr(evalobj, name)(*args.T)[:, vslice]
-        except IndexError:
-            output = getattr(evalobj, name)(*args.T)
+        output = numpy.array(tuple(getattr(evalobj, name)(*args.T)))
 
         # Reshape if output is 0 dimensional
         if not numpy.prod(output.shape):

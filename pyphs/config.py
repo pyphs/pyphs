@@ -45,7 +45,7 @@ path_to_configuration_file = os.path.join(here, 'config.py')
 # Below are the options for the INTERFACE
 
 # Verbose level in [0, 1, 2, 3]
-VERBOSE = 1
+VERBOSE = 3
 
 
 ###############################################################################
@@ -59,6 +59,7 @@ DTYPE = numpy.finfo(float).dtype.type
 FS = 48e3
 
 # Define the numerical tolerance such that |x|<EPS <=> x = 0
+# Used in the Newton-Raphson method as a condition on convergence
 # EPS = numpy.finfo(float).eps    # numpy tolerance
 EPS = 1e-12                     # custom tolerance
 
@@ -76,7 +77,8 @@ MAXIT = 100
 
 # Minimal conductance for accelerating convergence of NL-solver (used e.g. in
 # diodes, triode and bipolar-junction transistors):
-GMIN = 1e-12
+# GMIN = 1e-12
+GMIN = EPS
 
 # Assemble dictionary of parameters
 CONFIG_NUMERIC = {'fs': FS,
@@ -147,12 +149,15 @@ special_chars = ['#']
 # Data type for real numbers in {'float', 'double'}.
 FLOAT = 'double'
 
-# We use the CMAKE build system to build the generated c++ sources. Below is
-# the path to cmake executable (as returned e.g. on UNIX by `which cmake`).
-# Example Linux: r'/usr/local/bin/cmake'
-# Example MaOSX: r'/opt/local/bin/cmake'
+# We use the CMAKE build system to build the generated c++ sources. If your
+# cmake executable is not in yout $PATH, please give it below.
+# Examples:t
+# r'cmake'
+# r'/usr/bin/cmake'
+# r'/usr/local/bin/cmake'
+# r'/opt/local/bin/cmake'
 
-CMAKE_PATH = r'/usr/local/bin/cmake'
+CMAKE_PATH = r'cmake'
 
 
 CONFIG_CPP = {'float': FLOAT,

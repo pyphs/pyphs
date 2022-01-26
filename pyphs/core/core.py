@@ -15,7 +15,7 @@ from ..misc.tools import geteval
 from ..config import VERBOSE
 # Structure methods
 from .structure.R import reduce_z
-from .structure.splits import linear_nonlinear
+from .structure.splits import linear_nonlinear, monovar_multivar
 from .structure.output import output_function as output
 from .structure.moves import move_stor, move_diss, move_port, move_connector
 from .structure.connectors import port2connector
@@ -42,6 +42,7 @@ class Core:
 
     reduce_z = reduce_z
     linear_nonlinear = linear_nonlinear
+    monovar_multivar = monovar_multivar
     output = output
 
     move_storage = move_stor
@@ -90,7 +91,7 @@ class Core:
         # Ordered list of variables considered as the systems's arguments
         self.args_names = ('x', 'dx', 'w', 'u', 'p', 'o')
 
-        self.attrstocopy = {('dims', '_xl'), ('dims', '_wl'),
+        self.attrstocopy = {('dims', '_xl'), ('dims', '_wl'), ('dims', '_xnl_mono'),
                             'connectors', 'force_wnl', 'subs', 'M', '_dxH',
                             'symbs_names', 'exprs_names', 'observers'}
 
@@ -1066,7 +1067,7 @@ add the connector'.format(i)
 
     # =========================================================================
     # Evaluation
-    def to_evaluation(self, names='all', vectorize=True):
+    def to_evaluation(self, names='all', vectorize=True, vslice=None):
         """
         Return an object with all the numerical function associated with all
         or a selected set of symbolic functions from a given pyphs.Core.
@@ -1097,7 +1098,7 @@ add the connector'.format(i)
 
         """
         from pyphs.numerics.tools._evaluation import Evaluation
-        return Evaluation(self, names=names, vectorize=vectorize)
+        return Evaluation(self, names=names, vectorize=vectorize, vslice=vslice)
 
     # =========================================================================
 

@@ -323,7 +323,7 @@ class Simulation(object):
             equal = True
             for k in inits.keys():
                 try:
-                    equal = inits[k] == self.inits[k] and equal
+                    equal = all(v == s for (v,s) in zip(inits[k], self.inits[k])) and equal
                 except KeyError:
                     equal = False
             if not equal:

@@ -25,3 +25,9 @@ makefile
 
 
 cover/
+
+**test.py
+/test/
+**/test/
+/data/*
+**/data/*

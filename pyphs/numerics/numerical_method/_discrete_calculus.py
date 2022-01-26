@@ -8,10 +8,10 @@ from __future__ import absolute_import, division, print_function
 import sympy
 from pyphs.config import EPS_DG
 from pyphs.core.tools import types
-from pyphs.core.maths import gradient
+from pyphs.core.maths import gradient, hessian
 
 
-def discrete_gradient(H, x, dx, numtol=EPS_DG):
+def discrete_gradient_monovar(H, x, dx, numtol=EPS_DG):
     """
     Symbolic computation here. Return the discrete gradient of scalar function\
  H between x and x+dx, with H separable with respect to x: H = sum_i[H_i(x_i)].
@@ -56,6 +56,61 @@ def discrete_gradient(H, x, dx, numtol=EPS_DG):
                                (dxh0, dx[i] < numtol),
                                (dxh, True))
         dxHd.append(dxhi)
+    return dxHd
+
+
+def discrete_gradient_multivar(H, x, dx, numtol=EPS_DG):
+    """
+    Symbolic computation here. Return the discrete gradient of scalar function\
+ H between x and x+dx, with H separable with respect to x: H = sum_i[H_i(x_i)].
+
+    Parameters
+    -----------
+
+    H : sympy.expression
+
+        Scalar function of x.
+
+    x : list or sympy.SparseMatrix
+
+        1 dimensional array of sympy symbols.
+
+    dx : list or sympy.SparseMatrix
+
+        1 dimensional array of sympy symbols.
+
+    Output
+    -------
+
+    gradd : list
+
+        discrete gradient of H with
+        'gradd[i] = H.diff(x) if norm(dx[i]) < numtol else \
+(H(x+dx[i])-H(x))/dx[i]'
+    """
+    types.vector_test(x)
+    types.vector_test(dx)
+    types.scalar_test(H)
+    nx = len(x)
+    assert len(dx) == nx, \
+        'dim(dx)={0!s} is not equal to dim(x)={1!s}'.format(len(dx), nx)
+
+    # initialize the discrete gradient by the midpoint rule
+    dxHd = gradient_theta(H, x, dx, theta=0.5)
+
+    # define correction coefficient
+    squarred_norm_dx = sum(dxi**2 for dxi in dx)
+    corr = H.subs(dict((xi, xi + dxi) for xi, dxi in zip(x, dx))) - H
+    corr -= sum(dxHdi*dxi for dxHdi, dxi in zip(dxHd, dx))
+    corr /= squarred_norm_dx
+
+    # correction to the midpoint discrete gradient
+    corr = sympy.Piecewise((corr, squarred_norm_dx < -numtol**2),
+                           (0, squarred_norm_dx < numtol**2),
+                           (corr, True))
+    for i in range(nx):
+        dxHd[i] += corr*dx[i]
+
     return dxHd
 
 

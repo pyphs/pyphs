@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Jun 11 23:08:40 2016
+Modified on Wed Oct 20, 2021
 
-@author: Falaize
+@author: afalaize
+
+This module implements a class `Dimensions` that stores and manage dimensions
+of pyphs.Core objects.
+
 """
 
 from __future__ import absolute_import, division, print_function
@@ -36,11 +41,17 @@ class Dimensions:
         self._xl = 0
         self._wl = 0
 
+        # init number of monovariate components to 0
+        self._xnl_mono = 0
+
     def tot(self):
         """
         Total dimension ntot = dim(x)+dim(w)+dim(y)+dim(cy)
         """
         return sum(geteval(self, var) for var in self.names)
+
+    # --------------------------------------------------------------------------
+    # Linear/nonlinear
 
     def xl(self):
         """
@@ -66,6 +77,23 @@ class Dimensions:
         """
         return self.w() - self.wl()
 
+    # --------------------------------------------------------------------------
+    # Separable/nonseparable
+
+    def xnl_mono(self):
+        """
+        Number of states associated with monovariate storage components
+        """
+        return self._xnl_mono
+
+    def xnl_multi(self):
+        """
+        Number of states associated with multivariate storage components
+        """
+        return self.x() - self.xl() - self.xnl_mono()
+
+    # --------------------------------------------------------------------------
+
     def l(self):
         """
         Total number of inear variables
@@ -78,14 +106,12 @@ class Dimensions:
         """
         return self.xnl() + self.wnl()
 
-###############################################################################
-###############################################################################
-###############################################################################
-
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def _dimvar_generator(core, var):
     """
-    return length of 'pho.symbs.var'
+    Return a function to access the dimension of `var` in `core`.
     """
     def dimvar():
         return len(geteval(core, var))

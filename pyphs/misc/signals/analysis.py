@@ -20,7 +20,7 @@ def spectrogram(x, fs, show=False, **kwargs):
     x : lists of values
         y-axis values for each curve.
 
-    fs : floats
+    fs : float
         samplerate.
 
     label : list, optional
@@ -33,7 +33,7 @@ def spectrogram(x, fs, show=False, **kwargs):
         y-axis labels (the default is None).
 
     path : str, optional
-        Figure is saved in 'filelabel.png' (the default is 'multiplot').
+        Figure is saved in 'path.png'.
 
     title : str, optional
         Figure main title. If set to None, the desactivated (the default is
@@ -51,14 +51,12 @@ def spectrogram(x, fs, show=False, **kwargs):
     opts['label'] = opts.pop('labels')
     opts.update(kwargs)
 
-    if not 'dynamics' in opts.keys():
-        opts['dynamics'] = 80.
-    if not 'nfft' in opts.keys():
-        opts['nfft'] = int(2**8)
-    else:
-        opts['nfft'] = int(opts['nfft'])
-    if not 'cmap' in opts.keys():
-        opts['cmap'] = 'BuPu'
+    opts.setdefault('dynamics', 80.)
+    opts.setdefault('nfft', int(2**8))
+    opts.setdefault('cmap', 'gnuplot2') # 'BuPu'
+    opts.setdefault('fmax', None)
+
+    opts['nfft'] = int(opts['nfft'])
 
     from matplotlib.pyplot import figure, fignum_exists
 
@@ -78,8 +76,15 @@ def spectrogram(x, fs, show=False, **kwargs):
                                         mode='psd', Fs=fs,
                                         NFFT=opts['nfft'], noverlap=noverlap,
                                         cmap=opts['cmap'])
+
+    if opts['fmax'] is not None:
+        ifmax = 0
+        while ifmax < len(fbins) and fbins[ifmax] < opts['fmax']:
+            ifmax += 1
+        Pxx, fbins = Pxx[:ifmax, :], fbins[:ifmax]
+
     Pxx = Pxx/np.max(Pxx)
-    extent = [tbins.min(), tbins.max(), 0., fbins.max()]
+    extent = [tbins.min(), tbins.max(), fbins.min(), fbins.max()]
 
     im = ax.imshow(10*np.log10(Pxx), extent=extent, origin='lower',
                    aspect='auto', cmap=opts['cmap'],
@@ -97,10 +102,6 @@ def spectrogram(x, fs, show=False, **kwargs):
         from matplotlib.pyplot import title
         title(opts['title'])
 
-    if opts['path'] is not None:
-        from matplotlib.pyplot import savefig
-        savefig(opts['path'] + '.' + opts['format'])
-
     fig.colorbar(im, label='Magnitude (dB)')
 
     if opts['log'] is not None and 'y' in opts['log']:
@@ -111,9 +112,15 @@ def spectrogram(x, fs, show=False, **kwargs):
         from matplotlib.pyplot import xscale
         xscale('log')
 
+    if opts['path'] is not None:
+        from matplotlib.pyplot import savefig
+        savefig(opts['path'] + '.' + opts['format'])
+
     if show:
         from matplotlib.pyplot import show as pltshow
         pltshow()
+
+    return ax
 
 
 def transferFunction(sigin, sigout, fs, nfft=int(2e10), filtering=None,

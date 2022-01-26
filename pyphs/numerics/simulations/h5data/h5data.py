@@ -753,7 +753,7 @@ or an integer nt (number of time steps).'
 
     def __getitem__(self, value):
         """
-        Read from g5file[global].
+        Read from h5file[global].
         """
 
         # vname: variable name
@@ -822,6 +822,7 @@ or an integer nt (number of time steps).'
         """
         tslice = self._tslice(tslice)
         output = numpy.arange(tslice.start, tslice.stop, tslice.step)/self.fs
+
         if postprocess is None:
             return output
         else:
@@ -875,7 +876,7 @@ or an integer nt (number of time steps).'
 
         expectedNt = (tslice.stop-tslice.start)//tslice.step
 
-        evalobj = self.method.to_evaluation(names=[name])
+        evalobj = self.method.to_evaluation(names=[name], vslice=vslice)
 
         # cope with functions that have no arguments (see Evaluation object)
         if name == 'o':
@@ -889,11 +890,7 @@ or an integer nt (number of time steps).'
         else:
             args = numpy.zeros((expectedNt, 1))
 
-        # Try to slice the output
-        try:
-            output = getattr(evalobj, name)(*args.T)[:, vslice]
-        except IndexError:
-            output = getattr(evalobj, name)(*args.T)
+        output = numpy.array(tuple(getattr(evalobj, name)(*args.T)))
 
         # Reshape if output is 0 dimensional
         if not numpy.prod(output.shape):

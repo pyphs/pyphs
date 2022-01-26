@@ -13,49 +13,37 @@ from ..maths import hessian, jacobian, gradient, matvecprod
 import sympy
 
 
+# ============================ monovar_multivar ============================== #
+
 def monovar_multivar(core):
     """
-    Split core components into monovariate and multivariate components.
+    Split core storage components into monovariate (separable) and multivariate
+    (nonseparable) components. This applies only to nonlinear storage components.
+
+    Parameters
+    ----------
+    core : pyphs.Core
+        Core to analyse.
     """
 
-    # split storage part
-    i = 0
-    for _ in range(core.dims.x()):
-        hess = hessian(core.H, core.x)
-        hess_line = list(hess[i, :].T)
-        # remove i-th element
-        hess_line.pop(i)
-        # if other elements are all 0
-        if all(el is sympy.sympify(0) for el in hess_line):
+    hess = hessian(core.H, core.xnl())
+    nxs = 0
+    for k in range(core.dims.xnl()):
+        # get i-th line of hessian matrix
+        hess_line = list(hess[nxs, :].T)
+        if all(elt is sympy.sympify(0) for elt in hess_line[nxs+1:]):
             # do nothing and increment counter
-            i += 1
+            nxs += 1
         else:
             # move the element at the end of states vector
-            move_stor(core, i, core.dims.x())
-    # number of separate components
-    core.dims.xs = i
-    # number of non-separate components
-    core.dims.xns = core.dims.x()-i
-    # split dissipative part
-    i = 0
-    for _ in range(core.dims.w()):
-        Jacz_line = list(core.Jacz[i, :].T)
-        # remove i-th element
-        Jacz_line.pop(i)
-        # if other elements are all 0
-        if all(el is sympy.sympify(0) for el in Jacz_line):
-            # do nothing and increment counter
-            i += 1
-        else:
-            # move the element at the end of variables vector
-            move_diss(core, i, core.dims.w())
-    # number of separate components
-    core.dims.ws = i
-    # number of non-separate components
-    core.dims.wns = core.dims.w()-i
+            move_stor(core, core.dims.xl() + nxs, core.dims.x()-1)
+            hess = movesquarematrixcolnrow(hess, nxs, core.dims.xnl()-1)
+
+    # number of separable nonlinear components
+    setattr(core.dims, '_xnl_mono', nxs)
 
 
-# ============================== linear_nonlinear =========================== #
+# ============================ linear_nonlinear ============================== #
 def linear_nonlinear(core, criterion=None):
     """
     1. Detect the number of linear storage component (_nxl) and of linear

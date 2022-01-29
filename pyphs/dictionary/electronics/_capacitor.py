@@ -8,7 +8,7 @@ Created on Sun Jun 18 23:55:52 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges import StorageLinear
+from ..common import StorageLinear
 from ..tools import componentDoc, parametersDefault
 from ..electronics import metadata as dicmetadata
 

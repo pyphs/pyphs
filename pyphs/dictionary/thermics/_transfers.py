@@ -7,7 +7,7 @@ Created on Fri Jun 16 13:13:07 2017
 """
 
 from pyphs.graphs import datum
-from ..edges import DissipativeNonLinear
+from ..common import DissipativeNonLinear
 from ..tools import symbols
 from ..tools import componentDoc, parametersDefault
 from ..thermics import metadata as dicmetadata

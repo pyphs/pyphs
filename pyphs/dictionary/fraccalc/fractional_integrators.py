@@ -8,7 +8,7 @@ Created on Sat May 13 17:57:10 2017
 
 from pyphs import Graph
 import numpy as np
-from pyphs.dictionary.edges import DissipativeLinear, StorageLinear
+from pyphs.dictionary.common import DissipativeLinear, StorageLinear
 from pyphs.misc.rst import equation
 from pyphs.config import EPS
 from ..tools import componentDoc, parametersDefault

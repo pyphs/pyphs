@@ -47,6 +47,12 @@ path_to_configuration_file = os.path.join(here, 'config.py')
 # Verbose level in [0, 1, 2, 3]
 VERBOSE = 3
 
+try:
+    from icecream import ic
+    debug_print = ic
+except:
+    debug_print = print
+
 
 ###############################################################################
 

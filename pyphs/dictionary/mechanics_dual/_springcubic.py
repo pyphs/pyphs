@@ -7,7 +7,7 @@ Created on Sun Jun 18 23:50:31 2017
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import StorageNonLinear
+from ..common import StorageNonLinear
 from pyphs.dictionary.tools import symbols
 from ..tools import componentDoc, parametersDefault
 from ..mechanics_dual import metadata as dicmetadata

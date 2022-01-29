@@ -7,7 +7,7 @@ Created on Sun Jun 18 23:49:05 2017
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import StorageLinear
+from ..common import StorageLinear
 from ..tools import componentDoc, parametersDefault
 from ..mechanics_dual import metadata as dicmetadata
 from pyphs.misc.rst import equation

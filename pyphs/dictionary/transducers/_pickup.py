@@ -8,7 +8,7 @@ Created on Sun May 14 16:12:19 2017
 from pyphs import Graph
 from ..connectors import Gyrator
 from ..magnetics import Source, Capacitor
-from ..edges import Observerec
+from ..common import Observerec
 from ..tools import mappars
 from ..tools import componentDoc, parametersDefault
 from ..transducers import metadata as dicmetadata

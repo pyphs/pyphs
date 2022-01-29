@@ -6,7 +6,7 @@ Created on Sat May 21 16:29:43 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import StorageNonLinear
+from ..common import StorageNonLinear
 from pyphs.dictionary.tools import symbols
 import sympy as sp
 from ..tools import componentDoc, parametersDefault

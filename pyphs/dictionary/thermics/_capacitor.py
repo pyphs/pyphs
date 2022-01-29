@@ -6,7 +6,7 @@ Created on Fri Jun 16 12:14:04 2017
 @author: Falaize
 """
 
-from ..edges import StorageNonLinear
+from ..common import StorageNonLinear
 from ..tools import symbols
 from pyphs.graphs import datum
 import sympy as sp

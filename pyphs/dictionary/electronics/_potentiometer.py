@@ -9,7 +9,7 @@ Created on Mon Jun 19 00:06:10 2017
 from __future__ import absolute_import, division, print_function
 
 from ..tools import symbols
-from ..edges import DissipativeNonLinear
+from ..common import DissipativeNonLinear
 from ..tools import componentDoc, parametersDefault
 from ..electronics import metadata as dicmetadata
 
@@ -24,6 +24,7 @@ class Potentiometer(DissipativeNonLinear):
         for par in pars:
             assert par in parameters.keys()
         R, A, E = symbols(pars)
+
         # dissipation variable
         w = symbols(["w"+label+str(i) for i in (1, 2)])
         # dissipation funcion

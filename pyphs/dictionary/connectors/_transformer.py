@@ -6,7 +6,7 @@ Created on Tue Jun  7 19:13:35 2016
 """
 from __future__ import absolute_import, division, print_function
 
-from ..edges.connectors import Connector
+from ..common.connectors import Connector
 from ..tools import componentDoc, parametersDefault
 from ..connectors import metadata as dicmetadata
 from pyphs.misc.rst import equation

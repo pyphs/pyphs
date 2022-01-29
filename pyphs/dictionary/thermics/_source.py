@@ -6,7 +6,7 @@ Created on Fri Jun 16 12:14:22 2017
 @author: Falaize
 """
 
-from ..edges import Port
+from ..common import Port
 from ..tools import symbols
 from pyphs.graphs import datum
 from ..tools import componentDoc, parametersDefault

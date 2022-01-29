@@ -1,0 +1,4 @@
+polynomial.source F ('#', 'n1'): ctrl=e;
+polynomial.storage M ('#', 'n1'): ctrl='e'; c2=('M1', 0.01); c4=('M3', 0.04);
+polynomial.storage K ('#', 'n1'): ctrl='f'; c2=('K1', 1e3); c4=('K3', 2e3);
+polynomial.dissipative A ('#', 'n1'): ctrl='e'; c1=2e1; c3=3.5e2;

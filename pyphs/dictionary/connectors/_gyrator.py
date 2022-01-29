@@ -8,7 +8,7 @@ Created on Sun Jun 18 23:04:04 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges.connectors import Connector
+from ..common.connectors import Connector
 from ..tools import componentDoc, parametersDefault
 from ..connectors import metadata as dicmetadata
 from pyphs.misc.rst import equation

@@ -114,12 +114,10 @@ def move_diss(core, indi, indf):
     new_indices = myrange(core.dims.w(), indi, indf)
     core.w = [core.w[el] for el in new_indices]
     core.z = [core.z[el] for el in new_indices]
-    moveCoreMcolnrow(core, core.dims.x()+indi, core.dims.x()+indf)
-    if (not core.Zl.is_zero and
-            indi < core.dims.wl() and
-            indf < core.dims.wl()):
+    moveCoreMcolnrow(core, core.dims.x() + indi, core.dims.x() + indf)
+    if not core.Zl.is_zero and indi < core.dims.wl() and indf < core.dims.wl():
         core.Zl = movesquarematrixcolnrow(core.Zl, indi, indf)
-    elif (not core.Zl.is_zero):
+    elif not core.Zl.is_zero:
         core.Zl = core.Zl[:0, :0]  # Set Matrix to zero
 
 
@@ -138,8 +136,9 @@ def move_port(core, indi, indf):
     new_indices = myrange(core.dims.y(), indi, indf)
     core.u = [core.u[el] for el in new_indices]
     core.y = [core.y[el] for el in new_indices]
-    moveCoreMcolnrow(core, core.dims.x()+core.dims.w()+indi,
-                     core.dims.x()+core.dims.w()+indf)
+    moveCoreMcolnrow(
+        core, core.dims.x() + core.dims.w() + indi, core.dims.x() + core.dims.w() + indf
+    )
 
 
 def move_connector(core, indi, indf):
@@ -157,5 +156,8 @@ def move_connector(core, indi, indf):
     new_indices = myrange(core.dims.cy(), indi, indf)
     core.cu = [core.cu[el] for el in new_indices]
     core.cy = [core.cy[el] for el in new_indices]
-    moveCoreMcolnrow(core, core.dims.x()+core.dims.w()+core.dims.y()+indi,
-                     core.dims.x()+core.dims.w()+core.dims.y()+indf)
+    moveCoreMcolnrow(
+        core,
+        core.dims.x() + core.dims.w() + core.dims.y() + indi,
+        core.dims.x() + core.dims.w() + core.dims.y() + indf,
+    )

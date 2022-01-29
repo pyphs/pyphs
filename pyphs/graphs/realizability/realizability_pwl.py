@@ -8,14 +8,14 @@ Modified on Thr Jul 25 23:12:34 2018
 by @author: afalaize
 
 """
-#import warnings
-#from pyphs.dictionary import pwl
-#from pyphs.dictionary.pwl.tools import data_generator
-#import numpy as np
-#import os
+# import warnings
+# from pyphs.dictionary import pwl
+# from pyphs.dictionary.pwl.tools import data_generator
+# import numpy as np
+# import os
 #
 #
-#def PWL(X, Y, Xin):
+# def PWL(X, Y, Xin):
 #    n = len(X)
 #    if n < 2:
 #        raise ValueError('X must contain at least 2 elements')
@@ -45,7 +45,7 @@ by @author: afalaize
 #        return Yout
 #
 #
-#def PWL_inv(X, Y):
+# def PWL_inv(X, Y):
 #    n = len(X)
 #    if n < 2:
 #        raise ValueError('X must contain at least 2 elements')
@@ -59,12 +59,12 @@ by @author: afalaize
 #        return Y, X
 #
 #
-#def PWL_comp(X, Y1, Y2, Z):
+# def PWL_comp(X, Y1, Y2, Z):
 #    Zout = PWL(Y2, Z, Y1)
 #    return X, Zout
 #
 #
-#def PWL_sum(XX, YY, tol=2):
+# def PWL_sum(XX, YY, tol=2):
 #    eps = np.finfo(float).eps
 #    n = len(XX)
 #    Xout = []
@@ -81,7 +81,7 @@ by @author: afalaize
 #    return Xout, Yout
 #
 #
-#def PWL_integ(X, Y):
+# def PWL_integ(X, Y):
 #    p = X[1]-X[0]  #step is supposedly constant
 #    Yout = []
 #    z, = np.where(X==0)
@@ -95,7 +95,7 @@ by @author: afalaize
 #    return X, Yout
 #
 #
-#def PWL_Heq(XX, YY, tol=2):
+# def PWL_Heq(XX, YY, tol=2):
 #    n = len(XX)
 #    XXo = []
 #    YYo = []
@@ -110,18 +110,18 @@ by @author: afalaize
 #    return Xout, Yout
 #
 #
-#def get_key(dic, value):
+# def get_key(dic, value):
 #    for k, v in dic.items():
 #            if v == value:
 #                return k
 #
 #
-#def isStorage(edge):
+# def isStorage(edge):
 #    _, _, dic = edge
 #    return (dic['type'] == 'storage')
 #
 #
-#def initialize_Heq():
+# def initialize_Heq():
 #    XX, YY = [], []
 #    label = 'Heq_'
 #    keys = []
@@ -129,7 +129,7 @@ by @author: afalaize
 #    return XX, YY, label, keys, nodeslist
 #
 #
-#def replace_Heq_par(graph, keys, nodes, path, label):
+# def replace_Heq_par(graph, keys, nodes, path, label):
 #    """
 #        Replace all parallel storages within a parallel graph with
 #        equivalent storage
@@ -160,7 +160,7 @@ by @author: afalaize
 #    warnings.warn('Replacing parallel storage with equivalent storage ' + label)
 #
 #
-#def replace_Heq_ser(graph, keys, nodeslist, path, label, firstnode, lastnode):
+# def replace_Heq_ser(graph, keys, nodeslist, path, label, firstnode, lastnode):
 #    """
 #        Replace all serial storages within a serial graph with
 #        equivalent storage
@@ -197,7 +197,7 @@ by @author: afalaize
 #    warnings.warn('Replacing serial storages with equivalent storage ' + label)
 #
 #
-#def graph_analysis_serial(graph):
+# def graph_analysis_serial(graph):
 #    """
 #        Walk through a serial graph and perform replace_Heq_ser wherever possible
 #    """
@@ -241,7 +241,7 @@ by @author: afalaize
 #    graph.remove_nodes_from(nodesbin)
 #
 #
-#def graph_analysis_parallel(graph):
+# def graph_analysis_parallel(graph):
 #    """
 #        Walk through a parallel graph and perform replace_Heq_par wherever possible
 #    """
@@ -270,7 +270,7 @@ by @author: afalaize
 #        replace_Heq_par(graph, keys, nodes, path, label)
 #
 #
-#def graph_eq(splitgraph):
+# def graph_eq(splitgraph):
 #    """
 #        Walk through a split graph (call Graph.sp_split method first) and perform
 #        replace_Heq_par and replace_Heq_ser wherever possible

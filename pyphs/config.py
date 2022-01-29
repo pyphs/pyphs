@@ -37,8 +37,8 @@ import numpy
 import os
 
 # Define the path to this file
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-path_to_configuration_file = os.path.join(here, 'config.py')
+here = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
+path_to_configuration_file = os.path.join(here, "config.py")
 
 ###############################################################################
 
@@ -49,6 +49,7 @@ VERBOSE = 3
 
 try:
     from icecream import ic
+
     debug_print = ic
 except:
     debug_print = print
@@ -67,7 +68,7 @@ FS = 48e3
 # Define the numerical tolerance such that |x|<EPS <=> x = 0
 # Used in the Newton-Raphson method as a condition on convergence
 # EPS = numpy.finfo(float).eps    # numpy tolerance
-EPS = 1e-12                     # custom tolerance
+EPS = 1e-12  # custom tolerance
 
 # Define the numerical tolerance for the discrete gradient:
 # |dx|<EPS_DG <=> dxH = H'
@@ -87,12 +88,14 @@ MAXIT = 100
 GMIN = EPS
 
 # Assemble dictionary of parameters
-CONFIG_NUMERIC = {'fs': FS,
-                  'eps': EPS,
-                  'maxit': int(MAXIT),
-                  'theano': THEANO,
-                  'gmin': GMIN,
-                  'dtype': DTYPE}
+CONFIG_NUMERIC = {
+    "fs": FS,
+    "eps": EPS,
+    "maxit": int(MAXIT),
+    "theano": THEANO,
+    "gmin": GMIN,
+    "dtype": DTYPE,
+}
 
 
 ###############################################################################
@@ -100,30 +103,30 @@ CONFIG_NUMERIC = {'fs': FS,
 # Below are the options for SYMBOLIC COMPUTATIONS
 
 # Symbol for sample rate in symbolic numerical scheme Method
-FS_SYMBS = 'F_S'
+FS_SYMBS = "F_S"
 
 # Simplification method for sympy expressions:
 # -'simplify' tries a lot of simplifications and select the best w.r.t
 #   a "length" criterion (slow).
 # - 'factor' tries to factorise expressions (recommanded)
-SIMPLIFY = 'factor'
+SIMPLIFY = "factor"
 
 # Simplification trial time before timeout and abord (expressed in second)
-TIMEOUT = 10.
+TIMEOUT = 10.0
 
 ###############################################################################
 
 # Below are the options for GRAPH ANALYSIS
 
 # label of datum node
-datum = '#'
+datum = "#"
 
 ###############################################################################
 
 # Graphs plot options
 
 # Nodes layout in {'circular', 'spring'}
-GRAPHS_LAYOUT = 'circular'
+GRAPHS_LAYOUT = "circular"
 
 # Number of iteration for layout optimization
 GRAPHS_ITERATIONS = 1000
@@ -140,20 +143,20 @@ fold_short_frac = False
 mat_delim = "("
 
 # Which matrix environment string to use, in {“smallmatrix”, “matrix”, “array”}
-mat_str = 'array'
+mat_str = "array"
 
 # multiplication symbol, in {None, “ldot”, “dot”, “times”}
-mul_symbol = 'dot'
+mul_symbol = "dot"
 
 # Special characters to be ignored
-special_chars = ['#']
+special_chars = ["#"]
 
 ###############################################################################
 
 # Below are the options for C++ files rendering and execution inside python.
 
 # Data type for real numbers in {'float', 'double'}.
-FLOAT = 'double'
+FLOAT = "double"
 
 # We use the CMAKE build system to build the generated c++ sources. If your
 # cmake executable is not in yout $PATH, please give it below.
@@ -163,12 +166,10 @@ FLOAT = 'double'
 # r'/usr/local/bin/cmake'
 # r'/opt/local/bin/cmake'
 
-CMAKE_PATH = r'cmake'
+CMAKE_PATH = r"cmake"
 
 
-CONFIG_CPP = {'float': FLOAT,
-              'cmake': CMAKE_PATH
-              }
+CONFIG_CPP = {"float": FLOAT, "cmake": CMAKE_PATH}
 
 ###############################################################################
 
@@ -176,22 +177,19 @@ CONFIG_CPP = {'float': FLOAT,
 
 # Hamiltonian gradient evaluation
 # in {'discret', 'theta', 'trapez'}
-GRADIENT = 'discret'
+GRADIENT = "discret"
 
 # Parameter of the theta numerical scheme:
 # M(x+theta*dx) with gradient={'discret', 'theta'}
 # grad(H(x+theta*dx)) with gradient='theta'
-THETA = 0.
+THETA = 0.0
 
 # Split the structure into explicit (up to a matrix inversion) and implicit
 # before the simulation. Then presolve (matrix inversion) for the explicit part
 # at runtime before the implicit function solver iterations.
 SPLIT = True
 
-CONFIG_METHOD = {'grad': GRADIENT,
-                 'theta': THETA,
-                 'split': SPLIT,
-                 'epsdg': EPS_DG}
+CONFIG_METHOD = {"grad": GRADIENT, "theta": THETA, "split": SPLIT, "epsdg": EPS_DG}
 
 ###############################################################################
 
@@ -203,13 +201,13 @@ SIMULATION_PATH = None
 
 # Simulation language in {'python', 'c++'}
 # Notice the 'c++' option need an appropriate configuration (see website).
-LANGUAGE = 'python'
+LANGUAGE = "python"
 
 # Data names in the global datasapce of the hdf5 file saved in PATH/data.
 # Any VECTOR element in Numeric object can be added to the dataset.
 # !!!    For ploting with the Data object, DNAMES must      !!!
 # !!!   contain at least ('x', 'dx', 'dxH', 'w', 'z', 'y')  !!!
-DNAMES = ('x', 'dx', 'dxH', 'w', 'z', 'y')
+DNAMES = ("x", "dx", "dxH", "w", "z", "y")
 
 # Display minimal timing informations
 TIMER = False
@@ -219,27 +217,29 @@ PBAR = False
 
 # Options for the data reader. The data are read from index start
 # to index stop, rendering one element out of the number step
-LOAD_OPTS = {'start': 0, 'stop': None, 'step': 1}
+LOAD_OPTS = {"start": 0, "stop": None, "step": 1}
 
-CONFIG_SIMULATION = {'path': SIMULATION_PATH,
-                     'lang': LANGUAGE,
-                     'timer': TIMER,
-                     'pbar': PBAR,
-                     'dnames': DNAMES,
-                     'load': LOAD_OPTS}
+CONFIG_SIMULATION = {
+    "path": SIMULATION_PATH,
+    "lang": LANGUAGE,
+    "timer": TIMER,
+    "pbar": PBAR,
+    "dnames": DNAMES,
+    "load": LOAD_OPTS,
+}
 
 ###############################################################################
 
 # Below are the options for PLOTS
 
 # Export format:
-plot_format = 'pdf'
+plot_format = "pdf"
 
 ###############################################################################
 
 # Below are the options for RST rendering
 
 # RST equations format in {'mathjax', 'latex'}
-RST_EQUATIONS = 'mathjax'
+RST_EQUATIONS = "mathjax"
 
-RST = {'equations': RST_EQUATIONS}
+RST = {"equations": RST_EQUATIONS}

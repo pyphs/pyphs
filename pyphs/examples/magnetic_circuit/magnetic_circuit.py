@@ -13,11 +13,11 @@ from pyphs import Netlist
 import os
 import numpy as np
 
-label = 'magnetic_circuit'
+label = "magnetic_circuit"
 
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+here = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
 
-netlist_filename = os.path.join(here, label + '.net')
+netlist_filename = os.path.join(here, label + ".net")
 
 netlist = Netlist(netlist_filename)
 
@@ -27,7 +27,7 @@ core = netlist.to_core()
 
 # UNCOMMENT BELOW FOR SIMULATION AND PLOTS
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs import Simulation, signalgenerator
 #

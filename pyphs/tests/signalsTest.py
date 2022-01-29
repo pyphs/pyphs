@@ -11,24 +11,24 @@ import os
 from pyphs import signalgenerator
 import numpy as np
 
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+here = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
 
 
 def signal_waves():
     """
     Write and read a random sample in wav format
     """
-    path = os.path.join(here, 'test.wav')
+    path = os.path.join(here, "test.wav")
 
     s = signalgenerator()
     s /= np.max(np.abs(s))
 
     fs = 1000
-    sig.waves.wavwrite(list(s), fs, path, normalize=False, timefades=0.)
+    sig.waves.wavwrite(list(s), fs, path, normalize=False, timefades=0.0)
     fss, ss = sig.waves.wavread(path)
     os.remove(path)
     ss /= max(abs(ss))
-    return max(abs(ss-s)) < 1e-4 and fss - fs < 1e-4
+    return max(abs(ss - s)) < 1e-4 and fss - fs < 1e-4
 
 
 def signal_synthesis():
@@ -37,6 +37,6 @@ def signal_synthesis():
     sigs.append(signalgenerator())
     # test for all synthesis methods
     for w in sig.synthesis.names:
-        kwargs = {'which': w}
+        kwargs = {"which": w}
         sigs.append(signalgenerator(**kwargs))
     return True

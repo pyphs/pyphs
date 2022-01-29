@@ -13,6 +13,7 @@ import sympy
 
 # =========================================================================
 
+
 def substitute_scalar(expr, subs=None):
     """
     Apply substitution method to scalar expression expr.
@@ -121,6 +122,7 @@ def substitute_dict(expr, subs):
 
 # =========================================================================
 
+
 def substitute(expr, subs):
     """
     Select and apply appropriate substitution method based on expr type.
@@ -149,15 +151,15 @@ def substitute(expr, subs):
     elif isinstance(expr, dict):
         expr = substitute_dict(expr, subs)
     else:
-        text = 'Type {} is not a pyphs expression.'.format(type(expr))
+        text = "Type {} is not a pyphs expression.".format(type(expr))
         raise TypeError(text)
     return expr
 
 
 # =========================================================================
 
-def substitute_core(core, subs=None, selfall=False, selfexprs=False,
-                    simplify=False):
+
+def substitute_core(core, subs=None, selfall=False, selfexprs=False, simplify=False):
     """
     substitute_core
     ***************
@@ -202,15 +204,14 @@ def substitute_core(core, subs=None, selfall=False, selfexprs=False,
     core.subs = substitute_dict(core.subs, subs)
 
     # substitutions in core's list of expressions and symbols
-    attrs_to_sub = set(list(core.exprs_names) +
-                       list(core.symbs_names) +
-                       ['M', '_dxH', 'observers'])
+    attrs_to_sub = set(
+        list(core.exprs_names) + list(core.symbs_names) + ["M", "_dxH", "observers"]
+    )
     for name in attrs_to_sub:
         expr = geteval(core, name)
         keys = free_symbols(expr).intersection(set(subs.keys()))
         # recast the elements of the substitution dictionary as sympy objects
-        subs_e = dict(map(lambda k, v: (k, v),
-                          keys, [subs[k] for k in keys]))
+        subs_e = dict(map(lambda k, v: (k, v), keys, [subs[k] for k in keys]))
         if expr is None or callable(expr):
             pass
         else:

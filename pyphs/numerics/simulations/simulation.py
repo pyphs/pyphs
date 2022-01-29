@@ -6,8 +6,13 @@ Created on Tue May 24 11:20:26 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from pyphs.config import (CONFIG_METHOD, CONFIG_SIMULATION,
-                          CONFIG_NUMERIC, CONFIG_CPP, VERBOSE)
+from pyphs.config import (
+    CONFIG_METHOD,
+    CONFIG_SIMULATION,
+    CONFIG_NUMERIC,
+    CONFIG_CPP,
+    VERBOSE,
+)
 from ..cpp.simu2cpp import simu2cpp, main_path
 from ..cpp.method2cpp import method2cpp, parameters
 from .. import Numeric
@@ -24,43 +29,44 @@ import shutil
 # -----------------------------------------------------------------------------
 # Functions for system call and bash execution
 
+
 def system_call(cmd, **popenArgs):
     """
     Execute a system command.
     """
 
-    if sys.platform.startswith('win'):
+    if sys.platform.startswith("win"):
         shell = True
     else:
         shell = True
 
-    popenArgs['shell'] = shell
+    popenArgs["shell"] = shell
 
     if VERBOSE >= 1:
         print(cmd)
 
-    popenArgs['stderr'] = subprocess.STDOUT
-    popenArgs['stdout'] = subprocess.PIPE
+    popenArgs["stderr"] = subprocess.STDOUT
+    popenArgs["stdout"] = subprocess.PIPE
 
     try:
-        popenArgs.pop('check')
+        popenArgs.pop("check")
     except KeyError:
         pass
 
     if VERBOSE >= 1:
         pri = print
     else:
+
         def pri(*args):
             pass
 
-
     p = subprocess.Popen(cmd, **popenArgs)
 
-    while(True):
+    while True:
         retcode = p.poll()  # returns None while subprocess is running
         line = p.stdout.readline()
         pri(line)
-        if(retcode is not None):
+        if retcode is not None:
             break
 
 
@@ -84,7 +90,7 @@ def execute_bash(text):
 
     """
     for line in text.splitlines():
-        if line.startswith('#') or len(line) == 0:
+        if line.startswith("#") or len(line) == 0:
             pass
         else:
             system_call(line.split())
@@ -93,13 +99,13 @@ def execute_bash(text):
 # -----------------------------------------------------------------------------
 # Simulation class
 
+
 class Simulation(object):
     """
     Object for the iterative solving of Method object.
     """
 
-    def __init__(self, method, config=None, inits=None,
-                 label=None, erase=True):
+    def __init__(self, method, config=None, inits=None, label=None, erase=True):
         """
         Parameters
         -----------
@@ -168,11 +174,11 @@ class Simulation(object):
         # Rebuild method if parameters are differents
         self.init_method()
 
-        if self.config['path'] is None:
-            self.config['path'] = os.getcwd()
+        if self.config["path"] is None:
+            self.config["path"] = os.getcwd()
 
-        if not os.path.exists(self.config['path']):
-            os.mkdir(self.config['path'])
+        if not os.path.exists(self.config["path"]):
+            os.mkdir(self.config["path"])
 
         # Define inits
         self.inits = {}
@@ -183,7 +189,7 @@ class Simulation(object):
 
     @property
     def fs(self):
-        return self.config['fs']
+        return self.config["fs"]
 
     def config_numeric(self):
         dic = dict()
@@ -227,27 +233,32 @@ class Simulation(object):
             The default is True.
 
         """
-        self.cpp_path = os.path.join(main_path(self),
-                                     self.objlabel.lower())
+        self.cpp_path = os.path.join(main_path(self), self.objlabel.lower())
         self.work_path = os.getcwd()
-        self.src_path = os.path.join(self.cpp_path, 'src')
+        self.src_path = os.path.join(self.cpp_path, "src")
         if os.path.exists(self.cpp_path):
             shutil.rmtree(self.cpp_path)
         os.mkdir(self.cpp_path)
         os.mkdir(self.src_path)
 
-        if not self.config['lang'] in ['c++', 'python']:
-            text = 'Unknows language {}'
-            raise AttributeError(text.format(self.config['lang']))
+        if not self.config["lang"] in ["c++", "python"]:
+            text = "Unknows language {}"
+            raise AttributeError(text.format(self.config["lang"]))
 
-        elif self.config['lang'] == 'python':
-            setattr(self, 'nums', Numeric(self.method,
-                                          inits=self.inits,
-                                          config=self.config_numeric()))
-        elif self.config['lang'] == 'c++':
-            method2cpp(self.method, objlabel=self.objlabel, path=self.src_path,
-                       inits=self.inits,
-                       config=self.config_numeric())
+        elif self.config["lang"] == "python":
+            setattr(
+                self,
+                "nums",
+                Numeric(self.method, inits=self.inits, config=self.config_numeric()),
+            )
+        elif self.config["lang"] == "c++":
+            method2cpp(
+                self.method,
+                objlabel=self.objlabel,
+                path=self.src_path,
+                inits=self.inits,
+                config=self.config_numeric(),
+            )
 
         self.data = H5Data(self.method, self.config, erase=erase)
 
@@ -256,43 +267,41 @@ class Simulation(object):
         Build the numerical method.
         """
         if self.config_method() != self.method.config:
-            self.method.__init__(self.method._core,
-                                 config=self.config_method())
+            self.method.__init__(self.method._core, config=self.config_method())
 
     # -------------------------------------------------------------------------
 
-    def init(self, nt=None, u=None, p=None,  inits=None,
-             config=None, subs=None):
+    def init(self, nt=None, u=None, p=None, inits=None, config=None, subs=None):
         """
-    init
-    ****
+        init
+        ****
 
-    Initialize simulation data.
+        Initialize simulation data.
 
-    Parameters
-    ----------
+        Parameters
+        ----------
 
-    u: iterable or None, optional
-        Input sequence wich elements are arrays with shape (core.dims.y(), ).
-        If the lenght nt of the sequence is known (e.g. sequ is a list), the
-        number of simulation time steps is set to nt. If None, a sequence with
-        length nt of zeros with appropriate shape is used (default).
+        u: iterable or None, optional
+            Input sequence wich elements are arrays with shape (core.dims.y(), ).
+            If the lenght nt of the sequence is known (e.g. sequ is a list), the
+            number of simulation time steps is set to nt. If None, a sequence with
+            length nt of zeros with appropriate shape is used (default).
 
-    p: iterable or None, optional
-        Input sequence wich elements are arrays with shape (core.dims.p(), ).
-        If (i) the lenght of sequ is not known, and (ii) the length nt of seqp
-        is known (e.g. seqp is a list), the number of simulation time steps is
-        set to nt=len(seqp). If None, a sequence with length nt of zeros with
-        appropriate shape is used (default).
+        p: iterable or None, optional
+            Input sequence wich elements are arrays with shape (core.dims.p(), ).
+            If (i) the lenght of sequ is not known, and (ii) the length nt of seqp
+            is known (e.g. seqp is a list), the number of simulation time steps is
+            set to nt=len(seqp). If None, a sequence with length nt of zeros with
+            appropriate shape is used (default).
 
-    nt: int or None:
-        Number of time steps. If None, the lenght of either sequ or seqp must
-        be known (i.e. they are not either generators or None).
+        nt: int or None:
+            Number of time steps. If None, the lenght of either sequ or seqp must
+            be known (i.e. they are not either generators or None).
 
-    inits : dict
-        Dictionary with variable name as keys and initialization values
-        as value. E.g: inits = {'x': [0., 0., 1.]} to initalize state x
-        with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
+        inits : dict
+            Dictionary with variable name as keys and initialization values
+            as value. E.g: inits = {'x': [0., 0., 1.]} to initalize state x
+            with dim(x) = 3, x[0] = x[1] = 0 and x[2] = 1.
         """
 
         init_numeric = False
@@ -323,16 +332,22 @@ class Simulation(object):
             equal = True
             for k in inits.keys():
                 try:
-                    equal = all(v == s for (v,s) in zip(inits[k], self.inits[k])) and equal
+                    equal = (
+                        all(v == s for (v, s) in zip(inits[k], self.inits[k])) and equal
+                    )
                 except KeyError:
                     equal = False
             if not equal:
                 self.inits.update(inits)
                 init_numeric = True
 
-        if any([self.config[k] != c[k] for k in
-                list(self.config_numeric().keys()) +
-                list(self.config_method().keys())]):
+        if any(
+            [
+                self.config[k] != c[k]
+                for k in list(self.config_numeric().keys())
+                + list(self.config_method().keys())
+            ]
+        ):
             self.config.update(c)
             self.init_method()
 
@@ -351,26 +366,31 @@ class Simulation(object):
             self.method.subs = subs
         path = self.src_path
         parameters_files = parameters(subs, self.objlabel)
-        for e in ['cpp', 'h']:
-            filename = os.path.join(path, 'parameters.{0}'.format(e))
+        for e in ["cpp", "h"]:
+            filename = os.path.join(path, "parameters.{0}".format(e))
             string = parameters_files[e]
-            _file = open(filename, 'w')
+            _file = open(filename, "w")
             _file.write(string)
             _file.close()
         if VERBOSE >= 2:
-            print('Parameters Files generated in \n{}'.format(path))
+            print("Parameters Files generated in \n{}".format(path))
 
     # -------------------------------------------------------------------------
     # Progressbar
 
     def _init_pb(self):
-        pb_widgets = ['\n', 'Simulation: ',
-                      progressbar.Percentage(), ' ',
-                      progressbar.Bar(), ' ',
-                      progressbar.ETA()
-                      ]
-        self._pbar = progressbar.ProgressBar(widgets=pb_widgets,
-                                             max_value=self.data.config['nt'])
+        pb_widgets = [
+            "\n",
+            "Simulation: ",
+            progressbar.Percentage(),
+            " ",
+            progressbar.Bar(),
+            " ",
+            progressbar.ETA(),
+        ]
+        self._pbar = progressbar.ProgressBar(
+            widgets=pb_widgets, max_value=self.data.config["nt"]
+        )
         self._pbar.start()
 
     def _update_pb(self):
@@ -394,36 +414,36 @@ class Simulation(object):
 
         """
         if VERBOSE >= 1:
-            print('Simulation: Process...')
+            print("Simulation: Process...")
 
-        if self.config['timer']:
+        if self.config["timer"]:
             tstart = time.time()
 
         # language is 'py' or 'cpp'
-        if not self.config['lang'] in ('c++', 'python'):
-            text = 'Unknown language {}.'.format(self.config['language'])
+        if not self.config["lang"] in ("c++", "python"):
+            text = "Unknown language {}.".format(self.config["language"])
             raise NameError(text)
 
-        if self.config['lang'] == 'c++':
+        if self.config["lang"] == "c++":
             self._process_cpp()
 
-        elif self.config['lang'] == 'python':
+        elif self.config["lang"] == "python":
             self._process_py()
 
-        if self.config['timer']:
+        if self.config["timer"]:
             tstop = time.time()
 
-        if self.config['timer']:
+        if self.config["timer"]:
 
-            t_total = tstop-tstart
-            print('Total time: {}s'.format(tstop-tstart))
+            t_total = tstop - tstart
+            print("Total time: {}s".format(tstop - tstart))
 
-            string = 'Total time w.r.t number of time-steps: {}s'
-            time_it = (t_total/float(self.data.config['nt']))
+            string = "Total time w.r.t number of time-steps: {}s"
+            time_it = t_total / float(self.data.config["nt"])
             print(string.format(time_it))
 
         if VERBOSE >= 1:
-            print('\nSimulation: Done')
+            print("\nSimulation: Done")
 
     def _process_py(self):
 
@@ -434,10 +454,10 @@ class Simulation(object):
         seq_u = data.u(tslice=tslice)
         seq_p = data.p(tslice=tslice)
 
-        names = list(self.config['dnames'])
+        names = list(self.config["dnames"])
 
         # progressbar
-        if self.config['pbar'] and VERBOSE >= 1:
+        if self.config["pbar"] and VERBOSE >= 1:
             self._init_pb()
 
         # init time step
@@ -449,19 +469,18 @@ class Simulation(object):
             # update numerics
             self.nums.update(u=u, p=p)
 
-            vecs = dict(zip(names,
-                            [geteval(self.nums, name) for name in names]))
+            vecs = dict(zip(names, [geteval(self.nums, name) for name in names]))
             # write to files
             data.h5dump_vecs(self.n, vecs)
 
             self.n += 1
 
             # update progressbar
-            if self.config['pbar'] and VERBOSE >= 1:
+            if self.config["pbar"] and VERBOSE >= 1:
                 self._update_pb()
 
         # progressbar
-        if self.config['pbar'] and VERBOSE >= 1:
+        if self.config["pbar"] and VERBOSE >= 1:
             self._close_pb()
 
         time.sleep(1e-3)
@@ -478,9 +497,9 @@ class Simulation(object):
 
         # Commands
         cmd = {
-            'build_tree': '%s . -Bbuild' % self.config['cmake'],
-            'compile_src': '%s --build build -- -j3' % self.config['cmake']
-            }
+            "build_tree": "%s . -Bbuild" % self.config["cmake"],
+            "compile_src": "%s --build build -- -j3" % self.config["cmake"],
+        }
 
         # options for the subprocess.run method
         sp_config = {
@@ -489,29 +508,28 @@ class Simulation(object):
             "check": True,
             "universal_newlines": True,
             "shell": True,
-            }
+        }
 
         # Perform build
-        with open(os.path.join(sp_config["cwd"], "build.log"), 'w') as fid:
+        with open(os.path.join(sp_config["cwd"], "build.log"), "w") as fid:
 
-            sp_config['stdout'] = fid
+            sp_config["stdout"] = fid
 
             # Running commands
             try:
                 # subprocess.run has been introduced in py3.5
-                if hasattr(subprocess, 'run'):
-                    subprocess.run(cmd['build_tree'], **sp_config)
-                    subprocess.run(cmd['compile_src'], **sp_config)
+                if hasattr(subprocess, "run"):
+                    subprocess.run(cmd["build_tree"], **sp_config)
+                    subprocess.run(cmd["compile_src"], **sp_config)
                 else:
-                    system_call(cmd['build_tree'], **sp_config)
-                    system_call(cmd['compile_src'], **sp_config)
+                    system_call(cmd["build_tree"], **sp_config)
+                    system_call(cmd["compile_src"], **sp_config)
 
             except subprocess.CalledProcessError as error:
 
                 # Printing errors
-                print(
-                    '\nAn error occured while building simulation executable.')
-                print('See log file {0} for details\n'.format(fid.name))
+                print("\nAn error occured while building simulation executable.")
+                print("See log file {0} for details\n".format(fid.name))
 
                 # go back to work folder
                 os.chdir(self.work_path)
@@ -520,21 +538,21 @@ class Simulation(object):
 
         # VERBOSE: print build log
         if VERBOSE >= 3:
-            build_log = open('build.log', 'r')
+            build_log = open("build.log", "r")
             for line in build_log:
                 print(line)
 
         # Running executable simulation
 
         # subprocess.run has been introduced in py3.5
-#        if hasattr(subprocess, 'run'):
-#            process = subprocess.run('./bin/%s' % self.label, **sp_config)
-#            print(process.stdout)
-#
-#        else:
-#            process = system_call(['./bin/%s' % self.label, ], **sp_config)
+        #        if hasattr(subprocess, 'run'):
+        #            process = subprocess.run('./bin/%s' % self.label, **sp_config)
+        #            print(process.stdout)
+        #
+        #        else:
+        #            process = system_call(['./bin/%s' % self.label, ], **sp_config)
 
-        cmd = './bin/{0}'.format(self.label)
+        cmd = "./bin/{0}".format(self.label)
         self.system_call(cmd, **sp_config)
 
         # go back to work folder

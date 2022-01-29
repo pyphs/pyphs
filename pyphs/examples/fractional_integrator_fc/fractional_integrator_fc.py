@@ -11,11 +11,11 @@ from __future__ import absolute_import, division, print_function
 import os
 from pyphs import Netlist
 
-label = 'fractional_integrator_fc'
+label = "fractional_integrator_fc"
 
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+path = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
 
-netlist_filename = path + os.sep + label + '.net'
+netlist_filename = path + os.sep + label + ".net"
 netlist = Netlist(netlist_filename)
 core = netlist.to_core()
 
@@ -25,7 +25,7 @@ core = netlist.to_core()
 # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
 # !!! Very long simulation with numpy (use c++ if possible)
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    from pyphs import Simulation, signalgenerator
 #    from pyphs.misc.signals.analysis import transferFunction
 #    import matplotlib.pyplot as plt

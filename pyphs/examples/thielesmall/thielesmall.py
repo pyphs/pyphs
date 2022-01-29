@@ -11,9 +11,9 @@ from __future__ import absolute_import, division, print_function
 import os
 from pyphs import Netlist, Graph
 
-label = 'thielesmall'
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-netlist_filename = path + os.sep + label + '.net'
+label = "thielesmall"
+path = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
+netlist_filename = path + os.sep + label + ".net"
 netlist = Netlist(netlist_filename)
 
 graph = Graph(netlist=netlist)
@@ -22,7 +22,7 @@ core = graph.to_core()
 # UNCOMMENT BELOW FOR SIMULATION and PLOT OF TRANSFER FUNCTION
 # !!! Very long simulation with numpy
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs import Simulation, signalgenerator
 #    from pyphs.misc.signals.analysis import transferFunction

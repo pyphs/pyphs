@@ -36,13 +36,15 @@ def matvecprod(mat, vec):
     vec = types.matrix_types[0](vec)
 
     if not l == n:
-        text = 'Matrix shape ({}) and vector shape ({}) do not coincide.'
+        text = "Matrix shape ({}) and vector shape ({}) do not coincide."
         raise IndexError(text.format((m, n), l))
 
     if l == 0:
-        res = [0,]*m
+        res = [
+            0,
+        ] * m
     else:
         res = list(mat * Matrix(vec))
-#        if m == 1:
-#            res = [res, ]
+    #        if m == 1:
+    #            res = [res, ]
     return res

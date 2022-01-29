@@ -16,11 +16,11 @@ import os
 from pyphs import Netlist
 
 # ----------------------------  NETLIST  ------------------------------------ #
-label = 'beam_cantilever'
+label = "beam_cantilever"
 
 # define absolute path to netlist
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-netlist_filename = os.path.join(here, label + '.net')
+here = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
+netlist_filename = os.path.join(here, label + ".net")
 
 # read netlist from file
 netlist = Netlist(netlist_filename)

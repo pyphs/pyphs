@@ -16,14 +16,14 @@ from pyphs import method2cpp
 import os
 import shutil
 
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+here = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
 
 
 def cpp_nlcore_full():
-    label = 'test'
+    label = "test"
     path = os.path.join(here, label)
 
     method2cpp(nlcore.to_method(), objlabel=label, path=path)
-    if not os.name.lower().startswith('nt'):
+    if not os.name.lower().startswith("nt"):
         shutil.rmtree(path)
     return True

@@ -11,11 +11,12 @@ from __future__ import absolute_import, division, print_function
 import os
 import pyphs as phs
 import numpy
-label = 'rlc'
 
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+label = "rlc"
 
-netlist_filename = os.path.join(here, label + '.net')
+here = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
+
+netlist_filename = os.path.join(here, label + ".net")
 
 netlist = phs.Netlist(netlist_filename)
 

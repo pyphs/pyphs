@@ -10,25 +10,27 @@ import sympy
 
 # =========================================================================== #
 
+
 def get_date():
     " Return current date."
     now = datetime.now()
-    dt_format = '%Y/%m/%d'
+    dt_format = "%Y/%m/%d"
     return now.strftime(dt_format)
 
 
 def get_time():
     " Return current date and time."
     now = datetime.now()
-    dt_format = '%Y/%m/%d %H:%M:%S'
+    dt_format = "%Y/%m/%d %H:%M:%S"
     return now.strftime(dt_format)
 
 
 # =========================================================================== #
 
+
 def pause():
     """
-Pause compatible with Python 2 and Python 3, wait for user to press return.
+    Pause compatible with Python 2 and Python 3, wait for user to press return.
     """
     try:
         raw_input()
@@ -38,13 +40,14 @@ Pause compatible with Python 2 and Python 3, wait for user to press return.
 
 # =========================================================================== #
 
+
 def geteval(obj, attr):
     """
     if getattr(obj, attr) is function, return evaluation with no arguments, \
 else return value.
     """
     elt = getattr(obj, attr)
-    if hasattr(elt, '__call__') and not isinstance(elt, sympy.Symbol):
+    if hasattr(elt, "__call__") and not isinstance(elt, sympy.Symbol):
         return elt()
     else:
         return elt
@@ -52,25 +55,31 @@ else return value.
 
 # =========================================================================== #
 
+
 def myrange(N, indi, indf):
     """
-Return 'range(N)' with index 'indi' at position 'indf'
+    Return 'range(N)' with index 'indi' at position 'indf'
     """
     lis = list(range(N))
     if indi < indf:
-        deb = lis[:indi] + lis[indi+1:indf+1]
-        end = lis[indf+1:]
-        eli = [lis[indi], ]
+        deb = lis[:indi] + lis[indi + 1 : indf + 1]
+        end = lis[indf + 1 :]
+        eli = [
+            lis[indi],
+        ]
         lis = deb + eli + end
     elif indi > indf:
         deb = lis[:indf]
-        end = lis[indf:indi] + lis[indi+1:]
-        eli = [lis[indi], ]
+        end = lis[indf:indi] + lis[indi + 1 :]
+        eli = [
+            lis[indi],
+        ]
         lis = deb + eli + end
     return lis
 
 
 # =========================================================================== #
+
 
 def decimate(it, nd=10):
     """
@@ -105,6 +114,7 @@ def decimate(it, nd=10):
 
 # =========================================================================== #
 
+
 def remove_duplicates(lis):
     """
     Remove duplicate entries from a given list, preserving ordering.
@@ -118,16 +128,17 @@ def remove_duplicates(lis):
 
 # =========================================================================== #
 
+
 def get_strings(obj, remove=None):
     """
-Get strings in obj recursively.
+    Get strings in obj recursively.
 
-Example
--------
->>> from pyphs.misc.tools import get_strings
->>> l = ['jkl', ['llm', ['o']], 'r', ['k', ['l']]]
->>> get_strings(l)
-['jkl', 'llm', 'o', 'r', 'k', 'l']
+    Example
+    -------
+    >>> from pyphs.misc.tools import get_strings
+    >>> l = ['jkl', ['llm', ['o']], 'r', ['k', ['l']]]
+    >>> get_strings(l)
+    ['jkl', 'llm', 'o', 'r', 'k', 'l']
     """
     if remove is None:
         remove = list()
@@ -142,6 +153,7 @@ Example
 
 
 # =========================================================================== #
+
 
 def ordering(core, name, args):
     """
@@ -162,19 +174,22 @@ def ordering(core, name, args):
     inds : list of int
 
     """
+
     def get_index(e):
         symb = core.symbols(e)
         return getattr(core, name).index(symb)
+
     return list(map(get_index, args))
 
 
 # =========================================================================== #
 
+
 def find(symbs, allsymbs):
     """
-Sort elements in symbs according to allsymbs to form and return (args, inds)
-with list of ordered arguments as args and corresponding list of indices in
-allsymbs as inds.
+    Sort elements in symbs according to allsymbs to form and return (args, inds)
+    with list of ordered arguments as args and corresponding list of indices in
+    allsymbs as inds.
     """
     args = []
     inds = []
@@ -188,6 +203,7 @@ allsymbs as inds.
 
 
 # =========================================================================== #
+
 
 def interleave(l1, l2):
     """

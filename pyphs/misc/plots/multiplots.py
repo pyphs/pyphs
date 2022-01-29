@@ -97,20 +97,26 @@ def multiplot(x, y, show=True, **kwargs):
 
     # ------------------------------------------------------------
     # Check fo options length
-    if opts['ylabels'] is None:
-        opts['ylabels'] = ['', ]*nplots
-    elif not len(opts['ylabels']) == nplots:
-        raise AttributeError('wrong number of y labels')
+    if opts["ylabels"] is None:
+        opts["ylabels"] = [
+            "",
+        ] * nplots
+    elif not len(opts["ylabels"]) == nplots:
+        raise AttributeError("wrong number of y labels")
 
-    if opts['labels'] is None:
-        opts['labels'] = [None, ]*nplots
-    elif not len(opts['ylabels']) == nplots:
-        raise AttributeError('wrong number of curves labels')
+    if opts["labels"] is None:
+        opts["labels"] = [
+            None,
+        ] * nplots
+    elif not len(opts["ylabels"]) == nplots:
+        raise AttributeError("wrong number of curves labels")
 
-    if opts['log'] is None:
-        opts['log'] = ['', ] * nplots
-    elif not len(opts['log']) == nplots:
-        raise AttributeError('wrong number of log options')
+    if opts["log"] is None:
+        opts["log"] = [
+            "",
+        ] * nplots
+    elif not len(opts["log"]) == nplots:
+        raise AttributeError("wrong number of log options")
 
     # ------------------------------------------------------------
     # Init figure and axes
@@ -132,7 +138,7 @@ def multiplot(x, y, show=True, **kwargs):
         else:
             axe = axs
 
-        axe.ticklabel_format(style='sci', scilimits=(-2, 2))
+        axe.ticklabel_format(style="sci", scilimits=(-2, 2))
 
         # --------------------------------------------------------
         # flag
@@ -140,24 +146,24 @@ def multiplot(x, y, show=True, **kwargs):
 
         # --------------------------------------------------------
         # if yn is a list of values
-        if (isinstance(yn[0], (float, int)) or
-            (isinstance(yn[0], numpy.ndarray) and len(yn[0].shape) == 0)):
+        if isinstance(yn[0], (float, int)) or (
+            isinstance(yn[0], numpy.ndarray) and len(yn[0].shape) == 0
+        ):
 
             # get plot in {plot, semilogx, semilogy, loglog}
-            plotn = whichplot(opts['log'][n], axe)
+            plotn = whichplot(opts["log"][n], axe)
 
             # Add label or annotation
-            if isinstance(opts['labels'][n], (list, tuple)):
-                annotate(*opts['labels'][n], ax=axe)
+            if isinstance(opts["labels"][n], (list, tuple)):
+                annotate(*opts["labels"][n], ax=axe)
                 l = None
             else:
-                l = opts['labels'][n]
+                l = opts["labels"][n]
             print_legend = l is not None or print_legend
 
             # Plot
-            if opts['linestyles'] is not None:
-                plotn(x, yn, opts['linestyles'][n][0],
-                      label=l)
+            if opts["linestyles"] is not None:
+                plotn(x, yn, opts["linestyles"][n][0], label=l)
             else:
                 plotn(x, yn, label=l)
 
@@ -169,72 +175,76 @@ def multiplot(x, y, show=True, **kwargs):
             len_yn = len(yn)
 
             # Set appropriate len of labels
-            if opts['labels'][n] is None:
-                opts['labels'][n] = (None, )*len_yn
-            elif not len(opts['labels'][n]) == len_yn:
-                raise AttributeError('wrong number of labels')
+            if opts["labels"][n] is None:
+                opts["labels"][n] = (None,) * len_yn
+            elif not len(opts["labels"][n]) == len_yn:
+                raise AttributeError("wrong number of labels")
 
             # iterate over yn  data
             for m, ynm in enumerate(yn):
 
                 # Add label or annotation
-                if isinstance(opts['labels'][n][m], (list, tuple)):
-                    annotate(*opts['labels'][n][m], ax=axe)
+                if isinstance(opts["labels"][n][m], (list, tuple)):
+                    annotate(*opts["labels"][n][m], ax=axe)
                     l = None
                 else:
-                    l = opts['labels'][n][m]
+                    l = opts["labels"][n][m]
                 print_legend = l is not None or print_legend
 
                 # get plot in {plot, semilogx, semilogy, loglog}
-                plotn = whichplot(opts['log'][n], axe)
+                plotn = whichplot(opts["log"][n], axe)
 
                 # Plot
-                if opts['linestyles'] is not None:
-                    plotn(x, ynm, opts['linestyles'][n][m], label=l)
+                if opts["linestyles"] is not None:
+                    plotn(x, ynm, opts["linestyles"][n][m], label=l)
                 else:
                     plotn(x, ynm, label=l)
 
         # --------------------------------------------------------
         # Print legend
         if print_legend:
-            axs[n].legend(loc=opts['loc'])
+            axs[n].legend(loc=opts["loc"])
 
         # --------------------------------------------------------
         # Set y label
-        if opts['ylabels'][n] is not None:
-            axs[n].set_ylabel(opts['ylabels'][n])
-            if opts['xpos_ylabel'] is not None:
-                axs[n].yaxis.set_label_coords(opts['xpos_ylabel'], 0.5)
+        if opts["ylabels"][n] is not None:
+            axs[n].set_ylabel(opts["ylabels"][n])
+            if opts["xpos_ylabel"] is not None:
+                axs[n].yaxis.set_label_coords(opts["xpos_ylabel"], 0.5)
 
         # --------------------------------------------------------
         # Set x label if last plot
-        if n == nplots-1:
-            axs[n].set_xlabel(opts['xlabel'])
+        if n == nplots - 1:
+            axs[n].set_xlabel(opts["xlabel"])
         else:
             from matplotlib.pyplot import setp
+
             setp(axs[n].get_xticklabels(), visible=False)
 
         # --------------------------------------------------------
         # Show grid
-        axs[n].grid(opts['grid'])
+        axs[n].grid(opts["grid"])
         axs[n].minorticks_on()
 
     # ------------------------------------------------------------
     # Set title
-    if opts['title'] is not None:
+    if opts["title"] is not None:
         from matplotlib.pyplot import suptitle
-        suptitle(opts['title'])
+
+        suptitle(opts["title"])
 
     # ------------------------------------------------------------
     # Save file
-    if opts['path'] is not None:
+    if opts["path"] is not None:
         from matplotlib.pyplot import savefig
-        savefig(opts['path'] + '.' + opts['format'])
+
+        savefig(opts["path"] + "." + opts["format"])
 
     # ------------------------------------------------------------
     # Show
     if show:
         from matplotlib.pyplot import show as pltshow
+
         pltshow()
 
     return fig, axs

@@ -17,12 +17,14 @@ import numpy
 
 # =========================================================================== #
 
+
 class Numeric(object):
     """
     This class implements a numerical version of Core. First, a numerical
     method is applied symbolically to a core, then every relevant functions
     for simulations are lambdified and organized into the object.
     """
+
     def __init__(self, method, inits=None, label=None, config=None):
         """
         Instanciate a Numeric.
@@ -55,9 +57,9 @@ class Numeric(object):
             config = {}
         for k in config.keys():
             if k not in self.config.keys():
-                raise AttributeError('Unknown parameter {}.'.format(k))
+                raise AttributeError("Unknown parameter {}.".format(k))
         self.config.update(config)
-        self.method.subs.update({self.method.fs: self.config['fs']})
+        self.method.subs.update({self.method.fs: self.config["fs"]})
 
         # Define inits
         self.inits = {}
@@ -75,14 +77,14 @@ class Numeric(object):
             val = self.inits[k]
             get_func = getattr(self, k)
             self_shape = get_func().shape
-            set_func = getattr(self, 'set_' + k)
+            set_func = getattr(self, "set_" + k)
             if val is None:
                 val = numpy.zeros(self_shape)
                 set_func(val)
             else:
                 val = numpy.asarray(val)
                 if not val.shape == self_shape:
-                    text = 'Init value for {0} has wrong shape {1}'.format(k, val.shape)
+                    text = "Init value for {0} has wrong shape {1}".format(k, val.shape)
                     raise TypeError(text)
                 else:
                     set_func(val)
@@ -90,10 +92,15 @@ class Numeric(object):
     def build(self):
 
         if VERBOSE >= 1:
-            print('Build numeric {}...'.format(self.label))
+            print("Build numeric {}...".format(self.label))
 
         # init args values with 0
-        self.args = numpy.array([0., ]*self.method.dims.args())
+        self.args = numpy.array(
+            [
+                0.0,
+            ]
+            * self.method.dims.args()
+        )
 
         # build evaluations for arguments
         for name in self.method.args_names:
@@ -112,9 +119,9 @@ class Numeric(object):
         Define accessors and mutators for numerical values associated with
         numerical arguments.
         """
-        inds = getattr(self.method, name + '_inds')
+        inds = getattr(self.method, name + "_inds")
         setattr(self, name, getarg_generator(self, name, inds))
-        setattr(self, 'set_' + name, setarg_generator(self, name, inds))
+        setattr(self, "set_" + name, setarg_generator(self, name, inds))
 
     def _build_func(self, name):
         """
@@ -123,41 +130,40 @@ class Numeric(object):
         # link evaluation to internal values
         func = evalfunc_generator(self, name)
         value = func()
-        setattr(self, name + '_eval', func)
-        setattr(self, '_' + name, value)
+        setattr(self, name + "_eval", func)
+        setattr(self, "_" + name, value)
         setattr(self, name, getfunc_generator(self, name))
-        setattr(self, 'set_' + name, setfunc_generator(self, name))
+        setattr(self, "set_" + name, setfunc_generator(self, name))
 
     def _build_op(self, name):
         """
         Link and lambdify a numerical operation from its name.
         """
         # build a callable func() that evaluate the operation
-        func = evalop_generator(self, name,
-                                getattr(self.method, name + '_op'))
+        func = evalop_generator(self, name, getattr(self.method, name + "_op"))
         # store the function
-        setattr(self, name + '_eval', func)
+        setattr(self, name + "_eval", func)
 
         # evaluate to initialize
         value = func()
         # store the value
-        setattr(self, '_' + name, value)
+        setattr(self, "_" + name, value)
 
         # accessor
         setattr(self, name, getfunc_generator(self, name))
         # mutator
-        setattr(self, 'set_' + name, setfunc_generator(self, name))
+        setattr(self, "set_" + name, setfunc_generator(self, name))
 
     def _build_eval(self, name):
         """
         Link and lambdify a numerical operation or numerical function from name
         """
         if VERBOSE >= 2:
-            print('    Build numerical evaluation of {}'.format(name))
+            print("    Build numerical evaluation of {}".format(name))
         # build for Operation
         if name in self.method.ops_names:
             #  build of dependencies before hand
-            deps = getattr(self.method, name + '_deps')
+            deps = getattr(self.method, name + "_deps")
             for dep in deps:
                 if not hasattr(self, dep):
                     self._build_eval(dep)
@@ -194,7 +200,7 @@ class Numeric(object):
         self.set_p(p)
         for action in self.method.update_actions:
             actiontype = action[0]
-            if actiontype == 'exec':
+            if actiontype == "exec":
                 self._execs(action[1])
             else:
                 self._iterexecs(*action[1])
@@ -210,8 +216,8 @@ class Numeric(object):
             else:
                 setname = command[0]
                 evalname = command[1]
-            setfunc = getattr(self, 'set_'+setname)
-            evalfunc = getattr(self, evalname + '_eval')
+            setfunc = getattr(self, "set_" + setname)
+            evalfunc = getattr(self, evalname + "_eval")
             setfunc(evalfunc())
 
     def _iterexecs(self, commands, res_name, step_name):
@@ -223,21 +229,22 @@ class Numeric(object):
         # init it counter
         self.it = 0
         # init step on iteration
-        getattr(self, 'set_' + step_name)(1.)
+        getattr(self, "set_" + step_name)(1.0)
         # loop while res > tol, step > tol and it < itmax
-        while getattr(self, res_name)() > self.config['eps'] \
-                and getattr(self, step_name)() > self.config['eps']\
-                and self.it < self.config['maxit']:
+        while (
+            getattr(self, res_name)() > self.config["eps"]
+            and getattr(self, step_name)() > self.config["eps"]
+            and self.it < self.config["maxit"]
+        ):
             self._execs(commands)
             self.it += 1
-        if self.it >= self.config['maxit'] and VERBOSE >= 1:
-            message = 'Warning: {} = {} after {} iterations'
-            print(message.format(res_name,
-                                 getattr(self, res_name)(),
-                                 self.it))
+        if self.it >= self.config["maxit"] and VERBOSE >= 1:
+            message = "Warning: {} = {} after {} iterations"
+            print(message.format(res_name, getattr(self, res_name)(), self.it))
 
 
 # =========================================================================== #
+
 
 def evalfunc_generator(nums, name):
     """
@@ -259,16 +266,15 @@ def evalfunc_generator(nums, name):
         Evaluator
     """
     try:
-        expr = getattr(nums.method, name + '_expr')
-        args = getattr(nums.method, name + '_args')
-        inds = getattr(nums.method, name + '_inds')
+        expr = getattr(nums.method, name + "_expr")
+        args = getattr(nums.method, name + "_args")
+        inds = getattr(nums.method, name + "_inds")
     except AttributeError:
         expr = geteval(nums.method, name)
         symbs = free_symbols(expr)
         args, inds = find(symbs, nums.method.args())
 
-    func = lambdify(args, expr, subs=nums.method.subs,
-                    theano=nums.config['theano'])
+    func = lambdify(args, expr, subs=nums.method.subs, theano=nums.config["theano"])
 
     if len(inds) > 0:
         inds = numpy.array(inds)
@@ -285,7 +291,7 @@ def evalfunc_generator(nums, name):
     elif isinstance(expr, core_types.matrix_types):
         num_types.matrix_test(eval_func())
     else:
-        raise TypeError('Lambdified function output type not understood.')
+        raise TypeError("Lambdified function output type not understood.")
 
     eval_func.__doc__ = """
         Evaluate :code:`{0}`.
@@ -295,7 +301,9 @@ def evalfunc_generator(nums, name):
 
         _{0} : numpy array
             The current evaluation of :code:`{0}`, with shape {1}.
-    """.format(name, eval_func().shape)
+    """.format(
+        name, eval_func().shape
+    )
 
     return eval_func
 
@@ -328,12 +336,15 @@ def evalop_generator(nums, name, op):
 
         _{0} : numpy array
             The current evaluation of :code:`{0}`, with shape {1}.
-    """.format(name, func().shape)
+    """.format(
+        name, func().shape
+    )
 
     return eval_func
 
 
 # =========================================================================== #
+
 
 def getarg_generator(nums, name, inds):
     """
@@ -356,7 +367,9 @@ def getarg_generator(nums, name, inds):
         _{0} : numpy array
             The current value of :code:`{0}`, with shape ({2}, ). It
             corresponds to :code:`{0}={1}`.
-        """.format(name, [nums.method.args()[i] for i in inds], len(inds))
+        """.format(
+        name, [nums.method.args()[i] for i in inds], len(inds)
+    )
 
     return get_func
 
@@ -383,19 +396,24 @@ def setarg_generator(nums, name, inds):
             The new value of :code:`{0}`, with shape ({2}). It corresponds to
             :code:`{0}={1}`
 
-        """.format(name, [nums.method.args()[i] for i in inds], len(inds))
+        """.format(
+        name, [nums.method.args()[i] for i in inds], len(inds)
+    )
 
     return set_func
 
 
 # =========================================================================== #
 
+
 def getfunc_generator(nums, name):
     """
     generators of 'get'
     """
+
     def get_func():
-        return getattr(nums, '_' + name)
+        return getattr(nums, "_" + name)
+
     get_func.__doc__ = """
         Accessor to the value of {0}.
 
@@ -404,7 +422,9 @@ def getfunc_generator(nums, name):
 
         _{0} : numpy array
             The current value of :code:`{0}`, with shape {1}.
-        """.format(name, getattr(nums, '_'+name).shape)
+        """.format(
+        name, getattr(nums, "_" + name).shape
+    )
     return get_func
 
 
@@ -414,7 +434,8 @@ def setfunc_generator(nums, name):
     """
 
     def set_func(array):
-        setattr(nums, '_' + name, array)
+        setattr(nums, "_" + name, array)
+
     set_func.__doc__ = """
         Change the value of {0}.
 
@@ -423,5 +444,7 @@ def setfunc_generator(nums, name):
 
         array : numpy array
             The new value of :code:`{0}`, with shape {1}.
-        """.format(name, getattr(nums, '_'+name).shape)
+        """.format(
+        name, getattr(nums, "_" + name).shape
+    )
     return set_func

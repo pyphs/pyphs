@@ -31,15 +31,15 @@ y: list
     if core.dims.y() > 0:  # Check if system has external ports
 
         # contribution of inputs to the output
-        Vyu = core.Myy()*types.matrix_types[0](core.u)
+        Vyu = core.Myy() * types.matrix_types[0](core.u)
 
         if core.dims.x() > 0:  # Check if system has storage parts
-            Vyx = core.Myx()*types.matrix_types[0](core.dxH())
+            Vyx = core.Myx() * types.matrix_types[0](core.dxH())
         else:
             Vyx = types.matrix_types[0](sympy.zeros(core.dims.y(), 1))
 
         if core.dims.w() > 0:  # Check if system has dissipative parts
-            Vyw = types.matrix_types[0](core.Myw()*types.matrix_types[0](core.z))
+            Vyw = types.matrix_types[0](core.Myw() * types.matrix_types[0](core.z))
         else:
             Vyw = types.matrix_types[0](sympy.zeros(core.dims.y(), 1))
 

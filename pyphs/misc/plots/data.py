@@ -12,27 +12,26 @@ from ..latex.tools import nice_label
 import os
 
 
-def plot_powerbal(data, mode='single', DtE='DxhDtx', tslice=None,
-                  show=True, save=False):
+def plot_powerbal(
+    data, mode="single", DtE="DxhDtx", tslice=None, show=True, save=False
+):
     """
     Plot the power balance. mode is 'single' or 'multi' for single figure or \
 multifigure
     """
     if save:
-        folder = data.config['path'] + os.sep + 'figures'
+        folder = data.config["path"] + os.sep + "figures"
         if not os.path.exists(folder):
             os.makedirs(folder)
-        path = os.path.join(folder, 'power_balance')
+        path = os.path.join(folder, "power_balance")
     else:
         path = None
 
-    config = {'xlabel': r'time $t$ (s)',
-              'path': path,
-              'title': r'Power balance'}
+    config = {"xlabel": r"time $t$ (s)", "path": path, "title": r"Power balance"}
 
-    labdtE = r'$\frac{\mathtt{d}\mathrm{E}}{\mathtt{d}t}$'
-    labPs = r'$\mathrm{P_S}$'
-    labPd = r'$\mathrm{P_D}$'
+    labdtE = r"$\frac{\mathtt{d}\mathrm{E}}{\mathtt{d}t}$"
+    labPs = r"$\mathrm{P_S}$"
+    labPd = r"$\mathrm{P_D}$"
 
     datax = [el for el in data.t(tslice=tslice)]
 
@@ -40,38 +39,47 @@ multifigure
     ps = data.ps(tslice=tslice)
     pd = data.pd(tslice=tslice)
 
-    if mode == 'single':
+    if mode == "single":
         datay = list()
         datay.append(dte)
-        Psd = map(lambda x, y: - float(x) - float(y), ps, pd)
+        Psd = map(lambda x, y: -float(x) - float(y), ps, pd)
         datay.append(tuple(Psd))
-        config.update({'linestyles': ('-', '--'),
-                       'ylabel': r'Power (W)',
-                       'labels': [labdtE, r'$-$('+labPs+r'$+$'+labPd + r')']})
+        config.update(
+            {
+                "linestyles": ("-", "--"),
+                "ylabel": r"Power (W)",
+                "labels": [labdtE, r"$-$(" + labPs + r"$+$" + labPd + r")"],
+            }
+        )
         fig, ax = singleplot(datax, datay, show=show, **config)
     else:
-        assert mode == 'multi'
+        assert mode == "multi"
         datay = list()
         datay.append(dte)
         datay.append(pd)
         datay.append(ps)
         deltaP = [sum(el) for el in zip(dte, pd, ps)]
         datay.append(deltaP)
-        config.update({'linestyles': [('-b', ), ('-g', ), ('-r', ), ('-k', )],
-                       'ylabels': [r' (W)']*4,
-                       'fontsize': 16,
-                       'labels': [labdtE,
-                                  labPd,
-                                  labPs,
-                                  labdtE+r'$+$'+labPd+r'$+$'+labPs]})
+        config.update(
+            {
+                "linestyles": [("-b",), ("-g",), ("-r",), ("-k",)],
+                "ylabels": [r" (W)"] * 4,
+                "fontsize": 16,
+                "labels": [
+                    labdtE,
+                    labPd,
+                    labPs,
+                    labdtE + r"$+$" + labPd + r"$+$" + labPs,
+                ],
+            }
+        )
 
         fig, ax = multiplot(datax, datay, show=show, **config)
 
     return fig, ax
 
 
-def plot(data, vars, tslice=None, show=True,
-         label=None, save=False):
+def plot(data, vars, tslice=None, show=True, label=None, save=False):
     """
     Plot simulation data
 
@@ -102,10 +110,10 @@ def plot(data, vars, tslice=None, show=True,
         label = data.method.label
 
     if save:
-        folder = data.config['path'] + os.sep + 'figures'
+        folder = data.config["path"] + os.sep + "figures"
         if not os.path.exists(folder):
             os.makedirs(folder)
-        path = os.path.join(folder, 'power_balance')
+        path = os.path.join(folder, "power_balance")
     else:
         path = None
 
@@ -118,41 +126,38 @@ def plot(data, vars, tslice=None, show=True,
         datay.append(sig)
         labels.append(nice_label(data.method, (name, index)))
 
-    dimsmap = {'x': 'x',
-               'dx': 'x',
-               'dtx': 'x',
-               'dxH': 'x',
-               'w': 'w',
-               'z': 'w',
-               'u': 'y',
-               'y': 'y',
-               'p': 'p',
-               'o': 'o'
-               }
+    dimsmap = {
+        "x": "x",
+        "dx": "x",
+        "dtx": "x",
+        "dxH": "x",
+        "w": "w",
+        "z": "w",
+        "u": "y",
+        "y": "y",
+        "p": "p",
+        "o": "o",
+    }
     for var in vars:
         if isinstance(var, (tuple, list)):
             append_sig(*var)
             if path is not None:
-                path += '_'+var[0]+str(var[1])
+                path += "_" + var[0] + str(var[1])
         elif isinstance(var, str):
             dim = dimsmap[var]
             for i in range(getattr(data.method.dims, dim)()):
                 append_sig(var, i)
                 if path is not None:
-                    path += '_'+var+str(i)
+                    path += "_" + var + str(i)
         else:
-            raise TypeError('Variable {} not available for ploting.'.format(var))
+            raise TypeError("Variable {} not available for ploting.".format(var))
 
     if len(datay) > 1:
-        plotopts = {'xlabel': 'time $t$ (s)',
-                    'ylabels': labels,
-                    'path': path}
+        plotopts = {"xlabel": "time $t$ (s)", "ylabels": labels, "path": path}
         fig, ax = multiplot(datax, datay, show=show, **plotopts)
 
     elif len(datay) > 0:
-        plotopts = {'xlabel': 'time $t$ (s)',
-                    'ylabel': labels[0],
-                    'path': path}
+        plotopts = {"xlabel": "time $t$ (s)", "ylabel": labels[0], "path": path}
         fig, ax = singleplot(datax, datay, show=show, **plotopts)
 
     return fig, ax

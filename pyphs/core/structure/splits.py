@@ -6,14 +6,14 @@ Created on Mon May 15 15:14:37 2017
 @author: Falaize
 """
 
-from .moves import (movematrixcols, movesquarematrixcolnrow,
-                    move_stor, move_diss)
+from .moves import movematrixcols, movesquarematrixcolnrow, move_stor, move_diss
 from ..tools import free_symbols
 from ..maths import hessian, jacobian, gradient, matvecprod
 import sympy
 
 
 # ============================ monovar_multivar ============================== #
+
 
 def monovar_multivar(core):
     """
@@ -31,16 +31,16 @@ def monovar_multivar(core):
     for k in range(core.dims.xnl()):
         # get i-th line of hessian matrix
         hess_line = list(hess[nxs, :].T)
-        if all(elt is sympy.sympify(0) for elt in hess_line[nxs+1:]):
+        if all(elt is sympy.sympify(0) for elt in hess_line[nxs + 1 :]):
             # do nothing and increment counter
             nxs += 1
         else:
             # move the element at the end of states vector
-            move_stor(core, core.dims.xl() + nxs, core.dims.x()-1)
-            hess = movesquarematrixcolnrow(hess, nxs, core.dims.xnl()-1)
+            move_stor(core, core.dims.xl() + nxs, core.dims.x() - 1)
+            hess = movesquarematrixcolnrow(hess, nxs, core.dims.xnl() - 1)
 
     # number of separable nonlinear components
-    setattr(core.dims, '_xnl_mono', nxs)
+    setattr(core.dims, "_xnl_mono", nxs)
 
 
 # ============================ linear_nonlinear ============================== #
@@ -86,8 +86,8 @@ def linear_nonlinear(core, criterion=None):
             nxl += 1
         else:
             # move the element at the end of states vector
-            move_stor(core, nxl, core.dims.x()-1)
-            hess = movefunc(hess, nxl, core.dims.x()-1)
+            move_stor(core, nxl, core.dims.x() - 1)
+            hess = movefunc(hess, nxl, core.dims.x() - 1)
 
     # split dissipative part
     nwl = 0
@@ -104,20 +104,20 @@ def linear_nonlinear(core, criterion=None):
             nwl += 1
         else:
             # move the element to end of dissipation variables vector
-            move_diss(core, nwl, core.dims.w()-1)
-            jacz = movefunc(jacz, nwl, core.dims.w()-1)
+            move_diss(core, nwl, core.dims.w() - 1)
+            jacz = movefunc(jacz, nwl, core.dims.w() - 1)
 
     # number of linear components
-    setattr(core.dims, '_xl', nxl)
+    setattr(core.dims, "_xl", nxl)
     # Hamiltonian of linear components
     # Quadratic part
     Q = hessian(core.H, core.xl())
     # Linear part
-    bl = [a-b for a, b in zip(gradient(core.H, core.xl()), matvecprod(Q, core.xl()))]
+    bl = [a - b for a, b in zip(gradient(core.H, core.xl()), matvecprod(Q, core.xl()))]
 
-    core.setexpr('Q', Q)
-    core.setexpr('bl', bl)
+    core.setexpr("Q", Q)
+    core.setexpr("bl", bl)
 
     # number of linear components
-    setattr(core.dims, '_wl', nwl)
-    core.setexpr('Zl', jacobian(core.zl(), core.wl()))
+    setattr(core.dims, "_wl", nwl)
+    core.setexpr("Zl", jacobian(core.zl(), core.wl()))

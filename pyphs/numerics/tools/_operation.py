@@ -10,7 +10,6 @@ from ._operators import norm
 
 
 class Operation:
-
     def __init__(self, operation, args):
 
         self.operation = operation
@@ -18,7 +17,13 @@ class Operation:
 
         func = PARSER[self.operation]
 
-        self.call = [func, [None, ]*len(args)]
+        self.call = [
+            func,
+            [
+                None,
+            ]
+            * len(args),
+        ]
         self.freesymbols = set()
 
         for i, arg in enumerate(args):
@@ -26,7 +31,11 @@ class Operation:
                 symbs = arg.freesymbols
                 arg = arg.call
             elif isinstance(arg, str):
-                symbs = set([arg, ])
+                symbs = set(
+                    [
+                        arg,
+                    ]
+                )
             else:
                 symbs = set()
             self.call[1][i] = arg
@@ -35,7 +44,7 @@ class Operation:
     def __call__(self):
         args = list()
         for el in self.args:
-            if hasattr(el, '__call__'):
+            if hasattr(el, "__call__"):
                 args.append(el())
             else:
                 args.append(el)
@@ -45,12 +54,13 @@ class Operation:
 # =========================================================================== #
 
 # Dictionary of numerical methods callable by Operations
-PARSER = {'add': numpy.add,
-          'prod': lambda a1, a2: a1*a2,
-          'dot': numpy.dot,
-          'inv': numpy.linalg.inv,
-          'div': numpy.divide,
-          'norm': norm,
-          'copy': lambda x: x,
-          'none': lambda: None,
-          }
+PARSER = {
+    "add": numpy.add,
+    "prod": lambda a1, a2: a1 * a2,
+    "dot": numpy.dot,
+    "inv": numpy.linalg.inv,
+    "div": numpy.divide,
+    "norm": norm,
+    "copy": lambda x: x,
+    "none": lambda: None,
+}

@@ -17,7 +17,8 @@ def parametersTable(parameters):
     Return table of parameters as a restructured-text table.
     """
     from pyphs.misc.rst import rstTable
-    header = ['Key', 'Description', 'Unit', 'Default']
+
+    header = ["Key", "Description", "Unit", "Default"]
     return rstTable(header, parameters)
 
 
@@ -27,9 +28,7 @@ def parametersDicFull(parameters):
     """
     dic = {}
     for p in parameters:
-        dic[p[0]] = {'description': p[1],
-                     'unit': p[2],
-                     'default': p[3]}
+        dic[p[0]] = {"description": p[1], "unit": p[2], "default": p[3]}
     return dic
 
 
@@ -103,6 +102,7 @@ $references
 
 """
 
+
 def componentDoc(metadata):
     """
     Build the documentation for a component of pyphs.dictionary.
@@ -110,61 +110,81 @@ def componentDoc(metadata):
 
     from pyphs.misc.rst import title, indent
 
-    metadata.setdefault('parametersdesc',
-                        'Parameters description and default value.')
+    metadata.setdefault("parametersdesc", "Parameters description and default value.")
 
-    pars = parametersDefault(metadata['parameters'])
+    pars = parametersDefault(metadata["parameters"])
 
-    refs = metadata['refs']
+    refs = metadata["refs"]
 
     def refline(i, ref):
-        return '\n.. [{}] {}\n'.format(i, ref)
+        return "\n.. [{}] {}\n".format(i, ref)
 
     if len(refs) > 1:
-        references = title('References', 3)
+        references = title("References", 3)
         for i in refs:
             references += refline(i, refs[i])
     elif len(refs) > 0:
-        references = title('Reference', 3)
+        references = title("Reference", 3)
         references += refline(1, refs[1])
     else:
-        references = ''
+        references = ""
 
-    temp = [(k, d, u, "'" + v + "'" if isinstance(v, str) else str(v)) for (k, d, u, v) in metadata['parameters']]
+    temp = [
+        (k, d, u, "'" + v + "'" if isinstance(v, str) else str(v))
+        for (k, d, u, v) in metadata["parameters"]
+    ]
     blanks = [len(str(v) + str(k)) for (k, d, u, v) in temp]
     bmax = max(blanks) + 2
     for i, b in enumerate(blanks):
         blanks[i] = bmax - b
-    expars = ('\n... ' + 14*' ').join(["'{0}': {1},{4}# {2} ({3})".format(k, v, d, u, b*' ') for ((k, d, u, v), b) in zip(temp, blanks)])
-    realtitle = metadata['title'] if metadata['component'] == metadata['title'] else '{} ({})'.format(metadata['title'], metadata['component'])
-    subs = {'title': title(realtitle, 0),
-            'label': metadata['label'],
-            'dico': metadata['dico'],
-            'component': metadata['component'],
-            'desc': metadata['desc'],
-            'nodes': metadata['nodes'],
-            'flux': '{1} :math:`{0}`   ({2})'.format(*metadata['flux']),
-            'effort': '{1} :math:`{0}`   ({2})'.format(*metadata['effort']),
-            'nodesdesc': metadata['nodesdesc'],
-            'parameterstable': parametersTable(metadata['parameters']),
-            'parametersdesc': metadata['parametersdesc'],
-            'expars': expars,
-            'usepars': ', '.join(['{}={}'.format(k, "'" + v + "'" if isinstance(v, str) else str(v)) for (k, v) in zip(pars.keys(), pars.values())]),
-            'linepars': '; '.join(['{}={}'.format(k, v) for (k, v) in zip(pars.keys(), pars.values())]) + ';',
-            'references': references
-            }
-    for k in ['nnodes', 'nedges']:
+    expars = ("\n... " + 14 * " ").join(
+        [
+            "'{0}': {1},{4}# {2} ({3})".format(k, v, d, u, b * " ")
+            for ((k, d, u, v), b) in zip(temp, blanks)
+        ]
+    )
+    realtitle = (
+        metadata["title"]
+        if metadata["component"] == metadata["title"]
+        else "{} ({})".format(metadata["title"], metadata["component"])
+    )
+    subs = {
+        "title": title(realtitle, 0),
+        "label": metadata["label"],
+        "dico": metadata["dico"],
+        "component": metadata["component"],
+        "desc": metadata["desc"],
+        "nodes": metadata["nodes"],
+        "flux": "{1} :math:`{0}`   ({2})".format(*metadata["flux"]),
+        "effort": "{1} :math:`{0}`   ({2})".format(*metadata["effort"]),
+        "nodesdesc": metadata["nodesdesc"],
+        "parameterstable": parametersTable(metadata["parameters"]),
+        "parametersdesc": metadata["parametersdesc"],
+        "expars": expars,
+        "usepars": ", ".join(
+            [
+                "{}={}".format(k, "'" + v + "'" if isinstance(v, str) else str(v))
+                for (k, v) in zip(pars.keys(), pars.values())
+            ]
+        ),
+        "linepars": "; ".join(
+            ["{}={}".format(k, v) for (k, v) in zip(pars.keys(), pars.values())]
+        )
+        + ";",
+        "references": references,
+    }
+    for k in ["nnodes", "nedges"]:
         subs[k] = metadata[k]
 
-    subs['linecomponent'] = subs['component'].lower()
+    subs["linecomponent"] = subs["component"].lower()
 
     import string
+
     template = string.Template(doc_template)
     return template.substitute(subs)
 
 
 class Argument:
-
     def __init__(self, name, obj):
         self.symb, self.sub, self.par = form(name, obj)
 
@@ -185,13 +205,21 @@ def form(name, obj):
     """
     if isinstance(obj, tuple):
         if not isinstance(obj[0], str):
-            raise TypeError('For tupple parameter, \
-first element should be a str, got {0}'.format(type(obj[0])))
+            raise TypeError(
+                "For tupple parameter, \
+first element should be a str, got {0}".format(
+                    type(obj[0])
+                )
+            )
         try:
             if not isinstance(obj[1], types.scalar_types):
-                raise TypeError('For tupple parameter, \
+                raise TypeError(
+                    "For tupple parameter, \
 second element should be numeric, got \
-{0}'.format(type(obj[1])))
+{0}".format(
+                        type(obj[1])
+                    )
+                )
         except AssertionError:
             types.scalar_test(obj[1])
         string = obj[0]
@@ -227,7 +255,7 @@ for parameters in component expression 'dicpars' and for parameters in phs \
     dicpars = {}
     subs = {}
     for key in kwargs.keys():
-        symb, sub, par = form(graph.label + '_' + str(key), kwargs[key])
+        symb, sub, par = form(graph.label + "_" + str(key), kwargs[key])
         dicpars.update({Core.symbols(key): symb})
         subs.update(sub)
         if par is not None:
@@ -281,7 +309,7 @@ def generateDicDoc(folder):
     import shutil
 
     for d in dictionary.__all__:
-        if not d == 'path_to_dictionary':
+        if not d == "path_to_dictionary":
             comps = dict()
             titles = dict()
             dic = getattr(dictionary, d)
@@ -292,28 +320,51 @@ def generateDicDoc(folder):
             dcomps.sort()
             for c in dcomps:
                 comp = getattr(dic, c)
-                realtitle = comp.metadata['title'] if comp.metadata['component'] == comp.metadata['title'] else '{} ({})'.format(comp.metadata['title'], comp.metadata['component'])
-                comps[c] = '{}-{}'.format(d, c)
+                realtitle = (
+                    comp.metadata["title"]
+                    if comp.metadata["component"] == comp.metadata["title"]
+                    else "{} ({})".format(
+                        comp.metadata["title"], comp.metadata["component"]
+                    )
+                )
+                comps[c] = "{}-{}".format(d, c)
                 titles[c] = realtitle
                 temp = string.Template(dicdocTemplate)
-                subs = {'title': realtitle,
-                        'dico': d,
-                        'desc': comp.metadata['desc'],
-                        'component': c,
-                        'slug': comps[c],
-                        'date': datetime.datetime.now(),
-                        'doc': comp.__doc__}
-                with open(os.path.join(folder, comp.metadata['dico'], comp.metadata['component']+'.rst'), 'w') as f:
+                subs = {
+                    "title": realtitle,
+                    "dico": d,
+                    "desc": comp.metadata["desc"],
+                    "component": c,
+                    "slug": comps[c],
+                    "date": datetime.datetime.now(),
+                    "doc": comp.__doc__,
+                }
+                with open(
+                    os.path.join(
+                        folder,
+                        comp.metadata["dico"],
+                        comp.metadata["component"] + ".rst",
+                    ),
+                    "w",
+                ) as f:
                     for l in temp.substitute(subs).splitlines():
-                        f.write('{}\n'.format(l))
+                        f.write("{}\n".format(l))
 
-            content = '\n'.join(['- `{0} </posts/dicos/{1}/{2}>`_'.format(titles[c], d, comps[c]) for c in comps])
-            subs = {'content': content,
-                    'dico': d,
-                    'date': datetime.datetime.now(),
-                    }
+            content = "\n".join(
+                [
+                    "- `{0} </posts/dicos/{1}/{2}>`_".format(titles[c], d, comps[c])
+                    for c in comps
+                ]
+            )
+            subs = {
+                "content": content,
+                "dico": d,
+                "date": datetime.datetime.now(),
+            }
 
-            with open(os.path.join(folder, comp.metadata['dico'], 'index.rst'), 'w') as f:
+            with open(
+                os.path.join(folder, comp.metadata["dico"], "index.rst"), "w"
+            ) as f:
                 temp = string.Template(dicindexTemplate)
                 for l in temp.substitute(subs).splitlines():
-                    f.write(l + '\n')
+                    f.write(l + "\n")

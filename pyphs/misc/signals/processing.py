@@ -29,19 +29,18 @@ def lowpass(s, fc, tbw=1e-2):
 
     from numpy import arange, cos, sinc, ceil, convolve, pi
 
-    b = tbw*fc
-    fc = fc-b
+    b = tbw * fc
+    fc = fc - b
     N = int(ceil((4 / b)))
     if not N % 2:
         N += 1  # Make sure that N is odd.
     n = arange(N)
     # Compute sinc filter.
-    h = sinc(2 * fc * (n - (N - 1) / 2.))
+    h = sinc(2 * fc * (n - (N - 1) / 2.0))
     # Compute Blackman window.
-    w = 0.42 - 0.5 * cos(2 * pi * n / (N - 1)) + \
-        0.08 * cos(4 * pi * n / (N - 1))
+    w = 0.42 - 0.5 * cos(2 * pi * n / (N - 1)) + 0.08 * cos(4 * pi * n / (N - 1))
     # Multiply sinc filter with window.
     h = h * w
     # Normalize to get unity gain.
     h = h / sum(h)
-    return convolve(s, h, 'same')
+    return convolve(s, h, "same")

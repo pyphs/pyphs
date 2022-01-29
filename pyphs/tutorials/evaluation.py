@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # In this tutorial, we cover the `pyphs.Evaluation` object for the numerical evaluation of `pyphs.Core` objects. The core PHS object associated with the Thiele-Small modeling of electrodynamic loudspeakers is used as an example.
@@ -66,7 +65,7 @@ core.subs
 
 # In[8]:
 
-evals = core.to_evaluation(names=['H', 'dxH', 'z', 'M', 'Jxx'], vectorize=True)
+evals = core.to_evaluation(names=["H", "dxH", "z", "M", "Jxx"], vectorize=True)
 
 
 # Notice the symbols associated with entries in the substitution dictionary `core.subs` are automatically replaced by their correponding value in `core.subs`.
@@ -98,8 +97,12 @@ evals.args()
 
 x = [5e-4, 2e-2]
 dx = [5e-3, 2e-1]
-w = [5e-3, ]
-u = [1.5, ]
+w = [
+    5e-3,
+]
+u = [
+    1.5,
+]
 
 args = x + dx + w + u
 
@@ -188,10 +191,11 @@ evals.Jxx()
 # In[21]:
 
 import numpy as np
+
 N = 5
-x1_vec = np.random.rand(N)*1e-3
-x2_vec = np.random.rand(N)*1e-3
-x3_vec = np.random.rand(N)*1e-3
+x1_vec = np.random.rand(N) * 1e-3
+x2_vec = np.random.rand(N) * 1e-3
+x3_vec = np.random.rand(N) * 1e-3
 
 
 # and call the function with these vectors:

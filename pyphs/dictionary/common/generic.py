@@ -12,39 +12,40 @@ from pyphs.dictionary.tools import Argument, mappars
 
 class Generic(Graph):
     """
-Generic component class.
+    Generic component class.
 
-Parameters
------------
+    Parameters
+    -----------
 
-label : str
+    label : str
 
-    component label
+        component label
 
-edges : list of networkx edges
+    edges : list of networkx edges
 
-    networkx edges are tuples edge = (node_start, node_end, data), where data
-    is a dictionary with the following 'key': value
-        * ‘label': sympy.Symbol, edge label.
-        * 'ctrl': in ['e', 'f', '?'] control type.
-        * '': dic {'e':ze, 'f':zf} where ze and zf are the dissipation
-        functions (sympy.Exprs) in the effort-controlled case and the flux
-        controlled.
-    case, respectively.
-        * 'link': not implemented for dssipative components.
+        networkx edges are tuples edge = (node_start, node_end, data), where data
+        is a dictionary with the following 'key': value
+            * ‘label': sympy.Symbol, edge label.
+            * 'ctrl': in ['e', 'f', '?'] control type.
+            * '': dic {'e':ze, 'f':zf} where ze and zf are the dissipation
+            functions (sympy.Exprs) in the effort-controlled case and the flux
+            controlled.
+        case, respectively.
+            * 'link': not implemented for dssipative components.
 
-x : list of sp.Symbol
+    x : list of sp.Symbol
 
-    list of state variables symbols.
+        list of state variables symbols.
 
-H : sp.Expr
+    H : sp.Expr
 
-    Scalar storage function expression with symbols in 'x' and in keys of the
-    kwargs arguments.
+        Scalar storage function expression with symbols in 'x' and in keys of the
+        kwargs arguments.
 
-kwargs: dictionary of component parameters
+    kwargs: dictionary of component parameters
 
     """
+
     def __init__(self, label, edges, **kwargs):
         # init PortHamiltonianObject
         Graph.__init__(self, label=label)

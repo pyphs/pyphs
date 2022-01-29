@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -12,6 +11,7 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 from pyphs.config import VERBOSE
 import itertools
+
 from_iterable = itertools.chain.from_iterable
 
 
@@ -29,7 +29,9 @@ from_iterable = itertools.chain.from_iterable
 #         offset += npt
 
 # Numpy method
-def set_dataset_from_iterable(dataset, iterable, rslice=None, cslice=None, chunksize=1024):
+def set_dataset_from_iterable(
+    dataset, iterable, rslice=None, cslice=None, chunksize=1024
+):
     """
     Dump data from 2D array passed as row-major iterable in an h5py dataset
     using flattened numpy array as buffer.
@@ -80,8 +82,8 @@ def set_dataset_from_iterable(dataset, iterable, rslice=None, cslice=None, chunk
     flattened_iterable = from_iterable(iterable)
 
     while True:
-        if chunksize <= nrows-offset:
-            buffer_rslice = slice(offset, offset+chunksize)
+        if chunksize <= nrows - offset:
+            buffer_rslice = slice(offset, offset + chunksize)
             if rslice is not None:
                 buffer_rslice = range(rslice.stop)[rslice][buffer_rslice]
             count = chunksize * ncols
@@ -94,7 +96,7 @@ def set_dataset_from_iterable(dataset, iterable, rslice=None, cslice=None, chunk
             buffer_rslice = slice(offset, None)
             if rslice is not None:
                 buffer_rslice = range(rslice.stop)[rslice][buffer_rslice]
-            count = (nrows-offset) * ncols
+            count = (nrows - offset) * ncols
             buffer = np.fromiter(flattened_iterable, dataset.dtype)
             dataset[buffer_rslice, cslice] = buffer.reshape(-1, ncols)
             break

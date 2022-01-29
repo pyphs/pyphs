@@ -15,9 +15,9 @@ from pyphs import Netlist
 
 
 # def netlist file name
-label = 'bjtamp'
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-netlist_filename = here + os.sep + label + '.net'
+label = "bjtamp"
+here = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
+netlist_filename = here + os.sep + label + ".net"
 
 # read netlist
 netlist = Netlist(netlist_filename)

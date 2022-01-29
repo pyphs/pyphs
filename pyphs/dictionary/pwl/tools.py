@@ -10,8 +10,7 @@ import sympy as sp
 import numpy as np
 
 
-def data_generator(path, ind=None, step=None,
-                   postprocess=None, start=None, stop=None):
+def data_generator(path, ind=None, step=None, postprocess=None, start=None, stop=None):
     """
     Generator that read file from path. Each line is returned as a list of
     floats, if index i is such that start <= i < stop, with step. A function can be passed as postprocess, to be applied on each
@@ -21,12 +20,12 @@ def data_generator(path, ind=None, step=None,
     if start is None:
         start = 0
     if stop is None:
-        stop = float('Inf')
+        stop = float("Inf")
     if step is None:
         step = 1
 
     if ind is not None and not isinstance(ind, int):
-        text = 'Index should be an integer. Got {0}'
+        text = "Index should be an integer. Got {0}"
         text = text.format(type(ind))
         raise ValueError(text)
 
@@ -34,7 +33,7 @@ def data_generator(path, ind=None, step=None,
 
     with open(path, "r") as f:
         for line in f:
-            if start <= i < stop and not bool((i-start) % step):
+            if start <= i < stop and not bool((i - start) % step):
                 # export full line
                 if ind is None:
                     out = [float(x) for x in line.split()]
@@ -50,8 +49,7 @@ def data_generator(path, ind=None, step=None,
             i += 1
 
 
-def pwl_func(X_lst, Y_lst, symbol=sp.symbols('x'),
-             integ=False, y0=0., intconst=0.):
+def pwl_func(X_lst, Y_lst, symbol=sp.symbols("x"), integ=False, y0=0.0, intconst=0.0):
     """
     Returns a piecewise linear interpolation of the set (X_lst, Y_lst), based on
     the following explicit form:
@@ -80,23 +78,27 @@ def pwl_func(X_lst, Y_lst, symbol=sp.symbols('x'),
     # delta_f[i] = f(x[x+1]) - f(x[i]) for i in [1, ..., P-1]
     delta_y = np.diff(Y)
     # m[i] = delta_y[i]/delta_x[i]
-    m = delta_y/delta_x
+    m = delta_y / delta_x
     # m <= (m[0], m, m[P-2]
     m = np.concatenate((m[np.newaxis, 0], m, m[np.newaxis, -1]))
     # in [Chua and Ying, eq (2.2)]: 0.5*(m[0] + m[-1])
-    b = 0.5*(m[0] + m[-1])
+    b = 0.5 * (m[0] + m[-1])
     # in [Chua and Ying, eq (2.3)]: c[i] = 0.5*(m[i] - m[i-1]) for i in [1, ... P]
-    c = 0.5*(m[1:] - m[:P])
+    c = 0.5 * (m[1:] - m[:P])
     # in [Chua and Ying, eq (2.3)]: a = f(0) - sum_i(c[i]*abs(x[i]))
     # here we force f(0) = y0
-    a = y0 - np.sum(c*np.abs(X))
+    a = y0 - np.sum(c * np.abs(X))
 
     if integ:
         # integral of a + b.x + sum(c[i]*abs(x - X[i]))
-        expr = (intconst + a*x + (b/2)*x**2 +
-                sum(c*0.5*abs(x - X)*(x - X)) +
-                sum(c*0.5*abs(X)*X))
+        expr = (
+            intconst
+            + a * x
+            + (b / 2) * x ** 2
+            + sum(c * 0.5 * abs(x - X) * (x - X))
+            + sum(c * 0.5 * abs(X) * X)
+        )
     else:
-        expr = a + b*x + sum(c*abs(x - X))
+        expr = a + b * x + sum(c * abs(x - X))
 
     return expr

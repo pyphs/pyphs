@@ -7,7 +7,7 @@ Created on Sat Jun 11 19:28:12 2016
 
 from __future__ import absolute_import, division, print_function
 
-from pyphs.misc.plots.tools import (annotate, whichplot, standard)
+from pyphs.misc.plots.tools import annotate, whichplot, standard
 import numpy
 
 
@@ -84,13 +84,13 @@ None).
         Indicate whether to show the grid or not (the default is False)
     """
     opts = standard.copy()
-    opts['ylabel'] = opts.pop('ylabels')
+    opts["ylabel"] = opts.pop("ylabels")
     opts.update(kwargs)
 
     try:
-        if (isinstance(y[0], (float, int)) or
-           (isinstance(y[0], numpy.ndarray) and
-           len(y[0].shape) == 0)):
+        if isinstance(y[0], (float, int)) or (
+            isinstance(y[0], numpy.ndarray) and len(y[0].shape) == 0
+        ):
 
             y = [y]
     except IndexError:
@@ -98,18 +98,27 @@ None).
 
     nplots = int(y.__len__())
 
-    if opts['labels'] is None:
-        opts['labels'] = [None, ]*nplots
-    elif len(opts['labels']) != nplots:
-        nlabels = len(opts['labels'])
+    if opts["labels"] is None:
+        opts["labels"] = [
+            None,
+        ] * nplots
+    elif len(opts["labels"]) != nplots:
+        nlabels = len(opts["labels"])
         if nplots % nlabels == 0:
             N = nplots - nlabels
-            opts['labels'] = list(opts['labels']) + [None, ]*N
+            opts["labels"] = (
+                list(opts["labels"])
+                + [
+                    None,
+                ]
+                * N
+            )
 
-    if opts['log'] is None:
-        opts['log'] = ''
+    if opts["log"] is None:
+        opts["log"] = ""
 
     from matplotlib.pyplot import figure, fignum_exists
+
     i = 1
     while fignum_exists(i):
         i += 1
@@ -119,54 +128,60 @@ None).
     from matplotlib.pyplot import axes
 
     ax = axes()
-    ax.ticklabel_format(style='sci', scilimits=(-2, 2))
+    ax.ticklabel_format(style="sci", scilimits=(-2, 2))
 
     print_legend = False
 
     for n, yn in enumerate(y):
         if len(yn) == 0:
-            print('Skipping empty array: ', opts['labels'][n])
+            print("Skipping empty array: ", opts["labels"][n])
             continue
 
-        if isinstance(opts['labels'][n], (list, tuple)):
-            annotate(*opts['labels'][n], ax=ax)
+        if isinstance(opts["labels"][n], (list, tuple)):
+            annotate(*opts["labels"][n], ax=ax)
             l = None
         else:
-            l = opts['labels'][n]
+            l = opts["labels"][n]
         print_legend = l is not None or print_legend
 
-        plot = whichplot(opts['log'], ax)
-        if opts['linestyles'] is not None:
-            plot(x, yn, opts['linestyles'][n], label=l)
+        plot = whichplot(opts["log"], ax)
+        if opts["linestyles"] is not None:
+            plot(x, yn, opts["linestyles"][n], label=l)
         else:
             plot(x, yn, label=l)
 
     if print_legend:
         from matplotlib.pyplot import legend
-        legend(loc=opts['loc'])
 
-    if opts['xlabel'] is not None:
+        legend(loc=opts["loc"])
+
+    if opts["xlabel"] is not None:
         from matplotlib.pyplot import xlabel
-        xlabel(opts['xlabel'])
 
-    if opts['ylabel'] is not None:
+        xlabel(opts["xlabel"])
+
+    if opts["ylabel"] is not None:
         from matplotlib.pyplot import ylabel
-        ylabel(opts['ylabel'])
 
-    if opts['title'] is not None:
+        ylabel(opts["ylabel"])
+
+    if opts["title"] is not None:
         from matplotlib.pyplot import title
-        title(opts['title'])
+
+        title(opts["title"])
 
     # Show grid
-    ax.grid(opts['grid'])
+    ax.grid(opts["grid"])
     ax.minorticks_on()
 
-    if opts['path'] is not None:
+    if opts["path"] is not None:
         from matplotlib.pyplot import savefig
-        savefig(opts['path'] + '.' + opts['format'])
+
+        savefig(opts["path"] + "." + opts["format"])
 
     if show:
         from matplotlib.pyplot import show as pltshow
+
         pltshow()
 
     return fig, ax

@@ -15,49 +15,57 @@ from pyphs.misc.rst import equation
 
 
 class Source(Port):
-
     def __init__(self, label, nodes, **kwargs):
 
         # parameters
-        parameters = parametersDefault(self.metadata['parameters'])
+        parameters = parametersDefault(self.metadata["parameters"])
         parameters.update(kwargs)
 
-        type_ = parameters['type']
+        type_ = parameters["type"]
         type_ = type_.lower()
 
         if not label == nodes[0]:
             text = "The node label associated with a heat source must be the\
- same as the component label:\n{}\nis not \n{}".format(label, nodes[0])
+ same as the component label:\n{}\nis not \n{}".format(
+                label, nodes[0]
+            )
             raise NameError(text)
 
-        assert type_ in ('temperature', 'entropyvar')
+        assert type_ in ("temperature", "entropyvar")
 
-        if type_ == 'entropyvar':
-            ctrl = 'e'
+        if type_ == "entropyvar":
+            ctrl = "e"
             obs = {}
-        elif type_ == 'temperature':
-            ctrl = 'f'
-            obs = {symbols('gx'+label): symbols('u'+label)}
+        elif type_ == "temperature":
+            ctrl = "f"
+            obs = {symbols("gx" + label): symbols("u" + label)}
 
-        kwargs.update({'ctrl': ctrl})
-        Port.__init__(self, label,
-                         (datum, nodes[0]), **kwargs)
+        kwargs.update({"ctrl": ctrl})
+        Port.__init__(self, label, (datum, nodes[0]), **kwargs)
         self.core.observers.update(obs)
 
-    metadata = {'title': 'Mechanical Source',
-                'component': 'Source',
-                'label': 'T',
-                'dico': 'thermics',
-                'desc': r"Thermal source, i.e. imposed temperature delta (type='temp') or entropy variation (type='ev') between points.",
-                'nodesdesc': "Thermal point associated with the source with positive flux #->temp. The node label must be the same as the component label.",
-                'nodes': ('T', ),
-                'parametersdesc': 'Component parameter.',
-                'parameters': [['type', "Source type in {'entropyvar', 'temperature'}", 'string', 'temperature']],
-                'refs': {},
-                'nnodes': 2,
-                'nedges': 1,
-                'flux': dicmetadata['flux'],
-                'effort': dicmetadata['effort'],
-                }
+    metadata = {
+        "title": "Mechanical Source",
+        "component": "Source",
+        "label": "T",
+        "dico": "thermics",
+        "desc": r"Thermal source, i.e. imposed temperature delta (type='temp') or entropy variation (type='ev') between points.",
+        "nodesdesc": "Thermal point associated with the source with positive flux #->temp. The node label must be the same as the component label.",
+        "nodes": ("T",),
+        "parametersdesc": "Component parameter.",
+        "parameters": [
+            [
+                "type",
+                "Source type in {'entropyvar', 'temperature'}",
+                "string",
+                "temperature",
+            ]
+        ],
+        "refs": {},
+        "nnodes": 2,
+        "nedges": 1,
+        "flux": dicmetadata["flux"],
+        "effort": dicmetadata["effort"],
+    }
 
     __doc__ = componentDoc(metadata)

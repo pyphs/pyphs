@@ -12,10 +12,10 @@ import os
 from pyphs import Netlist, Graph
 
 # ---------------------------  NETLIST  ------------------------------------- #
-label = 'piano_hammer'
+label = "piano_hammer"
 this_script = os.path.realpath(__file__)
-here = this_script[:this_script.rfind(os.sep)]
-netlist_filename = here + os.sep + label + '.net'
+here = this_script[: this_script.rfind(os.sep)]
+netlist_filename = here + os.sep + label + ".net"
 netlist = Netlist(netlist_filename)
 
 
@@ -28,7 +28,7 @@ core = graph.to_core()
 
 
 ## ---------------------------  SIMULATION  ---------------------------------- #
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    import numpy
 #    import matplotlib.pyplot as plt

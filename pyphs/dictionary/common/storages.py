@@ -16,38 +16,47 @@ from pyphs.dictionary.tools import Argument, nicevarlabel, mappars
 # LINEAR
 ###############################################################
 
+
 class StorageLinear(Graph):
     """
     Linear flux-controlled storage component
     """
+
     def __init__(self, label, nodes, **kwargs):
         Graph.__init__(self, label=label)
-        if not isinstance(kwargs['value'], Argument):
-            coeff = Argument(label + 'coeff', kwargs['value'])
+        if not isinstance(kwargs["value"], Argument):
+            coeff = Argument(label + "coeff", kwargs["value"])
         else:
-            coeff = kwargs['value']
+            coeff = kwargs["value"]
         x = nicevarlabel("x", label)
         x = self.core.symbols(x)
-        if kwargs['inv_coeff']:
-            coeff.symb = coeff.symb**-1
-        H = coeff.symb * x**2/2.
+        if kwargs["inv_coeff"]:
+            coeff.symb = coeff.symb ** -1
+        H = coeff.symb * x ** 2 / 2.0
         self.core.add_storages([x], H)
-        edge_data_dic = {'label': x,
-                         'type': 'storage',
-                         'ctrl': kwargs['ctrl'],
-                         'link': None}
+        edge_data_dic = {
+            "label": x,
+            "type": "storage",
+            "ctrl": kwargs["ctrl"],
+            "link": None,
+        }
         edge = (nodes[0], nodes[1], edge_data_dic)
         self.add_edges_from([edge])
         self.core.subs.update(coeff.sub)
-        if len(coeff.sub) == 0 and kwargs['inv_coeff']:
-            self.core.p  += [coeff.symb**-1, ]
+        if len(coeff.sub) == 0 and kwargs["inv_coeff"]:
+            self.core.p += [
+                coeff.symb ** -1,
+            ]
         elif len(coeff.sub) == 0:
-            self.core.p  += [coeff.symb, ]
+            self.core.p += [
+                coeff.symb,
+            ]
 
 
 ###############################################################
 # NONLINEAR
 ###############################################################
+
 
 class StorageNonLinear(Graph):
     """
@@ -83,6 +92,7 @@ keys of the kwargs arguments.
     kwargs: dictionary of component parameters
 
     """
+
     def __init__(self, label, edges, x, H, **kwargs):
         # init PortHamiltonianObject
         Graph.__init__(self, label=label)

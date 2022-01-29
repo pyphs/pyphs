@@ -5,7 +5,7 @@ Created on Wed Jun  8 18:56:56 2016
 @author: Falaize
 """
 from .processing import lowpass
-from pyphs.misc.plots.tools import (annotate, standard)
+from pyphs.misc.plots.tools import annotate, standard
 from pyphs.misc.plots.fonts import globalfonts
 import numpy as np
 
@@ -47,16 +47,16 @@ def spectrogram(x, fs, show=False, **kwargs):
         Colormap specifier. Default is 'gnuplot2'.
     """
     opts = standard.copy()
-    opts['ylabel'] = opts.pop('ylabels')
-    opts['label'] = opts.pop('labels')
+    opts["ylabel"] = opts.pop("ylabels")
+    opts["label"] = opts.pop("labels")
     opts.update(kwargs)
 
-    opts.setdefault('dynamics', 80.)
-    opts.setdefault('nfft', int(2**8))
-    opts.setdefault('cmap', 'gnuplot2') # 'BuPu'
-    opts.setdefault('fmax', None)
+    opts.setdefault("dynamics", 80.0)
+    opts.setdefault("nfft", int(2 ** 8))
+    opts.setdefault("cmap", "gnuplot2")  # 'BuPu'
+    opts.setdefault("fmax", None)
 
-    opts['nfft'] = int(opts['nfft'])
+    opts["nfft"] = int(opts["nfft"])
 
     from matplotlib.pyplot import figure, fignum_exists
 
@@ -66,65 +66,84 @@ def spectrogram(x, fs, show=False, **kwargs):
     fig = figure(i)
 
     from matplotlib.pyplot import axes
+
     ax = axes()
 
-    if isinstance(opts['label'], (list, tuple)):
-        annotate(*opts['label'], ax=ax)
+    if isinstance(opts["label"], (list, tuple)):
+        annotate(*opts["label"], ax=ax)
 
-    noverlap = int(opts['nfft']/2)
-    Pxx, fbins, tbins, im = ax.specgram(np.array(x)/(opts['nfft']/2.),
-                                        mode='psd', Fs=fs,
-                                        NFFT=opts['nfft'], noverlap=noverlap,
-                                        cmap=opts['cmap'])
+    noverlap = int(opts["nfft"] / 2)
+    Pxx, fbins, tbins, im = ax.specgram(
+        np.array(x) / (opts["nfft"] / 2.0),
+        mode="psd",
+        Fs=fs,
+        NFFT=opts["nfft"],
+        noverlap=noverlap,
+        cmap=opts["cmap"],
+    )
 
-    if opts['fmax'] is not None:
+    if opts["fmax"] is not None:
         ifmax = 0
-        while ifmax < len(fbins) and fbins[ifmax] < opts['fmax']:
+        while ifmax < len(fbins) and fbins[ifmax] < opts["fmax"]:
             ifmax += 1
         Pxx, fbins = Pxx[:ifmax, :], fbins[:ifmax]
 
-    Pxx = Pxx/np.max(Pxx)
+    Pxx = Pxx / np.max(Pxx)
     extent = [tbins.min(), tbins.max(), fbins.min(), fbins.max()]
 
-    im = ax.imshow(10*np.log10(Pxx), extent=extent, origin='lower',
-                   aspect='auto', cmap=opts['cmap'],
-                   vmin=-opts['dynamics'], vmax=0)
+    im = ax.imshow(
+        10 * np.log10(Pxx),
+        extent=extent,
+        origin="lower",
+        aspect="auto",
+        cmap=opts["cmap"],
+        vmin=-opts["dynamics"],
+        vmax=0,
+    )
 
-    if opts['xlabel'] is not None:
+    if opts["xlabel"] is not None:
         from matplotlib.pyplot import xlabel
-        xlabel(opts['xlabel'])
 
-    if opts['ylabel'] is not None:
+        xlabel(opts["xlabel"])
+
+    if opts["ylabel"] is not None:
         from matplotlib.pyplot import ylabel
-        ylabel(opts['ylabel'])
 
-    if opts['title'] is not None:
+        ylabel(opts["ylabel"])
+
+    if opts["title"] is not None:
         from matplotlib.pyplot import title
-        title(opts['title'])
 
-    fig.colorbar(im, label='Magnitude (dB)')
+        title(opts["title"])
 
-    if opts['log'] is not None and 'y' in opts['log']:
+    fig.colorbar(im, label="Magnitude (dB)")
+
+    if opts["log"] is not None and "y" in opts["log"]:
         from matplotlib.pyplot import yscale
-        yscale('log')
 
-    if opts['log'] is not None and 'x' in opts['log']:
+        yscale("log")
+
+    if opts["log"] is not None and "x" in opts["log"]:
         from matplotlib.pyplot import xscale
-        xscale('log')
 
-    if opts['path'] is not None:
+        xscale("log")
+
+    if opts["path"] is not None:
         from matplotlib.pyplot import savefig
-        savefig(opts['path'] + '.' + opts['format'])
+
+        savefig(opts["path"] + "." + opts["format"])
 
     if show:
         from matplotlib.pyplot import show as pltshow
+
         pltshow()
 
     return ax
 
 
-def transferFunction(sigin, sigout, fs, nfft=int(2e10), filtering=None,
-                     limits=None, noverlap=None):
+def transferFunction(
+    sigin, sigout, fs, nfft=int(2e10), filtering=None, limits=None, noverlap=None
+):
     """
     Return frequencies and modulus of \
 transfer function T(iw) = sigout(iw)/sigin(iw).
@@ -169,17 +188,20 @@ noverlap = nperseg // 2. Defaults to None.
         sigin = lowpass(sigin, fc=filtering)
         sigout = lowpass(sigout, fc=filtering)
     import scipy.signal as sig
-    f, Pxx_den1 = sig.welch(sigin, fs, nperseg=nfft, scaling='spectrum',
-                            noverlap=noverlap)
-    f, Pxx_den2 = sig.welch(sigout, fs, nperseg=nfft, scaling='spectrum',
-                            noverlap=noverlap)
-    TF = Pxx_den2/Pxx_den1
+
+    f, Pxx_den1 = sig.welch(
+        sigin, fs, nperseg=nfft, scaling="spectrum", noverlap=noverlap
+    )
+    f, Pxx_den2 = sig.welch(
+        sigout, fs, nperseg=nfft, scaling="spectrum", noverlap=noverlap
+    )
+    TF = Pxx_den2 / Pxx_den1
     if limits is not None:
         fmin, fmax = limits
     else:
-        fmin, fmax = 0., fs/2.
+        fmin, fmax = 0.0, fs / 2.0
     nfmax = len(f) if fmax >= f[-1] else np.nonzero(f > fmax)[0][0]
     nfmin = np.nonzero(f >= fmin)[0][0]
     f = np.array(f[nfmin:nfmax])
-    TF = np.array(TF[nfmin:nfmax])**0.5
+    TF = np.array(TF[nfmin:nfmax]) ** 0.5
     return f, TF

@@ -21,8 +21,8 @@ def cmake_write(project_name, path):
     path : str
         Path to the directory where the build shall be made.
     """
-    filepath = os.path.join(path, 'CMakeLists.txt')
-    f = open(filepath, 'w+')
+    filepath = os.path.join(path, "CMakeLists.txt")
+    f = open(filepath, "w+")
     f.write(_template(project_name))
     f.close()
     return filepath
@@ -67,4 +67,6 @@ include_directories(${{HDF5_INCLUDE_DIRS}})
 add_executable({0} ${{SOURCE_FILES}})
 target_link_libraries ({0} Eigen3::Eigen ${{HDF5_LIBRARIES}})
 
-""".format(project_name)
+""".format(
+        project_name
+    )

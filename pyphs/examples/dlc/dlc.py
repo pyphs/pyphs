@@ -12,13 +12,13 @@ import os
 from pyphs import Netlist
 
 # netlist is "{label}.net"
-label = 'dlc'
+label = "dlc"
 
 # get folder path
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+path = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
 
 # def filename
-netlist_filename = os.path.join(path, '{0}.net'.format(label))
+netlist_filename = os.path.join(path, "{0}.net".format(label))
 
 # read in Netlist object
 netlist = Netlist(netlist_filename)

@@ -24,15 +24,13 @@ def is_known_test(obj):
             raised += 1
 
     if raised == 3:
-        message = 'Expression type not understood, got {}'.format(type(obj))
+        message = "Expression type not understood, got {}".format(type(obj))
         raise TypeError(message)
 
 
 # =============================== SCALARS =================================== #
 
-scalar_types = (sympy.Expr, sympy.Symbol,
-                sympy.Float, sympy.Integer,
-                float, int, DTYPE)
+scalar_types = (sympy.Expr, sympy.Symbol, sympy.Float, sympy.Integer, float, int, DTYPE)
 
 
 class ScalarExprTypeError(Exception):
@@ -45,8 +43,10 @@ def scalar_test(obj, metadata=(None, None)):
     information display.
     """
     if not isinstance(obj, scalar_types):
-        message = 'In func{}, name {}: \nexpected {}, \
-            \ngot {}'.format(metadata[0], metadata[1], vector_types, type(obj))
+        message = "In func{}, name {}: \nexpected {}, \
+            \ngot {}".format(
+            metadata[0], metadata[1], vector_types, type(obj)
+        )
         raise ScalarExprTypeError(message, obj)
 
 
@@ -65,8 +65,10 @@ def vector_test(obj, metadata=(None, None)):
     information display.
     """
     if not isinstance(obj, vector_types):
-        message = 'In func{}, name {}: \nexpected {}, \
-            \ngot {}'.format(metadata[0], metadata[1], vector_types, type(obj))
+        message = "In func{}, name {}: \nexpected {}, \
+            \ngot {}".format(
+            metadata[0], metadata[1], vector_types, type(obj)
+        )
         raise VectorExprTypeError(message)
     else:
         try:
@@ -77,7 +79,7 @@ def vector_test(obj, metadata=(None, None)):
 
 # ============================ MATRICES ===================================== #
 
-matrix_types = (sympy.SparseMatrix, )
+matrix_types = (sympy.SparseMatrix,)
 
 
 class MatrixExprTypeError(Exception):
@@ -90,10 +92,14 @@ def matrix_test(obj, metadata=(None, None)):
     information display.
     """
     if not isinstance(obj, matrix_types):
-        message = 'In func{}, name {}: \nexpected {}, \
-            \ngot {}'.format(metadata[0], metadata[1], matrix_types, type(obj))
+        message = "In func{}, name {}: \nexpected {}, \
+            \ngot {}".format(
+            metadata[0], metadata[1], matrix_types, type(obj)
+        )
         raise MatrixExprTypeError(message, obj)
     elif not len(obj.shape) == 2:
-        message = 'In {}, name {}: matrix must be 2D (i, j), \
-            got shape {}.'.format(metadata[0], metadata[1], obj.shape)
+        message = "In {}, name {}: matrix must be 2D (i, j), \
+            got shape {}.".format(
+            metadata[0], metadata[1], obj.shape
+        )
         raise MatrixExprTypeError(message, obj)

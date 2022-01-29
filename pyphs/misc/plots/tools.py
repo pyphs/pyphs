@@ -15,7 +15,7 @@ def dec(li, opts):
     opts['maxnplot'].
     """
     li = list(li)
-    ndecim = max((1, int(len(li)/opts['maxnplot'])))
+    ndecim = max((1, int(len(li) / opts["maxnplot"])))
     return [el for el in decimate(li, ndecim)]
 
 
@@ -25,36 +25,41 @@ def annotate(s, xy, ax=None):
     """
     binx = xy[0]
     biny = xy[1]
-    ax.text(binx, biny, s,
-            bbox=dict(facecolor='white', alpha=1.),
-            horizontalalignment='center',
-            verticalalignment='center',
-            transform=ax.transAxes)
+    ax.text(
+        binx,
+        biny,
+        s,
+        bbox=dict(facecolor="white", alpha=1.0),
+        horizontalalignment="center",
+        verticalalignment="center",
+        transform=ax.transAxes,
+    )
 
 
 def whichplot(which, axe):
     """
     select plot function according to chosen log scale (if any).
     """
-    if which == '':
+    if which == "":
         return axe.plot
-    elif which == 'x':
+    elif which == "x":
         return axe.semilogx
-    elif which == 'y':
+    elif which == "y":
         return axe.semilogy
-    elif which == 'xy':
+    elif which == "xy":
         return axe.loglog
 
 
-standard = {'loc': 0,  # legend location
-            'xlabel': None,  # x axis label
-            'ylabels': None,  # y axis label
-            'log': None,  # logscale: 'x','y','xy'
-            'format': plot_format,
-            'path': None,  # save path
-            'linestyles': None,
-            'labels': None,
-            'title': None,
-            'xpos_ylabel': None,
-            'grid': False
-            }
+standard = {
+    "loc": 0,  # legend location
+    "xlabel": None,  # x axis label
+    "ylabels": None,  # y axis label
+    "log": None,  # logscale: 'x','y','xy'
+    "format": plot_format,
+    "path": None,  # save path
+    "linestyles": None,
+    "labels": None,
+    "title": None,
+    "xpos_ylabel": None,
+    "grid": False,
+}

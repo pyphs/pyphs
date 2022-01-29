@@ -84,9 +84,7 @@ def serial_edges(graph):
     # for each node with degree 2 in the graph
     for node in g.nodes():
 
-        if node not in serial_nodes and \
-                g.degree(node) == 2 and \
-                not node == datum:
+        if node not in serial_nodes and g.degree(node) == 2 and not node == datum:
 
             # neighbors of node
             neighbors = list(g.neighbors(node))
@@ -109,7 +107,7 @@ def serial_edges(graph):
             # recover list of edges
             edges = list()
             for i, n in enumerate(s[:-1]):
-                edges.append(getedges(graph, (n, s[i+1]))[0])
+                edges.append(getedges(graph, (n, s[i + 1]))[0])
             all_edges.append((edges, s[0], s[-1]))
 
     return all_edges

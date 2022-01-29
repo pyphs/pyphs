@@ -18,24 +18,25 @@ class Dimensions:
     """
     Class that serves as a container for system's dimensions
     """
+
     def __init__(self, core):
         """
         Defines accessors to len of var 'phs.symbs.nvar' for var in x, w, y, cy
         """
-        setattr(self, 'names', ('x', 'w', 'y', 'cy'))
+        setattr(self, "names", ("x", "w", "y", "cy"))
 
         for name in self.names:
             dimvar = _dimvar_generator(core, name)
             setattr(self, name, dimvar)
 
-        dimp = _dimvar_generator(core, 'p')
-        setattr(self, 'p', dimp)
+        dimp = _dimvar_generator(core, "p")
+        setattr(self, "p", dimp)
 
-        dimp = _dimvar_generator(core, 'o')
-        setattr(self, 'o', dimp)
+        dimp = _dimvar_generator(core, "o")
+        setattr(self, "o", dimp)
 
-        dimargs = _dimvar_generator(core, 'args')
-        setattr(self, 'args', dimargs)
+        dimargs = _dimvar_generator(core, "args")
+        setattr(self, "args", dimargs)
 
         # init number of linear components to 0
         self._xl = 0
@@ -51,7 +52,7 @@ class Dimensions:
         return sum(geteval(self, var) for var in self.names)
 
     # --------------------------------------------------------------------------
-    # Linear/nonlinear
+    #  Linear/nonlinear
 
     def xl(self):
         """
@@ -78,7 +79,7 @@ class Dimensions:
         return self.w() - self.wl()
 
     # --------------------------------------------------------------------------
-    # Separable/nonseparable
+    #  Separable/nonseparable
 
     def xnl_mono(self):
         """
@@ -106,13 +107,17 @@ class Dimensions:
         """
         return self.xnl() + self.wnl()
 
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+
 
 def _dimvar_generator(core, var):
     """
     Return a function to access the dimension of `var` in `core`.
     """
+
     def dimvar():
         return len(geteval(core, var))
+
     return dimvar

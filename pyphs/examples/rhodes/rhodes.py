@@ -12,10 +12,10 @@ import os
 from pyphs import Netlist
 
 # ---------------------------  NETLIST  ------------------------------------- #
-label = 'rhodes'
+label = "rhodes"
 this_script = os.path.realpath(__file__)
-here = this_script[:this_script.rfind(os.sep)]
-netlist_filename = here + os.sep + label + '.net'
+here = this_script[: this_script.rfind(os.sep)]
+netlist_filename = here + os.sep + label + ".net"
 netlist = Netlist(netlist_filename)
 
 # ---------------------------  CORE  ---------------------------------------- #

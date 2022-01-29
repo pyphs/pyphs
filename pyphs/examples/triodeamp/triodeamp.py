@@ -14,11 +14,11 @@ import os
 from pyphs import Netlist, Graph
 
 
-label = 'triodeamp'
+label = "triodeamp"
 
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+path = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
 
-netlist_filename = path + os.sep + label + '.net'
+netlist_filename = path + os.sep + label + ".net"
 
 netlist = Netlist(netlist_filename)
 
@@ -28,9 +28,9 @@ core = graph.to_core(verbose=False)
 core.linear_nonlinear()
 core.subsinverse()
 
-#core.reduce_z()
+# core.reduce_z()
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs import signalgenerator
 #

@@ -59,7 +59,9 @@ class Graph(nx.MultiDiGraph):
             attributes for the generation of pyphs.Core objects by graph
             analysis.
 
-        """.format(description)
+        """.format(
+            description
+        )
 
         nx.MultiDiGraph.__init__(self)
 
@@ -80,7 +82,7 @@ class Graph(nx.MultiDiGraph):
             # else raise TypeError
             else:
                 t = type(netlist)
-                text = 'Can not understand netlist type {}'.format(t)
+                text = "Can not understand netlist type {}".format(t)
                 raise TypeError(text)
 
             # store netlist
@@ -89,17 +91,17 @@ class Graph(nx.MultiDiGraph):
             # graph label
             if label is None:
                 # read the label from netlist
-                label = os.path.basename(netlist.filename).split('.')[0]
+                label = os.path.basename(netlist.filename).split(".")[0]
 
             # Verbosity
             if VERBOSE >= 1:
-                print('\nBuild graph {}...'.format(label))
+                print("\nBuild graph {}...".format(label))
 
             # read netlist and build graph
             self._build_from_netlist()
 
         elif label is None:
-            label = 'graph'
+            label = "graph"
 
         # graph label
         self.label = label
@@ -113,8 +115,7 @@ class Graph(nx.MultiDiGraph):
         # Build analysis object
         self.analysis = GraphAnalysis(self, verbose=verbose, plot=plot)
 
-    def perform_analysis(self, verbose=False, plot=False, solve_arc=True,
-                         force=True):
+    def perform_analysis(self, verbose=False, plot=False, solve_arc=True, force=True):
         """
         Perform realizability analysis. Create analysis object first if needed.
 
@@ -144,10 +145,10 @@ class Graph(nx.MultiDiGraph):
 
         # verbosity
         if VERBOSE >= 1:
-            print('Analyze  {}...'.format(self.label))
+            print("Analyze  {}...".format(self.label))
 
         # check for graph analysis object
-        if not hasattr(self, 'analysis') or force:
+        if not hasattr(self, "analysis") or force:
 
             # Cope with anti-realizable connections
             self.sp_split()
@@ -158,7 +159,7 @@ class Graph(nx.MultiDiGraph):
 
         # check for existing inverse Gamma matrix for flux-controled edges
         # or force
-        if not hasattr(self.analysis, 'iGamma_fc') or force:
+        if not hasattr(self.analysis, "iGamma_fc") or force:
             # Perform realizability analysis
             self.analysis.perform()
 
@@ -179,31 +180,41 @@ class Graph(nx.MultiDiGraph):
             """
 
             for i in edges:
-                label = self.analysis.get_edge_data(i, 'label')
+                label = self.analysis.get_edge_data(i, "label")
                 if i in self.analysis.fc_edges:
-                    ctrl = 'f'
+                    ctrl = "f"
                 elif i in self.analysis.ec_edges:
-                    ctrl = 'e'
+                    ctrl = "e"
                 else:
                     text = "Unnown realizablity for edge {}"
                     edge = self.analysis.edges
                     raise IndeterminateRealizability(text.format(edge))
                 for e in self.edgeslist:
-                    if e[-1]['label'] == label:
-                        e[-1]['ctrl'] = ctrl
+                    if e[-1]["label"] == label:
+                        e[-1]["ctrl"] = ctrl
 
         # read realizibility for storages, dissipatives, ports and
         # connectors edges
-        for edges in (self.analysis.stor_edges,
-                      self.analysis.diss_edges,
-                      self.analysis.port_edges,
-                      self.analysis.conn_edges):
+        for edges in (
+            self.analysis.stor_edges,
+            self.analysis.diss_edges,
+            self.analysis.port_edges,
+            self.analysis.conn_edges,
+        ):
             read_realizability(edges)
 
     # ----------------------------------------------------------------------- #
 
-    def to_core(self, label=None, connect=True, merge_all=False, verbose=False,
-                plot=False, solve_arc=True, force=True):
+    def to_core(
+        self,
+        label=None,
+        connect=True,
+        merge_all=False,
+        verbose=False,
+        plot=False,
+        solve_arc=True,
+        force=True,
+    ):
         """
         Return the core PHS object associated with the graph.
 
@@ -256,12 +267,13 @@ class Graph(nx.MultiDiGraph):
             # assemble serial/parallel edges into current graph
             self.sp_assemble()
 
-        self.perform_analysis(verbose=verbose, plot=plot, solve_arc=solve_arc,
-                              force=force)
+        self.perform_analysis(
+            verbose=verbose, plot=plot, solve_arc=solve_arc, force=force
+        )
 
         # verbosity
         if VERBOSE >= 1:
-            print('Build core {}...'.format(self.label))
+            print("Build core {}...".format(self.label))
 
         # build Core
         buildCore(self)
@@ -290,11 +302,11 @@ class Graph(nx.MultiDiGraph):
         if label is None:
             label = str(self.label)
         if not isinstance(label, str):
-            raise TypeError('Core label not understood:\n{}'.format(label))
+            raise TypeError("Core label not understood:\n{}".format(label))
         core.label = label
 
         # Transfer reference to Netlist object
-        if hasattr(self, 'netlist'):
+        if hasattr(self, "netlist"):
             core._netlist = self.netlist
 
         return core
@@ -384,15 +396,16 @@ class Graph(nx.MultiDiGraph):
     'netlists' module).
         """
         from importlib import import_module
+
         for line in self.netlist:
-            dic_name = 'pyphs.dictionary.' + line['dictionary']
+            dic_name = "pyphs.dictionary." + line["dictionary"]
             dic = import_module(dic_name)
-            name = line['component'].lower()
+            name = line["component"].lower()
             klass = name[0].upper() + name[1:]
             component = getattr(dic, klass)
-            component_graph = component(line['label'],
-                                        line['nodes'],
-                                        **line['arguments'])
+            component_graph = component(
+                line["label"], line["nodes"], **line["arguments"]
+            )
             self += component_graph
 
     def plot(self, filename=None, ax=None, show=True):
@@ -410,6 +423,7 @@ class Graph(nx.MultiDiGraph):
         """
 
         from .subgraph import SubGraphSerial
+
         # list of clusters of serial edges
         se = serial_edges(self)
         for edges in se:
@@ -418,7 +432,7 @@ class Graph(nx.MultiDiGraph):
                 self.remove_edges_from([(e[0], e[1], None) for e in edges[0]])
             # increment counter for parallel edges labels
             self._idser += 1
-            sglabel = 'serial{0}'.format(self._idser)
+            sglabel = "serial{0}".format(self._idser)
             # define subgraph terminals
             terminals = edges[1], edges[2]
             # instanciate a new subgraph
@@ -429,16 +443,19 @@ class Graph(nx.MultiDiGraph):
             # add serial cluster edges
             for n in edges[1:3]:
                 if not n == datum:
-                    sg.add_edge(datum, n, **{'type': 'port',
-                                             'ctrl': '?',
-                                             'label': sglabel + '_out_' + n})
+                    sg.add_edge(
+                        datum,
+                        n,
+                        **{"type": "port", "ctrl": "?", "label": sglabel + "_out_" + n}
+                    )
             # build subgraph analysis object
             sg._build_analysis()
             # add subgraph to root graph
-            self.add_edge(edges[1], edges[2], **{'type': 'graph',
-                                                 'ctrl': '?',
-                                                 'label': sglabel,
-                                                 'graph': sg})
+            self.add_edge(
+                edges[1],
+                edges[2],
+                **{"type": "graph", "ctrl": "?", "label": sglabel, "graph": sg}
+            )
         self.remove_orphan_nodes()
         # Return True if any change occured
         return bool(len(se))
@@ -465,7 +482,7 @@ class Graph(nx.MultiDiGraph):
                 pass
             # increment counter for parallel edges labels
             self._idpar += 1
-            pglabel = 'parallel{0}'.format(self._idpar)
+            pglabel = "parallel{0}".format(self._idpar)
             # define subgraph terminals
             terminals = n1, n2
             # instanciate a new subgraph
@@ -479,15 +496,15 @@ class Graph(nx.MultiDiGraph):
             # add control edge
             for n in (n1, n2):
                 if not n == datum:
-                    pg.add_edge(datum, n, **{'type': 'port',
-                                             'ctrl': '?',
-                                             'label': pglabel + '_out_' + n})
+                    pg.add_edge(
+                        datum,
+                        n,
+                        **{"type": "port", "ctrl": "?", "label": pglabel + "_out_" + n}
+                    )
             # add subgraph to root graph
-            self.add_edge(n1, n2, **{'type': 'graph',
-                                     'ctrl': '?',
-                                     'label':
-                                     pglabel,
-                                     'graph': pg})
+            self.add_edge(
+                n1, n2, **{"type": "graph", "ctrl": "?", "label": pglabel, "graph": pg}
+            )
         # Return True if any change occured
         return bool(len(pe))
 
@@ -501,8 +518,8 @@ class Graph(nx.MultiDiGraph):
             Resursive import of edges from subgraphs.
             """
             for e in graph.edgeslist:
-                if e[-1]['type'] == 'graph':
-                    subgraph = e[-1]['graph']
+                if e[-1]["type"] == "graph":
+                    subgraph = e[-1]["graph"]
                     subgraph.core = Core()
                     assemble_subgraph(subgraph)
                     graph += subgraph
@@ -512,10 +529,14 @@ class Graph(nx.MultiDiGraph):
         # remove '_out_' and subgraphs edges
         for e in self.edgeslist:
             # get type and label
-            elabel = e[-1]['label']
-            etype = e[-1]['type']
-            if '_out_' in str(elabel) or etype == 'graph':
-                self.remove_edges_from_list([e, ])
+            elabel = e[-1]["label"]
+            etype = e[-1]["type"]
+            if "_out_" in str(elabel) or etype == "graph":
+                self.remove_edges_from_list(
+                    [
+                        e,
+                    ]
+                )
 
     def sp_split(self):
         """
@@ -565,10 +586,10 @@ class Graph(nx.MultiDiGraph):
             subgraphs = {graph.label: graph}
             for e in graph.edges(data=True):
                 # if leaf is a subgraph
-                if e[-1]['type'] == 'graph':
+                if e[-1]["type"] == "graph":
                     # get label and subgraphs
-                    elabel = e[-1]['label']
-                    egraph = e[-1]['graph']
+                    elabel = e[-1]["label"]
+                    egraph = e[-1]["graph"]
                     # update graph dictionary
                     subgraphs[elabel] = egraph
                     # get sub-sub-graphs
@@ -588,9 +609,9 @@ class Graph(nx.MultiDiGraph):
             tree = {graph.label: dict()}
             for e in graph.edges(data=True):
                 # if leaf is a subgraph
-                if e[-1]['type'] == 'graph':
-                    elabel = e[-1]['label']
-                    egraph = e[-1]['graph']
+                if e[-1]["type"] == "graph":
+                    elabel = e[-1]["label"]
+                    egraph = e[-1]["graph"]
                     subtree = get_subgraphs_tree(egraph)
                     tree[graph.label][elabel] = subtree[elabel]
             return tree
@@ -607,20 +628,20 @@ class Graph(nx.MultiDiGraph):
 
         level = 0
         levels = dict()
-        levels[level] = (list(self.sp_subgraphs_tree.keys())[0], )
+        levels[level] = (list(self.sp_subgraphs_tree.keys())[0],)
         continu = True
         subgraphs = self.sp_subgraphs
         while continu:
             continu = False
             level += 1
             levels[level] = ()
-            for k in levels[level-1]:
+            for k in levels[level - 1]:
                 try:
                     gk = subgraphs[k]
                     for e in gk.edges(data=True):
-                        levels[level] += (e[-1]['label'], )
+                        levels[level] += (e[-1]["label"],)
                         # if leaf is a subgraph
-                        if e[-1]['type'] == 'graph':
+                        if e[-1]["type"] == "graph":
                             continu = True
                 except KeyError:
                     pass
@@ -638,16 +659,16 @@ class Graph(nx.MultiDiGraph):
 
         """
         # check for graph analysis object
-        if not hasattr(graph, 'analysis'):
+        if not hasattr(graph, "analysis"):
             graph._build_analysis()
         # analyze root graph
         graph.analysis.iteration()
         # iterate over leaves
         for e in graph.edges(data=True):
             # if leaf is a subgraph
-            if e[-1]['type'] == 'graph':
+            if e[-1]["type"] == "graph":
                 # iterate
-                Graph.iter_analysis(e[-1]['graph'])
+                Graph.iter_analysis(e[-1]["graph"])
 
     # ----------------------------------------------------------------------- #
     def remove_edges_from_list(self, *args, **kwargs):
@@ -671,7 +692,7 @@ class Graph(nx.MultiDiGraph):
             # Get edge key
             n1, n2 = e[:2]
             for key in self[n1][n2].keys():
-                if self[n1][n2][key]['label'] == e[-1]['label']:
+                if self[n1][n2][key]["label"] == e[-1]["label"]:
                     break
 
             # Remove edge
@@ -696,7 +717,7 @@ class Graph(nx.MultiDiGraph):
         """
         Graph summation.
         """
-        if hasattr(graph1, 'netlist') and hasattr(graph2, 'netlist'):
+        if hasattr(graph1, "netlist") and hasattr(graph2, "netlist"):
             graph1.netlist += graph2.netlist
         graph1.core += graph2.core
         graph1.add_edges_from(graph2.edges(data=True))
@@ -739,15 +760,14 @@ class Graph(nx.MultiDiGraph):
             Dictionary with nodes labels as keys and nodes positions as values.
             Values are given as 1 dimension, 2 elements numpy.ndarray.
         """
-        if not hasattr(self, 'positions') or reset:
+        if not hasattr(self, "positions") or reset:
             if layout is None:
                 layout = GRAPHS_LAYOUT
             else:
-                assert layout in ('circular', 'spring')
-            if layout == 'spring':
-                self.positions = nx.spring_layout(self,
-                                                  iterations=GRAPHS_ITERATIONS)
-            elif layout == 'circular':
+                assert layout in ("circular", "spring")
+            if layout == "spring":
+                self.positions = nx.spring_layout(self, iterations=GRAPHS_ITERATIONS)
+            elif layout == "circular":
                 self.positions = nx.circular_layout(self)
 
         return self.positions

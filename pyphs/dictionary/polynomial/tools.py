@@ -9,5 +9,6 @@ Created on Mon Jun 19 00:12:30 2017
 import sympy as sp
 import numpy as np
 
+
 def polynomial(var, coefficients):
-    return sum(c*(var**i) for i, c in enumerate(coefficients))
+    return sum(c * (var ** i) for i, c in enumerate(coefficients))

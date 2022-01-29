@@ -8,9 +8,10 @@ Created on Wed May 17 23:15:00 2017
 
 import numpy as np
 from pyphs.config import DTYPE
+
 # ============================ MATRICES ===================================== #
 
-matrix_types = (np.ndarray, )
+matrix_types = (np.ndarray,)
 
 
 class MatrixTypeError(Exception):
@@ -23,23 +24,28 @@ def matrix_test(obj, metadata=(None, None)):
     information display.
     """
     if not isinstance(obj, matrix_types):
-        message = 'In func{0}, name {1}: \nexpected {2}, \
-            \ngot {3}'.format(metadata[0], metadata[1],
-                              matrix_types, type(obj))
+        message = "In func{0}, name {1}: \nexpected {2}, \
+            \ngot {3}".format(
+            metadata[0], metadata[1], matrix_types, type(obj)
+        )
         raise MatrixTypeError(message, obj)
     elif not len(obj.shape) == 2:
-        message = 'In {0}, name {1}: matrix must be 2D (i, j), \
-            got shape {2}.'.format(metadata[0], metadata[1], obj.shape)
+        message = "In {0}, name {1}: matrix must be 2D (i, j), \
+            got shape {2}.".format(
+            metadata[0], metadata[1], obj.shape
+        )
         raise MatrixTypeError(message, obj)
     elif not obj.dtype.type == DTYPE:
-        message = 'In {0}, name {1}: Data type must be {2}, \
-            got {3}.'.format(metadata[0], metadata[1], DTYPE, obj.dtype)
+        message = "In {0}, name {1}: Data type must be {2}, \
+            got {3}.".format(
+            metadata[0], metadata[1], DTYPE, obj.dtype
+        )
         raise MatrixTypeError(message, obj)
 
 
 # ============================== VECTORS ==================================== #
 
-vector_types = (np.ndarray, )
+vector_types = (np.ndarray,)
 
 
 class VectorTypeError(Exception):
@@ -52,22 +58,28 @@ def vector_test(obj, metadata=(None, None)):
     information display.
     """
     if not isinstance(obj, vector_types):
-        message = 'In func{}, name {}: \nexpected {}, \
-            \ngot {}'.format(metadata[0], metadata[1], vector_types, type(obj))
+        message = "In func{}, name {}: \nexpected {}, \
+            \ngot {}".format(
+            metadata[0], metadata[1], vector_types, type(obj)
+        )
         raise VectorTypeError(message, obj)
     elif not len(obj.shape) == 1:
-        message = 'In {}, name {}: \nvectors must be 1D (i, ), \
-            \ngot shape {}.'.format(metadata[0], metadata[1], obj.shape)
+        message = "In {}, name {}: \nvectors must be 1D (i, ), \
+            \ngot shape {}.".format(
+            metadata[0], metadata[1], obj.shape
+        )
         raise VectorTypeError(message, obj)
     elif not obj.dtype.type == DTYPE:
-        message = 'In {}, name {}: Data type must be {}, \
-            got {}.'.format(metadata[0], metadata[1], DTYPE, obj.dtype)
+        message = "In {}, name {}: Data type must be {}, \
+            got {}.".format(
+            metadata[0], metadata[1], DTYPE, obj.dtype
+        )
         raise VectorTypeError(message, obj)
 
 
 # =============================== SCALARS =================================== #
 
-scalar_types = (np.ndarray, )
+scalar_types = (np.ndarray,)
 
 
 class ScalarTypeError(Exception):
@@ -80,14 +92,20 @@ def scalar_test(obj, metadata=(None, None)):
     information display.
     """
     if not isinstance(obj, scalar_types):
-        message = 'In func{}, name {}: \nexpected {}, \
-            \ngot {}'.format(metadata[0], metadata[1], vector_types, type(obj))
+        message = "In func{}, name {}: \nexpected {}, \
+            \ngot {}".format(
+            metadata[0], metadata[1], vector_types, type(obj)
+        )
         raise ScalarTypeError(message, obj)
     elif not len(obj.shape) == 0:
-        message = 'In {}, name {}: \nscalar must be 0D (, ), \
-            \ngot shape {}.'.format(metadata[0], metadata[1], obj.shape)
+        message = "In {}, name {}: \nscalar must be 0D (, ), \
+            \ngot shape {}.".format(
+            metadata[0], metadata[1], obj.shape
+        )
         raise ScalarTypeError(message, obj)
     elif not obj.dtype.type == DTYPE:
-        message = 'In {}, name {}: Data type must be {}, \
-            got {}.'.format(metadata[0], metadata[1], DTYPE, obj.dtype)
+        message = "In {}, name {}: Data type must be {}, \
+            got {}.".format(
+            metadata[0], metadata[1], DTYPE, obj.dtype
+        )
         raise ScalarTypeError(message, obj)

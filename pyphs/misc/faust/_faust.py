@@ -18,25 +18,29 @@ from ._method_invmat import MethodInvMat
 import os
 import string
 
-here = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
+here = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
 
 
 def faust_expr(name, args, expr, subs):
-    previous_expr = sp.sympify(0.)
+    previous_expr = sp.sympify(0.0)
     start = time.time()
-    while previous_expr != expr and time.time()-start < 10:
+    while previous_expr != expr and time.time() - start < 10:
         previous_expr = expr
         expr = simplify(previous_expr)
-    code = '\n' + \
-        name + " = \(" + \
-        ('{}, '*len(args)).format(*map(str, args))[:-2] + ').('
+    code = (
+        "\n"
+        + name
+        + " = \("
+        + ("{}, " * len(args)).format(*map(str, args))[:-2]
+        + ").("
+    )
     code += ccode(expr)
-    code += ');'
-    return code.replace('(-', '(0-')
+    code += ");"
+    return code.replace("(-", "(0-")
 
 
 def faust_vector(name, expr, argsnames, subs, method):
-    joinListArgsNames = ', '.join(map(lambda s: s[-1], argsnames))
+    joinListArgsNames = ", ".join(map(lambda s: s[-1], argsnames))
     methodargs = []
     for namea in argsnames:
         methodargs.extend(geteval(method, namea))
@@ -44,38 +48,37 @@ def faust_vector(name, expr, argsnames, subs, method):
     code = str()
     for i, e in enumerate(expr):
         if VERBOSE >= 2:
-            print('    Generate Faust expression {}[{}]'.format(name, i))
-        code += faust_expr(name+str(i), argsnames, e, subs)
-    code += '\n'*2 + name + " = "
+            print("    Generate Faust expression {}[{}]".format(name, i))
+        code += faust_expr(name + str(i), argsnames, e, subs)
+    code += "\n" * 2 + name + " = "
     if len(expr) > 0:
         code += joinListArgsNames
-        code += " <: " + ''.join([name+str(i)+', '
-                                  for i in range(len(expr))])[:-2]
+        code += " <: " + "".join([name + str(i) + ", " for i in range(len(expr))])[:-2]
     else:
-        code += '0. : ! '
-    code += ';'
+        code += "0. : ! "
+    code += ";"
     return code
 
 
 def listToAllPass(l):
-    return ('_, '*len(l))[:-2]
+    return ("_, " * len(l))[:-2]
 
 
 def listToAllTerminate(l):
-    return ('!, '*len(l))[:-2]
+    return ("!, " * len(l))[:-2]
 
 
 def listToTerminateAllExcept(l, i):
-    string = ''
+    string = ""
     for n, el in enumerate(l):
-        string += '_, ' if n == i else '!, '
+        string += "_, " if n == i else "!, "
     return string[:-2]
 
 
 def listToPassAllExcept(l, i):
-    string = ''
+    string = ""
     for n, el in enumerate(l):
-        string += '!, ' if n == i else '_, '
+        string += "!, " if n == i else "_, "
     return string[:-2]
 
 
@@ -94,39 +97,54 @@ def multirecursive(method, process, nin, nout, inits):
         # select name and index depending on the type of recursion input
         if i < nx:
             # State increment
-            initname = 'dx'
+            initname = "dx"
             initstart = 0
         elif i < nx + nw:
             # Dissipative variable
-            initname = 'w'
+            initname = "w"
             initstart = nx
         elif i < nx + nw + nx:
             # State
-            initname = 'x'
+            initname = "x"
             initstart = nx + nw
         elif i < nx + nw + nx + nu:
             # Input
-            initname = 'u'
+            initname = "u"
             initstart = nx + nw + nx
         else:
             # Observer
-            initname = 'o'
+            initname = "o"
             initstart += nx + nw + nx + nu
 
         # parameters for recursion
-        p1 = listToPassAllExcept([None, ]*(nin-i), 0)+',' if nin-i > 0 else ''
-        p2 = listToAllPass([None, ]*(nout-nin))
+        p1 = (
+            listToPassAllExcept(
+                [
+                    None,
+                ]
+                * (nin - i),
+                0,
+            )
+            + ","
+            if nin - i > 0
+            else ""
+        )
+        p2 = listToAllPass(
+            [
+                None,
+            ]
+            * (nout - nin)
+        )
 
         # faust init (prefix)
-        prefix = 'prefix({0}, _)'.format(inits[initname][i-initstart])
+        prefix = "prefix({0}, _)".format(inits[initname][i - initstart])
 
         # recursion
-        string = '(' + string + ') ~ {2} <: {0}{1}'.format(p1, p2, prefix)
+        string = "(" + string + ") ~ {2} <: {0}{1}".format(p1, p2, prefix)
     return string
 
 
-def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
-                   nIt=10):
+def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None, nIt=10):
     """
     write a Faust process (.dsp)
 
@@ -152,9 +170,9 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     """
 
     if VERBOSE >= 1:
-        print('Generate Faust code')
+        print("Generate Faust code")
 
-    with open(os.path.join(here, 'faustfx.template'), 'r') as f:
+    with open(os.path.join(here, "faustfx.template"), "r") as f:
         template = string.Template(f.read())
 
     if inputs is None:
@@ -177,158 +195,161 @@ def write_faust_fx(method, path=None, inputs=None, outputs=None, inits=None,
     # initializations
     if inits is None:
         inits = {}
-    for name in ('x', 'dx', 'w', 'u', 'o', 'p'):
+    for name in ("x", "dx", "w", "u", "o", "p"):
         if name not in inits.keys():
-            inits[name] = [0., ]*len(geteval(method, name))
+            inits[name] = [
+                0.0,
+            ] * len(geteval(method, name))
 
     # set path
     if path is None:
-        path = method.label + '.dsp'
-    argsnames = ['dx', 'w', 'x', 'o', 'u']
+        path = method.label + ".dsp"
+    argsnames = ["dx", "w", "x", "o", "u"]
 
     # inputs processes
-    cinputs = '('
+    cinputs = "("
     for i, ui in enumerate(method.u):
         if i in iin:
-            cinputs += '_, '
+            cinputs += "_, "
         else:
-            cinputs += str(ui) + ', '
-    cinputs = cinputs[:-2] + ')'
+            cinputs += str(ui) + ", "
+    cinputs = cinputs[:-2] + ")"
 
     # constant values for parameters
-    constPars = ''
+    constPars = ""
     for k in method.subs.keys():
-        constPars += '\n{0} = {1};'.format(str(k), method.subs[k])
-    if constPars == '':
-        constPars = '// None'
+        constPars += "\n{0} = {1};".format(str(k), method.subs[k])
+    if constPars == "":
+        constPars = "// None"
 
     # constant values for inputs
-    constInputs = ''
+    constInputs = ""
     for i, ui in enumerate(method.u):
         if i not in iin:
-            constInputs += '\n{0} = {1};'.format(str(ui), inputs[i])
-    if constInputs == '':
-        constInputs = '// None'
+            constInputs += "\n{0} = {1};".format(str(ui), inputs[i])
+    if constInputs == "":
+        constInputs = "// None"
 
     # sliders for controlled parameters
-    sliders = ''
+    sliders = ""
     for p in method.p:
         sliders += '\n{0} = hslider("{0}", 0.5, 0., 1., 0.001);'.format(str(p))
-    if sliders == '':
-        sliders = '// None'
+    if sliders == "":
+        sliders = "// None"
 
     # all-pass processes
     def code_pass(name):
         a = geteval(method, name)
         if len(a) > 0:
-            return '\n{0} = {1};'.format(name, listToAllPass(a))
+            return "\n{0} = {1};".format(name, listToAllPass(a))
         else:
-            return '\n{0} = 0. : !;'.format(name)
+            return "\n{0} = 0. : !;".format(name)
 
-    cpass = ''
-    for name in 'xwupov':
+    cpass = ""
+    for name in "xwupov":
         cr = False
-        for suffix in ('', 'l', 'nl'):
+        for suffix in ("", "l", "nl"):
             try:
-                c = code_pass(name+suffix)
-                if not c == '':
+                c = code_pass(name + suffix)
+                if not c == "":
                     cpass += c
                     cr = True
             except:
                 pass
         if cr:
-            cpass += '\n'
+            cpass += "\n"
 
     # all-cut processes
     def code_terminate(name):
         a = geteval(method, name)
         if len(a) > 0:
-            return '\n{0}T = {1};'.format(name, listToAllTerminate(a))
+            return "\n{0}T = {1};".format(name, listToAllTerminate(a))
         else:
-            return '\n{0}T = 0. : !;'.format(name)
-    cstop = ''
-    for name in 'xwupov':
+            return "\n{0}T = 0. : !;".format(name)
+
+    cstop = ""
+    for name in "xwupov":
         cr = False
-        for suffix in ('', 'l', 'nl'):
+        for suffix in ("", "l", "nl"):
             try:
-                c = code_terminate(name+suffix)
-                if not c == '':
+                c = code_terminate(name + suffix)
+                if not c == "":
                     cstop += c
                     cr = True
             except:
                 pass
         if cr:
-            cstop += '\n'
+            cstop += "\n"
 
     # update vl = (dxl, wl)
-    udvl = faust_vector('udvl', method.ud_vl, argsnames, method.subs, method)
-    udL = 'iterationL' if len(method.vl()) > 0 else 'args'
+    udvl = faust_vector("udvl", method.ud_vl, argsnames, method.subs, method)
+    udL = "iterationL" if len(method.vl()) > 0 else "args"
 
     # update vnl = (dxnl, wnl)
-    udvnl = faust_vector('udvnl',
-                         method.ud_vnl,
-                         argsnames,
-                         method.subs,
-                         method)
-    udNL = ('iterationNL : '*nIt)[:-1] if len(method.vnl()) > 0 else ''
+    udvnl = faust_vector("udvnl", method.ud_vnl, argsnames, method.subs, method)
+    udNL = ("iterationNL : " * nIt)[:-1] if len(method.vnl()) > 0 else ""
 
     # update x and y
-    udXY = '<: (udx, y)' if len(method.x) > 0 else '<: y'
-    y = faust_vector('y', [method.output()[i] for i in iout],
-                     argsnames, method.subs, method)
+    udXY = "<: (udx, y)" if len(method.x) > 0 else "<: y"
+    y = faust_vector(
+        "y", [method.output()[i] for i in iout], argsnames, method.subs, method
+    )
 
     # Faust recursion
-    nin = len(method.x)*2 + len(method.w) + len(method.observers)
+    nin = len(method.x) * 2 + len(method.w) + len(method.observers)
     nout = nin + len(outputs)
-    recursion = multirecursive(method, 'iteration', nin, nout, inits)
+    recursion = multirecursive(method, "iteration", nin, nout, inits)
 
     # Faust comments
-    infoIn = ''
+    infoIn = ""
     for i in range(len(method.u)):
         if i in iin:
-            infoIn += str(method.u[i]) + ', '
+            infoIn += str(method.u[i]) + ", "
 
-    infoOut = ''
+    infoOut = ""
     for i in range(len(method.y)):
         if i in iout:
-            infoOut += str(method.y[i]) + ', '
+            infoOut += str(method.y[i]) + ", "
 
-    infoPars = ''
+    infoPars = ""
     for p in method.p:
-        infoPars += str(p) + ', '
+        infoPars += str(p) + ", "
 
     # Substitutions
-    subs = {'inputs': cinputs,
-            'label': method.label,
-            'fs': str(method.fs),
-            'constPars': constPars,
-            'constInputs': constInputs,
-            'sliders': sliders,
-            'pass': cpass,
-            'stop': cstop,
-            'udvl': udvl,
-            'udvnl': udvnl,
-            'y': y,
-            'udNL': udNL,
-            'udL': udL,
-            'udXY': udXY,
-            'recursion': recursion,
-            'in': infoIn[:-2] + '.',
-            'out': infoOut[:-2] + '.',
-            'pars': infoPars[:-2] + '.'}
+    subs = {
+        "inputs": cinputs,
+        "label": method.label,
+        "fs": str(method.fs),
+        "constPars": constPars,
+        "constInputs": constInputs,
+        "sliders": sliders,
+        "pass": cpass,
+        "stop": cstop,
+        "udvl": udvl,
+        "udvnl": udvnl,
+        "y": y,
+        "udNL": udNL,
+        "udL": udL,
+        "udXY": udXY,
+        "recursion": recursion,
+        "in": infoIn[:-2] + ".",
+        "out": infoOut[:-2] + ".",
+        "pars": infoPars[:-2] + ".",
+    }
 
     cfaust = template.substitute(subs)
 
     # Write FAUST .dsp file
-    with open(path, 'w') as f:
+    with open(path, "w") as f:
         for i, l in enumerate(cfaust.splitlines()):
             if i > 0:
-                f.write('\n')
+                f.write("\n")
             f.write(l)
 
 
-def core2faustfx(core, config=None, path=None, inputs=None,
-                 outputs=None, inits=None, nIt=10):
+def core2faustfx(
+    core, config=None, path=None, inputs=None, outputs=None, inits=None, nIt=10
+):
     """
     write a Faust process (.dsp)
 
@@ -365,5 +386,6 @@ def core2faustfx(core, config=None, path=None, inputs=None,
     """
 
     method = MethodInvMat(core, config)
-    write_faust_fx(method, path=path, inputs=inputs, outputs=outputs,
-                   inits=inits, nIt=nIt)
+    write_faust_fx(
+        method, path=path, inputs=inputs, outputs=outputs, inits=inits, nIt=nIt
+    )

@@ -11,24 +11,41 @@ from unittest import TestCase
 from .faustFx import test_faust_fx_generation
 from .signalsTest import signal_synthesis, signal_waves
 from .NetlistTests import test_netslist
-from .GraphTests import (graph, target_edges, target_M, sp_split,
-                            plot_Graph, plot_GraphAnalysis)
+from .GraphTests import (
+    graph,
+    target_edges,
+    target_M,
+    sp_split,
+    plot_Graph,
+    plot_GraphAnalysis,
+)
 from .LatexTest import TestCore2Tex
-from .SimulationTest import (simulation_rlc_with_split,
-                                simulation_rlc_without_split,
-                                simulation_rlc_without_split_theta,
-                                simulation_rlc_without_split_trapez,
-                                simulation_nlcore_full,
-                                simulation_rlc_cpp)
-from .SimulationPlotsTest import (plot_rlc_with_split,
-                                     dataH5File,
-                                     plot_power_balance_rlc_with_split,
-                                     TranferFunction)
+from .SimulationTest import (
+    simulation_rlc_with_split,
+    simulation_rlc_without_split,
+    simulation_rlc_without_split_theta,
+    simulation_rlc_without_split_trapez,
+    simulation_nlcore_full,
+    simulation_rlc_cpp,
+)
+from .SimulationPlotsTest import (
+    plot_rlc_with_split,
+    dataH5File,
+    plot_power_balance_rlc_with_split,
+    TranferFunction,
+)
 
 
-from .CoreTests import (test_allsymbs, test_build_eval, test_freesymbols,
-                           test_init_M, test_labels, test_pprint,
-                           test_simplify, test_subsinverse)
+from .CoreTests import (
+    test_allsymbs,
+    test_build_eval,
+    test_freesymbols,
+    test_init_M,
+    test_labels,
+    test_pprint,
+    test_simplify,
+    test_subsinverse,
+)
 
 
 from .cppTest import cpp_nlcore_full
@@ -48,7 +65,7 @@ class TestGraph(TestCase):
         edges.sort()
         res = []
         for l1, l2 in zip(target_edges, edges):
-            print(' ')
+            print(" ")
             for arg1, arg2 in zip(l1, l2):
                 if isinstance(arg1, dict):
                     for k in arg1.keys():
@@ -64,18 +81,18 @@ class TestGraph(TestCase):
     def test_graph_build_core(self):
         graph.to_core()
         graph.core.connect()
-        if not graph.core.x[:2] == graph.core.symbols(['xM', 'xL']):
-            i = graph.core.x.index(graph.core.symbols('xM'))
+        if not graph.core.x[:2] == graph.core.symbols(["xM", "xL"]):
+            i = graph.core.x.index(graph.core.symbols("xM"))
             graph.core.move_storage(0, i)
-            i = graph.core.x.index(graph.core.symbols('xL'))
+            i = graph.core.x.index(graph.core.symbols("xL"))
             graph.core.move_storage(1, i)
-        if not graph.core.w[:2] == graph.core.symbols(['wR', 'wA']):
-            i = graph.core.w.index(graph.core.symbols('wR'))
+        if not graph.core.w[:2] == graph.core.symbols(["wR", "wA"]):
+            i = graph.core.w.index(graph.core.symbols("wR"))
             graph.core.move_dissipative(0, i)
-            i = graph.core.w.index(graph.core.symbols('wA'))
+            i = graph.core.w.index(graph.core.symbols("wA"))
             graph.core.move_dissipative(1, i)
-        test_M = np.array(graph.core.M)-target_M
-        results = (test_M == np.zeros(target_M.shape))
+        test_M = np.array(graph.core.M) - target_M
+        results = test_M == np.zeros(target_M.shape)
         self.assertTrue(all(list(results.flatten())))
 
     def test_sp_split(self):
@@ -89,14 +106,12 @@ class TestGraph(TestCase):
 
 
 class TestCore2Latex(TestCase):
-
     def test_core_2_latex(self):
 
         self.assertTrue(TestCore2Tex())
 
 
 class TestSimulation(TestCase):
-
     def test_simulation_rlc_with_split(self):
         self.assertTrue(simulation_rlc_with_split())
 
@@ -122,89 +137,129 @@ class TestCpp(TestCase):
 
 
 class TestExamples(TestCase):
-
     def test_import_examples1(self):
         from pyphs.examples.bjtamp.bjtamp import core as bjtamp_core
+
         self.assertTrue(True)
 
     def test_import_examples2(self):
         from pyphs.examples.connectors.connectors import core as connectors_core
+
         self.assertTrue(True)
 
     def test_import_examples3(self):
         from pyphs.examples.dlc.dlc import core as dlc_core
+
         self.assertTrue(True)
 
     def test_import_examples4(self):
-        from pyphs.examples.fractional_derivator_ec.fractional_derivator_ec import core as fractional_derivator_ec_core
+        from pyphs.examples.fractional_derivator_ec.fractional_derivator_ec import (
+            core as fractional_derivator_ec_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples5(self):
-        from pyphs.examples.fractional_derivator_fc.fractional_derivator_fc import core as fractional_derivator_fc_core
+        from pyphs.examples.fractional_derivator_fc.fractional_derivator_fc import (
+            core as fractional_derivator_fc_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples6(self):
-        from pyphs.examples.fractional_integrator_ec.fractional_integrator_ec import core as fractional_integrator_ec_core
+        from pyphs.examples.fractional_integrator_ec.fractional_integrator_ec import (
+            core as fractional_integrator_ec_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples7(self):
-        from pyphs.examples.fractional_integrator_fc.fractional_integrator_fc import core as fractional_integrator_fc_core
+        from pyphs.examples.fractional_integrator_fc.fractional_integrator_fc import (
+            core as fractional_integrator_fc_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples8(self):
         from pyphs.examples.mka.mka import core as mka_core
+
         self.assertTrue(True)
 
     def test_import_examples9(self):
         from pyphs.examples.mka_dual.mka_dual import core as mka_dual_core
+
         self.assertTrue(True)
 
     def test_import_examples10(self):
         from pyphs.examples.pwl.pwl import core as pwl_core
+
         self.assertTrue(True)
 
     def test_import_examples11(self):
         from pyphs.examples.rhodes.rhodes import core as rhodes_core
+
         self.assertTrue(True)
 
     def test_import_examples12(self):
         from pyphs.examples.rlc.rlc import core as rlc_core
+
         self.assertTrue(True)
 
     def test_import_examples13(self):
         from pyphs.examples.thielesmall.thielesmall import core as thielesmall_core
+
         self.assertTrue(True)
 
     def test_import_examples14(self):
-        from pyphs.examples.thielesmall_dual.thielesmall_dual import core as thielesmall_dual_core
+        from pyphs.examples.thielesmall_dual.thielesmall_dual import (
+            core as thielesmall_dual_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples15(self):
-        from pyphs.examples.heat_transfer.heat_transfer import core as heat_transfer_core
+        from pyphs.examples.heat_transfer.heat_transfer import (
+            core as heat_transfer_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples16(self):
-        from pyphs.examples.magnetic_circuit.magnetic_circuit import core as magnetic_circuit_core
+        from pyphs.examples.magnetic_circuit.magnetic_circuit import (
+            core as magnetic_circuit_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples17(self):
-        from pyphs.examples.thielesmall_NL.thielesmall_NL import core as thielesmall_NL_core
+        from pyphs.examples.thielesmall_NL.thielesmall_NL import (
+            core as thielesmall_NL_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples18(self):
         from pyphs.examples.triodeamp.triodeamp import core as triodeamp_core
+
         self.assertTrue(True)
 
     def test_import_examples19(self):
-        from pyphs.examples.oscillator_nl.oscillator_nl import core as oscillator_nl_core
+        from pyphs.examples.oscillator_nl.oscillator_nl import (
+            core as oscillator_nl_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples20(self):
-        from pyphs.examples.oscillator_nl_dual.oscillator_nl_dual import core as oscillator_nl_dual_core
+        from pyphs.examples.oscillator_nl_dual.oscillator_nl_dual import (
+            core as oscillator_nl_dual_core,
+        )
+
         self.assertTrue(True)
 
     def test_import_examples21(self):
         from pyphs.examples.sp_circuit.sp_circuit import core as sp_circuit_core
+
         self.assertTrue(len(sp_circuit_core.x) == 3)
 
 
@@ -228,7 +283,6 @@ class TestPlots(TestCase):
 
 
 class TestSignals(TestCase):
-
     def test_signal_synthesis(self):
         self.assertTrue(signal_synthesis())
 
@@ -237,14 +291,13 @@ class TestSignals(TestCase):
 
 
 class TestImportTutorials(TestCase):
-
     def test_tutorial_evaluation(self):
         from pyphs.tutorials import evaluation
+
         self.assertTrue(True)
 
 
 class TestCorefunctions(TestCase):
-
     def test_build_eval(self):
         self.assertTrue(test_build_eval())
 

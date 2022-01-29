@@ -13,21 +13,26 @@ def test_method2jucefx():
     from pyphs.examples.bjtamp.bjtamp import core
     from pyphs.misc.juce._fx import method2jucefx
 
-    path = 'temp'
+    path = "temp"
 
     core.subsinverse()
 
     method = core.to_method()
 
-    io = (['uIN', ],    # inputs
+    io = (
+        [
+            "uIN",
+        ],  # inputs
+        [
+            "yOUT",
+        ],
+    )  # outputs
 
-          ['yOUT', ])   # outputs
-
-    inits = {'u': (0, 0, 9.)}
+    inits = {"u": (0, 0, 9.0)}
 
     method2jucefx(method, path=path, io=io, inits=inits)
 
-    if not os.name.lower().startswith('nt'):
+    if not os.name.lower().startswith("nt"):
         shutil.rmtree(path)
 
     return True

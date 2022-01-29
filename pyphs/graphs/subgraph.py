@@ -26,23 +26,27 @@ def nonrealizable_merge_storages(x, dxH):
 
     from pyphs import Core
 
-    y = Core.symbols('y:{0}'.format(len(x)))
-    X = Core.symbols(('x'+'{}'*len(x)).format(*[str(xn)[1:] for xn in x]))
-    Y = Core.symbols('Y')
+    y = Core.symbols("y:{0}".format(len(x)))
+    X = Core.symbols(("x" + "{}" * len(x)).format(*[str(xn)[1:] for xn in x]))
+    Y = Core.symbols("Y")
 
-    idxH = list(map(lambda arg: sympy.solve(arg[0]-arg[2], arg[1])[0],
-                zip(dxH, x, y)))
+    idxH = list(
+        map(lambda arg: sympy.solve(arg[0] - arg[2], arg[1])[0], zip(dxH, x, y))
+    )
     Q = sum([e.subs(yi, Y) for e, yi in zip(idxH, y)]).simplify()
-    iQ = sympy.solve(Q-X, Y)[0]
+    iQ = sympy.solve(Q - X, Y)[0]
 
     [e.subs(yi, iQ) for (e, yi) in zip(idxH, y)]
 
     HH = [sympy.integrate(dxhn, xn) for dxhn, xn in zip(dxH, x)]
-    newH = sum([Hn.subs(xn, fn)
-                for (Hn, xn, fn)
-                in zip(HH,
-                       x,
-                       [idxhn.subs(yi, iQ) for idxhn, yi in zip(idxH, y)])])
+    newH = sum(
+        [
+            Hn.subs(xn, fn)
+            for (Hn, xn, fn) in zip(
+                HH, x, [idxhn.subs(yi, iQ) for idxhn, yi in zip(idxH, y)]
+            )
+        ]
+    )
 
     return X, sympy.simplify(newH)
 
@@ -50,32 +54,31 @@ def nonrealizable_merge_storages(x, dxH):
 def realizable_merge_storages(x, dxH):
 
     from pyphs import Core
-    X = Core.symbols(('x'+'{}'*len(x)).format(*[str(xn)[1:] for xn in x]))
+
+    X = Core.symbols(("x" + "{}" * len(x)).format(*[str(xn)[1:] for xn in x]))
     HH = [sympy.integrate(dxhn, xn) for dxhn, xn in zip(dxH, x)]
-    newH = sum([Hn.subs(xn, X)
-                for (Hn, xn)
-                in zip(HH, x)])
+    newH = sum([Hn.subs(xn, X) for (Hn, xn) in zip(HH, x)])
     return X, sympy.simplify(newH)
 
 
 def nonrealizable_merge_dissipatives(w, z):
     from pyphs import Core
 
-    y = Core.symbols('y:{0}'.format(len(w)))
-    newW = Core.symbols(('w'+'{}'*len(w)).format(*[str(wn)[1:] for wn in w]))
-    Y = Core.symbols('Y')
+    y = Core.symbols("y:{0}".format(len(w)))
+    newW = Core.symbols(("w" + "{}" * len(w)).format(*[str(wn)[1:] for wn in w]))
+    Y = Core.symbols("Y")
 
-    iz = list(map(lambda arg: sympy.solve(arg[0]-arg[2], arg[1])[0],
-                  zip(z, w, y)))
+    iz = list(map(lambda arg: sympy.solve(arg[0] - arg[2], arg[1])[0], zip(z, w, y)))
     iZ = sum([e.subs(yi, Y) for e, yi in zip(iz, y)]).simplify()
-    newZ = sympy.solve(iZ-newW, Y)[0]
+    newZ = sympy.solve(iZ - newW, Y)[0]
 
     return newW, newZ
 
 
 def realizable_merge_dissipatives(w, z):
     from pyphs import Core
-    W = Core.symbols(('w'+'{}'*len(w)).format(*[str(wn)[1:] for wn in w]))
+
+    W = Core.symbols(("w" + "{}" * len(w)).format(*[str(wn)[1:] for wn in w]))
     return W, sum([zn.subs(dict([(wn, W) for wn in w])) for zn in z])
 
 
@@ -100,7 +103,7 @@ class SubGraph(Graph):
         """
 
         if label is None:
-            label = 'subgraph'+str(len(SubGraph._registered))
+            label = "subgraph" + str(len(SubGraph._registered))
 
         if terminals is None:
             terminals = []
@@ -117,14 +120,15 @@ class SubGraph(Graph):
 
     @property
     def orientations_dic(self):
-        return dict([(e[-1]['label'], o)
-                     for (e, o) in zip(self.edgeslist, self.orientations)])
+        return dict(
+            [(e[-1]["label"], o) for (e, o) in zip(self.edgeslist, self.orientations)]
+        )
 
     @property
     def fc_storages(self):
         edges = list()
         for edge in self.edges(data=True):
-            if edge[-1]['type'] == 'storage' and edge[-1]['ctrl'] == 'f':
+            if edge[-1]["type"] == "storage" and edge[-1]["ctrl"] == "f":
                 edges.append(edge)
         return edges
 
@@ -132,7 +136,7 @@ class SubGraph(Graph):
     def ec_storages(self):
         edges = list()
         for edge in self.edges(data=True):
-            if edge[-1]['type'] == 'storage' and edge[-1]['ctrl'] == 'e':
+            if edge[-1]["type"] == "storage" and edge[-1]["ctrl"] == "e":
                 edges.append(edge)
         return edges
 
@@ -140,7 +144,7 @@ class SubGraph(Graph):
     def fc_dissipatives(self):
         edges = list()
         for edge in self.edges(data=True):
-            if edge[-1]['type'] == 'dissipative' and edge[-1]['ctrl'] == 'f':
+            if edge[-1]["type"] == "dissipative" and edge[-1]["ctrl"] == "f":
                 edges.append(edge)
         return edges
 
@@ -148,7 +152,7 @@ class SubGraph(Graph):
     def ec_dissipatives(self):
         edges = list()
         for edge in self.edges(data=True):
-            if edge[-1]['type'] == 'dissipative' and edge[-1]['ctrl'] == 'e':
+            if edge[-1]["type"] == "dissipative" and edge[-1]["ctrl"] == "e":
                 edges.append(edge)
         return edges
 
@@ -156,7 +160,7 @@ class SubGraph(Graph):
     def ic_dissipatives(self):
         edges = list()
         for edge in self.edges(data=True):
-            if edge[-1]['type'] == 'dissipative' and edge[-1]['ctrl'] == '?':
+            if edge[-1]["type"] == "dissipative" and edge[-1]["ctrl"] == "?":
                 edges.append(edge)
         return edges
 
@@ -164,7 +168,7 @@ class SubGraph(Graph):
     def x_fc(self):
         x = []
         for e in self.fc_storages:
-            x.append(e[-1]['label'])
+            x.append(e[-1]["label"])
         return x
 
     @property
@@ -175,7 +179,7 @@ class SubGraph(Graph):
     def x_ec(self):
         x = []
         for e in self.ec_storages:
-            x.append(e[-1]['label'])
+            x.append(e[-1]["label"])
         return x
 
     @property
@@ -186,50 +190,50 @@ class SubGraph(Graph):
     def w_fc(self):
         w = []
         for e in self.fc_dissipatives:
-            w.append(e[-1]['label'])
+            w.append(e[-1]["label"])
         return w
 
     @property
     def w_ic(self):
         w = []
         for e in self.ic_dissipatives:
-            w.append(e[-1]['label'])
+            w.append(e[-1]["label"])
         return w
 
     @property
     def w_ec(self):
         w = []
         for e in self.ec_dissipatives:
-            w.append(e[-1]['label'])
+            w.append(e[-1]["label"])
         return w
 
     @property
     def z_fc(self):
         z = []
         for e in self.fc_dissipatives:
-            z.append(copy.copy(e[-1]['z']))
+            z.append(copy.copy(e[-1]["z"]))
         return z
 
     @property
     def z_ic(self):
         z = []
         for e in self.ic_dissipatives:
-            z.append(copy.copy(e[-1]['z']))
+            z.append(copy.copy(e[-1]["z"]))
         return z
 
     @property
     def z_ec(self):
         z = []
         for e in self.ec_dissipatives:
-            z.append(copy.copy(e[-1]['z']))
+            z.append(copy.copy(e[-1]["z"]))
         return z
 
     def merge_arc_storages(self):
-        edges_stor = getattr(self, self.anti_realizability+'c_storages')
+        edges_stor = getattr(self, self.anti_realizability + "c_storages")
         change = len(edges_stor) > 1
         if change:
             # get nodes for new component
-            if self.orientations_dic[edges_stor[0][-1]['label']] == 1:
+            if self.orientations_dic[edges_stor[0][-1]["label"]] == 1:
                 nodes = edges_stor[0][:2]
             else:
                 nodes = edges_stor[0][1], edges_stor[0][0]
@@ -249,32 +253,40 @@ class SubGraph(Graph):
             for xn in self.x_arc:
                 self.core.x.remove(xn)
             # new component
-            self.new_edge({'ctrl': self.anti_realizability,
-                           'label': X,
-                           'link': None,
-                           'type': 'storage'
-                           },
-                          nodes)
+            self.new_edge(
+                {
+                    "ctrl": self.anti_realizability,
+                    "label": X,
+                    "link": None,
+                    "type": "storage",
+                },
+                nodes,
+            )
             # Append new state
             self.core.x.append(X)
             # ADD new energy
             self.core.H += H
             # remove edges
-            self.remove_edges_from_list(edges_stor, preserve_nodes=[nodes, ])
+            self.remove_edges_from_list(
+                edges_stor,
+                preserve_nodes=[
+                    nodes,
+                ],
+            )
         return change
 
     def merge_arc_dissipatives(self):
-        edges_diss = getattr(self, self.anti_realizability+'c_dissipatives')
+        edges_diss = getattr(self, self.anti_realizability + "c_dissipatives")
         change = len(edges_diss) > 1
         if change:
             # get nodes for new component
-            if self.orientations_dic[edges_diss[0][-1]['label']] == 1:
+            if self.orientations_dic[edges_diss[0][-1]["label"]] == 1:
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
             oriented_z_arc = self.z_arc
             for i, dic in enumerate(oriented_z_arc):
-                oriented_z_arc[i] = dic[self.anti_realizability + '_ctrl']
+                oriented_z_arc[i] = dic[self.anti_realizability + "_ctrl"]
             for i, wn in enumerate(self.w_arc):
                 if self.orientations_dic[wn] == -1:
                     oriented_z_arc[i] = -oriented_z_arc[i].subs(wn, -wn)
@@ -288,24 +300,32 @@ class SubGraph(Graph):
                 self.core.w.pop(i)
                 self.core.z.pop(i)
             # new component
-            self.new_edge({'ctrl': self.anti_realizability,
-                           'label': W,
-                           'link': None,
-                           'type': 'dissipative',
-                           'z': {'{}_ctrl'.format(self.anti_realizability): Z},
-                           },
-                          nodes)
+            self.new_edge(
+                {
+                    "ctrl": self.anti_realizability,
+                    "label": W,
+                    "link": None,
+                    "type": "dissipative",
+                    "z": {"{}_ctrl".format(self.anti_realizability): Z},
+                },
+                nodes,
+            )
             self.core.add_dissipations(W, Z)
             # remove edges
-            self.remove_edges_from_list(edges_diss, preserve_nodes=[nodes, ])
+            self.remove_edges_from_list(
+                edges_diss,
+                preserve_nodes=[
+                    nodes,
+                ],
+            )
         return change
 
     def merge_rc_storages(self):
-        edges_stor = getattr(self, self.realizability+'c_storages')
+        edges_stor = getattr(self, self.realizability + "c_storages")
         change = len(edges_stor) > 1
         if change:
             # get nodes for new component
-            if self.orientations_dic[edges_stor[0][-1]['label']] == 1:
+            if self.orientations_dic[edges_stor[0][-1]["label"]] == 1:
                 nodes = edges_stor[0][:2]
             else:
                 nodes = edges_stor[0][1], edges_stor[0][0]
@@ -325,32 +345,40 @@ class SubGraph(Graph):
             for xn in self.x_rc:
                 self.core.x.remove(xn)
             # new component
-            self.new_edge({'ctrl': self.realizability,
-                           'label': X,
-                           'link': None,
-                           'type': 'storage'
-                           },
-                          nodes)
+            self.new_edge(
+                {
+                    "ctrl": self.realizability,
+                    "label": X,
+                    "link": None,
+                    "type": "storage",
+                },
+                nodes,
+            )
             # Append new state
             self.core.x.append(X)
             # ADD new energy
             self.core.H += H
             # remove edges
-            self.remove_edges_from_list(edges_stor, preserve_nodes=[nodes, ])
+            self.remove_edges_from_list(
+                edges_stor,
+                preserve_nodes=[
+                    nodes,
+                ],
+            )
         return change
 
     def merge_rc_dissipatives(self):
-        edges_diss = getattr(self, self.realizability+'c_dissipatives')
+        edges_diss = getattr(self, self.realizability + "c_dissipatives")
         change = len(edges_diss) > 1
         if change:
             # get nodes for new component
-            if self.orientations_dic[edges_diss[0][-1]['label']] == 1:
+            if self.orientations_dic[edges_diss[0][-1]["label"]] == 1:
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
             oriented_z_rc = self.z_rc
             for i, dic in enumerate(oriented_z_rc):
-                oriented_z_rc[i] = dic[self.realizability + '_ctrl']
+                oriented_z_rc[i] = dic[self.realizability + "_ctrl"]
             for i, wn in enumerate(self.w_rc):
                 if self.orientations_dic[wn] == -1:
                     oriented_z_rc[i] = -oriented_z_rc[i].subs(wn, -wn)
@@ -364,16 +392,24 @@ class SubGraph(Graph):
                 self.core.w.pop(i)
                 self.core.z.pop(i)
             # new component
-            self.new_edge({'ctrl': self.realizability,
-                           'label': W,
-                           'link': None,
-                           'type': 'dissipative',
-                           'z': {'{}_ctrl'.format(self.realizability): Z},
-                           },
-                          nodes)
+            self.new_edge(
+                {
+                    "ctrl": self.realizability,
+                    "label": W,
+                    "link": None,
+                    "type": "dissipative",
+                    "z": {"{}_ctrl".format(self.realizability): Z},
+                },
+                nodes,
+            )
             self.core.add_dissipations(W, Z)
             # remove edges
-            self.remove_edges_from_list(edges_diss, preserve_nodes=[nodes, ])
+            self.remove_edges_from_list(
+                edges_diss,
+                preserve_nodes=[
+                    nodes,
+                ],
+            )
         return change
 
     def merge_ic_dissipatives(self):
@@ -381,7 +417,7 @@ class SubGraph(Graph):
         change = len(edges_diss) > 1
         if change:
             # get nodes for new component
-            if self.orientations_dic[edges_diss[0][-1]['label']] == 1:
+            if self.orientations_dic[edges_diss[0][-1]["label"]] == 1:
                 nodes = edges_diss[0][:2]
             else:
                 nodes = edges_diss[0][1], edges_diss[0][0]
@@ -389,7 +425,7 @@ class SubGraph(Graph):
             # get edges ic
             oriented_z_ic = self.z_ic
             for i, dic in enumerate(oriented_z_ic):
-                oriented_z_ic[i] = dic[self.realizability + '_ctrl']
+                oriented_z_ic[i] = dic[self.realizability + "_ctrl"]
             for i, wn in enumerate(self.w_ic):
                 if self.orientations_dic[wn] == -1:
                     oriented_z_ic[i] = -oriented_z_ic[i].subs(wn, -wn)
@@ -398,13 +434,12 @@ class SubGraph(Graph):
             # get edges arc
             oriented_z_ic = self.z_ic
             for i, dic in enumerate(oriented_z_ic):
-                oriented_z_ic[i] = dic[self.anti_realizability + '_ctrl']
+                oriented_z_ic[i] = dic[self.anti_realizability + "_ctrl"]
             for i, wn in enumerate(self.w_ic):
                 if self.orientations_dic[wn] == -1:
                     oriented_z_ic[i] = -oriented_z_ic[i].subs(wn, -wn)
 
-            W, Zarc = nonrealizable_merge_dissipatives(self.w_ic,
-                                                       oriented_z_ic)
+            W, Zarc = nonrealizable_merge_dissipatives(self.w_ic, oriented_z_ic)
 
             warnings.warn(merge_warning("dissipative", self.w_ic, W), Warning)
 
@@ -415,17 +450,27 @@ class SubGraph(Graph):
                 self.core.z.pop(i)
 
             # new component
-            self.new_edge({'ctrl': '?',
-                           'label': W,
-                           'link': None,
-                           'type': 'dissipative',
-                           'z': {'{}_ctrl'.format(self.realizability): Zrc,
-                                 '{}_ctrl'.format(self.anti_realizability): Zarc},
-                           },
-                          nodes)
+            self.new_edge(
+                {
+                    "ctrl": "?",
+                    "label": W,
+                    "link": None,
+                    "type": "dissipative",
+                    "z": {
+                        "{}_ctrl".format(self.realizability): Zrc,
+                        "{}_ctrl".format(self.anti_realizability): Zarc,
+                    },
+                },
+                nodes,
+            )
             self.core.add_dissipations(W, Zrc)
             # remove edges
-            self.remove_edges_from_list(edges_diss, preserve_nodes=[nodes, ])
+            self.remove_edges_from_list(
+                edges_diss,
+                preserve_nodes=[
+                    nodes,
+                ],
+            )
         return change
 
     def merge_all(self):
@@ -451,80 +496,81 @@ class SubGraph(Graph):
 
     @property
     def anti_realizability(self):
-        if self.realizability == 'e':
-            return 'f'
-        elif self.realizability == 'f':
-            return 'e'
+        if self.realizability == "e":
+            return "f"
+        elif self.realizability == "f":
+            return "e"
 
     @property
     def x_rc(self):
-        return getattr(self, 'x_{0}c'.format(self.realizability))
+        return getattr(self, "x_{0}c".format(self.realizability))
 
     @property
     def x_arc(self):
-        return getattr(self, 'x_{0}c'.format(self.anti_realizability))
+        return getattr(self, "x_{0}c".format(self.anti_realizability))
 
     @property
     def dxH_rc(self):
-        return getattr(self, 'dxH_{0}c'.format(self.realizability))
+        return getattr(self, "dxH_{0}c".format(self.realizability))
 
     @property
     def dxH_arc(self):
-        return getattr(self, 'dxH_{0}c'.format(self.anti_realizability))
+        return getattr(self, "dxH_{0}c".format(self.anti_realizability))
 
     @property
     def H_rc(self):
-        return sum([sympy.integrate(dxhn, xn) for dxhn, xn in zip(self.dxH_rc,
-                                                                  self.x_rc)])
+        return sum(
+            [sympy.integrate(dxhn, xn) for dxhn, xn in zip(self.dxH_rc, self.x_rc)]
+        )
 
     @property
     def H_arc(self):
-        return sum([sympy.integrate(dxhn, xn) for dxhn, xn in zip(self.dxH_arc,
-                                                                  self.x_arc)])
+        return sum(
+            [sympy.integrate(dxhn, xn) for dxhn, xn in zip(self.dxH_arc, self.x_arc)]
+        )
 
     @property
     def w_rc(self):
-        return getattr(self, 'w_{0}c'.format(self.realizability))
+        return getattr(self, "w_{0}c".format(self.realizability))
 
     @property
     def w_arc(self):
-        return getattr(self, 'w_{0}c'.format(self.anti_realizability))
+        return getattr(self, "w_{0}c".format(self.anti_realizability))
 
     @property
     def z_rc(self):
-        return getattr(self, 'z_{0}c'.format(self.realizability))
+        return getattr(self, "z_{0}c".format(self.realizability))
 
     @property
     def z_arc(self):
-        return getattr(self, 'z_{0}c'.format(self.anti_realizability))
+        return getattr(self, "z_{0}c".format(self.anti_realizability))
 
-#    def set_orientation_reference(self, orientation):
-#        if not hasattr(self, '_orientation'):
-#            self._orientation = orientation
+    #    def set_orientation_reference(self, orientation):
+    #        if not hasattr(self, '_orientation'):
+    #            self._orientation = orientation
 
     @property
     def terminals(self):
         """
         Get the terminal nodes associated with the subgraph.
         """
-#        # read nodes from subgraph output edges
-#        nodes = set()
-#        for e in self.edges(data=True):
-#            if '_out_' in str(e[-1]['label']):
-#                nodes.update(e[:2])
-#        # remove datum
-#        if len(nodes) > 2:
-#            nodes.remove(self.datum)
-#        # return
-#        return nodes
+        #        # read nodes from subgraph output edges
+        #        nodes = set()
+        #        for e in self.edges(data=True):
+        #            if '_out_' in str(e[-1]['label']):
+        #                nodes.update(e[:2])
+        #        # remove datum
+        #        if len(nodes) > 2:
+        #            nodes.remove(self.datum)
+        #        # return
+        #        return nodes
         return self._terminals
 
 
 class SubGraphParallel(SubGraph):
-
     def __init__(self, label=None, terminals=None):
         SubGraph.__init__(self, label, terminals)
-        self._realizability = 'e'
+        self._realizability = "e"
 
     def new_edge(self, edata, nodes=None):
         if nodes is None:
@@ -548,31 +594,34 @@ class SubGraphParallel(SubGraph):
                 orientation = +1
             elif (e[1], e[0]) == nodes:
                 orientation = -1
-            elif '_out_' in str(e[-1]['label']):
+            elif "_out_" in str(e[-1]["label"]):
                 orientation = None
             else:
-                raise ValueError('Orientation of the following edge can not \
-be determined\n{}'.format(e))
+                raise ValueError(
+                    "Orientation of the following edge can not \
+be determined\n{}".format(
+                        e
+                    )
+                )
             orientations.append(orientation)
-#
-#        n_pos = sum(map(lambda val: max(val, 0), orientations))
-#        n_neg = -sum(map(lambda val: min(val, 0), orientations))
-#        self.set_orientation_reference(int(n_pos >= n_neg)-int(n_neg > n_pos))
-#
-#        if self._orientation == -1:
-#            orientations = [-o for o in orientations]
+        #
+        #        n_pos = sum(map(lambda val: max(val, 0), orientations))
+        #        n_neg = -sum(map(lambda val: min(val, 0), orientations))
+        #        self.set_orientation_reference(int(n_pos >= n_neg)-int(n_neg > n_pos))
+        #
+        #        if self._orientation == -1:
+        #            orientations = [-o for o in orientations]
 
         return orientations
 
 
 class SubGraphSerial(SubGraph):
-
     def serial_next(self, *args):
         return serial_next(self, *args)
 
     def __init__(self, label=None, terminals=None):
         SubGraph.__init__(self, label, terminals)
-        self._realizability = 'f'
+        self._realizability = "f"
 
     @property
     def chain(self):
@@ -597,8 +646,7 @@ class SubGraphSerial(SubGraph):
         simple_graph = nwxGraph(self)
 
         # Return chain decomposition
-        return list(chain_decomposition(simple_graph,
-                                        root=root))[0]
+        return list(chain_decomposition(simple_graph, root=root))[0]
 
     @property
     def orientations(self):
@@ -614,16 +662,20 @@ class SubGraphSerial(SubGraph):
             elif (e[1], e[0]) in chain:
                 orientation = -1
             else:
-                raise ValueError('Orientation the following edge can not be \
-determined\n{}'.format(e))
+                raise ValueError(
+                    "Orientation the following edge can not be \
+determined\n{}".format(
+                        e
+                    )
+                )
             orientations.append(orientation)
 
-#        n_pos = sum(map(lambda val: max(val, 0), orientations))
-#        n_neg = -sum(map(lambda val: min(val, 0), orientations))
-#        self.set_orientation_reference(int(n_pos >= n_neg)-int(n_neg > n_pos))
-#
-#        if self._orientation == -1:
-#            orientations = [-o for o in orientations]
+        #        n_pos = sum(map(lambda val: max(val, 0), orientations))
+        #        n_neg = -sum(map(lambda val: min(val, 0), orientations))
+        #        self.set_orientation_reference(int(n_pos >= n_neg)-int(n_neg > n_pos))
+        #
+        #        if self._orientation == -1:
+        #            orientations = [-o for o in orientations]
 
         return orientations
 
@@ -660,15 +712,14 @@ determined\n{}'.format(e))
             # Get edge key
             n1, n2 = e[:2]
             for key in self[n1][n2].keys():
-                if self[n1][n2][key]['label'] == e[-1]['label']:
+                if self[n1][n2][key]["label"] == e[-1]["label"]:
                     break
 
             # Actually remove edge
             self.remove_edge(n1, n2, key)
 
             # reconnect the subgraph
-            if not ((n1, n2) in preserve_nodes or
-                    (n2, n1) in preserve_nodes):
+            if not ((n1, n2) in preserve_nodes or (n2, n1) in preserve_nodes):
 
                 # new undirected graph
                 undirected = nwxGraph(self)
@@ -681,16 +732,15 @@ determined\n{}'.format(e))
                     connect_node2 = list(undirected.neighbors(del_node))[0]
 
                 # Add edge with new node
-                contracted_edges = contracted_nodes(self,
-                                                    connect_node1,
-                                                    del_node,
-                                                    self_loops=False).edges
+                contracted_edges = contracted_nodes(
+                    self, connect_node1, del_node, self_loops=False
+                ).edges
                 self.add_edges_from(contracted_edges)
                 # Get edge key
                 edge = self.nodes2edge(del_node, connect_node2)
                 n1, n2 = edge[:2]
                 for key in self[n1][n2].keys():
-                    if self[n1][n2][key]['label'] == e[-1]['label']:
+                    if self[n1][n2][key]["label"] == e[-1]["label"]:
                         break
                 data = edge[2]
                 # Actually remove edge
@@ -716,18 +766,18 @@ determined\n{}'.format(e))
             try:
                 ind = self.orientations.index(1)
                 n1, n2 = self.edgeslist[ind][:2]
-                n2temp = 'N'+str(edata['label'])+'_'+n2
+                n2temp = "N" + str(edata["label"]) + "_" + n2
                 nodes = n1, n2temp
             except ValueError:
                 ind = 0
                 n1, n2 = self.edgeslist[ind][:2]
-                n2temp = 'N'+str(edata['label'])+'_'+n2
+                n2temp = "N" + str(edata["label"]) + "_" + n2
                 nodes = n2temp, n1
 
             edataTemp = self[n1][n2][0]
 
             for key in self[n1][n2].keys():
-                if self[n1][n2][key]['label'] == edataTemp['label']:
+                if self[n1][n2][key]["label"] == edataTemp["label"]:
                     break
 
             # Remove edge

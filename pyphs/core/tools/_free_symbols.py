@@ -11,8 +11,8 @@ from . import types
 
 def free_symbols(expr):
     """
-Return a set of the free symbols in expression.
-expr can be a sympy.Expr, a sympy.SparseMatrix or a list of sympy.Expr
+    Return a set of the free symbols in expression.
+    expr can be a sympy.Expr, a sympy.SparseMatrix or a list of sympy.Expr
     """
     if isinstance(expr, types.matrix_types):
         symbs = free_symbols_mat(expr)
@@ -25,15 +25,15 @@ expr can be a sympy.Expr, a sympy.SparseMatrix or a list of sympy.Expr
     elif expr is None:
         symbs = set()
     else:
-        b = '\n'*2+'*'*50 + '\n'*2
+        b = "\n" * 2 + "*" * 50 + "\n" * 2
         raise TypeError("{0}{1}{0}Unkown type {2}".format(b, expr, type(expr)))
     return symbs
 
 
 def free_symbols_dict(expr):
     """
-Return a set of the free symbols in expression.
-expr must be a sympy.Expr
+    Return a set of the free symbols in expression.
+    expr must be a sympy.Expr
     """
     symbs = set()
     for k in expr.keys():
@@ -43,8 +43,8 @@ expr must be a sympy.Expr
 
 def free_symbols_expr(expr):
     """
-Return a set of the free symbols in expression.
-expr must be a sympy.Expr
+    Return a set of the free symbols in expression.
+    expr must be a sympy.Expr
     """
     types.scalar_test(expr)
     if isinstance(expr, types.sympy.Expr):
@@ -56,8 +56,8 @@ expr must be a sympy.Expr
 
 def free_symbols_vec(vec):
     """
-Return a set of the free symbols in expression.
-expr must be a list of sympy.Expr
+    Return a set of the free symbols in expression.
+    expr must be a list of sympy.Expr
     """
     types.vector_test(vec)
     symbs = set()
@@ -68,8 +68,8 @@ expr must be a list of sympy.Expr
 
 def free_symbols_mat(mat):
     """
-Return a set of the free symbols in expression.
-expr must be a sympy.SparseMatrix
+    Return a set of the free symbols in expression.
+    expr must be a sympy.SparseMatrix
     """
     types.matrix_test(mat)
     m, n = mat.shape

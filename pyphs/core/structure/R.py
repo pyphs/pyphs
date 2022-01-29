@@ -57,37 +57,33 @@ after this operation, and :code:`core.z()=core.znl()`.
         # reduce Zl
         core.Zl = core.Zl[:-nforced, :-nforced]
     # build inverse of Dl
-    iDl = types.matrix_types[0](sympy.eye(core.dims.wl())-core.Mwlwl()*core.Zl)
+    iDl = types.matrix_types[0](sympy.eye(core.dims.wl()) - core.Mwlwl() * core.Zl)
     # build Dl
     Dl = inverse(iDl)
     # build Mwlnl
-    Mwlnl = types.matrix_types[0].hstack(core.Mwlxl(),
-                                         core.Mwlxnl(),
-                                         core.Mwlwnl(),
-                                         core.Mwly(),
-                                         core.Mwlcy())
+    Mwlnl = types.matrix_types[0].hstack(
+        core.Mwlxl(), core.Mwlxnl(), core.Mwlwnl(), core.Mwly(), core.Mwlcy()
+    )
     # build Mnlwl
-    Mnlwl = types.matrix_types[0].vstack(core.Mxlwl(),
-                                         core.Mxnlwl(),
-                                         core.Mwnlwl(),
-                                         core.Mywl(),
-                                         core.Mcywl())
-            # build Mnl
-    names = ('xl', 'xnl', 'wnl', 'y', 'cy')
+    Mnlwl = types.matrix_types[0].vstack(
+        core.Mxlwl(), core.Mxnlwl(), core.Mwnlwl(), core.Mywl(), core.Mcywl()
+    )
+    # build Mnl
+    names = ("xl", "xnl", "wnl", "y", "cy")
     mat = []
     for namei in names:
         mati = []
         for namej in names:
-            Mij = geteval(core, 'M'+namei+namej)
+            Mij = geteval(core, "M" + namei + namej)
             mati.append(Mij)
         Mi = types.matrix_types[0].hstack(*mati)
         mat.append(Mi)
     Mnl = types.matrix_types[0].vstack(*mat)
     # Set M to Mnew
-    core.M = Mnlwl*core.Zl*Dl*Mwlnl + Mnl
+    core.M = Mnlwl * core.Zl * Dl * Mwlnl + Mnl
     # Reduce w
-    core.w = core.w[core.dims.wl():]
+    core.w = core.w[core.dims.wl() :]
     # Reduce z
-    core.z = core.z[core.dims.wl():]
+    core.z = core.z[core.dims.wl() :]
     # Set dim(wl) to 0
     core.dims._wl = 0

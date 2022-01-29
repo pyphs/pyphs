@@ -14,10 +14,11 @@ class Indices:
     """
     Class that serves as a container for indices of arguments
     """
+
     def __init__(self, core):
-        names = ('x', 'w', 'y', 'cy')
+        names = ("x", "w", "y", "cy")
         self._set_inds(names, core)
-        names = ('xl', 'xnl', 'wl', 'wnl', 'y', 'cy')
+        names = ("xl", "xnl", "wl", "wnl", "y", "cy")
         self._set_inds(names, core)
 
     def _set_inds(self, names, core):
@@ -34,6 +35,7 @@ def _inds_in_all(core, names, name):
     """
     return position of deb and end of name in structure
     """
+
     def inds():
         """
         get indices deb and end of a block"""
@@ -45,6 +47,8 @@ def _inds_in_all(core, names, name):
                 end = deb + geteval(core.dims, current_name)
                 break
         return (deb, end)
+
     return inds
+
 
 ##############################################################################

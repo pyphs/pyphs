@@ -8,12 +8,12 @@ Modified on Thr Jul 25 23:12:34 2018
 by @author: afalaize
 
 """
-#import warnings
-#from pyphs.core.core import Core
-#from pyphs.dictionary import electronics
+# import warnings
+# from pyphs.core.core import Core
+# from pyphs.dictionary import electronics
 #
 #
-#def get_key(dic, value):
+# def get_key(dic, value):
 #    """
 #    Inverse lookup for the key associated with value in dictionary dic.
 #
@@ -39,12 +39,12 @@ by @author: afalaize
 #                break
 #
 #
-#def isStorageLinear(edge):
+# def isStorageLinear(edge):
 #    _, _, dic = edge
 #    return (dic['type'] == 'storage')
 #
 #
-#def initialize_Leq():
+# def initialize_Leq():
 #    Leq = 0
 #    label = 'Leq_'
 #    keys = []
@@ -52,7 +52,7 @@ by @author: afalaize
 #    return Leq, label, keys, nodeslist
 #
 #
-#def replace_Ceq(graph, keys, nodes, Ceq, label):
+# def replace_Ceq(graph, keys, nodes, Ceq, label):
 #    """
 #        Replace all parallel capacitors within a parallel graph with
 #        equivalent capacitor
@@ -84,7 +84,7 @@ by @author: afalaize
 #                  label)
 #
 #
-#def replace_Leq(graph, keys, nodeslist, Leq, label, firstnode, lastnode):
+# def replace_Leq(graph, keys, nodeslist, Leq, label, firstnode, lastnode):
 #    """
 #        Replace all serial inductors within a serial graph with
 #        equivalent inductor
@@ -122,7 +122,7 @@ by @author: afalaize
 #                  label)
 #
 #
-#def graph_analysis_serial(graph):
+# def graph_analysis_serial(graph):
 #    """
 #        Walk through a serial graph and perform replace_Leq wherever possible
 #    """
@@ -155,7 +155,7 @@ by @author: afalaize
 #    graph.remove_nodes_from(nodesbin)
 #
 #
-#def graph_analysis_parallel(graph):
+# def graph_analysis_parallel(graph):
 #    """
 #        Walk through a parallel graph and perform replace_Ceq wherever possible
 #    """
@@ -176,7 +176,7 @@ by @author: afalaize
 #        replace_Ceq(graph, keys, nodes, Ceq, label)
 #
 #
-#def graph_eq(splitgraph):
+# def graph_eq(splitgraph):
 #    """
 #        Walk through a split graph (call Graph.sp_split method first) and perform
 #        replace_Ceq and replace_Leq wherever possible

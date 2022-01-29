@@ -61,7 +61,7 @@ expr_simp: same type as expr
     elif isinstance(expr, types.scalar_types):
         return simplify_scalar(expr, **kwargs)
     else:
-        raise TypeError('Unknown type {}'.format(type(expr)))
+        raise TypeError("Unknown type {}".format(type(expr)))
 
 
 def timeout_simplify(expr, method=SIMPLIFY, timeout=TIMEOUT):
@@ -87,7 +87,7 @@ Output
 expr_simp: sympy.Expr or str
     Simplified expression if succeed, else returns 'not finished'
     """
-    #@stopit.threading_timeoutable(default=expr)
+    # @stopit.threading_timeoutable(default=expr)
     # def func():
     return getattr(sympy, method)(expr) if method is not None else expr
     # return func(timeout=timeout)
@@ -146,7 +146,7 @@ vec_simp: same type as vec or str
     types.vector_test(vec)
     for i, e in enumerate(vec):
         vec[i] = simplify_scalar(e, **kwargs)
-    return 'not finished' if 'not finished' in vec else vec
+    return "not finished" if "not finished" in vec else vec
 
 
 def simplify_matrix(mat, **kwargs):
@@ -177,12 +177,12 @@ vec_simp: same type as vec or str
     not_finished = False
     for i, j, expr in mat.row_list():
         simplified_expr = simplify_scalar(expr, **kwargs)
-        if simplified_expr == 'not finished':
+        if simplified_expr == "not finished":
             not_finished = True
             break
         else:
             mat[i, j] = simplified_expr
-    return 'not finished' if not_finished else mat
+    return "not finished" if not_finished else mat
 
 
 def simplify_dict(expr, **kwargs):
@@ -212,10 +212,11 @@ expr_simp: dict
     for k in expr.keys():
         new_k = timeout_simplify(k, **kwargs)
         new_v = timeout_simplify(expr[k], **kwargs)
-        finished = not(new_k == 'not finished' or new_v == 'not finished')
+        finished = not (new_k == "not finished" or new_v == "not finished")
         if finished:
             expr[new_k] = new_v
-    return expr if finished else 'not finished'
+    return expr if finished else "not finished"
+
 
 # =========================================================================
 
@@ -230,9 +231,9 @@ def simplify_core(core):
     """
 
     # substitutions in core's list of expressions and symbols
-    attrs_to_sub = set(list(core.exprs_names) +
-                       list(core.symbs_names) +
-                       ['M', '_dxH', 'observers'])
+    attrs_to_sub = set(
+        list(core.exprs_names) + list(core.symbs_names) + ["M", "_dxH", "observers"]
+    )
     for name in attrs_to_sub:
         expr = geteval(core, name)
         if expr is not None:

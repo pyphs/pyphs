@@ -17,9 +17,11 @@ from pyphs import Core
 from ..cpp.method2cpp import method2cpp
 from ..tools import Operation
 from ._discrete_calculus import (
-    discrete_gradient_monovar, discrete_gradient_multivar,
-    gradient_theta, gradient_trapez
-    )
+    discrete_gradient_monovar,
+    discrete_gradient_multivar,
+    gradient_theta,
+    gradient_trapez,
+)
 import copy
 
 
@@ -54,9 +56,9 @@ class Method(Core):
             label = core.label
 
         if VERBOSE >= 1:
-            print('Build method {}...'.format(label))
+            print("Build method {}...".format(label))
         if VERBOSE >= 2:
-            print('    Init Method...')
+            print("    Init Method...")
 
         # INIT Core object
         Core.__init__(self, label=label)
@@ -75,10 +77,11 @@ class Method(Core):
         self._core.Zl = self._core.Zl[:0, :0]
 
         # Copy core content
-        for name in (list(set().union(
-                          self._core.attrstocopy,
-                          self._core.exprs_names,
-                          self._core.symbs_names))):
+        for name in list(
+            set().union(
+                self._core.attrstocopy, self._core.exprs_names, self._core.symbs_names
+            )
+        ):
             if isinstance(name, str):
                 source = self._core
                 target = self
@@ -125,17 +128,17 @@ class Method(Core):
         # set sample rate as a symbol...
         self.fs = self.symbols(FS_SYMBS)
 
-        # identify linear components and split linear/nonlinear
-        if self.config['split']:
+        #  identify linear components and split linear/nonlinear
+        if self.config["split"]:
             if VERBOSE >= 2:
-                print('    Split Linear/Nonlinear...')
+                print("    Split Linear/Nonlinear...")
             self.linear_nonlinear()
 
-        # identify separable components and split separable/nonseparable
+        #  identify separable components and split separable/nonseparable
         self.monovar_multivar()
 
         if VERBOSE >= 2:
-            print('    Build numerical structure...')
+            print("    Build numerical structure...")
 
         # build the discrete evaluation for the gradient
         build_gradient_evaluation(self)
@@ -146,13 +149,13 @@ class Method(Core):
         # build method updates
         set_structure(self)
 
-        if self.config['split']:
+        if self.config["split"]:
             if VERBOSE >= 2:
-                print('    Split Implicit/Resolved...')
+                print("    Split Implicit/Resolved...")
             # Split implicit equations from explicit equations
             self.explicit_implicit()
             if VERBOSE >= 2:
-                print('    Re-Build numerical structure...')
+                print("    Re-Build numerical structure...")
             # build the discrete evaluation for the gradient
             build_gradient_evaluation(self)
             # build the discrete evaluation for the structure
@@ -161,15 +164,15 @@ class Method(Core):
             set_structure(self)
 
         if VERBOSE >= 2:
-                print('    Init update actions...')
+            print("    Init update actions...")
         set_execactions(self)
 
         if VERBOSE >= 2:
-                print('    Init arguments...')
+            print("    Init arguments...")
         self.init_args()
 
         if VERBOSE >= 2:
-                print('    Init functions...')
+            print("    Init functions...")
         self.init_funcs()
 
     def update_actions_deps(self):
@@ -178,15 +181,16 @@ class Method(Core):
         dependencies.
         """
         # recover the names of the method's update functions and operations
-        names = remove_duplicates(get_strings(self.update_actions,
-                                              remove=('exec', 'iter')))
+        names = remove_duplicates(
+            get_strings(self.update_actions, remove=("exec", "iter"))
+        )
 
         updates = list()
 
         def add_update(name):
             if name not in updates:
                 if name in self.ops_names:
-                    deps = getattr(self, name+'_deps')
+                    deps = getattr(self, name + "_deps")
                     for d in deps:
                         add_update(d)
                 updates.append(name)
@@ -195,24 +199,24 @@ class Method(Core):
         for name in names:
             add_update(name)
 
-        return remove_duplicates(updates + ['dx', 'w', 'u', 'p'])
+        return remove_duplicates(updates + ["dx", "w", "u", "p"])
 
     def args(self):
-        return (self.x + self.dx() + self.w + self.u +
-                self.p + self.o())
+        return self.x + self.dx() + self.w + self.u + self.p + self.o()
 
     def dtx(self):
-        return [dx*self.fs for dx in self.dx()]
+        return [dx * self.fs for dx in self.dx()]
 
     def c(self):
-        return (self.x + self.u + self.p + self.o())
+        return self.x + self.u + self.p + self.o()
 
     def init_args(self):
         needed = self.update_actions_deps()
 
         def names_lnl(s):
-            return [s, s+'l', s+'nl']
-        for n in ['x', 'dx', 'w', 'u', 'p', 'v', 'o']:
+            return [s, s + "l", s + "nl"]
+
+        for n in ["x", "dx", "w", "u", "p", "v", "o"]:
             for name in names_lnl(n):
                 if name in needed:
                     try:
@@ -222,15 +226,15 @@ class Method(Core):
 
     def setarg(self, name):
         if VERBOSE >= 3:
-            print('        Build {}'.format(name))
+            print("        Build {}".format(name))
         expr = geteval(self, name)
         # retrieve expr symbols
         symbs = free_symbols(expr)
         # retrieve ordered symbols (args) and indices in self.args
         args, inds = find(symbs, self.args())
-        setattr(self, name+'_expr', expr)
-        setattr(self, name+'_args', args)
-        setattr(self, name+'_inds', inds)
+        setattr(self, name + "_expr", expr)
+        setattr(self, name + "_args", args)
+        setattr(self, name + "_inds", inds)
         self.args_names.append(name)
 
     def init_funcs(self):
@@ -238,41 +242,40 @@ class Method(Core):
         for name in list(self.exprs_names) + list(self.struc_names):
             if name in needed:
                 self.setfunc(name)
-        if 'y' in needed:
-            self.setfunc('y', geteval(self, 'output'))
-        if 'fs' in needed:
-            self.setfunc('fs', self.fs)
+        if "y" in needed:
+            self.setfunc("y", geteval(self, "output"))
+        if "fs" in needed:
+            self.setfunc("fs", self.fs)
 
     def setfunc(self, name, expr=None):
         if VERBOSE >= 3:
-            print('        Build {}'.format(name))
+            print("        Build {}".format(name))
         if expr is None:
             expr = geteval(self, name)
         symbs = free_symbols(expr)
         args, inds = find(symbs, self.args())
-        setattr(self, name+'_expr', expr)
-        setattr(self, name+'_args', args)
-        setattr(self, name+'_inds', inds)
+        setattr(self, name + "_expr", expr)
+        setattr(self, name + "_args", args)
+        setattr(self, name + "_inds", inds)
         self.funcs_names.append(name)
 
     def setoperation(self, name, op):
         "set Operation 'op' as the attribute 'name'."
-        setattr(self, name+'_op', op)
-        setattr(self, name+'_deps', op.freesymbols)
+        setattr(self, name + "_op", op)
+        setattr(self, name + "_deps", op.freesymbols)
         self.ops_names.append(name)
 
     def set_execaction(self, list_):
-        self.update_actions.append(('exec', list_))
+        self.update_actions.append(("exec", list_))
 
     def set_iteraction(self, list_, res_symb, step_symb):
-        self.update_actions.append(('iter', (list_, res_symb, step_symb)))
+        self.update_actions.append(("iter", (list_, res_symb, step_symb)))
 
     def explicit_implicit(self):
-        v = geteval(self, 'v')
-        jacF = geteval(self, 'jactempF')
-        args = (v, )*2
-        mats = (jacF[:, :self.dims.x()],
-                jacF[:, self.dims.x():])*2
+        v = geteval(self, "v")
+        jacF = geteval(self, "jactempF")
+        args = (v,) * 2
+        mats = (jacF[:, : self.dims.x()], jacF[:, self.dims.x() :]) * 2
         criterion = list(zip(mats, args))
         self.linear_nonlinear(criterion=criterion)
 
@@ -294,6 +297,7 @@ class Method(Core):
             Object for the numerical evaluation of the PHS numerical method.
         """
         from pyphs import Numeric
+
         return Numeric(self, inits=inits, config=config)
 
     def to_simulation(self, config=None, inits=None, erase=True):
@@ -320,7 +324,9 @@ class Method(Core):
             Object for the numerical evaluation of the PHS numerical method.
         """
         from pyphs import Simulation
+
         return Simulation(self, inits=inits, config=config, erase=erase)
+
 
 def set_structure(method):
     set_getters_I(method)
@@ -335,251 +341,287 @@ def set_structure(method):
 
 def set_getters_v(method):
     """
-Append getters for vectors of unknown variables to method:
-* method.v() <=> v = [dx, w],
-* method.vl() <=> vl = [dxl, wl],
-* method.vnl() <=> vnl = [dxnl, wnl].
+    Append getters for vectors of unknown variables to method:
+    * method.v() <=> v = [dx, w],
+    * method.vl() <=> vl = [dxl, wl],
+    * method.vnl() <=> vnl = [dxnl, wnl].
     """
+
     def func_generator_v(suffix):
         "Getter generator"
+
         def func():
             "Getter"
-            output = geteval(method, 'dx'+suffix)+geteval(method, 'w'+suffix)
+            output = geteval(method, "dx" + suffix) + geteval(method, "w" + suffix)
             return output
+
         doc = "Getter for variable v{0} = [dx{0}, w{0}]".format(suffix)
         func.func_doc = doc
         return func
 
     # append getters
-    for suffix in ('', 'l', 'nl'):
-        setattr(method, 'v'+suffix, func_generator_v(suffix))
+    for suffix in ("", "l", "nl"):
+        setattr(method, "v" + suffix, func_generator_v(suffix))
 
 
 def set_getters_f(method):
     """
-Append getters for expressions 'f' to method:
-* method.f() <=> v = [dxH, z],
-* method.fl() <=> vl = [dxHl, zl],
-* method.fnl() <=> vnl = [dxHnl, znl].
+    Append getters for expressions 'f' to method:
+    * method.f() <=> v = [dxH, z],
+    * method.fl() <=> vl = [dxHl, zl],
+    * method.fnl() <=> vnl = [dxHnl, znl].
     """
     # define getter generator
     def func_generator_f(suffix):
         "Getter generator"
+
         def func():
-            output = geteval(method, 'dxH'+suffix)+geteval(method, 'z'+suffix)
+            output = geteval(method, "dxH" + suffix) + geteval(method, "z" + suffix)
             return output
+
         doc = "Getter for expressions f{0} = [dxH{0}, z{0}]".format(suffix)
         func.func_doc = doc
         return func
 
     # append getters
-    for suffix in ('', 'l', 'nl'):
-        method.setexpr('f'+suffix, func_generator_f(suffix))
+    for suffix in ("", "l", "nl"):
+        method.setexpr("f" + suffix, func_generator_f(suffix))
 
 
 def set_getters_blocks_M(method):
     """
-Generators of getters for block matrices:
-* method.Mvv() = [[Mxx, Mxw],
-                [Mwx, Mww]]
-* method.Mvlvl() = [[Mxlxl, Mxlwl],
-                  [Mwlxl, Mwlwl]]
-* method.Mvlvnl() = [[Mxlxnl, Mxlwnl],
-                   [Mwlxnl, Mwlwnl]]
-* method.Mvnlvl() = [[Mxnlxl, Mxnlwl],
-                   [Mwnlxl, Mwnlwl]]
-* method.Mvnlvnl() = [[Mxnlxnl, Mxnlwnl],
-                    [Mwnlxnl, Mwnlwnl]]
-* method.Mvly() = [[Mxly],
-                 [Mwly]]
-* method.Mvnly() = [[Mxnly],
-                  [Mwnly]]
+    Generators of getters for block matrices:
+    * method.Mvv() = [[Mxx, Mxw],
+                    [Mwx, Mww]]
+    * method.Mvlvl() = [[Mxlxl, Mxlwl],
+                      [Mwlxl, Mwlwl]]
+    * method.Mvlvnl() = [[Mxlxnl, Mxlwnl],
+                       [Mwlxnl, Mwlwnl]]
+    * method.Mvnlvl() = [[Mxnlxl, Mxnlwl],
+                       [Mwnlxl, Mwnlwl]]
+    * method.Mvnlvnl() = [[Mxnlxnl, Mxnlwnl],
+                        [Mwnlxnl, Mwnlwnl]]
+    * method.Mvly() = [[Mxly],
+                     [Mwly]]
+    * method.Mvnly() = [[Mxnly],
+                      [Mwnly]]
     """
+
     def func_generator_Mab(a, b):
         "Getter generator"
+
         def func():
-            temp_1 = types.matrix_types[0].hstack(getattr(method,
-                                                          'Mx'+a+'x'+b)(),
-                                                  getattr(method,
-                                                          'Mx'+a+'w'+b)())
-            temp_2 = types.matrix_types[0].hstack(getattr(method,
-                                                          'Mw'+a+'x'+b)(),
-                                                  getattr(method,
-                                                          'Mw'+a+'w'+b)())
+            temp_1 = types.matrix_types[0].hstack(
+                getattr(method, "Mx" + a + "x" + b)(),
+                getattr(method, "Mx" + a + "w" + b)(),
+            )
+            temp_2 = types.matrix_types[0].hstack(
+                getattr(method, "Mw" + a + "x" + b)(),
+                getattr(method, "Mw" + a + "w" + b)(),
+            )
             return types.matrix_types[0].vstack(temp_1, temp_2)
+
         doc = """
 Getter for block M{0}{1} = [[Mx{0}x{1}, Mx{0}w{1}],
                             [Mw{0}x{1}, Mw{0}w{1}]]
-""".format(a, b)
+""".format(
+            a, b
+        )
         func.func_doc = doc
         return func
 
     def func_generator_My(suffix):
         "Getter generator"
+
         def func():
-            temp_1 = types.matrix_types[0].hstack(getattr(method, 'Mx'+suffix+'y')(),)
-            temp_2 = types.matrix_types[0].hstack(getattr(method, 'Mw'+suffix+'y')(),)
+            temp_1 = types.matrix_types[0].hstack(
+                getattr(method, "Mx" + suffix + "y")(),
+            )
+            temp_2 = types.matrix_types[0].hstack(
+                getattr(method, "Mw" + suffix + "y")(),
+            )
             return types.matrix_types[0].vstack(temp_1, temp_2)
+
         doc = """
 Getter for block M{0}y = [[Mx{0}y],
                           [Mw{0}y]]
-""".format(suffix)
+""".format(
+            suffix
+        )
         func.func_doc = doc
         return func
 
     # append getters
-    method.setexpr('Mvv', func_generator_Mab('', ''))
-    method.setexpr('Mvy', func_generator_My(''))
-    for a in ('l', 'nl'):
-        method.setexpr('Mv{}y'.format(a),
-                       func_generator_My(a))
-        for b in ('l', 'nl'):
-            method.setexpr('Mv{0}v{1}'.format(a, b),
-                           func_generator_Mab(a, b))
+    method.setexpr("Mvv", func_generator_Mab("", ""))
+    method.setexpr("Mvy", func_generator_My(""))
+    for a in ("l", "nl"):
+        method.setexpr("Mv{}y".format(a), func_generator_My(a))
+        for b in ("l", "nl"):
+            method.setexpr("Mv{0}v{1}".format(a, b), func_generator_Mab(a, b))
 
 
 def set_getters_tempF(method):
-
     def func_generator_tempF(suffix):
         "Getter generator"
-        if suffix == '':
+        if suffix == "":
+
             def func():
 
-                v = geteval(method, 'v')
-                Mvv = geteval(method, 'Mvv')
-                Mvy = geteval(method, 'Mvy')
-                f = geteval(method, 'f')
-                u = geteval(method, 'u')
-                temp = [sp.sympify(0), ]*len(geteval(method, 'v'))
-                temp = sumvecs(temp,
-                               matvecprod(method.I(''), v),
-                               [-e for e in matvecprod(Mvv, f)],
-                               [-e for e in matvecprod(Mvy, u)])
+                v = geteval(method, "v")
+                Mvv = geteval(method, "Mvv")
+                Mvy = geteval(method, "Mvy")
+                f = geteval(method, "f")
+                u = geteval(method, "u")
+                temp = [
+                    sp.sympify(0),
+                ] * len(geteval(method, "v"))
+                temp = sumvecs(
+                    temp,
+                    matvecprod(method.I(""), v),
+                    [-e for e in matvecprod(Mvv, f)],
+                    [-e for e in matvecprod(Mvy, u)],
+                )
                 return temp
+
         else:
+
             def func():
 
-                v = geteval(method, 'v'+suffix)
-                Mvvl = geteval(method, 'Mv'+suffix+'vl')
-                Mvvnl = geteval(method, 'Mv'+suffix+'vnl')
-                Mvy = geteval(method, 'Mv'+suffix+'y')
-                fl = geteval(method, 'fl')
-                fnl = geteval(method, 'fnl')
-                u = geteval(method, 'u')
-                temp = [sp.sympify(0), ]*len(geteval(method, 'v'+suffix))
-                temp = sumvecs(temp,
-                               matvecprod(method.I(suffix), v),
-                               [-e for e in matvecprod(Mvvl, fl)],
-                               [-e for e in matvecprod(Mvvnl,fnl)],
-                               [-e for e in matvecprod(Mvy, u)])
+                v = geteval(method, "v" + suffix)
+                Mvvl = geteval(method, "Mv" + suffix + "vl")
+                Mvvnl = geteval(method, "Mv" + suffix + "vnl")
+                Mvy = geteval(method, "Mv" + suffix + "y")
+                fl = geteval(method, "fl")
+                fnl = geteval(method, "fnl")
+                u = geteval(method, "u")
+                temp = [
+                    sp.sympify(0),
+                ] * len(geteval(method, "v" + suffix))
+                temp = sumvecs(
+                    temp,
+                    matvecprod(method.I(suffix), v),
+                    [-e for e in matvecprod(Mvvl, fl)],
+                    [-e for e in matvecprod(Mvvnl, fnl)],
+                    [-e for e in matvecprod(Mvy, u)],
+                )
                 return temp
+
         doc = """
 Getter for function
 F{0} = [[fs*dx{0}],] - [[Mv{0}vl, Mv{0}vnl, Mv{0}y]]. [[fl],
         [w{0}]]                                        [fnl],
                                                        [u]]
-""".format(suffix)
+""".format(
+            suffix
+        )
         func.func_doc = doc
         return func
 
     # append getters
-    method.setexpr('tempF', func_generator_tempF(''))
-    for suffix in ('l', 'nl'):
-        method.setexpr('tempF{}'.format(suffix), func_generator_tempF(suffix)())
+    method.setexpr("tempF", func_generator_tempF(""))
+    for suffix in ("l", "nl"):
+        method.setexpr("tempF{}".format(suffix), func_generator_tempF(suffix)())
 
 
 def set_getters_Jac_tempF(method):
-
     def func_generator_Jac_tempF(n1, n2):
         def func():
-            F, v = geteval(method, 'tempF'+n1), geteval(method, 'v'+n2)
+            F, v = geteval(method, "tempF" + n1), geteval(method, "v" + n2)
             return jacobian(F, v)
+
         return func
-    method.setexpr('jactempF', func_generator_Jac_tempF('', '')())
-    for a in ('l', 'nl'):
-        for b in ('l', 'nl'):
-            method.setexpr('jactempF{0}{1}'.format(a, b),
-                           func_generator_Jac_tempF(a, b))
+
+    method.setexpr("jactempF", func_generator_Jac_tempF("", "")())
+    for a in ("l", "nl"):
+        for b in ("l", "nl"):
+            method.setexpr(
+                "jactempF{0}{1}".format(a, b), func_generator_Jac_tempF(a, b)
+            )
 
 
 def set_getters_G(method):
     def func_generator_G(a):
-        if a == '':
+        if a == "":
+
             def func():
-                F = geteval(method, 'tempF')
-                vl = geteval(method, 'vl')
+                F = geteval(method, "tempF")
+                vl = geteval(method, "vl")
                 JacFl = jacobian(F, vl)
-                G = sumvecs(F,
-                            [-e for e in matvecprod(JacFl, vl)])
+                G = sumvecs(F, [-e for e in matvecprod(JacFl, vl)])
                 return list(G)
+
         else:
+
             def func():
-                Fa = geteval(method, 'tempF'+a)
-                vl = geteval(method, 'vl')
-                JacFal = geteval(method, 'jactempF'+a+'l',)
-                return sumvecs(Fa,
-                               [-e for e in matvecprod(JacFal, vl)])
+                Fa = geteval(method, "tempF" + a)
+                vl = geteval(method, "vl")
+                JacFal = geteval(
+                    method,
+                    "jactempF" + a + "l",
+                )
+                return sumvecs(Fa, [-e for e in matvecprod(JacFal, vl)])
+
         return func
 
-    method.setexpr('G', func_generator_G(''))
-    for a in ('l', 'nl'):
-        method.setexpr('G{}'.format(a),
-                       func_generator_G(a))
+    method.setexpr("G", func_generator_G(""))
+    for a in ("l", "nl"):
+        method.setexpr("G{}".format(a), func_generator_G(a))
 
 
 def set_getters_Jac_G(method):
-
     def func_generator_jacG(a, b):
         def func():
-            G, v = geteval(method, 'G'+a), geteval(method, 'v'+b)
+            G, v = geteval(method, "G" + a), geteval(method, "v" + b)
             return jacobian(G, v)
+
         return func
 
-    for a in ('l', 'nl'):
-        for b in ('l', 'nl'):
-            method.setexpr('jacG{0}{1}'.format(a, b),
-                           func_generator_jacG(a, b))
+    for a in ("l", "nl"):
+        for b in ("l", "nl"):
+            method.setexpr("jacG{0}{1}".format(a, b), func_generator_jacG(a, b))
 
 
 def set_getters_I(method):
     def I(suffix):
-        dimx, dimw = (getattr(method.dims, 'x'+suffix)(),
-                      getattr(method.dims, 'w'+suffix)())
-        out = types.matrix_types[0](sp.diag(sp.eye(dimx)*method.fs,
-                                            sp.eye(dimw)))
+        dimx, dimw = (
+            getattr(method.dims, "x" + suffix)(),
+            getattr(method.dims, "w" + suffix)(),
+        )
+        out = types.matrix_types[0](sp.diag(sp.eye(dimx) * method.fs, sp.eye(dimw)))
         return types.matrix_types[0](out)
-    setattr(method, 'I', I)
+
+    setattr(method, "I", I)
 
 
 def set_update_x(method):
     # update the value of 'x' with the evaluation of 'ud_x'
-    method.setoperation('ud_x', method.Operation('add', ('x', 'dx')))
+    method.setoperation("ud_x", method.Operation("add", ("x", "dx")))
     # add execaction to the update queue
-    method.preimplicit.append(('x', 'ud_x'))
+    method.preimplicit.append(("x", "ud_x"))
 
 
 def set_update_observers(method):
     # update the value of 'o' with the evaluation of 'ud_o'
-    method.setexpr('ud_o', [method.observers[k] for k in method.o()])
+    method.setexpr("ud_o", [method.observers[k] for k in method.o()])
     # add execaction to the update queue
-    method.preimplicit.append(('o', 'ud_o'))
+    method.preimplicit.append(("o", "ud_o"))
 
 
 def set_update_vl(method):
 
-    ijactempFll = method.Operation('inv', ('jactempFll', ))
-    method.setoperation('ijactempFll', ijactempFll)
+    ijactempFll = method.Operation("inv", ("jactempFll",))
+    method.setoperation("ijactempFll", ijactempFll)
 
-    temp = method.Operation('dot', (-1., 'Gl'))
-    ud_vl = method.Operation('dot', ('ijactempFll', temp))
+    temp = method.Operation("dot", (-1.0, "Gl"))
+    ud_vl = method.Operation("dot", ("ijactempFll", temp))
 
-    method.setoperation('ud_vl', ud_vl)
+    method.setoperation("ud_vl", ud_vl)
 
-    method.preimplicit.append(('jactempFll'))
-    method.preimplicit.append(('ijactempFll'))
-    method.preimplicit.append(('Gl'))
+    method.preimplicit.append(("jactempFll"))
+    method.preimplicit.append(("ijactempFll"))
+    method.preimplicit.append(("Gl"))
 
-    method.postimplicit.append(('vl', 'ud_vl'))
+    method.postimplicit.append(("vl", "ud_vl"))
 
 
 def set_update_vnl(method):
@@ -587,67 +629,67 @@ def set_update_vnl(method):
     # Implicite function and Jacobian
     if method.dims.l() > 0:
 
-        temp1 = method.Operation('dot', (-1, 'Gl'))
-        temp2 = method.Operation('dot', ('ijactempFll', temp1))
-        temp3 = method.Operation('dot', ('jactempFnll', temp2))
-        Fnl = method.Operation('add', ('Gnl', temp3))
+        temp1 = method.Operation("dot", (-1, "Gl"))
+        temp2 = method.Operation("dot", ("ijactempFll", temp1))
+        temp3 = method.Operation("dot", ("jactempFnll", temp2))
+        Fnl = method.Operation("add", ("Gnl", temp3))
 
-        temp1 = method.Operation('dot', (-1, 'jacGlnl'))
-        temp2 = method.Operation('dot', ('ijactempFll', temp1))
-        temp3 = method.Operation('dot', ('jactempFnll', temp2))
-        jacFnl = method.Operation('add', ('jacGnlnl', temp3))
+        temp1 = method.Operation("dot", (-1, "jacGlnl"))
+        temp2 = method.Operation("dot", ("ijactempFll", temp1))
+        temp3 = method.Operation("dot", ("jactempFnll", temp2))
+        jacFnl = method.Operation("add", ("jacGnlnl", temp3))
 
     else:
 
-        Fnl = method.Operation('copy', ('Gnl', ))
+        Fnl = method.Operation("copy", ("Gnl",))
 
-        jacFnl = method.Operation('copy', ('jacGnlnl', ))
+        jacFnl = method.Operation("copy", ("jacGnlnl",))
 
-    ijacFnl = method.Operation('inv', ('jacFnl', ))
+    ijacFnl = method.Operation("inv", ("jacFnl",))
 
-    method.setoperation('Fnl', Fnl)
-    method.setoperation('jacFnl', jacFnl)
-    method.setoperation('ijacFnl', ijacFnl)
+    method.setoperation("Fnl", Fnl)
+    method.setoperation("jacFnl", jacFnl)
+    method.setoperation("ijacFnl", ijacFnl)
 
     # save implicit function
-    method.setoperation('save_Fnl', method.Operation('copy', ('Fnl', )))
+    method.setoperation("save_Fnl", method.Operation("copy", ("Fnl",)))
 
     # residual
-    method.setoperation('res_Fnl', method.Operation('norm', ('Fnl', )))
+    method.setoperation("res_Fnl", method.Operation("norm", ("Fnl",)))
 
     # progression step
-    temp1 = method.Operation('prod', (-1., 'save_Fnl'))
-    temp2 = method.Operation('add', ('Fnl', temp1))
-    step_Fnl = method.Operation('norm', (temp2, ))
-    method.setoperation('step_Fnl', step_Fnl)
+    temp1 = method.Operation("prod", (-1.0, "save_Fnl"))
+    temp2 = method.Operation("add", ("Fnl", temp1))
+    step_Fnl = method.Operation("norm", (temp2,))
+    method.setoperation("step_Fnl", step_Fnl)
 
     # update vnl
-    temp1 = method.Operation('dot', ('ijacFnl', 'Fnl'))
-    temp2 = method.Operation('prod', (-1., temp1))
-    ud_vnl = method.Operation('add', ('vnl', temp2))
-    method.setoperation('ud_vnl', ud_vnl)
+    temp1 = method.Operation("dot", ("ijacFnl", "Fnl"))
+    temp2 = method.Operation("prod", (-1.0, temp1))
+    ud_vnl = method.Operation("add", ("vnl", temp2))
+    method.setoperation("ud_vnl", ud_vnl)
 
     # -------- BEFORE ITERATIONS --------- #
     if method.dims.l() > 0:
-        method.preimplicit.append(('jactempFnll'))
-    method.preimplicit.append(('Gnl'))
-    method.preimplicit.append('Fnl')
-    method.preimplicit.append('res_Fnl')
+        method.preimplicit.append(("jactempFnll"))
+    method.preimplicit.append(("Gnl"))
+    method.preimplicit.append("Fnl")
+    method.preimplicit.append("res_Fnl")
 
     # -------- ITERATIONS --------- #
-    method.implicit.append(('save_Fnl'))
+    method.implicit.append(("save_Fnl"))
     if method.dims.l() > 0:
-        method.implicit.append('jacGlnl')
-    method.implicit.append('jacGnlnl')
-    method.implicit.append('jacFnl')
-    method.implicit.append('ijacFnl')
-    method.implicit.append(('vnl', 'ud_vnl'))
+        method.implicit.append("jacGlnl")
+    method.implicit.append("jacGnlnl")
+    method.implicit.append("jacFnl")
+    method.implicit.append("ijacFnl")
+    method.implicit.append(("vnl", "ud_vnl"))
     if method.dims.l() > 0:
-        method.implicit.append('Gl')
-    method.implicit.append('Gnl')
-    method.implicit.append('Fnl')
-    method.implicit.append('res_Fnl')
-    method.implicit.append('step_Fnl')
+        method.implicit.append("Gl")
+    method.implicit.append("Gnl")
+    method.implicit.append("Fnl")
+    method.implicit.append("res_Fnl")
+    method.implicit.append("step_Fnl")
 
 
 def set_execactions(method):
@@ -666,65 +708,61 @@ def set_execactions(method):
     if method.dims.nl() > 0:
         set_update_vnl(method)
 
-    method.postimplicit.extend(['dxH', 'z', 'y'])
+    method.postimplicit.extend(["dxH", "z", "y"])
 
     method.set_execaction(method.preimplicit)
     if method.dims.nl() > 0:
-        method.set_iteraction(method.implicit,
-                              'res_Fnl',
-                              'step_Fnl')
+        method.set_iteraction(method.implicit, "res_Fnl", "step_Fnl")
     method.set_execaction(method.postimplicit)
 
 
 def build_gradient_evaluation(method):
     """
-Build the symbolic expression for the numerical evaluation of the gradient
-associated with the Core core and the chosen numerical method in the config
-dictionary.
+    Build the symbolic expression for the numerical evaluation of the gradient
+    associated with the Core core and the chosen numerical method in the config
+    dictionary.
     """
 
     # build discrete evaluation of the gradient
-    if method.config['grad'] == 'discret':
+    if method.config["grad"] == "discret":
         # discrete gradient
         mtype = types.matrix_types[0]
 
         dxHl = list(
-            mtype(method.Q)*(
-                mtype(method.xl()) + 0.5*mtype(method.dxl())) +
-            mtype(method.bl)
-            )
+            mtype(method.Q) * (mtype(method.xl()) + 0.5 * mtype(method.dxl()))
+            + mtype(method.bl)
+        )
         # monovariate
         dxHnl_sep = discrete_gradient_monovar(
             method.H,
-            method.xnl()[:method.dims.xnl_mono()],
-            method.dxnl()[:method.dims.xnl_mono()],
-            method.config['epsdg']
-            )
+            method.xnl()[: method.dims.xnl_mono()],
+            method.dxnl()[: method.dims.xnl_mono()],
+            method.config["epsdg"],
+        )
         # multivariate
         dxHnl_nonsep = discrete_gradient_multivar(
             method.H,
-            method.xnl()[method.dims.xnl_mono():],
-            method.dxnl()[method.dims.xnl_mono():],
-            method.config['epsdg']
-            )
+            method.xnl()[method.dims.xnl_mono() :],
+            method.dxnl()[method.dims.xnl_mono() :],
+            method.config["epsdg"],
+        )
 
         method._dxH = list(dxHl) + dxHnl_sep + dxHnl_nonsep
 
-    elif method.config['grad'] == 'theta':
+    elif method.config["grad"] == "theta":
         # theta scheme
-        method._dxH = gradient_theta(method.H,
-                                     method.x,
-                                     method.dx(),
-                                     method.config['theta'])
+        method._dxH = gradient_theta(
+            method.H, method.x, method.dx(), method.config["theta"]
+        )
     else:
         # trapezoidal rule
-        if not method.config['grad'] == 'trapez':
-            errortext = 'Unknown method for gradient evaluation: {}'
-            raise NotImplementedError(errortext.format(method.config['grad']))
+        if not method.config["grad"] == "trapez":
+            errortext = "Unknown method for gradient evaluation: {}"
+            raise NotImplementedError(errortext.format(method.config["grad"]))
         method._dxH = gradient_trapez(method.H, method.x, method.dx())
 
     # reference the discrete gradient for the Core in core.exprs_names
-    method.setexpr('dxH', method.dxH)
+    method.setexpr("dxH", method.dxH)
 
 
 def build_structure_evaluation(method):
@@ -746,10 +784,10 @@ def build_structure_evaluation(method):
     """
 
     # define theta parameter for the function 'build_structure_evaluation'
-    if method.config['grad'] == 'trapez':
-        theta = 'trapez'
+    if method.config["grad"] == "trapez":
+        theta = "trapez"
     else:
-        theta = method.config['theta']
+        theta = method.config["theta"]
 
     # substitutions associated with the chosen numerical method
     subs = {}
@@ -761,7 +799,7 @@ def build_structure_evaluation(method):
     # if theta is a numeric => theta scheme
     if isinstance(theta, (int, float)):
         for i, (xi, dxi) in enumerate(zip(method.x, method.dx())):
-            subs[xi] = xi+theta*dxi
+            subs[xi] = xi + theta * dxi
         # Substitute symbols in core.M
         method.M = method.M.subs(subs)
         # Substitute symbols in core.z
@@ -770,11 +808,11 @@ def build_structure_evaluation(method):
 
     # else if theta == 'trapez' => trapezoidal
     else:
-        assert theta == 'trapez'
+        assert theta == "trapez"
         for i, (xi, dxi) in enumerate(zip(method.x, method.dx())):
-            subs[xi] = xi+dxi
+            subs[xi] = xi + dxi
         # Substitute symbols in core.M
-        method.M = 0.5*(method.M + method.M.subs(subs))
+        method.M = 0.5 * (method.M + method.M.subs(subs))
         # Substitute symbols in core.z
         for i, z in enumerate(method.z):
-            method.z[i] = 0.5*(z + z.subs(subs))
+            method.z[i] = 0.5 * (z + z.subs(subs))

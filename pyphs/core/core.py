@@ -13,6 +13,7 @@ import shelve
 
 from ..misc.tools import geteval
 from ..config import VERBOSE
+
 # Structure methods
 from .structure.R import reduce_z
 from .structure.splits import linear_nonlinear, monovar_multivar
@@ -23,13 +24,20 @@ from .structure.connectors import port2connector
 from .maths import gradient, jacobian, inverse, hessian, matvecprod
 from .structure.dimensions import Dimensions
 from .structure.indices import Indices
-from .tools import (types, free_symbols, sympify,
-                    substitute_core, subsinverse_core, simplify_core)
+from .tools import (
+    types,
+    free_symbols,
+    sympify,
+    substitute_core,
+    subsinverse_core,
+    simplify_core,
+)
 from ..misc.latex import texdocument, core2tex
 
 from collections import OrderedDict
 
 import os
+
 
 class Core:
     """
@@ -76,27 +84,37 @@ class Core:
 
         # Init label
         if label is None:
-            label = 'phs'
+            label = "phs"
         self.label = label
 
         # =====================================================================
         # Symbols
 
         # assertions for sympy symbols
-        self.assertions = {'real': True}
+        self.assertions = {"real": True}
 
         # =====================================================================
         # Arguments
 
         # Ordered list of variables considered as the systems's arguments
-        self.args_names = ('x', 'dx', 'w', 'u', 'p', 'o')
+        self.args_names = ("x", "dx", "w", "u", "p", "o")
 
-        self.attrstocopy = {('dims', '_xl'), ('dims', '_wl'), ('dims', '_xnl_mono'),
-                            'connectors', 'force_wnl', 'subs', 'M', '_dxH',
-                            'symbs_names', 'exprs_names', 'observers'}
+        self.attrstocopy = {
+            ("dims", "_xl"),
+            ("dims", "_wl"),
+            ("dims", "_xnl_mono"),
+            "connectors",
+            "force_wnl",
+            "subs",
+            "M",
+            "_dxH",
+            "symbs_names",
+            "exprs_names",
+            "observers",
+        }
 
         # Names for structure matrices
-        self.struc_names = ['M', 'J', 'R']
+        self.struc_names = ["M", "J", "R"]
 
         # =====================================================================
 
@@ -130,17 +148,17 @@ class Core:
         self.inds = Indices(self)
 
         # init lists of symbols
-        for name in {'x', 'w', 'u', 'y', 'cu', 'cy', 'p'}:
+        for name in {"x", "w", "u", "y", "cu", "cy", "p"}:
             self.setsymb(name, types.vector_types[0]())
 
         # init functions
-        self.setexpr('H', sympify(0))
-        self.setexpr('z', types.vector_types[0]())
+        self.setexpr("H", sympify(0))
+        self.setexpr("z", types.vector_types[0]())
 
         # Coefficient matrices for linear parts
-        self.setexpr('Q', types.matrix_types[0](sympy.zeros(0, 0)))
-        self.setexpr('Zl', types.matrix_types[0](sympy.zeros(0, 0)))
-        self.setexpr('bl', types.matrix_types[0](sympy.zeros(0, 0)))
+        self.setexpr("Q", types.matrix_types[0](sympy.zeros(0, 0)))
+        self.setexpr("Zl", types.matrix_types[0](sympy.zeros(0, 0)))
+        self.setexpr("bl", types.matrix_types[0](sympy.zeros(0, 0)))
 
         # init tools
         self.dims = Dimensions(self)
@@ -150,19 +168,20 @@ class Core:
         # Accessors and mutators
 
         # get() and set() for structure matrices
-        names = ('x', 'w', 'y', 'cy', 'xl', 'xnl', 'wl', 'wnl')
+        names = ("x", "w", "y", "cy", "xl", "xnl", "wl", "wnl")
         self._struc_getset(names)
 
         # build accessors for nonlinear and linear parts
-        for name in {'x', 'dx', 'dxH'}:
-            lnl_accessors = self._gen_lnl_accessors(name, 'x')
-            setattr(self, name+'l', lnl_accessors[0])
-            setattr(self, name+'nl', lnl_accessors[1])
+        for name in {"x", "dx", "dxH"}:
+            lnl_accessors = self._gen_lnl_accessors(name, "x")
+            setattr(self, name + "l", lnl_accessors[0])
+            setattr(self, name + "nl", lnl_accessors[1])
 
-        for name in {'w', 'z'}:
-            lnl_accessors = self._gen_lnl_accessors(name, 'w')
-            setattr(self, name+'l', lnl_accessors[0])
-            setattr(self, name+'nl', lnl_accessors[1])
+        for name in {"w", "z"}:
+            lnl_accessors = self._gen_lnl_accessors(name, "w")
+            setattr(self, name + "l", lnl_accessors[0])
+            setattr(self, name + "nl", lnl_accessors[1])
+
     # =========================================================================
 
     # =========================================================================
@@ -198,16 +217,15 @@ class Core:
         if not os.path.exists(folder):
             os.mkdir(folder)
 
-        filename = '{0}.{1}'.format(label, 'phs')
+        filename = "{0}.{1}".format(label, "phs")
         path = os.path.join(folder, filename)
 
         dico = {}
-        dico['label'] = label
+        dico["label"] = label
 
-        for name in (list(set().union(
-                          self.attrstocopy,
-                          self.exprs_names,
-                          self.symbs_names))):
+        for name in list(
+            set().union(self.attrstocopy, self.exprs_names, self.symbs_names)
+        ):
             if isinstance(name, str):
                 source = self
                 attr_name = name
@@ -218,10 +236,10 @@ class Core:
             dico[attr_name] = obj
 
         with shelve.open(path) as database:
-            database['core'] = dico
+            database["core"] = dico
 
         if VERBOSE > 0:
-            print('Core {0} saved in {1}'.format(self.label, path))
+            print("Core {0} saved in {1}".format(self.label, path))
 
     def load(self, folder=None, label=None):
         """
@@ -251,18 +269,17 @@ class Core:
         if label is None:
             label = self.label
 
-        filename = '{0}.{1}'.format(label, 'phs')
+        filename = "{0}.{1}".format(label, "phs")
         path = os.path.join(folder, label, filename)
 
         with shelve.open(path) as database:
-            dico = database['core']
+            dico = database["core"]
 
-        self.label = copy.copy(dico['label'])
+        self.label = copy.copy(dico["label"])
 
-        for name in (list(set().union(
-                          self.attrstocopy,
-                          self.exprs_names,
-                          self.symbs_names))):
+        for name in list(
+            set().union(self.attrstocopy, self.exprs_names, self.symbs_names)
+        ):
             if isinstance(name, str):
                 target = self
                 attr_name = name
@@ -276,17 +293,16 @@ class Core:
                 setattr(target, attr_name, copy.copy(attr))
 
         if VERBOSE > 0:
-            print('Read Core from {0}'.format(path))
+            print("Read Core from {0}".format(path))
 
     # =========================================================================
     # Copy
 
     def __copy__(self):
         core = Core(label=None)
-        for name in (list(set().union(
-                          self.attrstocopy,
-                          self.exprs_names,
-                          self.symbs_names))):
+        for name in list(
+            set().union(self.attrstocopy, self.exprs_names, self.symbs_names)
+        ):
             if isinstance(name, str):
                 source = self
                 target = core
@@ -324,11 +340,11 @@ class Core:
 
         for vari in core.dims.names:
             for varj in core.dims.names:
-                Mij1 = getattr(core1, 'M'+vari+varj)()
-                Mij2 = getattr(core2, 'M'+vari+varj)()
+                Mij1 = getattr(core1, "M" + vari + varj)()
+                Mij2 = getattr(core2, "M" + vari + varj)()
                 Mij = types.matrix_types[0](sympy.diag(Mij1, Mij2))
                 if all(dim > 0 for dim in Mij.shape):
-                    set_func = getattr(core, 'set_M'+vari+varj)
+                    set_func = getattr(core, "set_M" + vari + varj)
                     set_func(Mij)
 
         # Concatenate lists of symbols
@@ -347,22 +363,23 @@ class Core:
         core.observers.update(core2.observers)
 
         # Set Hamiltonian expression
-        core.setexpr('H', core1.H + core2.H)
+        core.setexpr("H", core1.H + core2.H)
 
         # Concatenate lists of expressions
-        core.setexpr('z', core1.z + core2.z)
+        core.setexpr("z", core1.z + core2.z)
 
         core.connectors = core1.connectors + core2.connectors
         core.force_wnl = core1.force_wnl + core2.force_wnl
 
         for vari in core.dims.names:
             for varj in core.dims.names:
-                Mij = getattr(core, 'M'+vari+varj)()
+                Mij = getattr(core, "M" + vari + varj)()
                 if all(dim > 0 for dim in Mij.shape):
-                    set_func = getattr(core, 'set_M'+vari+varj)
+                    set_func = getattr(core, "set_M" + vari + varj)
                     set_func(Mij)
 
         return core
+
     # =========================================================================
 
     # SYMBOLS
@@ -377,23 +394,22 @@ class Core:
         is used in the numerical methods as the state increment
         :code:`x[n+1]=x[n]+dx[n]`.
         """
-        return [self.symbols('d'+str(x)) for x in self.x]
+        return [self.symbols("d" + str(x)) for x in self.x]
 
     def dtx(self):
-        return [self.symbols('dt'+str(x)) for x in self.x]
+        return [self.symbols("dt" + str(x)) for x in self.x]
 
     def b(self):
         return self.dtx() + self.w + self.y
 
     def a(self):
-        return geteval(self, 'dxH') + self.z + self.u
+        return geteval(self, "dxH") + self.z + self.u
 
     def pd(self):
         output = sympify(0)
         for w, z in zip(self.w, self.z):
-            output += w*z
-        output += sympy.SparseMatrix(self.a()).dot(matvecprod(self.R(),
-                                                              self.a()))
+            output += w * z
+        output += sympy.SparseMatrix(self.a()).dot(matvecprod(self.R(), self.a()))
         return output
 
     def z_symbols(self):
@@ -405,7 +421,7 @@ class Core:
         "(zi, wi)" for each "wi" in dissipation variables vector
         'Core.w'.
         """
-        return self.symbols(['z'+str(w)[1:] for w in self.w])
+        return self.symbols(["z" + str(w)[1:] for w in self.w])
 
     def g(self):
         """
@@ -418,7 +434,7 @@ class Core:
         for the discrete evaluation of Hamiltonian's gradient in the structure
         matrix and dissipation function z.
         """
-        return [self.symbols('g'+str(x)) for x in self.x]
+        return [self.symbols("g" + str(x)) for x in self.x]
 
     def o(self):
         """
@@ -485,24 +501,25 @@ class Core:
 
         i = attr.index(symb)
         return i
-#        try:
-#            print('try:')
-#            i = attr.get_index(symb)
-#            print(i)
-#        except AttributeError:
-#            # name and attribute type
-#            text = 'Attribute {} is not a list, it is a {}.'.format(name,
-#                                                                    type(attr))
-#            raise AttributeError(text)
-#
-#        except ValueError:
-#            # name and attribute type
-#            text = 'Attribute {} does not contain {}.'.format(name, symb)
-#            raise AttributeError(text)
-#        except:
-#            print('error')
-#        finally:
-#            return i
+
+    #        try:
+    #            print('try:')
+    #            i = attr.get_index(symb)
+    #            print(i)
+    #        except AttributeError:
+    #            # name and attribute type
+    #            text = 'Attribute {} is not a list, it is a {}.'.format(name,
+    #                                                                    type(attr))
+    #            raise AttributeError(text)
+    #
+    #        except ValueError:
+    #            # name and attribute type
+    #            text = 'Attribute {} does not contain {}.'.format(name, symb)
+    #            raise AttributeError(text)
+    #        except:
+    #            print('error')
+    #        finally:
+    #            return i
 
     # =========================================================================
 
@@ -578,7 +595,6 @@ class Core:
 
         """
 
-
     def jacz(self):
         """
         jacz
@@ -626,7 +642,7 @@ class Core:
         J: sympy SparseMatrix
             :math:`\\mathbf{J} = \\frac{1}{2}(\\mathbf{M} - \\mathbf{M}^\intercal)`
         """
-        return (self.M - self.M.T)/2.
+        return (self.M - self.M.T) / 2.0
 
     def R(self):
         """
@@ -644,7 +660,7 @@ class Core:
         R: sympy SparseMatrix
             :math:`\\mathbf{R} = -\\frac{1}{2}(\\mathbf{M} + \\mathbf{M}^\intercal)`
         """
-        return -(self.M + self.M.T)/2.
+        return -(self.M + self.M.T) / 2.0
 
     # =========================================================================
 
@@ -777,20 +793,28 @@ class Core:
         after calling the method :code:`core.connect()`.
         """
         if alpha is None:
-            alpha = sympify(1.)
-        assert indices[0] != indices[1], 'Can not connect a port to itself: \
-indices={}.'.format(indices)
+            alpha = sympify(1.0)
+        assert (
+            indices[0] != indices[1]
+        ), "Can not connect a port to itself: \
+indices={}.".format(
+            indices
+        )
         u = list()
         y = list()
         for i in indices:
-            assert i < self.dims.y(), 'Port index {} is not known. Can not \
-add the connector'.format(i)
+            assert (
+                i < self.dims.y()
+            ), "Port index {} is not known. Can not \
+add the connector".format(
+                i
+            )
             u.append(self.u[i])
             y.append(self.y[i])
-        connector = {'u': u,
-                     'y': y,
-                     'alpha': alpha}
-        self.connectors += [connector, ]
+        connector = {"u": u, "y": y, "alpha": alpha}
+        self.connectors += [
+            connector,
+        ]
         sorted_indices = list(copy.deepcopy(indices))
         sorted_indices.sort()
         sorted_indices.reverse()
@@ -809,15 +833,13 @@ add the connector'.format(i)
         all_alpha = list()
         # recover connectors and sort cy and cu
         for i, c in enumerate(self.connectors):
-            all_alpha.append(c['alpha'])
-            i_primal = getattr(self, 'cy').index(c['y'][0])
-            self.move_connector(i_primal, 2*i)
-            i_dual = getattr(self, 'cy').index(c['y'][1])
-            self.move_connector(i_dual, 2*i+1)
+            all_alpha.append(c["alpha"])
+            i_primal = getattr(self, "cy").index(c["y"][0])
+            self.move_connector(i_primal, 2 * i)
+            i_dual = getattr(self, "cy").index(c["y"][1])
+            self.move_connector(i_dual, 2 * i + 1)
 
-        Mswitch_list = [alpha * sympy.Matrix([[0, -1],
-                                              [1, 0]])
-                        for alpha in all_alpha]
+        Mswitch_list = [alpha * sympy.Matrix([[0, -1], [1, 0]]) for alpha in all_alpha]
         Mswitch = types.matrix_types[0](sympy.diag(*Mswitch_list))
 
         nxwy = self.dims.x() + self.dims.w() + self.dims.y()
@@ -825,25 +847,26 @@ add the connector'.format(i)
         G_connectors = self.M[:nxwy, nxwy:]
         # Observation matrix
         O_connectors = self.M[nxwy:, :nxwy]
-        N_connectors = types.matrix_types[0](sympy.eye(self.dims.cy()) -
-                                             self.Mcycy() * Mswitch)
+        N_connectors = types.matrix_types[0](
+            sympy.eye(self.dims.cy()) - self.Mcycy() * Mswitch
+        )
 
         try:
             iN_connectors = inverse(N_connectors, dosimplify=False)
 
             # Interconnection Matrix due to the connectors
-            M_connectors = G_connectors*Mswitch*iN_connectors*O_connectors
+            M_connectors = G_connectors * Mswitch * iN_connectors * O_connectors
 
             # Store new structure
             self.M = types.matrix_types[0](self.M[:nxwy, :nxwy] + M_connectors)
 
             # clean
-            setattr(self, 'cy', list())
-            setattr(self, 'cu', list())
-            setattr(self, 'connectors', list())
+            setattr(self, "cy", list())
+            setattr(self, "cu", list())
+            setattr(self, "connectors", list())
 
         except ValueError:
-            raise Exception('Can not resolve the connection.\n\nABORD')
+            raise Exception("Can not resolve the connection.\n\nABORD")
 
     # =========================================================================
 
@@ -870,12 +893,14 @@ add the connector'.format(i)
             :math:`\\mathbf{x}` with :math:`\\nabla^2\\mahtrm H(\\mathbf{x}) \\succeq 0`.
         """
         if isinstance(x, types.scalar_types):
-            x = [x, ]
+            x = [
+                x,
+            ]
         elif isinstance(x, types.vector_types):
             pass
         else:
-            x_types = types.scalar_types+types.vector_types
-            raise TypeError('Type of x should be one of {}'.format(x_types))
+            x_types = types.scalar_types + types.vector_types
+            raise TypeError("Type of x should be one of {}".format(x_types))
         types.scalar_test(H)
         self.x += x
         self.H += H
@@ -904,14 +929,18 @@ add the connector'.format(i)
             types.vector_test(z)
         elif isinstance(w, types.scalar_types):
             types.scalar_test(z)
-            w = [w, ]
-            z = [z, ]
-            w_types = types.scalar_types+types.vector_types
+            w = [
+                w,
+            ]
+            z = [
+                z,
+            ]
+            w_types = types.scalar_types + types.vector_types
         else:
-            text = 'Type of w and z should be one of {}'.format(w_types)
+            text = "Type of w and z should be one of {}".format(w_types)
             raise TypeError(text)
         if not len(w) == len(z):
-            raise TypeError('w and z should have same dimension.')
+            raise TypeError("w and z should have same dimension.")
         self.w += w
         self.z += z
 
@@ -938,14 +967,18 @@ add the connector'.format(i)
             types.vector_test(y)
         elif isinstance(u, types.scalar_types):
             types.scalar_test(y)
-            u = [u, ]
-            y = [y, ]
-            y_types = types.scalar_types+types.vector_types
+            u = [
+                u,
+            ]
+            y = [
+                y,
+            ]
+            y_types = types.scalar_types + types.vector_types
         else:
-            text = 'Type of u and y should be one of {}'.format(y_types)
+            text = "Type of u and y should be one of {}".format(y_types)
             raise TypeError(text)
         if not len(u) == len(y):
-            raise TypeError('u and y should have same dimension.')
+            raise TypeError("u and y should have same dimension.")
         self.u += u
         self.y += y
 
@@ -965,7 +998,9 @@ add the connector'.format(i)
         if isinstance(p, types.vector_types):
             pass
         elif isinstance(p, types.scalar_types):
-            p = [p, ]
+            p = [
+                p,
+            ]
         self.p += p
 
         for par in p:
@@ -1009,7 +1044,7 @@ add the connector'.format(i)
 
         if path is None:
             folder = os.getcwd()
-            path = os.path.join(folder, '{}.tex'.format(self.label))
+            path = os.path.join(folder, "{}.tex".format(self.label))
         else:
             if os.sep in path:
                 imax = path.rfind(os.sep)
@@ -1018,14 +1053,16 @@ add the connector'.format(i)
             folder = path[:imax]
 
         if title is None:
-            title = r'{0}'.format(self.label)
+            title = r"{0}".format(self.label)
 
         content = ""
-        if hasattr(self, '_netlist'):
+        if hasattr(self, "_netlist"):
             from pyphs import netlist2tex, graphplot2tex
-            content += netlist2tex(getattr(self, '_netlist'))
-            content += graphplot2tex(getattr(self, '_netlist').to_graph(),
-                                     folder=folder)
+
+            content += netlist2tex(getattr(self, "_netlist"))
+            content += graphplot2tex(
+                getattr(self, "_netlist").to_graph(), folder=folder
+            )
         content += core2tex(self)
         texdocument(content, path, title=title)
 
@@ -1053,21 +1090,15 @@ add the connector'.format(i)
 
         sympy.init_printing()
 
-        b = types.matrix_types[0](self.dtx() +
-                                  self.w +
-                                  self.y +
-                                  self.cy)
+        b = types.matrix_types[0](self.dtx() + self.w + self.y + self.cy)
 
-        a = types.matrix_types[0](self.dxH() +
-                                  self.z +
-                                  self.u +
-                                  self.cu)
+        a = types.matrix_types[0](self.dxH() + self.z + self.u + self.cu)
 
         sympy.pprint([b, self.M, a], **settings)
 
     # =========================================================================
     # Evaluation
-    def to_evaluation(self, names='all', vectorize=True, vslice=None):
+    def to_evaluation(self, names="all", vectorize=True, vslice=None):
         """
         Return an object with all the numerical function associated with all
         or a selected set of symbolic functions from a given pyphs.Core.
@@ -1098,6 +1129,7 @@ add the connector'.format(i)
 
         """
         from pyphs.numerics.tools._evaluation import Evaluation
+
         return Evaluation(self, names=names, vectorize=vectorize, vslice=vslice)
 
     # =========================================================================
@@ -1132,6 +1164,7 @@ add the connector'.format(i)
         """
 
         from pyphs import Method
+
         return Method(self, config=config)
 
     # =========================================================================
@@ -1172,6 +1205,7 @@ add the connector'.format(i)
 
         from pyphs import Method
         from pyphs.config import CONFIG_METHOD
+
         config_method = CONFIG_METHOD.copy()
         if config is None:
             config = {}
@@ -1187,20 +1221,26 @@ add the connector'.format(i)
         """
         define atttributes set and get for all structure matrices
         """
-        for part in ['M', 'R', 'J']:
+        for part in ["M", "R", "J"]:
             if dims_names is None:
                 dims_names = self.dims.names
             for vari in dims_names:
                 for varj in dims_names:
-                    self._struc_setblock(part, part+vari+varj, (vari, varj))
+                    self._struc_setblock(part, part + vari + varj, (vari, varj))
 
     def _struc_setblock(self, part, name, dims_names):
         "effectively adds get and set attributes"
-        self.struc_names = list(set(self.struc_names).union(set([name, ])))
-        setattr(self,
-                name, self._struc_build_get_mat(dims_names, part))
-        setattr(self,
-                'set_'+name, self._struc_build_set_mat(dims_names, part))
+        self.struc_names = list(
+            set(self.struc_names).union(
+                set(
+                    [
+                        name,
+                    ]
+                )
+            )
+        )
+        setattr(self, name, self._struc_build_get_mat(dims_names, part))
+        setattr(self, "set_" + name, self._struc_build_set_mat(dims_names, part))
 
     def _struc_build_get_mat(self, mat, name):
         """
@@ -1239,13 +1279,16 @@ add the connector'.format(i)
             debi, endi = getattr(self.inds, namei)()
             debj, endj = getattr(self.inds, namej)()
             return geteval(self, name)[debi:endi, debj:endj]
+
         get_mat.__doc__ = """
         =====
         {0}{1}{2}
         =====
         Accessor to the submatrix :code:`core.{0}{1}{2}` with shape
         :code:`[core.dims.{1}(), core.dims.{2}()]`.
-        """.format(name, dims_names[0], dims_names[1])
+        """.format(
+            name, dims_names[0], dims_names[1]
+        )
         return get_mat
 
     def _build_set_mat(self, dims_names, name):
@@ -1253,30 +1296,32 @@ add the connector'.format(i)
         mat is ('matr', ('m', 'n')) with matr the matrix argument to define
         and 'x' and 'y' the variables that corresponds to block of core.name
         """
+
         def set_mat(mat):
             vari, varj = dims_names
             if self.M.shape[0] != self.dims.tot():
                 self.M = types.matrix_types[0](sympy.zeros(self.dims.tot()))
-            if name == 'J':
+            if name == "J":
                 Jab = types.matrix_types[0](mat)
-                Rab = getattr(self, 'R'+vari + varj)()
-                Rba = getattr(self, 'R'+varj + vari)()
+                Rab = getattr(self, "R" + vari + varj)()
+                Rba = getattr(self, "R" + varj + vari)()
                 Mab = Jab - Rab
                 Mba = -Jab.T - Rba
-            if name == 'R':
-                Jab = getattr(self, 'J'+vari + varj)()
-                Jba = getattr(self, 'J'+varj + vari)()
+            if name == "R":
+                Jab = getattr(self, "J" + vari + varj)()
+                Jba = getattr(self, "J" + varj + vari)()
                 R = types.matrix_types[0](mat)
                 Mab = Jab - R
                 Mba = Jba - R.T
-            if name == 'M':
+            if name == "M":
                 Mab = types.matrix_types[0](mat)
-                Mba = getattr(self, 'M'+varj + vari)()
+                Mba = getattr(self, "M" + varj + vari)()
             debi, endi = getattr(self.inds, vari)()
             debj, endj = getattr(self.inds, varj)()
             self.M[debi:endi, debj:endj] = types.matrix_types[0](Mab)
             if vari != varj:
                 self.M[debj:endj, debi:endi] = types.matrix_types[0](Mba)
+
         set_mat.__doc__ = """
         =========
         set_{0}{1}{2}
@@ -1298,18 +1343,21 @@ add the connector'.format(i)
         The skew-symmetry/symmetry of core.J/core.R is preserved by the
         automatic replacement of matrix core.{0}{2}{1} with the transpose of
         core.{0}{1}{2} and appropriate sign.
-        """.format(name, dims_names[0], dims_names[1])
+        """.format(
+            name, dims_names[0], dims_names[1]
+        )
 
         return set_mat
 
     # =============================================================================
 
-    def _gen_lnl_accessors(self, name='dxH', dim_label='x'):
+    def _gen_lnl_accessors(self, name="dxH", dim_label="x"):
         "Generator of functions to access the linear and nonlinear parts"
 
         def l_accessor():
-            dim = getattr(self.dims, dim_label+'l')()
+            dim = getattr(self.dims, dim_label + "l")()
             return geteval(self, name)[:dim]
+
         l_accessor.__doc__ = """
     =====
     {0}l
@@ -1326,11 +1374,14 @@ add the connector'.format(i)
     --------
     Core.split_linear() to split the system into linear and nonlinear
     storage and dissipative parts.
-        """.format(name, dim_label)
+        """.format(
+            name, dim_label
+        )
 
         def nl_accessor():
-            dim = getattr(self.dims, dim_label+'l')()
+            dim = getattr(self.dims, dim_label + "l")()
             return geteval(self, name)[dim:]
+
         nl_accessor.__doc__ = """
     =====
     {0}nl
@@ -1347,8 +1398,11 @@ add the connector'.format(i)
     --------
     Core.split_linear() to split the system into linear and nonlinear
     storage and dissipative parts.
-        """.format(name, dim_label)
+        """.format(
+            name, dim_label
+        )
         return (l_accessor, nl_accessor)
+
     # =========================================================================
 
     # SYMBOLS

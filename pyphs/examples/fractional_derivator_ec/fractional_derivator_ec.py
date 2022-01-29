@@ -11,9 +11,9 @@ from __future__ import absolute_import, division, print_function
 import os
 from pyphs import Netlist
 
-label = 'fractional_derivator_ec'
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-netlist_filename = path + os.sep + label + '.net'
+label = "fractional_derivator_ec"
+path = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
+netlist_filename = path + os.sep + label + ".net"
 
 netlist = Netlist(netlist_filename)
 

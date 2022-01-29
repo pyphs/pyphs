@@ -45,39 +45,43 @@ class MethodInvMat(Method):
         Method.__init__(self, core, config=config, label=label)
 
         if VERBOSE >= 2:
-            print('    Build {}'.format('ijactempFll'))
-        self.setexpr('ijactempFll', self.jactempFll().inverse_LU())
+            print("    Build {}".format("ijactempFll"))
+        self.setexpr("ijactempFll", self.jactempFll().inverse_LU())
 
         if VERBOSE >= 2:
-            print('    Build {}'.format('ud_vl'))
+            print("    Build {}".format("ud_vl"))
         ud_vl = matvecprod(-self.ijactempFll, self.Gl())
-        self.setexpr('ud_vl', list(ud_vl))
+        self.setexpr("ud_vl", list(ud_vl))
 
         if VERBOSE >= 2:
-            print('    Build {}'.format('Fnl'))
-        temp = matvecprod(self.jactempFnll()*self.ijactempFll, self.Gl())
-        Fnl = list(types.matrix_types[0](self.Gnl()) -
-                   types.matrix_types[0](temp))
+            print("    Build {}".format("Fnl"))
+        temp = matvecprod(self.jactempFnll() * self.ijactempFll, self.Gl())
+        Fnl = list(types.matrix_types[0](self.Gnl()) - types.matrix_types[0](temp))
 
         if VERBOSE >= 2:
-            print('    Simplify {}'.format('jacFnlnl'))
-        jacFnlnl = simplify(self.jacGnlnl() -
-                            self.jactempFnll()*self.ijactempFll*self.jacGlnl())
+            print("    Simplify {}".format("jacFnlnl"))
+        jacFnlnl = simplify(
+            self.jacGnlnl() - self.jactempFnll() * self.ijactempFll * self.jacGlnl()
+        )
 
         if VERBOSE >= 2:
-            print('    Inverse {}'.format('jacFnlnl'))
+            print("    Inverse {}".format("jacFnlnl"))
         if jacFnlnl.shape == (0, 0):
             ijacFnlnl = jacFnlnl
         else:
             ijacFnlnl = jacFnlnl.inv()
 
         if VERBOSE >= 2:
-            print('    Build {} for Faust code generation'.format('ud_vnl'))
-        ud_vnl = list(sympy.simplify(types.matrix_types[0](self.vnl()) -
-                      types.matrix_types[0]((matvecprod(ijacFnlnl, Fnl)))))
-        self.setexpr('ud_vnl', list(ud_vnl))
+            print("    Build {} for Faust code generation".format("ud_vnl"))
+        ud_vnl = list(
+            sympy.simplify(
+                types.matrix_types[0](self.vnl())
+                - types.matrix_types[0]((matvecprod(ijacFnlnl, Fnl)))
+            )
+        )
+        self.setexpr("ud_vnl", list(ud_vnl))
 
         self.init_funcs()
 
     def c(self):
-        return (self.x + self.u + self.o())
+        return self.x + self.u + self.o()

@@ -12,9 +12,9 @@ import os
 from pyphs import Netlist, Graph
 from icecream import ic
 
-label = 'polynomial'
-path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
-netlist_filename = path + os.sep + label + '.net'
+label = "polynomial"
+path = os.path.realpath(__file__)[: os.path.realpath(__file__).rfind(os.sep)]
+netlist_filename = path + os.sep + label + ".net"
 netlist = Netlist(netlist_filename)
 graph = Graph(netlist=netlist)
 core = graph.to_core()
@@ -28,7 +28,7 @@ ic(core.M)
 
 # UNCOMMENT BELOW FOR SIMULATION AND PLOTS
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #
 #    from pyphs import Netlist, Graph, Simulation, signalgenerator
 #    import numpy as np

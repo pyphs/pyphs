@@ -12,13 +12,14 @@ import os
 
 # -----------------------------  CORES  ------------------------------------- #
 this_script = os.path.realpath(__file__)
-here = this_script[:this_script.rfind(os.sep)]
+here = this_script[: this_script.rfind(os.sep)]
+
 
 def netlist_path(label):
     """
     Build netlist file name from label.
     """
-    return here + os.sep + label + '.net'
+    return here + os.sep + label + ".net"
 
 
 def sort_outputs(core):
@@ -26,15 +27,16 @@ def sort_outputs(core):
     Build netlist file name from label.
     """
     for i in range(core.dims.y()):
-        if not str(core.y[i]).endswith(str(i+1)):
-            core.move_port([str(y).endswith(str(i+1)) for y in core.y].index(True), i)
+        if not str(core.y[i]).endswith(str(i + 1)):
+            core.move_port([str(y).endswith(str(i + 1)) for y in core.y].index(True), i)
+
 
 # build simple Cores
-net1 = Netlist(netlist_path('phs1'))
+net1 = Netlist(netlist_path("phs1"))
 c1 = net1.to_core()
 sort_outputs(c1)
 
-net2 = Netlist(netlist_path('phs2'))
+net2 = Netlist(netlist_path("phs2"))
 c2 = net2.to_core()
 sort_outputs(c2)
 
@@ -44,9 +46,7 @@ sort_outputs(c2)
 core = c1 + c2
 
 # define the connection
-core.add_connector((core.y.index(c1.y[1]),
-                    core.y.index(c2.y[1])),
-                   alpha=1)
+core.add_connector((core.y.index(c1.y[1]), core.y.index(c2.y[1])), alpha=1)
 
 # apply the connection
 core.connect()
@@ -54,11 +54,8 @@ core.connect()
 # -------------------------------  TEST  ------------------------------------ #
 
 # target structure matrix
-target = array([[0, -1, 1, 0],
-                [1, 0, 0, -1],
-                [-1, 0, 0, 0],
-                [0, 1, 0, 0]])
+target = array([[0, -1, 1, 0], [1, 0, 0, -1], [-1, 0, 0, 0], [0, 1, 0, 0]])
 
 # check core.M == target
 test = all(map(lambda x: not x, array(array(core.M) - target).flatten()))
-assert test, 'ERROR:\n{}\n\n{}'.format(core.M, target)
+assert test, "ERROR:\n{}\n\n{}".format(core.M, target)

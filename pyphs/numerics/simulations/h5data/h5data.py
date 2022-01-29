@@ -47,14 +47,14 @@ class H5Data(object):
     """
 
     # global data name
-    dname = 'global'
+    dname = "global"
 
     # ----------------------------------------------------------------------- #
 
-    def __init__(self, method, config, h5name='results.h5', erase=False):
+    def __init__(self, method, config, h5name="results.h5", erase=False):
 
         if VERBOSE >= 1:
-            print('Build data i/o...')
+            print("Build data i/o...")
 
         # init configuration options
         self.config = config
@@ -67,7 +67,7 @@ class H5Data(object):
         self.h5path = os.path.join(self.folder, self.h5name)
 
         # data names
-        self.names = ['u', 'p'] + list(self.config['dnames'])
+        self.names = ["u", "p"] + list(self.config["dnames"])
 
         if erase or not os.path.exists(self.h5path):
             # new hdf5 file
@@ -87,12 +87,12 @@ class H5Data(object):
     # fs
     @property
     def fs(self):
-        return self.config['fs']
+        return self.config["fs"]
 
     # nt
     @property
     def nt(self):
-        return self.config['nt']
+        return self.config["nt"]
 
     # ntplot: number of points selected in arrays for plot (stepation)
     ntplot = 1000
@@ -101,7 +101,7 @@ class H5Data(object):
     # start and stop
 
     def _get_start(self):
-        i = self.config['load']['start']
+        i = self.config["load"]["start"]
         if i is None:
             return 0
         else:
@@ -109,20 +109,20 @@ class H5Data(object):
 
     def _set_start(self, i):
         if i is None:
-            self.config['load']['start'] = i
+            self.config["load"]["start"] = i
         else:
             if not 0 <= i < self.stop:
-                text = 'start must be in [0, {0}].'
-                raise ValueError(text.format(self.stop-1))
+                text = "start must be in [0, {0}]."
+                raise ValueError(text.format(self.stop - 1))
             if not isinstance(i, (int, float)):
-                text = 'start must be a positive integer: %s.' % str(i)
+                text = "start must be a positive integer: %s." % str(i)
                 raise ValueError(text)
-            self.config['load']['start'] = int(i)
+            self.config["load"]["start"] = int(i)
 
     start = property(_get_start, _set_start)
 
     def _get_stop(self):
-        i = self.config['load']['stop']
+        i = self.config["load"]["stop"]
         if i is None:
             return self.nt
         else:
@@ -130,22 +130,22 @@ class H5Data(object):
 
     def _set_stop(self, i):
         if i is None:
-            self.config['load']['stop'] = i
+            self.config["load"]["stop"] = i
         else:
             if not self.start < i <= self.nt:
-                text = 'stop must be in [{0}, {1}].'
-                raise ValueError(text.format(self.start+1, self.nt))
+                text = "stop must be in [{0}, {1}]."
+                raise ValueError(text.format(self.start + 1, self.nt))
             if not isinstance(i, (int, float)):
-                text = 'stop must be a positive integer: %s.' % str(i)
+                text = "stop must be a positive integer: %s." % str(i)
                 raise ValueError(text)
-            self.config['load']['stop'] = int(i)
+            self.config["load"]["stop"] = int(i)
 
     stop = property(_get_stop, _set_stop)
 
     # ----------------------------------------------------------------------- #
     # tstart and tstop
 
-    def _time2index(self, t, m='min'):
+    def _time2index(self, t, m="min"):
         """
 
         Convert time value to time index.
@@ -167,14 +167,14 @@ class H5Data(object):
             Time index.
 
         """
-        if m == 'min':
-            return int(t*self.fs)
-        elif m == 'max':
-            return int(t*self.fs)+1
+        if m == "min":
+            return int(t * self.fs)
+        elif m == "max":
+            return int(t * self.fs) + 1
         else:
-            raise ValueError('unknown m={}'.format(m))
+            raise ValueError("unknown m={}".format(m))
 
-    def _index2time(self, i, m='min'):
+    def _index2time(self, i, m="min"):
         """
 
         Convert time index to time value.
@@ -196,49 +196,49 @@ class H5Data(object):
             Time value
 
         """
-        if m == 'min':
-            return i/float(self.fs)
-        elif m == 'max':
-            return (i-1)/float(self.fs)
+        if m == "min":
+            return i / float(self.fs)
+        elif m == "max":
+            return (i - 1) / float(self.fs)
         else:
-            raise ValueError('unknown m={}'.format(m))
+            raise ValueError("unknown m={}".format(m))
 
     def _get_tstart(self):
-        return self._index2time(self.start, m='min')
+        return self._index2time(self.start, m="min")
 
     def _set_tstart(self, t):
         if t is None:
             self.start = t
         else:
-            tstart = 0.
+            tstart = 0.0
             tstop = self.tstop
             if not tstart <= t <= tstop:
-                text = 'tstart must be in [{0}, {1}].'
+                text = "tstart must be in [{0}, {1}]."
                 raise ValueError(text.format(tstart, tstop))
             if not isinstance(t, (int, float)):
-                text = 'tstart must be a positive value: %s.' % str(t)
+                text = "tstart must be a positive value: %s." % str(t)
                 raise ValueError(text)
-        self.start = self._time2index(t, m='min')
+        self.start = self._time2index(t, m="min")
 
     # tstart: start = tstart*fs and slice for t is slice(start, stop, step)
     tstart = property(_get_tstart, _set_tstart)
 
     def _get_tstop(self):
-        return self._index2time(self.stop, m='max')
+        return self._index2time(self.stop, m="max")
 
     def _set_tstop(self, t):
         if t is None:
             self.stop = t
         else:
             tstart = self.tstart
-            tstop = (self.nt-1)/self.fs
+            tstop = (self.nt - 1) / self.fs
             if not tstart <= t <= tstop:
-                text = 'tstop must be in [{0}, {1}].'
+                text = "tstop must be in [{0}, {1}]."
                 raise ValueError(text.format(tstart, tstop))
             if not isinstance(t, (int, float)):
-                text = 'tstop must be a positive value: %s.' % str(t)
+                text = "tstop must be a positive value: %s." % str(t)
                 raise ValueError(text)
-            self.stop = self._time2index(t, m='max')
+            self.stop = self._time2index(t, m="max")
 
     # tstop: stop = tstop*fs + 1 and slice for t is slice(start, stop, step)
     tstop = property(_get_tstop, _set_tstop)
@@ -247,16 +247,16 @@ class H5Data(object):
     # step: slice for t is slice(start, stop, step)
 
     def _get_step(self):
-        return self.config['load']['step']
+        return self.config["load"]["step"]
 
     def _set_step(self, i):
         if i is None:
-            self.config['load']['step'] = 1
+            self.config["load"]["step"] = 1
         else:
             if not 1 <= i or not isinstance(i, (int, float)):
-                text = 'step must be an integer >= 1.'
+                text = "step must be an integer >= 1."
                 raise ValueError(text)
-            self.config['load']['step'] = int(i)
+            self.config["load"]["step"] = int(i)
 
     step = property(_get_step, _set_step)
 
@@ -283,8 +283,9 @@ class H5Data(object):
     @property
     def dtype(self):
         return numpy.float64
-#        return numpy.dtype({'names': list(map(str, range(self.dim))),
-#                            'formats': [numpy.float64] * self.dim})
+
+    #        return numpy.dtype({'names': list(map(str, range(self.dim))),
+    #                            'formats': [numpy.float64] * self.dim})
 
     # ----------------------------------------------------------------------- #
 
@@ -317,22 +318,24 @@ class H5Data(object):
         """
         # get number of time-steps
         if nt is None:
-            if hasattr(sequ, '__len__'):
+            if hasattr(sequ, "__len__"):
                 nt = len(sequ)
-            elif hasattr(sequ, 'shape'):
+            elif hasattr(sequ, "shape"):
                 nt = sequ.shape[0]
-            elif hasattr(seqp, '__len__'):
+            elif hasattr(seqp, "__len__"):
                 nt = len(seqp)
-            elif hasattr(seqp, 'shape'):
+            elif hasattr(seqp, "shape"):
                 nt = seqp.shape[0]
             else:
-                raise ValueError("""Unknown number of iterations.
+                raise ValueError(
+                    """Unknown number of iterations.
 Please give either a list u (input sequence), a list p (sequence of parameters)
 or an integer nt (number of time steps).'
-    """)
+    """
+                )
 
         # store number of time steps
-        self.config['nt'] = nt = int(nt)
+        self.config["nt"] = nt = int(nt)
 
         self._h5new()
 
@@ -340,15 +343,17 @@ or an integer nt (number of time steps).'
         ny = self.method.dims.y()
         if isinstance(sequ, list):
             sequ = numpy.array(sequ)
-        elif hasattr(sequ, '__next__'):
+        elif hasattr(sequ, "__next__"):
             sequ = numpy.array(list(sequ))
             # TODO: remoce warnings
-            warnings.warn('Use of generator as inputs to simulation objects is deprecated. Use lists or arrays instead.')
+            warnings.warn(
+                "Use of generator as inputs to simulation objects is deprecated. Use lists or arrays instead."
+            )
         if sequ is None:
-            sequ = [[0]*ny for _ in range(nt)]
+            sequ = [[0] * ny for _ in range(nt)]
         elif len(sequ.shape) == 1:
             if not ny == 1:
-                text = 'Expected input shape is ({}, {}), got ({}, )'
+                text = "Expected input shape is ({}, {}), got ({}, )"
                 raise AttributeError(text.format(nt, ny, sequ.shape))
             else:
                 sequ = sequ[:, numpy.newaxis]
@@ -356,18 +361,18 @@ or an integer nt (number of time steps).'
         # if seqp is not provided, a sequence of [[0]*np]*nt is assumed
         np = self.method.dims.p()
         if seqp is None:
-            seqp = [[0]*np for _ in range(nt)]
+            seqp = [[0] * np for _ in range(nt)]
         if isinstance(seqp, list):
             seqp = numpy.array(seqp)
         elif len(seqp.shape) == 1:
             if not np == 1:
-                text = 'Expected parameter shape is ({}, {}), got ({}, )'
+                text = "Expected parameter shape is ({}, {}), got ({}, )"
                 raise AttributeError(text.format(nt, np, seqp.shape))
             else:
                 seqp = seqp[:, numpy.newaxis]
 
         # data to store in h5 dataset
-        seqs = {'u': sequ, 'p': seqp}
+        seqs = {"u": sequ, "p": seqp}
 
         # Open h5 file
         self.h5open()
@@ -426,25 +431,24 @@ or an integer nt (number of time steps).'
             os.remove(self.h5path)
 
         # Create HDF5 file
-        with h5py.File(self.h5path, 'w') as f:
+        with h5py.File(self.h5path, "w") as f:
 
             # save ordered list of names
             names = [n.encode("ascii", "ignore") for n in self.names]
-            f.create_dataset('names', (len(names), 1), 'S10', names)
+            f.create_dataset("names", (len(names), 1), "S10", names)
 
             # save dimensions and indices
             for name in self.names:
                 grp = f.create_group(name)
-                grp.attrs['dim'] = self.dims[name]
-                grp.attrs['inds'] = self.inds[name]
+                grp.attrs["dim"] = self.dims[name]
+                grp.attrs["inds"] = self.inds[name]
 
             maxshape = (None, self.dim)
 
             data = numpy.zeros((1, self.dim)).astype(self.dtype)
 
             # Create a global dataset
-            f.create_dataset(self.dname, data=data, dtype=self.dtype,
-                             maxshape=maxshape)
+            f.create_dataset(self.dname, data=data, dtype=self.dtype, maxshape=maxshape)
 
     # ----------------------------------------------------------------------- #
 
@@ -456,20 +460,20 @@ or an integer nt (number of time steps).'
         file_dims = list()
 
         # Read HDF5 file and extract dimensions
-        with h5py.File(self.h5path, 'r') as f:
-            names = [n.decode() for n in f['names'][:, 0]]
+        with h5py.File(self.h5path, "r") as f:
+            names = [n.decode() for n in f["names"][:, 0]]
             for name in names:
-                file_dims.append((name, f[name].attrs['dim']))
+                file_dims.append((name, f[name].attrs["dim"]))
 
         if not file_dims == self._method_dims:
-            text = 'hdf5 dims do not coincide with method dims: \n{0} != {1}'
+            text = "hdf5 dims do not coincide with method dims: \n{0} != {1}"
             raise AttributeError(text.format(file_dims, self._method_dims))
 
         self._dimsinit()
 
         self._open = False
 
-        self.config['nt'] = self._h5shape[0]
+        self.config["nt"] = self._h5shape[0]
 
     # ----------------------------------------------------------------------- #
 
@@ -501,11 +505,11 @@ or an integer nt (number of time steps).'
 
         for name in self.names:
 
-            if name in ('x', 'dx', 'dxH'):
+            if name in ("x", "dx", "dxH"):
                 dim = self.method.dims.x()
-            elif name in ('u', 'y'):
+            elif name in ("u", "y"):
                 dim = self.method.dims.y()
-            elif name in ('w', 'z'):
+            elif name in ("w", "z"):
                 dim = self.method.dims.w()
             else:
                 dim = geteval(self.method.dims, name)
@@ -521,7 +525,7 @@ or an integer nt (number of time steps).'
         """
         return the path to the HDF5 file folder
         """
-        return os.path.join(self.config['path'], 'data')
+        return os.path.join(self.config["path"], "data")
 
     # ----------------------------------------------------------------------- #
 
@@ -541,7 +545,7 @@ or an integer nt (number of time steps).'
         """
         open hdf5 file
         """
-        self.h5file = h5py.File(self.h5path, 'a')
+        self.h5file = h5py.File(self.h5path, "a")
         self._open = True
 
     def h5close(self):
@@ -614,16 +618,14 @@ or an integer nt (number of time steps).'
             vslice = slice(*self.inds[name])
             temp_nt = len(range(tslice.stop)[tslice])
             temp_nv = len(range(vslice.stop)[vslice])
-            if temp_nt*temp_nv > 0:
+            if temp_nt * temp_nv > 0:
                 if VERBOSE > 0:
-                    print('Write {0} to hdf5 file...'.format(name))
+                    print("Write {0} to hdf5 file...".format(name))
                 set_dataset_from_iterable(
-                    self.h5data, data[name],
-                    tslice, vslice,
-                    chunksize=1024
+                    self.h5data, data[name], tslice, vslice, chunksize=1024
                 )
                 if VERBOSE > 0:
-                    print('Write {0} to hdf5 file: Done.'.format(name))
+                    print("Write {0} to hdf5 file: Done.".format(name))
         if close:
             self.h5close()
 
@@ -634,12 +636,10 @@ or an integer nt (number of time steps).'
         # Set time slice
 
         if tslice is None:
-            tslice = slice(self.start,
-                           self.stop,
-                           self.step)
+            tslice = slice(self.start, self.stop, self.step)
 
         elif isinstance(tslice, int):
-            tslice = slice(tslice, tslice+1, None)
+            tslice = slice(tslice, tslice + 1, None)
 
         if tslice.start is None:
             start = self.start
@@ -671,11 +671,11 @@ or an integer nt (number of time steps).'
         # custom variable slice
         else:
             if vslice.start is not None:
-                start = vslice.start+self.inds[vname][0]
+                start = vslice.start + self.inds[vname][0]
             else:
                 start = self.inds[vname][0]
             if vslice.stop is not None:
-                stop = vslice.stop+self.inds[vname][0]
+                stop = vslice.stop + self.inds[vname][0]
             else:
                 stop = self.inds[vname][1]
             step = vslice.step
@@ -684,9 +684,7 @@ or an integer nt (number of time steps).'
         return vslice
 
     def _read_data(self, vname, tslice, vslice):
-        """
-
-        """
+        """"""
         # open h5 file
         if not self._open:
             self.h5open()
@@ -695,8 +693,7 @@ or an integer nt (number of time steps).'
             close = False
 
         # open h5 file
-        output = self.h5data[self._tslice(tslice),
-                             self._tuple2slice(vname, vslice)]
+        output = self.h5data[self._tslice(tslice), self._tuple2slice(vname, vslice)]
 
         # close h5 file
         if close:
@@ -712,9 +709,7 @@ or an integer nt (number of time steps).'
             if postprocess is None:
                 return self._read_data(name, tslice, vslice)
             else:
-                return postprocess(self._read_data(name,
-                                                   tslice,
-                                                   vslice))
+                return postprocess(self._read_data(name, tslice, vslice))
 
         data_reader.__doc__ = self.__doc_template__.format(name, self.h5path)
         return data_reader
@@ -821,7 +816,7 @@ or an integer nt (number of time steps).'
 
         """
         tslice = self._tslice(tslice)
-        output = numpy.arange(tslice.start, tslice.stop, tslice.step)/self.fs
+        output = numpy.arange(tslice.start, tslice.stop, tslice.step) / self.fs
 
         if postprocess is None:
             return output
@@ -831,9 +826,7 @@ or an integer nt (number of time steps).'
     # ----------------------------------------------------------------------- #
 
     def _hstack(self, names, tslice=None, vslice=None, postprocess=None):
-        """
-
-        """
+        """"""
 
         if not self._open:
             self.h5open()
@@ -874,18 +867,18 @@ or an integer nt (number of time steps).'
         if vslice is None:
             vslice = slice(None, None, None)
 
-        expectedNt = (tslice.stop-tslice.start)//tslice.step
+        expectedNt = (tslice.stop - tslice.start) // tslice.step
 
         evalobj = self.method.to_evaluation(names=[name], vslice=vslice)
 
         # cope with functions that have no arguments (see Evaluation object)
-        if name == 'o':
-            argsname = 'args'
+        if name == "o":
+            argsname = "args"
         else:
-            argsname = 'args_o'
+            argsname = "args_o"
 
-        if len(getattr(evalobj, name+'_inds')) > 0:
-            vs = getattr(evalobj, name+'_inds')
+        if len(getattr(evalobj, name + "_inds")) > 0:
+            vs = getattr(evalobj, name + "_inds")
             args = getattr(self, argsname)(tslice=tslice)[:, vs]
         else:
             args = numpy.zeros((expectedNt, 1))
@@ -934,10 +927,10 @@ or an integer nt (number of time steps).'
             index stop with stepation factor step (i.e. the value is generated
             if i-start % step == 0).
         """
-        names = ['x', 'dx', 'w', 'u', 'p']
-        return self._hstack(names,
-                            tslice=tslice, vslice=vslice,
-                            postprocess=postprocess)
+        names = ["x", "dx", "w", "u", "p"]
+        return self._hstack(
+            names, tslice=tslice, vslice=vslice, postprocess=postprocess
+        )
 
     # ----------------------------------------------------------------------- #
 
@@ -967,8 +960,9 @@ or an integer nt (number of time steps).'
             A python generator of observed quantites.
         """
 
-        return self._expression('o', tslice=tslice, vslice=vslice,
-                                postprocess=postprocess)
+        return self._expression(
+            "o", tslice=tslice, vslice=vslice, postprocess=postprocess
+        )
 
     # ----------------------------------------------------------------------- #
 
@@ -998,10 +992,10 @@ or an integer nt (number of time steps).'
             A python generator of observed quantites.
         """
 
-        names = ['args', 'o']
-        return self._hstack(names,
-                            tslice=tslice, vslice=vslice,
-                            postprocess=postprocess)
+        names = ["args", "o"]
+        return self._hstack(
+            names, tslice=tslice, vslice=vslice, postprocess=postprocess
+        )
 
     # ----------------------------------------------------------------------- #
 
@@ -1045,8 +1039,9 @@ or an integer nt (number of time steps).'
         else:
             close = False
 
-        output = self.dx(tslice=tslice, vslice=vslice,
-                         postprocess=lambda dx: dx*self.fs)
+        output = self.dx(
+            tslice=tslice, vslice=vslice, postprocess=lambda dx: dx * self.fs
+        )
 
         if postprocess is None:
             return output
@@ -1094,10 +1089,10 @@ or an integer nt (number of time steps).'
 
         """
 
-        names = ['dxH', 'z', 'u']
-        return self._hstack(names,
-                            tslice=tslice, vslice=vslice,
-                            postprocess=postprocess)
+        names = ["dxH", "z", "u"]
+        return self._hstack(
+            names, tslice=tslice, vslice=vslice, postprocess=postprocess
+        )
 
     # ----------------------------------------------------------------------- #
 
@@ -1136,15 +1131,16 @@ or an integer nt (number of time steps).'
         a
 
         """
-        names = ['dtx', 'w', 'y']
-        return self._hstack(names,
-                            tslice=tslice, vslice=vslice,
-                            postprocess=postprocess)
+        names = ["dtx", "w", "y"]
+        return self._hstack(
+            names, tslice=tslice, vslice=vslice, postprocess=postprocess
+        )
 
     # ----------------------------------------------------------------------- #
 
-    def wavwrite(self, name, index, path=None, gain=1.,
-                 fs=None, normalize=True, timefades=0.):
+    def wavwrite(
+        self, name, index, path=None, gain=1.0, fs=None, normalize=True, timefades=0.0
+    ):
         """
         wavwrite
         ========
@@ -1196,16 +1192,19 @@ or an integer nt (number of time steps).'
         if fs is None:
             fs = self.fs
         if path is None:
-            path = self.config['path'] + os.sep + name + str(index)
+            path = self.config["path"] + os.sep + name + str(index)
 
         # recover signal
-        sig = getattr(self, name)(vslice=index,
-                                  tslice=slice(self.start, self.stop, 1),
-                                  postprocess=lambda e: gain*e)
+        sig = getattr(self, name)(
+            vslice=index,
+            tslice=slice(self.start, self.stop, 1),
+            postprocess=lambda e: gain * e,
+        )
 
         # write .wav file
-        wavwrite(sig, self.fs, path,
-                 fs_out=fs, normalize=normalize, timefades=timefades)
+        wavwrite(
+            sig, self.fs, path, fs_out=fs, normalize=normalize, timefades=timefades
+        )
 
         # close flag
         if close:
@@ -1213,8 +1212,7 @@ or an integer nt (number of time steps).'
 
     # ----------------------------------------------------------------------- #
 
-    def plot_powerbal(self, mode='single', DtE='deltaH',
-                      show=True, tslice=None):
+    def plot_powerbal(self, mode="single", DtE="deltaH", show=True, tslice=None):
         """
         Plot the power balance. mode is 'single' or 'multi' for single figure
         or multifigure (default is 'single').
@@ -1256,15 +1254,15 @@ or an integer nt (number of time steps).'
             close = False
 
         if tslice.step is None:
-            tslice.step = max((1, (self.stop-self.start)//self.ntplot))
+            tslice.step = max((1, (self.stop - self.start) // self.ntplot))
 
-        fig, ax = plot_powerbal(self, mode=mode, DtE=DtE,
-                                show=show, tslice=tslice)
+        fig, ax = plot_powerbal(self, mode=mode, DtE=DtE, show=show, tslice=tslice)
 
         if close:
             self.h5close()
 
         return fig, ax
+
     # ----------------------------------------------------------------------- #
 
     def plot(self, vars, tslice=None, show=True, label=None):
@@ -1311,7 +1309,8 @@ or an integer nt (number of time steps).'
             tslice = slice(
                 tslice.start,
                 tslice.stop,
-                max((1, (self.stop-self.start)//self.ntplot)))
+                max((1, (self.stop - self.start) // self.ntplot)),
+            )
 
         fig, ax = plot(self, vars, show=show, label=label, tslice=tslice)
 
@@ -1348,7 +1347,7 @@ or an integer nt (number of time steps).'
 
     # ----------------------------------------------------------------------- #
 
-    def dtE(self, tslice=None, vslice=None, postprocess=None, DtE='DxhDtx'):
+    def dtE(self, tslice=None, vslice=None, postprocess=None, DtE="DxhDtx"):
         """
         dtE
         ===
@@ -1388,18 +1387,24 @@ or an integer nt (number of time steps).'
         tslice = self._tslice(tslice)
 
         # Compute DtE = (h[x[n+1]]-h[x[n]]) / dt
-        if DtE == 'deltaH':
-            last_dtH_value = numpy.einsum('ti,ti->t',
-                                          self['dxH', tslice.stop-1],
-                                          self['dtx', tslice.stop-1])/self.fs
-            output = numpy.ediff1d(self.E(tslice=tslice),
-                                   to_end=last_dtH_value)*self.fs/tslice.step
+        if DtE == "deltaH":
+            last_dtH_value = (
+                numpy.einsum(
+                    "ti,ti->t",
+                    self["dxH", tslice.stop - 1],
+                    self["dtx", tslice.stop - 1],
+                )
+                / self.fs
+            )
+            output = (
+                numpy.ediff1d(self.E(tslice=tslice), to_end=last_dtH_value)
+                * self.fs
+                / tslice.step
+            )
 
         # Compute DtE = dxh.T * dtx
-        elif DtE == 'DxhDtx':
-            output = numpy.einsum('ti,ti->t',
-                                  self['dxH', tslice],
-                                  self['dtx', tslice])
+        elif DtE == "DxhDtx":
+            output = numpy.einsum("ti,ti->t", self["dxH", tslice], self["dtx", tslice])
 
         if postprocess is None:
             return output
@@ -1436,8 +1441,9 @@ or an integer nt (number of time steps).'
             factor step (i.e. the value is generated if i-start % step == 0).
         """
 
-        return self._expression('H', tslice=tslice, vslice=vslice,
-                                postprocess=postprocess)
+        return self._expression(
+            "H", tslice=tslice, vslice=vslice, postprocess=postprocess
+        )
 
     # ----------------------------------------------------------------------- #
 
@@ -1467,8 +1473,9 @@ or an integer nt (number of time steps).'
             i-start % step == 0), with pd[i] = w[i] dot z[i].
         """
 
-        return self._expression('pd', tslice=tslice, vslice=vslice,
-                                postprocess=postprocess)
+        return self._expression(
+            "pd", tslice=tslice, vslice=vslice, postprocess=postprocess
+        )
 
     # ----------------------------------------------------------------------- #
 
@@ -1504,9 +1511,7 @@ or an integer nt (number of time steps).'
         else:
             close = False
 
-        output = numpy.einsum('ti,ti->t',
-                              self['u', tslice],
-                              self['y', tslice])
+        output = numpy.einsum("ti,ti->t", self["u", tslice], self["y", tslice])
 
         if postprocess is None:
             return output

@@ -10,20 +10,21 @@ import numpy
 
 # =========================================================================== #
 
+
 def norm(x):
     """
-Returns the discrete L2 norm of list of floats x considered as a vector:
+    Returns the discrete L2 norm of list of floats x considered as a vector:
 
-.. math:: \parallel \mathbf{x} \parallel = \sqrt{\mathbf{x}^\intercal \cdot \mathbf{x}}
+    .. math:: \parallel \mathbf{x} \parallel = \sqrt{\mathbf{x}^\intercal \cdot \mathbf{x}}
 
-Parameter
----------
-x : list of floats
+    Parameter
+    ---------
+    x : list of floats
 
-Return
-------
-n : float
-    L2 norm of x considered as a vector.
+    Return
+    ------
+    n : float
+        L2 norm of x considered as a vector.
     """
     x = numpy.array(x)
-    return numpy.sqrt(numpy.einsum('i,i', x, x))
+    return numpy.sqrt(numpy.einsum("i,i", x, x))

@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # <div id="toc-static"></div>
@@ -50,6 +49,7 @@
 # In[1]:
 
 from pyphs.graphs import datum
+
 datum
 
 
@@ -103,7 +103,8 @@ datum
 # In[2]:
 
 from pyphs import Netlist
-net = Netlist('rlc.net', clear = True)
+
+net = Netlist("rlc.net", clear=True)
 
 
 # Each line is defined with the `phs.graph.netlist.add_line` command, which takes python dicitonary with the following structure as arguments:
@@ -124,11 +125,13 @@ net = Netlist('rlc.net', clear = True)
 
 # In[3]:
 
-source = {'dictionary': 'electronics',
-          'component': 'source',
-          'label': 'out',
-          'nodes': (datum, 'A'),
-          'arguments': {'type': 'voltage'}}
+source = {
+    "dictionary": "electronics",
+    "component": "source",
+    "label": "out",
+    "nodes": (datum, "A"),
+    "arguments": {"type": "voltage"},
+}
 
 
 # Secondly, we include this line to the netlist of the object with:
@@ -151,27 +154,33 @@ print(net.netlist())
 # In[6]:
 
 # resistor
-resistance = {'dictionary': 'electronics',
-              'component': 'resistor',
-              'label': 'R1',
-              'nodes': ('A', 'B'),
-              'arguments': {'R': ('R1', 1e3)}}
+resistance = {
+    "dictionary": "electronics",
+    "component": "resistor",
+    "label": "R1",
+    "nodes": ("A", "B"),
+    "arguments": {"R": ("R1", 1e3)},
+}
 net.add_line(resistance)
 
 # inductor
-inductor = {'dictionary': 'electronics',
-            'component': 'inductor',
-            'label': 'L1',
-            'nodes': ('B', 'C'),
-            'arguments': {'L': ('L1', 5e-2)}}
+inductor = {
+    "dictionary": "electronics",
+    "component": "inductor",
+    "label": "L1",
+    "nodes": ("B", "C"),
+    "arguments": {"L": ("L1", 5e-2)},
+}
 net.add_line(inductor)
 
 # capacitor
-capacitor = {'dictionary': 'electronics',
-             'component': 'capacitor',
-             'label': 'C1',
-             'nodes': ('C', datum),
-             'arguments': {'C': ('C1', 2e-6)}}
+capacitor = {
+    "dictionary": "electronics",
+    "component": "capacitor",
+    "label": "C1",
+    "nodes": ("C", datum),
+    "arguments": {"C": ("C1", 2e-6)},
+}
 net.add_line(capacitor)
 
 
@@ -222,74 +231,75 @@ core.texwrite()
 # In[12]:
 
 from sympy import init_printing
-init_printing(use_latex='mathjax')
+
+init_printing(use_latex="mathjax")
 
 
 # The relevant system arguments are listed below:
 
 # In[13]:
 
-print('x=')
+print("x=")
 core.x
 
 
 # In[14]:
 
-print('w=')
+print("w=")
 core.w
 
 
 # In[15]:
 
-print('u=')
+print("u=")
 core.u
 
 
 # In[16]:
 
-print('y=')
+print("y=")
 core.y
 
 
 # In[17]:
 
-print('p=')
+print("p=")
 core.p
 
 
 # In[18]:
 
-print('H=')
+print("H=")
 core.H
 
 
 # In[19]:
 
-print('z=')
+print("z=")
 core.z
 
 
 # In[20]:
 
-print('M=')
+print("M=")
 core.M
 
 
 # In[21]:
 
-print('J=')
+print("J=")
 core.J()
 
 
 # In[22]:
 
-print('R=')
+print("R=")
 core.R()
 
 
 # In[23]:
 
-print('parameters :')
+print("parameters :")
 core.subs
 
 
@@ -300,36 +310,46 @@ core.subs
 
 from pyphs import signalgenerator
 from pyphs import Simulation
-import warnings;
-warnings.simplefilter('ignore')
+import warnings
+
+warnings.simplefilter("ignore")
 
 
 # Simulation options
-config = {'fs': 48e3,  # Samplerate (Hz)
-          'split': True,
-          'grad': 'theta',
-          'theta': 0.5,
-       }
+config = {
+    "fs": 48e3,  # Samplerate (Hz)
+    "split": True,
+    "grad": "theta",
+    "theta": 0.5,
+}
 
 simu = core.to_simulation(config=config)
 
 # Signal parameters
-A = 100.                           # Signal amplitude (V)
-f0 = 100.                          # Signal frequency (Hz)
-nP = 5                             # Sumber of periods (d.u.)
-tsig = 5/f0                        # Signal duration (s)
+A = 100.0  # Signal amplitude (V)
+f0 = 100.0  # Signal frequency (Hz)
+nP = 5  # Sumber of periods (d.u.)
+tsig = 5 / f0  # Signal duration (s)
 
 
 # signal generator
-vout = signalgenerator(which="sin",      # Sinusoidal signal
-                       A=A,              # Amplitude
-                       f0=f0,            # Frequency
-                       tsig=tsig,           # Number of time-steps
-                       fs=config['fs'],  # Samplerate
-                       ramp_on=True,     # Linear increase
-                      )
+vout = signalgenerator(
+    which="sin",  # Sinusoidal signal
+    A=A,  # Amplitude
+    f0=f0,  # Frequency
+    tsig=tsig,  # Number of time-steps
+    fs=config["fs"],  # Samplerate
+    ramp_on=True,  # Linear increase
+)
 
-u = list(([el, ] for el in vout))
+u = list(
+    (
+        [
+            el,
+        ]
+        for el in vout
+    )
+)
 
 # Init simulation
 simu.init(u=u)
@@ -343,7 +363,7 @@ simu.process()
 import matplotlib.pyplot as plt
 
 # Uncomment to activate inline plots in notebooks
-#get_ipython().magic('matplotlib inline')
+# get_ipython().magic('matplotlib inline')
 
 # plot power balance
 fig, ax = simu.data.plot_powerbal()
@@ -351,7 +371,7 @@ fig, ax = simu.data.plot_powerbal()
 
 # In[38]:
 
-fig, axes = simu.data.plot(['u', 'x', 'y'])
+fig, axes = simu.data.plot(["u", "x", "y"])
 
 
 # In[ ]:

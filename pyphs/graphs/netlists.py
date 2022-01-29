@@ -11,8 +11,9 @@ import os
 import ast
 from pyphs.config import datum, VERBOSE
 
+
 def sep():
-    return ','
+    return ","
 
 
 class Netlist:
@@ -33,20 +34,21 @@ free-parameter that can be continuously controlled during the simulations. \
 Else if no label is provided for the new component, the new label for the \
 i-th parameter is defined as 'label_pari'.
     """
+
     def __init__(self, path, clear=False):
         """
         init with path to read data from.
         """
-        n = path[path.rfind(os.sep)+1:]
-        f = path[:path.rfind(os.sep)+1]
+        n = path[path.rfind(os.sep) + 1 :]
+        f = path[: path.rfind(os.sep) + 1]
         if len(n) == 0:
             n, f = f, n
         if VERBOSE >= 1:
-            print('Read netlist {}'.format(n))
-            print('from folder {}'.format(f))
+            print("Read netlist {}".format(n))
+            print("from folder {}".format(f))
         self.path = path
         if not os.path.isfile(self.path) or clear:
-            file_ = open(self.path, 'w')
+            file_ = open(self.path, "w")
             file_.close()
         self.datum = datum
         self.dictionaries = tuple()
@@ -60,7 +62,7 @@ i-th parameter is defined as 'label_pari'.
     # Folder
 
     def get_folder(self):
-        return self.path[:self.path.rfind(os.sep)]
+        return self.path[: self.path.rfind(os.sep)]
 
     folder = property(get_folder)
 
@@ -68,18 +70,20 @@ i-th parameter is defined as 'label_pari'.
     # Filename
 
     def get_filename(self):
-        return  self.path[self.path.rfind(os.sep)+1:]
+        return self.path[self.path.rfind(os.sep) + 1 :]
 
     filename = property(get_filename)
 
     # --------------------------------------------------------------------------
 
     def __getitem__(self, n):
-        item = {'dictionary': self.dictionaries[n],
-                'component': self.components[n],
-                'label': self.labels[n],
-                'nodes': self.nodes[n],
-                'arguments': self.arguments[n]}
+        item = {
+            "dictionary": self.dictionaries[n],
+            "component": self.components[n],
+            "label": self.labels[n],
+            "nodes": self.nodes[n],
+            "arguments": self.arguments[n],
+        }
         return item
 
     def __add__(net1, net2):
@@ -96,11 +100,21 @@ components).
         return len(self.components)
 
     def add_line(self, dic):
-        self.dictionaries = list(self.dictionaries)+[dic['dictionary'], ]
-        self.components = list(self.components)+[dic['component'], ]
-        self.labels = list(self.labels)+[dic['label'], ]
-        self.nodes = list(self.nodes)+[dic['nodes'], ]
-        self.arguments = list(self.arguments)+[dic['arguments'], ]
+        self.dictionaries = list(self.dictionaries) + [
+            dic["dictionary"],
+        ]
+        self.components = list(self.components) + [
+            dic["component"],
+        ]
+        self.labels = list(self.labels) + [
+            dic["label"],
+        ]
+        self.nodes = list(self.nodes) + [
+            dic["nodes"],
+        ]
+        self.arguments = list(self.arguments) + [
+            dic["arguments"],
+        ]
 
     def read(self):
         """
@@ -108,7 +122,7 @@ components).
         """
         with open(self.path, "r") as openfileobject:
             for i, line in enumerate(openfileobject.readlines()):
-                if line.startswith('#'):
+                if line.startswith("#"):
                     if VERBOSE >= 1:
                         print('pass "{}"'.format(line[:-1]))
                 elif len(line) == 1:
@@ -117,25 +131,33 @@ components).
                     if VERBOSE >= 1:
                         print('read "{}"'.format(line[:-1]))
                     # get 'infos' (dic, comp and nodes) and parameters
-                    infos, _, parameters = line.partition(':')
+                    infos, _, parameters = line.partition(":")
                     # get ‘dic.comp' and 'label nodes'
                     si = infos.split()
                     diccomp = si.pop(0)
                     label = si.pop(0)
-                    nodes = ''.join(si)
-                    dic, _, comp = diccomp.partition('.')
-                    self.dictionaries = list(self.dictionaries)+[dic, ]
-                    self.components = list(self.components)+[comp, ]
-                    self.labels = list(self.labels)+[label, ]
-                    self.nodes = list(self.nodes)+[ast.literal_eval(nodes), ]
-                    nb_pars = parameters.count('=')
+                    nodes = "".join(si)
+                    dic, _, comp = diccomp.partition(".")
+                    self.dictionaries = list(self.dictionaries) + [
+                        dic,
+                    ]
+                    self.components = list(self.components) + [
+                        comp,
+                    ]
+                    self.labels = list(self.labels) + [
+                        label,
+                    ]
+                    self.nodes = list(self.nodes) + [
+                        ast.literal_eval(nodes),
+                    ]
+                    nb_pars = parameters.count("=")
                     pars = {}
                     for n in range(nb_pars):
-                        par, _, parameters = parameters.partition(';')
-                        par = par.replace(' ', '')
-                        key, _, value = par.partition('=')
-                        if value.startswith('('):
-                            value = value[1:-1].split(',')
+                        par, _, parameters = parameters.partition(";")
+                        par = par.replace(" ", "")
+                        key, _, value = par.partition("=")
+                        if value.startswith("("):
+                            value = value[1:-1].split(",")
                             value = tuple(map(eval, value))
                         else:
                             try:
@@ -143,7 +165,9 @@ components).
                             except ValueError:
                                 pass
                         pars.update({key: value})
-                    self.arguments = list(self.arguments)+[pars, ]
+                    self.arguments = list(self.arguments) + [
+                        pars,
+                    ]
 
     def netlist(self):
         """
@@ -160,7 +184,7 @@ components).
         """
         if path is None:
             path = self.path
-        file_ = open(path, 'w')
+        file_ = open(path, "w")
         file_.write(self.netlist())  # remove the last cariage return
         file_.close()
 
@@ -184,31 +208,31 @@ components).
         """
         set the netlist line 'n' whith provided dictionary
         """
-        value = line['dictionary']
+        value = line["dictionary"]
         try:
             value = ast.literal_eval(value)
         except ValueError:
             pass
         self.dictionaries[n] = value
 
-        value = line['component']
+        value = line["component"]
         try:
             value = ast.literal_eval(value)
         except ValueError:
             pass
         self.components[n] = value
 
-        value = line['label']
+        value = line["label"]
         try:
             value = ast.literal_eval(value)
         except (ValueError, SyntaxError):
             pass
         self.labels[n] = value
 
-        value = line['nodes']
+        value = line["nodes"]
         self.nodes[n] = value
 
-        value = line['arguments']
+        value = line["arguments"]
         self.arguments[n] = value
 
     def to_graph(self, label=None):
@@ -228,6 +252,7 @@ components).
             The graph object associated with the netlist.
         """
         from .graph import Graph
+
         return Graph(netlist=self, label=label)
 
     def to_core(self, label=None):
@@ -324,6 +349,7 @@ components).
         core = self.to_core(label=label)
         return core.to_simulation(config=config, inits=inits, erase=erase)
 
+
 def print_netlist_line(dic):
     """
     Return the line of the pyphs netlist associated to
@@ -367,13 +393,12 @@ or tuple (str, float).
         (includes end cariage return).
     """
 
-    component = '{0}.{1} {2} {3}:'.format(dic['dictionary'],
-                                          dic['component'],
-                                          dic['label'],
-                                          dic['nodes'])
+    component = "{0}.{1} {2} {3}:".format(
+        dic["dictionary"], dic["component"], dic["label"], dic["nodes"]
+    )
     pars = ""
-    if dic['arguments'] is not None:
-        for par in dic['arguments'].keys():
-            pars += ' {}={};'.format(par, str(dic['arguments'][par]))
-    line = component + pars + '\n'
+    if dic["arguments"] is not None:
+        for par in dic["arguments"].keys():
+            pars += " {}={};".format(par, str(dic["arguments"][par]))
+    line = component + pars + "\n"
     return line

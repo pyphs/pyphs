@@ -22,11 +22,10 @@ def subsinverse_scalar(expr, subs, symbols):
             test3 = bool(args[1] < 0)
         except (TypeError, IndexError, AttributeError):
             test3 = False
-        if (isinstance(expr, sp.Pow) and bool(args[0] in subs.keys()) and
-                test3):
+        if isinstance(expr, sp.Pow) and bool(args[0] in subs.keys()) and test3:
             symb, val = args
-            isymb = symbols('inv'+str(symb))
-            subs.update({isymb: subs[symb]**-1})
+            isymb = symbols("inv" + str(symb))
+            subs.update({isymb: subs[symb] ** -1})
             args = (isymb, -val)
         args = list(args)
         for i, a in enumerate(args):
@@ -123,6 +122,7 @@ def subsinverse_dict(expr, subs, symbols):
 
 # =========================================================================
 
+
 def subsinverse(expr, subs, symbols):
     """
     Select and apply appropriate substitution method based on expr type.
@@ -151,13 +151,13 @@ def subsinverse(expr, subs, symbols):
     elif isinstance(expr, dict):
         expr = subsinverse_dict(expr, subs, symbols)
     else:
-        text = 'Type {} is not a pyphs expression.'.format(type(expr))
+        text = "Type {} is not a pyphs expression.".format(type(expr))
         raise TypeError(text)
     return expr
 
 
-
 # =========================================================================
+
 
 def subsinverse_core(core):
     """
@@ -172,13 +172,12 @@ def subsinverse_core(core):
     """
 
     # substitutions in core's list of expressions and symbols
-    attrs_to_sub = set(list(core.exprs_names) +
-                       list(core.symbs_names) +
-                       ['M', '_dxH', 'observers'])
+    attrs_to_sub = set(
+        list(core.exprs_names) + list(core.symbs_names) + ["M", "_dxH", "observers"]
+    )
     for name in attrs_to_sub:
         expr = getattr(core, name)
         if expr is None or callable(expr):
             pass
         else:
-            setattr(core, name, subsinverse(expr, core.subs,
-                                                 core.symbols))
+            setattr(core, name, subsinverse(expr, core.subs, core.symbols))

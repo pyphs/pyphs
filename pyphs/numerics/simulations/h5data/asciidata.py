@@ -114,7 +114,7 @@ for saving values (not efficient...)
 #                     yield out if postprocess is None else postprocess(out)
 #             i += 1
 
-#class ASCIIData(BaseData):
+# class ASCIIData(BaseData):
 #
 #    # -------------------------------------------------------------------------
 #    def init_data(self, sequ=None, seqp=None, nt=None):

@@ -22,35 +22,33 @@ from pyphs import Core, Method, Numeric
 # instantiate a pyphs.Core object
 core = Core()
 
-xL, L = core.symbols(['xL', 'L'])   # define sympy symbols
-HL = xL**2/(2*L)                    # define sympy expression
-core.add_storages(xL, HL)           # add storage function to the `core` object
+xL, L = core.symbols(["xL", "L"])  # define sympy symbols
+HL = xL ** 2 / (2 * L)  # define sympy expression
+core.add_storages(xL, HL)  # add storage function to the `core` object
 
-xC, C = core.symbols(['xC', 'C'])   # define sympy symbols
-HC = xC**2/(2*C)                    # define sympy expression
-core.add_storages(xC, HC)           # add storage function to the `core` object
+xC, C = core.symbols(["xC", "C"])  # define sympy symbols
+HC = xC ** 2 / (2 * C)  # define sympy expression
+core.add_storages(xC, HC)  # add storage function to the `core` object
 
 # Set the skew-symetric structure
-Jxx = numpy.array([[0., -1.],
-                   [1., 0.]])
+Jxx = numpy.array([[0.0, -1.0], [1.0, 0.0]])
 core.set_Jxx(Jxx)
 
 # Physical parameters
-F0 = 100.
-L_value = 5e-1     # 500mH
+F0 = 100.0
+L_value = 5e-1  # 500mH
 # f0 = (2*pi*sqrt(L*C))**-1
-C_value = (2*numpy.pi*F0)**-2/L_value  # ?F
+C_value = (2 * numpy.pi * F0) ** -2 / L_value  # ?F
 
 # Dictionary with core.symbols as keys and parameters value as values
-subs = {L: L_value,
-        C: C_value}
+subs = {L: L_value, C: C_value}
 core.subs.update(subs)
 
 core.linear_nonlinear()
 # instantiate a pyphs.Evaluation object associated with a pyphs.Core
 method = Method(core)
 
-#method.dxH = list(map(lambda g: g.subs(dict([(ex, ex+ 0.5*edx) for ex, edx in zip(core.x, core.dx())])), core.dxH()))
+# method.dxH = list(map(lambda g: g.subs(dict([(ex, ex+ 0.5*edx) for ex, edx in zip(core.x, core.dx())])), core.dxH()))
 method.dxH = core.dxH()
 
 # Explicit Euler update:
@@ -58,32 +56,35 @@ method.dxH = core.dxH()
 # x = x + dx
 
 # Mxx * dxH
-op_MxxDotdxH = method.Operation('dot', ('Mxx', 'dxH'))
+op_MxxDotdxH = method.Operation("dot", ("Mxx", "dxH"))
 
 # Mxy * u
-op_MxyDotU = method.Operation('dot', ('Mxy', 'u'))
+op_MxyDotU = method.Operation("dot", ("Mxy", "u"))
 
 # Mxx * dxH + Mxy * u
-op_MxxDotX_add_MxyDotU = method.Operation('add', (op_MxxDotdxH, op_MxyDotU))
+op_MxxDotX_add_MxyDotU = method.Operation("add", (op_MxxDotdxH, op_MxyDotU))
 
 # dx = (Mxx * dxH + Mxy * u)/fs
-op_update_dx = method.Operation('div', (op_MxxDotX_add_MxyDotU, 'fs'))
-method.setoperation('ud_dx', op_update_dx)
+op_update_dx = method.Operation("div", (op_MxxDotX_add_MxyDotU, "fs"))
+method.setoperation("ud_dx", op_update_dx)
 
 # x += dx
-op_update_x = method.Operation('add', ('x', 'dx'))
-method.setoperation('ud_x', op_update_x)
+op_update_x = method.Operation("add", ("x", "dx"))
+method.setoperation("ud_x", op_update_x)
 
 # clear standard update:
 method.update_actions = list()
 
 # Explicit Euler update:
-method.set_execaction([('x', 'ud_x'),       # x = x + dx
-                       'dxH',               # update dxH
-                       ('dx', 'ud_dx'),     # dx = Mxx*dxH(x) + Mxy*u
-                       'y',                 # update y
-                       'H'                  # update H
-                       ])
+method.set_execaction(
+    [
+        ("x", "ud_x"),  # x = x + dx
+        "dxH",  # update dxH
+        ("dx", "ud_dx"),  # dx = Mxx*dxH(x) + Mxy*u
+        "y",  # update y
+        "H",  # update H
+    ]
+)
 
 method.init_args()
 method.init_funcs()
@@ -91,24 +92,27 @@ method.init_funcs()
 #%%
 nums = Numeric(method)
 
-def sig(t, mode='sin'):
-    F = 100.
-    if mode == 'sin':
-        out = numpy.sin(2*numpy.pi*F*t)
-    elif mode == 'impact':
+
+def sig(t, mode="sin"):
+    F = 100.0
+    if mode == "sin":
+        out = numpy.sin(2 * numpy.pi * F * t)
+    elif mode == "impact":
         dur = 1e-3
         start = 0.005
-        out = 1. if start <= t < start + dur else 0.
-    elif mode == 'none':
-        out = 0.
+        out = 1.0 if start <= t < start + dur else 0.0
+    elif mode == "none":
+        out = 0.0
     return numpy.array([out])
+
 
 # init x = x0
 x0 = numpy.array([0.1, 0])
 nums.set_x(x0)
 
 # init lists for results
-results_names = ['u', 'x', 'y', 'H']
+results_names = ["u", "x", "y", "H"]
+
 
 class Results:
     def __init__(self):
@@ -136,16 +140,16 @@ class Results:
         plt.figure()
         plt.plot(self.t[start:stop], values)
         plt.title(name)
-        plt.ylabel('${}({})$'.format(name, index))
-        plt.xlabel('$t$ (s)')
+        plt.ylabel("${}({})$".format(name, index))
+        plt.xlabel("$t$ (s)")
 
 
 results = Results()
 
 # def simulation time
 tmax = 0.2
-nmax = int(tmax*nums.fs())
-t = [n/nums.fs() for n in range(nmax)]
+nmax = int(tmax * nums.fs())
+t = [n / nums.fs() for n in range(nmax)]
 
 # simulation
 for tn in t:
@@ -165,10 +169,10 @@ results.liststoarrays()
 
 # %%
 
-results.plot('x', 0)
-results.plot('x', 1)
-results.plot('H')
+results.plot("x", 0)
+results.plot("x", 1)
+results.plot("H")
 plt.figure()
-plt.plot(results.x[:, 0], results.x[:, 1], ':.')
-plt.plot(results.x[-1, 0], results.x[-1, 1], 'or')
-plt.plot(x0[0], x0[1], 'og')
+plt.plot(results.x[:, 0], results.x[:, 1], ":.")
+plt.plot(results.x[-1, 0], results.x[-1, 1], "or")
+plt.plot(x0[0], x0[1], "og")

@@ -17,13 +17,18 @@ def pyphs_vectorize(func):
     """
     Control how to vectorize functions.
     """
-    #return numpy.vectorize(func)
+    # return numpy.vectorize(func)
     def vec_func(*args):
         len_args = len(args[0])
         if not all(len(a) == len_args for a in args[1:]):
-            raise AttributeError('Can not call vectorized function {} since given arguments have not the same length.'.format(func.__name__))
+            raise AttributeError(
+                "Can not call vectorized function {} since given arguments have not the same length.".format(
+                    func.__name__
+                )
+            )
         for ith_args in zip(*args):
             yield func(*ith_args)
+
     return vec_func
 
 
@@ -57,19 +62,20 @@ class Evaluation(object):
         or a selected set of symbolic functions from a given pyphs.Core.
 
     """
+
     def __init__(self, core, names=None, vectorize=True, vslice=None, theano=None):
         if VERBOSE >= 1:
-            print('Build numerical evaluations...')
+            print("Build numerical evaluations...")
 
         self.core = core.__copy__()
         self.core.o = list(self.core.observers.values())
 
         self.core.substitute(selfall=True)
 
-        if names in ['all', None]:
+        if names in ["all", None]:
             names = self.core.exprs_names
             names = names.union(self.core.struc_names)
-            names = names.union({'dxH'})
+            names = names.union({"dxH"})
             try:
                 # Includes Method attibutes
                 names = names.union(self.core.args_names)
@@ -83,8 +89,12 @@ class Evaluation(object):
 
     def build(self, vectorize=True, names=None, theano=None, vslice=None):
 
-        if vslice is not None and not len(names) ==1:
-            raise AttributeError('Can not slice Evaluation object for more than one attribute: names={}, vslice={}'.format(names, vslice))
+        if vslice is not None and not len(names) == 1:
+            raise AttributeError(
+                "Can not slice Evaluation object for more than one attribute: names={}, vslice={}".format(
+                    names, vslice
+                )
+            )
 
         if names is None:
             names = list()
@@ -92,17 +102,22 @@ class Evaluation(object):
         # for each function, subs, stores func args, args_inds and lambda func
         for name in names:
 
-            func, args, inds = self.expr_to_numeric(self.core, name,
-                                                    self.args(),
-                                                    theano=theano,
-                                                    vslice=vslice)
+            func, args, inds = self.expr_to_numeric(
+                self.core, name, self.args(), theano=theano, vslice=vslice
+            )
             setattr(self, name, func)
-            setattr(self, name+'_args', args)
-            setattr(self, name+'_inds', inds)
+            setattr(self, name + "_args", args)
+            setattr(self, name + "_inds", inds)
 
     def args(self):
-        return (self.core.x + self.core.dx() + self.core.w + self.core.u +
-                self.core.p + list(self.core.observers.keys()))
+        return (
+            self.core.x
+            + self.core.dx()
+            + self.core.w
+            + self.core.u
+            + self.core.p
+            + list(self.core.observers.keys())
+        )
 
     @staticmethod
     def expr_to_numeric(core, name, allargs, theano=None, vectorize=True, vslice=None):
@@ -152,33 +167,55 @@ class Evaluation(object):
                     expr[vslice],
                     subs=core.subs,
                     theano=theano,
-                    vectorize=vectorize
-                    )
+                    vectorize=vectorize,
+                )
             else:
-                if vslice is not None and not vslice.start == vslice.stop == vslice.step == None:
-                    raise AttributeError("Can not slice evaluation of scalar expression: expr={}, vslice={}".format(expr, vslice))
-                func = scalar_expr_to_numeric(args, expr, subs=core.subs,
-                                              theano=theano,
-                                              vectorize=vectorize)
+                if (
+                    vslice is not None
+                    and not vslice.start == vslice.stop == vslice.step == None
+                ):
+                    raise AttributeError(
+                        "Can not slice evaluation of scalar expression: expr={}, vslice={}".format(
+                            expr, vslice
+                        )
+                    )
+                func = scalar_expr_to_numeric(
+                    args, expr, subs=core.subs, theano=theano, vectorize=vectorize
+                )
 
-            func.__doc__ = """
+            func.__doc__ = (
+                """
     Evaluate `{0}`.
 
     Parameters
     ----------
-    """.format(name) + ''.join(["""
+    """.format(
+                    name
+                )
+                + "".join(
+                    [
+                        """
     {} : float
-    """.format(str(a)) for a in args]) + """
+    """.format(
+                            str(a)
+                        )
+                        for a in args
+                    ]
+                )
+                + """
 
     Return
     ------
 
     {0} : numpy array
         The numerical valuation of {0}{1}.
-            """.format(name, "" if vslice is None else "[{0}]".format(vslice))
+            """.format(
+                    name, "" if vslice is None else "[{0}]".format(vslice)
+                )
+            )
 
         else:
-            print('Expression {0} is None'.format(name))
+            print("Expression {0} is None".format(name))
             func, args, inds = None, None, None
 
         return func, args, inds
@@ -186,51 +223,65 @@ class Evaluation(object):
 
 def scalar_expr_to_numeric(args, expr, subs=None, theano=None, vectorize=True):
 
-        # set theano
-        if theano is None:
-            theano = THEANO
+    # set theano
+    if theano is None:
+        theano = THEANO
 
-        if subs is None:
-            subs = {}
+    if subs is None:
+        subs = {}
 
-        # lambdify func
-        f = lambdify(args, expr, subs=subs, theano=theano)
+    # lambdify func
+    f = lambdify(args, expr, subs=subs, theano=theano)
 
-        # map inputs to array (see sympy issue #11306)
-        def fun(*args):
-            return f(*map(numpy.array, args))
+    # map inputs to array (see sympy issue #11306)
+    def fun(*args):
+        return f(*map(numpy.array, args))
 
-        # Cope with vector evaluation of functions with arguments
-        if vectorize and len(args) > 0:
-            func = pyphs_vectorize(fun)
+    # Cope with vector evaluation of functions with arguments
+    if vectorize and len(args) > 0:
+        func = pyphs_vectorize(fun)
 
-        # Cope with vector evaluation of functions with no arguments
-        elif vectorize and len(args) == 0:
-            def func(*args):
-                if len(args) == 0:
-                    return numpy.array(fun())
-                elif isinstance(args[0], list):
-                    return numpy.array([fun(), ]*len(args[0]))
-                elif isinstance(args[0], numpy.ndarray):
-                    return numpy.array([fun(), ]*args[0].shape[0])
-                else:
-                    return numpy.array(fun())
+    # Cope with vector evaluation of functions with no arguments
+    elif vectorize and len(args) == 0:
 
-        # No vectorization
-        else:
-            func = fun
+        def func(*args):
+            if len(args) == 0:
+                return numpy.array(fun())
+            elif isinstance(args[0], list):
+                return numpy.array(
+                    [
+                        fun(),
+                    ]
+                    * len(args[0])
+                )
+            elif isinstance(args[0], numpy.ndarray):
+                return numpy.array(
+                    [
+                        fun(),
+                    ]
+                    * args[0].shape[0]
+                )
+            else:
+                return numpy.array(fun())
 
-        return func
+    # No vectorization
+    else:
+        func = fun
+
+    return func
+
 
 def vector_expr_to_numeric(args, expr, subs=None, theano=None, vectorize=True):
 
-        funcs = []
-        for e in expr:
-            funcs.append(scalar_expr_to_numeric(args, e, subs=subs,
-                                                theano=theano,
-                                                vectorize=vectorize))
+    funcs = []
+    for e in expr:
+        funcs.append(
+            scalar_expr_to_numeric(
+                args, e, subs=subs, theano=theano, vectorize=vectorize
+            )
+        )
 
-        def func(*args):
-            return numpy.array(tuple(map(lambda f: f(*args), funcs))).T
+    def func(*args):
+        return numpy.array(tuple(map(lambda f: f(*args), funcs))).T
 
-        return func
+    return func

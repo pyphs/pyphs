@@ -19,11 +19,20 @@ from . import beams
 from . import transducers
 
 import os
+
 end = os.path.realpath(__file__).rfind(os.sep)
 path_to_dictionary = os.path.realpath(__file__)[:end]
 
-__all__ = ['electronics', 'magnetics', 'mechanics', 'thermics',
-           'mechanics_dual',
-           'connectors', 'fraccalc', 'pwl',
-           'beams', 'transducers',
-           'path_to_dictionary']
+__all__ = [
+    "electronics",
+    "magnetics",
+    "mechanics",
+    "thermics",
+    "mechanics_dual",
+    "connectors",
+    "fraccalc",
+    "pwl",
+    "beams",
+    "transducers",
+    "path_to_dictionary",
+]

@@ -1,7 +1,9 @@
 #
 
-metadata = {'flux': [r'i', 'Electrical current', 'A'],
-            'effort': [r'v', 'Electrical Voltage', 'V']}
+metadata = {
+    "flux": [r"i", "Electrical current", "A"],
+    "effort": [r"v", "Electrical Voltage", "V"],
+}
 
 from ._bjt import Bjt
 from ._capacitor import Capacitor
@@ -13,5 +15,13 @@ from ._source import Source
 from ._triode import Triode
 
 
-__all__ = ['Source', 'Capacitor', 'Inductor', 'Resistor',
-           'Potentiometer', 'Diode', 'Bjt', 'Triode']
+__all__ = [
+    "Source",
+    "Capacitor",
+    "Inductor",
+    "Resistor",
+    "Potentiometer",
+    "Diode",
+    "Bjt",
+    "Triode",
+]

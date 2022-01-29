@@ -66,7 +66,9 @@ $$
 \end{array}
 \right)
 $$
-""".replace(r'\n', '')
+""".replace(
+    r"\n", ""
+)
 
 
 class LatexCore(object):
@@ -77,9 +79,9 @@ class LatexCore(object):
     def __init__(self, core):
 
         self.dims = {}
-        for name in ['', 'x', 'w', 'y', 'p', 'o', 'cy']:
-            for dim in ['', 'l', 'nl']:
-                key = name+dim
+        for name in ["", "x", "w", "y", "p", "o", "cy"]:
+            for dim in ["", "l", "nl"]:
+                key = name + dim
                 try:
                     self.dims[key] = geteval(core.dims, key)
                 except AttributeError:
@@ -88,85 +90,109 @@ class LatexCore(object):
         self.core = core
         self.sn = symbol_names(core)
 
-        self.x = obj2tex(self.core.x, r'\mathbf{x}', '', self.sn)
+        self.x = obj2tex(self.core.x, r"\mathbf{x}", "", self.sn)
 
-        self.dx = obj2tex(self.core.dx(), r'\mathbf{d_x}', '', self.sn)
+        self.dx = obj2tex(self.core.dx(), r"\mathbf{d_x}", "", self.sn)
 
-        self.H = obj2tex(self.core.H, r'\mathrm H(\mathbf{x})', '', self.sn,
-                         toMatrix=False)
+        self.H = obj2tex(
+            self.core.H, r"\mathrm H(\mathbf{x})", "", self.sn, toMatrix=False
+        )
 
-        self.dxH = obj2tex(self.core.g(), r'\nabla\mathrm H(\mathbf{x})',
-                           '', self.sn)
+        self.dxH = obj2tex(self.core.g(), r"\nabla\mathrm H(\mathbf{x})", "", self.sn)
 
-        self.dxH_elements = list(map(lambda a: obj2tex(a[0], sympy2latex(a[1], self.sn),
-                                                     '', self.sn, toMatrix=False),
-                                   zip(core.dxH(), self.core.g())))
+        self.dxH_elements = list(
+            map(
+                lambda a: obj2tex(
+                    a[0], sympy2latex(a[1], self.sn), "", self.sn, toMatrix=False
+                ),
+                zip(core.dxH(), self.core.g()),
+            )
+        )
 
-        self.Q = obj2tex(self.core.Q, r'\mathbf{Q}',
-                         '', self.sn)
+        self.Q = obj2tex(self.core.Q, r"\mathbf{Q}", "", self.sn)
 
-        self.bl = obj2tex(self.core.bl, r'\mathbf{b_l}',
-                         '', self.sn)
+        self.bl = obj2tex(self.core.bl, r"\mathbf{b_l}", "", self.sn)
 
-        self.Zl = obj2tex(self.core.Zl, r'\mathbf{Z_l}',
-                          '', self.sn)
+        self.Zl = obj2tex(self.core.Zl, r"\mathbf{Z_l}", "", self.sn)
 
-        self.w = obj2tex(self.core.w, r'\mathbf{w}', '', self.sn)
+        self.w = obj2tex(self.core.w, r"\mathbf{w}", "", self.sn)
 
-        self.z = obj2tex(core.z_symbols(),
-                         r'\mathbf z(\mathbf{w})', '', self.sn)
+        self.z = obj2tex(core.z_symbols(), r"\mathbf z(\mathbf{w})", "", self.sn)
 
-        self.z_elements = list(map(lambda a: obj2tex(a[0], sympy2latex(a[1], self.sn),
-                                                     '', self.sn, toMatrix=False),
-                                   zip(core.z, core.z_symbols())))
+        self.z_elements = list(
+            map(
+                lambda a: obj2tex(
+                    a[0], sympy2latex(a[1], self.sn), "", self.sn, toMatrix=False
+                ),
+                zip(core.z, core.z_symbols()),
+            )
+        )
 
-        self.u = obj2tex(self.core.u, r'\mathbf{u}', '', self.sn)
+        self.u = obj2tex(self.core.u, r"\mathbf{u}", "", self.sn)
 
-        self.y = obj2tex(self.core.y, r'\mathbf y', '', self.sn)
-        self.cy = obj2tex(self.core.cy, r'\mathbf y_c', '', self.sn)
-        self.cu = obj2tex(self.core.cu, r'\mathbf u_c', '', self.sn)
+        self.y = obj2tex(self.core.y, r"\mathbf y", "", self.sn)
+        self.cy = obj2tex(self.core.cy, r"\mathbf y_c", "", self.sn)
+        self.cu = obj2tex(self.core.cu, r"\mathbf u_c", "", self.sn)
 
         l = []
         for i, c in enumerate(self.core.connectors):
-            alpha = c['alpha']
-            u1, y1 = c['u'][0], c['y'][0]
-            s = obj2tex(alpha*y1, str(u1), '', self.sn)
-            u2, y2 = c['u'][1], c['y'][1]
-            s += obj2tex(-alpha*y2, str(u2), '', self.sn)
+            alpha = c["alpha"]
+            u1, y1 = c["u"][0], c["y"][0]
+            s = obj2tex(alpha * y1, str(u1), "", self.sn)
+            u2, y2 = c["u"][1], c["y"][1]
+            s += obj2tex(-alpha * y2, str(u2), "", self.sn)
             l.append(s)
         self.connectors_elements = l
 
-        self.y_elements = list(map(lambda a: obj2tex(a[0], sympy2latex(a[1], self.sn),
-                                                     '', self.sn, toMatrix=False),
-                                   zip(core.output(), core.y)))
+        self.y_elements = list(
+            map(
+                lambda a: obj2tex(
+                    a[0], sympy2latex(a[1], self.sn), "", self.sn, toMatrix=False
+                ),
+                zip(core.output(), core.y),
+            )
+        )
 
-        self.o = obj2tex(self.core.o(), r'\mathbf o', '', self.sn)
+        self.o = obj2tex(self.core.o(), r"\mathbf o", "", self.sn)
 
-        self.o_elements = list(map(lambda a: obj2tex(a[0], sympy2latex(a[1], self.sn),
-                                                     '', self.sn, toMatrix=False),
-                                   zip(core.observers.values(),
-                                       core.observers.keys())))
+        self.o_elements = list(
+            map(
+                lambda a: obj2tex(
+                    a[0], sympy2latex(a[1], self.sn), "", self.sn, toMatrix=False
+                ),
+                zip(core.observers.values(), core.observers.keys()),
+            )
+        )
 
-        self.p = obj2tex(self.core.p, r'\mathbf p', '', self.sn)
+        self.p = obj2tex(self.core.p, r"\mathbf p", "", self.sn)
 
-        for mat in 'MJR':
-            M = obj2tex(geteval(core, mat), r'\mathbf{%s}' % mat,
-                        '', self.sn)
+        for mat in "MJR":
+            M = obj2tex(geteval(core, mat), r"\mathbf{%s}" % mat, "", self.sn)
             setattr(self, mat, M)
 
-            for i in ['x', 'w', 'y', 'cy']:
-                for j in ['x', 'w', 'y', 'cy']:
-                    M = obj2tex(geteval(core, mat + i + j),
-                                r'\mathbf{' + mat + '_{' + i + j + '}}',
-                        '', self.sn)
+            for i in ["x", "w", "y", "cy"]:
+                for j in ["x", "w", "y", "cy"]:
+                    M = obj2tex(
+                        geteval(core, mat + i + j),
+                        r"\mathbf{" + mat + "_{" + i + j + "}}",
+                        "",
+                        self.sn,
+                    )
                     setattr(self, mat + i + j, M)
 
-        self.subs = dic2table(['parameter', 'value (SI)'], core.subs, self.sn,
-                              centering=True)
+        self.subs = dic2table(
+            ["parameter", "value (SI)"], core.subs, self.sn, centering=True
+        )
 
-        self.jacz = obj2tex(self.core.jacz(), r'\mathcal J_{\mathbf z}(\mathbf w)', '', self.sn)
-        self.hessH = obj2tex(self.core.hessH(), r'\triangle\mathrm H(\mathbf x)', '', self.sn)
+        self.jacz = obj2tex(
+            self.core.jacz(), r"\mathcal J_{\mathbf z}(\mathbf w)", "", self.sn
+        )
+        self.hessH = obj2tex(
+            self.core.hessH(), r"\triangle\mathrm H(\mathbf x)", "", self.sn
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     from pyphs.examples.rlc.rlc import core
+
     l = LatexCore(core)

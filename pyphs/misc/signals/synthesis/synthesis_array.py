@@ -6,37 +6,35 @@ Created on Wed Jun  8 18:57:05 2016
 """
 
 import numpy
-from numpy import (cos, sin, pi,
-                   arange,
-                   linspace,
-                   ones, zeros, ones_like,
-                   vstack, hstack)
+from numpy import cos, sin, pi, arange, linspace, ones, zeros, ones_like, vstack, hstack
 from numpy.random import uniform
 from numpy import min as npmin
 from numpy import max as npmax
 from scipy.signal import chirp
 
 
-names = ['zero', 'const', 'sin', 'cos', 'noise', 'step', 'sweep']
+names = ["zero", "const", "sin", "cos", "noise", "step", "sweep"]
 
-parameters = {'which': 'sin',
-              'tsig': 1.,
-              'ncycles': 1,
-              'tdeb': 0,
-              'tend': 0,
-              'fs': int(48e3),
-              'A': 1.,
-              'A1': 0.,
-              'f0': 10.,
-              'f1': 100.,
-              'cycle_ratio': 1.,
-              'attack_ratio': 0.,
-              'decay_ratio': 0.,
-              'ramp_on': False,
-              'bkgrd_noise': 0.}
+parameters = {
+    "which": "sin",
+    "tsig": 1.0,
+    "ncycles": 1,
+    "tdeb": 0,
+    "tend": 0,
+    "fs": int(48e3),
+    "A": 1.0,
+    "A1": 0.0,
+    "f0": 10.0,
+    "f1": 100.0,
+    "cycle_ratio": 1.0,
+    "attack_ratio": 0.0,
+    "decay_ratio": 0.0,
+    "ramp_on": False,
+    "bkgrd_noise": 0.0,
+}
 
 
-def sine(n, fs, f0, A=1., f1=None, A1=1.):
+def sine(n, fs, f0, A=1.0, f1=None, A1=1.0):
     """
     Build a generator that yields a sine wave.
 
@@ -61,13 +59,13 @@ def sine(n, fs, f0, A=1., f1=None, A1=1.):
         Sequence of sine wave values.
     """
 
-    s = A*sin(2*pi*f0*numpy.arange(n)/fs)
+    s = A * sin(2 * pi * f0 * numpy.arange(n) / fs)
     if isinstance(f1, (float, int)):
-        s += A1*sin(2*pi*f1*numpy.arange(n)/fs)
+        s += A1 * sin(2 * pi * f1 * numpy.arange(n) / fs)
     return s
 
 
-def cosine(n, fs, f0, A=1., f1=None, A1=1.):
+def cosine(n, fs, f0, A=1.0, f1=None, A1=1.0):
     """
     Build a generator that yields a cosine wave.
 
@@ -92,13 +90,13 @@ def cosine(n, fs, f0, A=1., f1=None, A1=1.):
         Sequence of cosine wave values.
     """
 
-    s = A*cos(2*pi*f0*numpy.arange(n)/fs)
+    s = A * cos(2 * pi * f0 * numpy.arange(n) / fs)
     if isinstance(f1, (float, int)):
-        s += A1*cos(2*pi*f1*numpy.arange(n)/fs)
+        s += A1 * cos(2 * pi * f1 * numpy.arange(n) / fs)
     return s
 
 
-def randomuniform(n, A=1.):
+def randomuniform(n, A=1.0):
     """
     Build a generator that yields a noise distributed according uniform \
 probability densisty.
@@ -119,7 +117,7 @@ probability densisty.
     return uniform(-A, A, n)
 
 
-def constant(n, A=1.):
+def constant(n, A=1.0):
     """
     Build a generator that yields a constant value.
 
@@ -136,10 +134,10 @@ def constant(n, A=1.):
         Sequence of constant value.
     """
 
-    return A*ones(n)
+    return A * ones(n)
 
 
-def sweep_cosine(n, fs, f0, f1, A=1., phi=-90, method='linear'):
+def sweep_cosine(n, fs, f0, f1, A=1.0, phi=-90, method="linear"):
     """
     Build a generator that yields a sweep sine between f0 and f1.
 
@@ -179,10 +177,10 @@ def sweep_cosine(n, fs, f0, f1, A=1., phi=-90, method='linear'):
 
     """
 
-    T = float(n-1)/float(fs)
+    T = float(n - 1) / float(fs)
 
     def mychirp(t):
-        return A*chirp(t, f0=f0, f1=f1, t1=T, phi=phi, method=method)
+        return A * chirp(t, f0=f0, f1=f1, t1=T, phi=phi, method=method)
 
     return mychirp(linspace(0, T, n))
 
@@ -264,23 +262,22 @@ to PWM.
     parameters = build_parameters(**kwargs)
 
     def clamp_signal(x, xmin, xmax):
-        cmax = npmax(vstack((x, xmin*ones_like(x))), axis=0)
-        return npmin(vstack((cmax, xmax*ones_like(x))), axis=0)
+        cmax = npmax(vstack((x, xmin * ones_like(x))), axis=0)
+        return npmin(vstack((cmax, xmax * ones_like(x))), axis=0)
 
     def ramp(i):
-        if parameters['ramp_on']:
-            return i/float(parameters['ncycles']*parameters['nsig']-1)
+        if parameters["ramp_on"]:
+            return i / float(parameters["ncycles"] * parameters["nsig"] - 1)
         else:
             return ones_like(i)
 
     def env(i):
-        if parameters['nd'] > 0:
-            enva = clamp_signal((parameters['non']-i)/float(parameters['nd']),
-                                0, 1)
+        if parameters["nd"] > 0:
+            enva = clamp_signal((parameters["non"] - i) / float(parameters["nd"]), 0, 1)
         else:
             enva = ones_like(i)
-        if parameters['na'] > 0:
-            envd = clamp_signal(i/float(parameters['na']), 0, 1)
+        if parameters["na"] > 0:
+            envd = clamp_signal(i / float(parameters["na"]), 0, 1)
         else:
             envd = ones_like(i)
 
@@ -288,104 +285,112 @@ to PWM.
 
     def background_noise(n=None):
         if n is None:
-            if isinstance(parameters['bkgrd_noise'], (int, float)):
-                return next(randomuniform(1, parameters['bkgrd_noise']))
+            if isinstance(parameters["bkgrd_noise"], (int, float)):
+                return next(randomuniform(1, parameters["bkgrd_noise"]))
             else:
-                return 0.
+                return 0.0
         else:
-            if isinstance(parameters['bkgrd_noise'], (int, float)):
-                return randomuniform(n, parameters['bkgrd_noise'])
+            if isinstance(parameters["bkgrd_noise"], (int, float)):
+                return randomuniform(n, parameters["bkgrd_noise"])
             else:
                 return zeros(n)
 
     # deb
-    deb = background_noise(parameters['ndeb'])
+    deb = background_noise(parameters["ndeb"])
 
     # cycles
-    for c in range(parameters['ncycles']):
-        if parameters['which'] == 'zero':
-            Sig = constant(parameters['non'], 0.)
-        elif parameters['which'] == 'const':
-            Sig = constant(parameters['non'], parameters['A'])
-        elif parameters['which'] == 'sin':
-            Sig = sine(parameters['non'],
-                       parameters['fs'],
-                       f0=parameters['f0'],
-                       f1=parameters['f1'],
-                       A=parameters['A'],
-                       A1=parameters['A1'])
-        elif parameters['which'] == 'cos':
-            Sig = cosine(parameters['non'],
-                         parameters['fs'],
-                         parameters['f0'],
-                         parameters['A'])
-        elif parameters['which'] == 'noise':
-            Sig = randomuniform(parameters['non'],
-                                parameters['A'])
-        elif parameters['which'] == 'step':
-            Sig = constant(parameters['non'],
-                           parameters['A'])
-        elif parameters['which'] == 'sweep':
-            Sig = sweep_cosine(parameters['non'],
-                               parameters['fs'],
-                               parameters['f0'],
-                               parameters['f1'],
-                               parameters['A'],
-                               parameters['phi'],
-                               parameters['method'])
+    for c in range(parameters["ncycles"]):
+        if parameters["which"] == "zero":
+            Sig = constant(parameters["non"], 0.0)
+        elif parameters["which"] == "const":
+            Sig = constant(parameters["non"], parameters["A"])
+        elif parameters["which"] == "sin":
+            Sig = sine(
+                parameters["non"],
+                parameters["fs"],
+                f0=parameters["f0"],
+                f1=parameters["f1"],
+                A=parameters["A"],
+                A1=parameters["A1"],
+            )
+        elif parameters["which"] == "cos":
+            Sig = cosine(
+                parameters["non"], parameters["fs"], parameters["f0"], parameters["A"]
+            )
+        elif parameters["which"] == "noise":
+            Sig = randomuniform(parameters["non"], parameters["A"])
+        elif parameters["which"] == "step":
+            Sig = constant(parameters["non"], parameters["A"])
+        elif parameters["which"] == "sweep":
+            Sig = sweep_cosine(
+                parameters["non"],
+                parameters["fs"],
+                parameters["f0"],
+                parameters["f1"],
+                parameters["A"],
+                parameters["phi"],
+                parameters["method"],
+            )
         else:
-            print('Unknown synthesis method \
-{0!s}.'.format(parameters['which']))
+            print(
+                "Unknown synthesis method \
+{0!s}.".format(
+                    parameters["which"]
+                )
+            )
             raise NameError
         nsigc = Sig.shape[0]
         i = arange(nsigc)
 
-        cycle_deb = ramp(i+c*parameters['nsig'])*env(i)*Sig + \
-            background_noise(nsigc)
+        cycle_deb = ramp(i + c * parameters["nsig"]) * env(i) * Sig + background_noise(
+            nsigc
+        )
 
-        cycle_end = background_noise(parameters['noff'])
+        cycle_end = background_noise(parameters["noff"])
 
-        if parameters['offset'] != 0:
-            cycle_deb += parameters['offset']
-            cycle_end += parameters['offset']
+        if parameters["offset"] != 0:
+            cycle_deb += parameters["offset"]
+            cycle_end += parameters["offset"]
 
     # end
-    end = background_noise(parameters['nend'])
+    end = background_noise(parameters["nend"])
 
     return hstack((deb, cycle_deb, cycle_end, end))
 
 
 def build_parameters(**kwargs):
     parameters = kwargs.copy()
-    parameters.setdefault('which', 'sin')
-    if not parameters['which'] in names:
-        txt = 'Unknown synthesis method {0!s}.'.format(parameters['which'])
+    parameters.setdefault("which", "sin")
+    if not parameters["which"] in names:
+        txt = "Unknown synthesis method {0!s}.".format(parameters["which"])
         raise NotImplementedError(txt)
 
-    parameters.setdefault('tsig', 1.)
-    parameters.setdefault('ncycles', 1)
-    parameters.setdefault('tdeb', 0.)
-    parameters.setdefault('tend', 0.)
-    parameters.setdefault('fs', int(1e3))
-    parameters.setdefault('A', 1.)
-    parameters.setdefault('A1', 0.)
-    parameters.setdefault('f0', 10.)
-    parameters.setdefault('f1', 100.)
-    parameters.setdefault('cycle_ratio', 1.)
-    parameters.setdefault('attack_ratio', 0.)
-    parameters.setdefault('decay_ratio', 0.)
-    parameters.setdefault('ramp_on', False)
-    parameters.setdefault('bkgrd_noise', 0.)
-    parameters.setdefault('offset', 0.)
-    parameters.setdefault('phi', -90)
-    parameters.setdefault('method', 'linear')
+    parameters.setdefault("tsig", 1.0)
+    parameters.setdefault("ncycles", 1)
+    parameters.setdefault("tdeb", 0.0)
+    parameters.setdefault("tend", 0.0)
+    parameters.setdefault("fs", int(1e3))
+    parameters.setdefault("A", 1.0)
+    parameters.setdefault("A1", 0.0)
+    parameters.setdefault("f0", 10.0)
+    parameters.setdefault("f1", 100.0)
+    parameters.setdefault("cycle_ratio", 1.0)
+    parameters.setdefault("attack_ratio", 0.0)
+    parameters.setdefault("decay_ratio", 0.0)
+    parameters.setdefault("ramp_on", False)
+    parameters.setdefault("bkgrd_noise", 0.0)
+    parameters.setdefault("offset", 0.0)
+    parameters.setdefault("phi", -90)
+    parameters.setdefault("method", "linear")
 
-    parameters['nsig'] = int(parameters['tsig']*parameters['fs'])
-    parameters['ndeb'] = int(parameters['tdeb']*parameters['fs'])
-    parameters['nend'] = int(parameters['tend']*parameters['fs'])
-    parameters['non'] = int(parameters['nsig']*parameters['cycle_ratio'])
-    parameters['noff'] = parameters['nsig'] - parameters['non']
+    parameters["nsig"] = int(parameters["tsig"] * parameters["fs"])
+    parameters["ndeb"] = int(parameters["tdeb"] * parameters["fs"])
+    parameters["nend"] = int(parameters["tend"] * parameters["fs"])
+    parameters["non"] = int(parameters["nsig"] * parameters["cycle_ratio"])
+    parameters["noff"] = parameters["nsig"] - parameters["non"]
 
-    parameters['na'], parameters['nd'] = (int(parameters['attack_ratio']*parameters['non']),
-                                          int(parameters['decay_ratio']*parameters['non']))
+    parameters["na"], parameters["nd"] = (
+        int(parameters["attack_ratio"] * parameters["non"]),
+        int(parameters["decay_ratio"] * parameters["non"]),
+    )
     return parameters

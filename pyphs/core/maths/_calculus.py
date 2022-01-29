@@ -40,7 +40,9 @@ def gradient(scalar_func, vars_, simplify=False):
     types.vector_test(vars_)
     types.scalar_test(scalar_func)
     nvars = len(vars_)
-    grad = [0, ]*nvars
+    grad = [
+        0,
+    ] * nvars
     for i in range(nvars):
         grad[i] = scalar_func.diff(vars_[i]).doit()
     if simplify:

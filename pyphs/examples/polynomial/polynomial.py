@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 from pyphs import Netlist, Graph
-from pyphs.config import debug_print
+from icecream import ic
 
 label = 'polynomial'
 path = os.path.realpath(__file__)[:os.path.realpath(__file__).rfind(os.sep)]
@@ -19,8 +19,11 @@ netlist = Netlist(netlist_filename)
 graph = Graph(netlist=netlist)
 core = graph.to_core()
 
-debug_print(core.x, core.dxH())
-debug_print(core.w, core.z)
+ic(core.x, core.H, core.dxH())
+ic(core.w, core.z)
+ic(core.u, core.y)
+ic(core.M)
+
 # %% ------------------------------ SIMULATION ------------------------------ #
 
 # UNCOMMENT BELOW FOR SIMULATION AND PLOTS

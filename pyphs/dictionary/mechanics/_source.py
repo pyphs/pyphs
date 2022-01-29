@@ -5,7 +5,7 @@ Created on Sat May 21 16:29:43 2016
 """
 
 from __future__ import absolute_import, division, print_function
-from ..edges import Port
+from ..common import Port
 from ..tools import componentDoc, parametersDefault
 from ..mechanics import metadata as dicmetadata
 

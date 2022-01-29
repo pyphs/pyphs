@@ -8,7 +8,7 @@ Created on Sun Jun 18 23:21:59 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges import Port
+from ..common import Port
 from ..tools import componentDoc, parametersDefault
 from ..magnetics import metadata as dicmetadata
 from pyphs.misc.rst import equation

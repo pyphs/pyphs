@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import sympy
 from ..tools import symbols, nicevarlabel
-from ..edges import DissipativeNonLinear
+from ..common import DissipativeNonLinear
 from pyphs.config import GMIN
 from ..tools import componentDoc, parametersDefault
 from ..electronics import metadata as dicmetadata

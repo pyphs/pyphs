@@ -8,7 +8,7 @@ Created on Mon Jun 19 00:05:25 2017
 
 from __future__ import absolute_import, division, print_function
 
-from ..edges import DissipativeLinear
+from ..common import DissipativeLinear
 from ..tools import componentDoc, parametersDefault
 from ..electronics import metadata as dicmetadata
 

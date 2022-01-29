@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 import sympy as sp
 import os
-from .. import edges
+from .. import common
 from pyphs import Graph
 from ..tools import componentDoc, parametersDefault
 from ..mechanics import metadata as dicmetadata

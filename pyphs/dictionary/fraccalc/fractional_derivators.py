@@ -13,7 +13,7 @@ import numpy as np
 from pyphs import Graph
 from pyphs.config import EPS
 
-from ..edges import DissipativeLinear, StorageLinear
+from ..common import DissipativeLinear, StorageLinear
 from pyphs.dictionary.connectors import Transformer
 from pyphs.graphs import datum
 from pyphs.misc.rst import equation

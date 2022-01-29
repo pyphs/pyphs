@@ -7,7 +7,7 @@ Created on Sat May 21 16:24:12 2016
 from __future__ import absolute_import, division, print_function
 
 import sympy as sp
-from ..edges import StorageNonLinear
+from ..common import StorageNonLinear
 from pyphs.dictionary.tools import symbols
 from ..tools import componentDoc, parametersDefault
 from ..magnetics import metadata as dicmetadata

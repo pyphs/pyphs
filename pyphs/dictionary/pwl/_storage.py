@@ -9,7 +9,7 @@ Created on Mon Jun 19 00:12:24 2017
 from __future__ import absolute_import, division, print_function
 
 import numpy as np
-from .. import edges
+from .. import common
 from pyphs import Graph
 from ..tools import componentDoc, parametersDefault
 from ..mechanics import metadata as dicmetadata

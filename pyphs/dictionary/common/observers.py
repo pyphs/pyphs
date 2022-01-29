@@ -7,7 +7,7 @@ Created on Wed May 24 19:21:54 2017
 """
 
 
-from ..edges import StorageLinear
+from ..common import StorageLinear
 from pyphs.config import FS_SYMBS, EPS
 from pyphs.core.tools import sympify
 from pyphs.dictionary.tools import Argument
